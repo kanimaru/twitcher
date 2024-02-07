@@ -1,5 +1,25 @@
-## {summary}
-func {method_name}({parameters}) -> {result}:
-	var response = await _request({request_path}, HTTPClient.METHOD_{method}, {header}, {body});
+class_name TwitchRestAPI
+
+var repo: TwitchRepository
+
+func _init(twitch_repository: TwitchRepository):
+	repo = twitch_repository;
+
+{for methods as method}
+## {method.summary}
+func {method.name}({method.parameters}) -> {method.result_type}:
+{method.time_parameter}
+	var response = await repo.request({method.request_path}, HTTPClient.METHOD_{method.method}, {method.header}, {method.body});
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	{if method.has_return_value}
 	return result;
+	{/if}
+
+{/for}
+
+## Converts unix timestamp to RFC 3339 (example: 2021-10-27T00:00:00Z) when passed a string uses as is
+static func get_rfc_3339_date_format(time: Variant) -> String:
+	if typeof(time) == TYPE_INT:
+		var date_time = Time.get_datetime_dict_from_unix_time(time);
+		return "%s-%02d-%02dT%02d:%02d:%02dZ" % [date_time['year'], date_time['month'], date_time['day'], date_time['hour'], date_time['minute'], date_time['second']];
+	return str(time);

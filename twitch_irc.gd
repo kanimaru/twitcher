@@ -91,6 +91,7 @@ func _data_received(data : PackedByteArray) -> void:
 ## Tries to send messages as long as the websocket is open
 func _send_messages() -> void:
 	if client.connection_state != WebSocketPeer.STATE_OPEN:
+		printerr("[TwitchIRC] Can't send message. Connection not open.")
 		# Maybe buggy when the websocket got opened but not authorized yet
 		# Can possible happen when we have a lot of load and a reconnect in the socket
 		return;
@@ -99,18 +100,18 @@ func _send_messages() -> void:
 		_send(msg_to_send);
 		next_message = Time.get_ticks_msec() + TwitchSetting.irc_send_message_delay;
 
-func join_channel(channel : String) -> void:
+## Joins a new channel when not yet joined and return the channel.
+func join_channel(channel : String) -> TwitchChannel:
 	var lower_channel : String = channel.to_lower()
+	if channel_maps.has(lower_channel):
+		return channel_maps[lower_channel];
+
 	_send("JOIN #" + lower_channel)
+	return _create_channel(lower_channel)
 
 func leave_channel(channel : String) -> void:
 	var lower_channel : String = channel.to_lower()
 	_send("PART #" + lower_channel)
-
-## Sends a string message to Twitch.
-func _send(text : String) -> void:
-	client.send_text(text);
-	if is_debug: print("[TwitchIRC] < " + text.strip_edges(false));
 
 ## Sends a chat message to a channel. Defaults to the only connected channel.
 ## Channel should be always without '#'.
@@ -125,10 +126,16 @@ func chat(message : String, channel_name : String = ""):
 	chat_queue.append("PRIVMSG #%s :%s\r\n" % [channel_name, message]);
 
 	if channel_maps.has(channel_name):
-		var channel = channel_maps[channel_name];
+		var channel = channel_maps[channel_name] as TwitchChannel;
 		var user_name = channel.data['display-name'];
 		var sender_data: TwitchSenderData = TwitchSenderData.new(user_name, channel, channel.data);
+		channel.handle_message_received(sender_data, message);
 		chat_message.emit(sender_data, message);
+
+## Sends a string message to Twitch.
+func _send(text : String) -> void:
+	client.send_text(text);
+	if is_debug: print("[TwitchIRC] < " + text.strip_edges(false));
 
 func _parse_tags(tags: String) -> Dictionary:
 	var parsed_tags : Dictionary = {};
@@ -137,7 +144,7 @@ func _parse_tags(tags: String) -> Dictionary:
 		parsed_tags[pair[0]] = pair[1];
 	return parsed_tags;
 
-## Handles all the messages tags can be empty when not requested via capabilities
+## Handles all the messages. Tags can be empty when not requested via capabilities
 func _handle_message(received_message : String, tags : Dictionary) -> void:
 	var message_parts : PackedStringArray = received_message.split(" ", true, 3);
 	# Reminder PONG messages is just different cant use match for it...
@@ -153,8 +160,8 @@ func _handle_message(received_message : String, tags : Dictionary) -> void:
 		"001":
 			print("[TwitchIRC] Authentication successful.");
 			_on_login(true);
-		"PRIVMSG": _handle_cmd_message(from, message_parts, tags, chat_message);
-		"WHISPER": _handle_cmd_message(from, message_parts, tags, whisper_message);
+		"PRIVMSG": _handle_chat_message(from, message_parts, tags, chat_message);
+		"WHISPER": _handle_chat_message(from, message_parts, tags, whisper_message);
 		"USERSTATE", "ROOMSTATE":
 			var channel_name = message_parts[2];
 			_handle_cmd_state(channel_name, tags);
@@ -164,13 +171,11 @@ func _handle_message(received_message : String, tags : Dictionary) -> void:
 ## updates it (Example :tmi.twitch.tv ROOMSTATE #bar)
 func _handle_cmd_state(channel_name: String, tags: Dictionary) -> void:
 	# right(-1) -> Remove the preceding # of the channel name
-	channel_name = channel_name.right(-1);
-	var channel: TwitchChannel;
+	channel_name = channel_name.right(-1).to_lower();
 	if not channel_maps.has(channel_name):
-		channel = _create_channel(channel_name);
 		channel_maps[channel_name] = _create_channel(channel_name);
-	else:
-		channel = channel_maps[channel_name];
+
+	var channel: TwitchChannel = channel_maps[channel_name];
 	channel.update_tags(tags);
 	channel_data_updated.emit(channel_name, channel.data);
 	print("[TwitchIRC] Channel updated ", channel_name);
@@ -178,8 +183,11 @@ func _handle_cmd_state(channel_name: String, tags: Dictionary) -> void:
 func _create_channel(channel_name: String) -> TwitchChannel:
 	return TwitchChannel.new(channel_name, self);
 
-func _handle_cmd_message(from: String, message_parts: Array[String], tags: Dictionary, output: Signal):
+## Handles chat messages from whisper and rooms.
+## (Example: PRIVMSG #<channel name> :HeyGuys <3 PartyTime)
+func _handle_chat_message(from: String, message_parts: Array[String], tags: Dictionary, output: Signal):
 	var channel_name := message_parts[2];
+	# right(-1) -> Removes  the : of the message
 	var message := message_parts[3].right(-1);
 	var user = user_regex.search(from).get_string(1);
 	var channel = channel_maps[channel_name];
