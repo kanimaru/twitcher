@@ -1,0 +1,6 @@
+## {documentation}
+class {class_name} extends RefCounted:
+	{fields}
+
+	static func load(data: Dictionary) -> {class_name}:
+		{convert_fields}

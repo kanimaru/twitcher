@@ -1,0 +1,5 @@
+## {summary}
+func {method_name}({parameters}) -> {result}:
+	var response = await _request({request_path}, HTTPClient.METHOD_{method}, {header}, {body});
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return result;
