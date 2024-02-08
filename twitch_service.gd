@@ -52,11 +52,11 @@ func get_user_by_id(user_id: String) -> TwitchUser:
 	if user_id == null || user_id == "": return null;
 	var user_data := await api.get_users([], [user_id]);
 	if user_data['data'].is_empty(): return null;
-	return TwitchUser.load_from_json(user_data['data'][0]);
+	return TwitchUser.from_json(user_data['data'][0]);
 
 func get_user(username: String) -> TwitchUser:
 	var user_data := await api.get_users([username], []);
-	return TwitchUser.load_from_json(user_data['data'][0]);
+	return TwitchUser.from_json(user_data['data'][0]);
 
 func load_profile_image(user: TwitchUser) -> ImageTexture:
 	return await repository.load_image(user);
@@ -76,7 +76,7 @@ func wait_for_connection() -> void:
 func _init_custom_rewards():
 	_load_rewards();
 
-func get_reward(reward_id: String) -> TwitchCustomReward:
+func get_reward(reward_id: String) -> TwitchCustomRewardResource:
 	if reward_map.has(reward_id):
 		return reward_map[reward_id];
 	return null;
@@ -88,7 +88,7 @@ func _load_rewards() -> void:
 		path = path.trim_suffix(".remap");
 		print("Load Reward %s " % [ path ]);
 
-		var reward = load("res://rewards/" + path) as TwitchCustomReward;
+		var reward = load("res://rewards/" + path) as TwitchCustomRewardResource;
 		var rewards_data = all_rewards.filter(func(r): return r.title == reward.title);
 		if rewards_data.is_empty():
 			var id = await add_custom_reward(reward.title, reward.cost, reward.prompt, reward.input_required, reward.enabled);
@@ -97,12 +97,14 @@ func _load_rewards() -> void:
 			reward.id = rewards_data[0]['id'];
 			update_custom_reward(reward.id, reward.title, reward.cost, reward.prompt, reward.input_required, reward.enabled, reward.pause, reward.auto_complete);
 		else: reward.id = rewards_data[0]['id'];
-		print("Reward %s for %s is loaded " % [ reward.id, path ])
+		print("Reward %s for %s is loaded " % [ reward.id, path ]);
 		reward_map[reward.id] = reward;
 
-func get_custom_rewards() -> Array:
-	var response = await api.get_custom_reward([], false); # TODO
-	return response['data'];
+func get_custom_rewards(only_manageable_rewards: bool = false) -> Array:
+	var response = await api.get_custom_reward([], only_manageable_rewards);
+	if response.has("data"):
+		return response['data'];
+	return [];
 
 func toggle_enable_custom_reward(id: String) -> void:
 	var rewardDto = TwitchModifyRewardDto.new();

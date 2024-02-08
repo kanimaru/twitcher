@@ -1,0 +1,23 @@
+## {class_description}
+class {class_name} extends RefCounted:
+{for properties as property}
+	## {property.description}
+	var {property.name}: {property.type};
+{/for}
+
+	static func from_json(d: Dictionary) -> {class_name}:
+		var result = {class_name}.new();
+{for properties as property}
+		result.{property.name} = d["{property.name}"];
+{/for}
+		return result;
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
+
+	func to_dict() -> Dictionary:
+		var d: Dictionary = {};
+{for properties as property}
+		d["{property.name}"] = {property.name};
+{/for}
+		return d;

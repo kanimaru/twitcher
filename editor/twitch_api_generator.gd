@@ -1,6 +1,7 @@
 @tool
 extends Button
 
+## Please do not touch! Insane code ahead! Last Warning!
 class_name Generator
 
 const SWAGGER_API = "https://twitch-api-swagger.surge.sh"
@@ -13,7 +14,10 @@ func _pressed() -> void:
 	if definition == {}:
 		print("load Twitch definition")
 		definition = await _load_swagger_definition();
-	_generate_repositories(definition);
+	_generate_repositories();
+	_generate_components();
+
+#region Repository
 
 func _load_swagger_definition() -> Dictionary:
 	client = BufferedHTTPClient.new(SWAGGER_API);
@@ -22,16 +26,16 @@ func _load_swagger_definition() -> Dictionary:
 	var response_data = await client.wait_for_request(request);
 
 	if response_data.error:
-		printerr("Can't generate REST API");
+		printerr("Cant generate REST API");
 	var response_str = response_data.response_data.get_string_from_utf8()
 	var response = JSON.parse_string(response_str);
 	return response;
 
-func _generate_repositories(openapi_spec: Dictionary):
+func _generate_repositories():
 	var template = SimpleTemplate.new();
 	var template_method = template.read_template_file("res://addons/twitcher/editor/template_method.txt");
 	var gdscript_code := ""
-	var paths = openapi_spec.get("paths", {})
+	var paths = definition.get("paths", {})
 	var data = [];
 	for path in paths:
 		var methods = paths[path];
@@ -50,6 +54,9 @@ func _generate_repositories(openapi_spec: Dictionary):
 			http_method = http_method.to_upper()
 			if responses.has("200"):
 				result_type = "Dictionary"  # Assuming the successful response is a JSON object
+				var ref = responses["200"].get("content", {}).get("application/json", {}).get("schema", {}).get("$ref", "")
+				if ref != "":
+					result_type = _resolve_ref(ref);
 
 			var method_data = {
 				"summary": summary,
@@ -69,7 +76,7 @@ func _generate_repositories(openapi_spec: Dictionary):
 			};
 			var method_code = template.parse_template(template_method, method_data)
 			data.append(method_code)
-	template.process_template("res://addons/twitcher/editor/template_api.txt", {'methods': data}, api_output_path)
+	template.process_template("res://addons/twitcher/editor/template_api.txt", {"methods": data}, api_output_path)
 	print("Twitch API got generated succesfullt into ", api_output_path);
 
 func _parse_parameters(method_spec: Dictionary) -> Dictionary:
@@ -85,7 +92,7 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 			query_params.append(param.name)
 			append_broadcaster = true
 		elif param.in == "query":
-			var type = _get_param_type(param);
+			var type = _get_param_type(param["schema"]);
 			parameters_code += "%s: %s, " % [param.name, type]
 			var schema = param["schema"];
 			if schema.get("format", "") == "date-time":
@@ -96,7 +103,11 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 				query_params.append(param.name)
 
 	if method_spec.has("requestBody"):
-		parameters_code += "body: Dictionary, "
+		var type = "Dictionary";
+		var ref = method_spec.get("requestBody").get("content", {}).get("application/json", {}).get("schema", {}).get("$ref", "")
+		if ref != "":
+			type = _resolve_ref(ref);
+		parameters_code += "body: %s, " % type
 		has_body = true
 
 	# Has to be last or atleast within the default parameters at the end
@@ -111,19 +122,104 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 		"array_parameters": array_parameters
 	}
 
-func _get_param_type(param: Dictionary) -> String:
-	var type = param["schema"]["type"];
-	var format = param["schema"].get("format", "");
+func _resolve_ref(ref: String) -> String:
+	return "Twitch" + ref.substr(ref.rfind("/") + 1);
+
+func _get_param_type(schema: Dictionary) -> String:
+	if schema.has("$ref"):
+		return _resolve_ref(schema["$ref"]);
+
+	if not schema.has("type"):
+		return "Variant" # Maybe ugly
+
+	var type = schema["type"];
+	var format = schema.get("format", "");
 	match type:
+		"object":
+			if schema.has("additinalProperties"):
+				return _get_param_type(schema["additinalProperties"])
+			return "Dictionary"
 		"string":
 			if format == "date-time":
 				return "Variant";
 			return "String";
 		"integer":
 			return "int";
+		"boolean":
+			return "bool";
 		"array":
-			if param["schema"]["items"]["type"] == "string":
+			var ref: String = schema["items"].get("$ref", "");
+			if schema["items"].get("type", "") == "string":
 				return "Array[String]";
+			elif ref != "":
+				var ref_name = _resolve_ref(ref);
+				return "Array[%s]" % ref_name;
 			else:
 				return "Array";
 		_: return "Variant";
+
+#endregion
+
+func _generate_components():
+	var template = SimpleTemplate.new();
+	var schemas = definition["components"]["schemas"];
+	for schema_name in schemas:
+		var classes = [];
+		var properties: Array[Dictionary] = [];
+		_calculate_template(schema_name, schemas[schema_name], classes, properties)
+		var data: Dictionary = {
+			"class_name": "Twitch" + schema_name,
+			"properties": properties,
+			"classes": classes
+		}
+		var file_name : String = "Twitch" + schema_name + ".gd";
+		file_name = file_name.to_snake_case();
+		template.process_template("res://addons/twitcher/editor/template_component.txt",
+				data, "res://addons/twitcher/generated/" + file_name);
+
+func _calculate_template(schema_name: String, schema: Dictionary, result_classes: Array, result_properties: Array[Dictionary]):
+	if schema["type"] != "object":
+		printerr("Not an object");
+	var properties = schema["properties"];
+	for property_name in properties:
+		var property = properties[property_name];
+		var type = _get_param_type(property)
+		var is_sub_class = false
+		if property.has("properties"):
+			var class_description = property['description'].replace("\n", " ");
+			var sub_class = _get_sub_classes(schema_name, property_name, property['properties'], class_description);
+			result_classes.append(sub_class["code"]);
+			type = sub_class["name"];
+			is_sub_class = true;
+
+		result_properties.append({
+			"name": property_name,
+			"type": type,
+			"is_sub_class": is_sub_class,
+			"description": property.get("description", "No description available").replace("\n", " "),
+		})
+
+func _get_sub_classes(schema_name: String, parent_property_name:String, properties: Dictionary, class_description: String = "") -> Dictionary:
+	var template = SimpleTemplate.new()
+	var template_component_class = template.read_template_file(
+			"res://addons/twitcher/editor/template_component_class.txt");
+	var property_data = [];
+	for property_name in properties:
+		var property = properties[property_name];
+		var description = property.get("description", "No description available").replace("\n", " ");
+		property_data.append({
+			"name": property_name,
+			"type": _get_param_type(property),
+			"description": description,
+		})
+
+	var cls_name = schema_name + parent_property_name.capitalize().replace(" ", "");
+	var data = {
+		"class_name": cls_name,
+		"class_description": class_description,
+		"properties": property_data
+	};
+	return {
+		"name": cls_name,
+		"code": template.parse_template(template_component_class, data)
+	}

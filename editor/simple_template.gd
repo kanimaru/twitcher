@@ -60,7 +60,7 @@ func _parse_variables(result: String, data: Dictionary, variable_pattern = "{([a
 # Process loops
 # TODO Nested for loops not supported -> the /for is tracked to early in regex
 func _parse_loops(result: String, data: Dictionary) -> String:
-	var loop_regex = RegEx.create_from_string( "(?s){for (.*?) as (.*?)}\n(.*?){/for}")
+	var loop_regex = RegEx.create_from_string( "(?s){for (.*?) as (.*?)}\n(.*?){/for}\n?")
 	var matches = loop_regex.search(result)
 	while matches:
 		var variable_path = matches.get_string(1).split(".")

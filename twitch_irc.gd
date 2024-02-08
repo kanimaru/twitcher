@@ -21,7 +21,7 @@ var next_message : int = Time.get_ticks_msec();
 ## see TwitchSettings.irc_send_message_delay.
 var chat_queue : Array[String] = []
 
-## All connected channels of the bot. Contains Key: channel_name -> Value: TwitchChannel entries.
+## All connected channels of the bot. Contains Key: channel_name -> Value: TwitchIrcChannel entries.
 ## See Requesting Twitch-specific capabilities at https://dev.twitch.tv/docs/irc/capabilities
 var channel_maps : Dictionary = {}
 
@@ -107,7 +107,7 @@ func _send_messages() -> void:
 		next_message = Time.get_ticks_msec() + TwitchSetting.irc_send_message_delay;
 
 ## Joins a new channel when not yet joined and return the channel.
-func join_channel(channel : String) -> TwitchChannel:
+func join_channel(channel : String) -> TwitchIrcChannel:
 	var lower_channel : String = channel.to_lower()
 	if channel_maps.has(lower_channel):
 		return channel_maps[lower_channel];
@@ -133,7 +133,7 @@ func chat(message : String, channel_name : String = ""):
 	chat_queue.append("PRIVMSG #%s :%s\r\n" % [channel_name, message]);
 
 	if channel_maps.has(channel_name):
-		var channel = channel_maps[channel_name] as TwitchChannel;
+		var channel = channel_maps[channel_name] as TwitchIrcChannel;
 		var user_name = channel.data['display-name'];
 		var sender_data: TwitchSenderData = TwitchSenderData.new(user_name, channel, channel.data);
 		channel.handle_message_received(sender_data, message);
@@ -182,13 +182,13 @@ func _handle_cmd_state(command: String, channel_name: String, tags: Dictionary) 
 	if not channel_maps.has(channel_name):
 		channel_maps[channel_name] = _create_channel(channel_name);
 
-	var channel: TwitchChannel = channel_maps[channel_name];
+	var channel: TwitchIrcChannel = channel_maps[channel_name];
 	channel.update_state(command, tags);
 	channel_data_updated.emit(channel_name, channel.data);
 	print("[TwitchIRC] Channel updated ", channel_name);
 
-func _create_channel(channel_name: String) -> TwitchChannel:
-	var channel = TwitchChannel.new(channel_name, self);
+func _create_channel(channel_name: String) -> TwitchIrcChannel:
+	var channel = TwitchIrcChannel.new(channel_name, self);
 	channel_maps[channel_name] = channel;
 	return channel;
 
