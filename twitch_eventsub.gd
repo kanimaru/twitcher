@@ -10,15 +10,15 @@ signal connected();
 
 var client : WebsocketClient = WebsocketClient.new();
 var swap_over_client : WebsocketClient = WebsocketClient.new();
-var repository: TwitchRepository;
+var api: TwitchRestAPI;
 var session_id: String;
 var keepalive_timeout: int;
 var eventsub_messages: Dictionary = {};
 var last_keepalive: int;
 var is_conntected: bool;
 
-func _init(repo: TwitchRepository) -> void:
-	repository = repo;
+func _init(twitch_api: TwitchRestAPI) -> void:
+	api = twitch_api;
 	client.message_received.connect(_data_received);
 	client.connection_state_changed.connect(_on_connection_state_changed)
 	subscribe_all();
@@ -37,14 +37,32 @@ func connect_to_eventsub(url: String) -> void:
 	client.connect_to(url);
 
 func subscribe_all():
+	if session_id == "": await session_id_received;
 	var subscriptions: Dictionary = TwitchSetting.subscriptions;
 	for subscription: TwitchSubscriptions.Subscription in subscriptions:
 		var condition: Dictionary = subscriptions[subscription];
-		subscribe_event(subscription.value, subscription.version, condition);
+		_subscribe_event(subscription.value, subscription.version, condition, session_id);
 
-func subscribe_event(evt: String, version: String, condtion: Dictionary):
-	if session_id == "": await session_id_received;
-	repository.subscribe_event(evt, version, condtion, session_id);
+## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/ for details on
+## which API versions are available and which conditions are required.
+func _subscribe_event(event_name : String, version : String, conditions : Dictionary, session_id: String):
+	var data : Dictionary = {}
+	data["type"] = event_name
+	data["version"] = version
+	data["condition"] = conditions
+	data["transport"] = {
+		"method":"websocket",
+		"session_id": session_id
+	}
+
+	var response = await api.create_eventsub_subscription(data);
+
+	if not str(response.response_code).begins_with("2"):
+		print("REST: Subscription failed for event '%s'. Error %s: %s" % [event_name, response.response_code, response.response_data.get_string_from_utf8()])
+		return
+	elif (response.response_data.is_empty()):
+		return
+	print("REST: Now listening to '%s' events." % event_name)
 
 func _data_received(data : PackedByteArray) -> void:
 	var message_str : String = data.get_string_from_utf8();

@@ -83,18 +83,19 @@ func _parse_loops(result: String, data: Dictionary) -> String:
 
 # Process conditionals with support for nested data
 func _parse_conditionals(result: String, data: Dictionary) -> String:
-	var conditional_pattern = "(?s){if ([^}]+)}(.*?)\n?{/if}"
-	var conditional_regex = RegEx.new()
-	conditional_regex.compile(conditional_pattern)
+	var conditional_regex = RegEx.create_from_string("(?s){if ([^}]+)}([^{]+)(\n?{else}\n?(.*?))?\n?{/if}")
 	var matches = conditional_regex.search(result)
 	while matches:
 		var variable_path = matches.get_string(1).split(".")
-		var conditional_body = matches.get_string(2)
+		var true_body = matches.get_string(2)
+		var false_body = matches.get_string(4) # Capture group for the "else" clause content
 		var conditional_result = ""
 
 		var conditional_data = _get_nested_value(data, variable_path)
 		if conditional_data != null and bool(conditional_data):
-			conditional_result = parse_template(conditional_body, data)
+			conditional_result = parse_template(true_body, data)
+		elif false_body != null:
+			conditional_result = parse_template(false_body, data)
 
 		# Replace the entire conditional block with the processed conditional result or an empty string
 		var conditional_block = matches.get_string(0)

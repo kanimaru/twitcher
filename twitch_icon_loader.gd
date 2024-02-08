@@ -9,7 +9,7 @@ signal preload_done;
 const ALLOW_EMPTY = true;
 const MAX_SPLITS = 1;
 
-var twitch_repository: TwitchRepository;
+var api: TwitchRestAPI;
 
 ## Badge definition for global and the channel.
 var cached_badges : Dictionary = {};
@@ -20,8 +20,8 @@ var cached_emotes : Dictionary = {};
 ## Is needed that the garbage collector isn't deleting our cache.
 var _cached_images : Array[SpriteFrames] = [];
 
-func _init(repo : TwitchRepository) -> void:
-	twitch_repository = repo;
+func _init(twitch_api : TwitchRestAPI) -> void:
+	api = twitch_api;
 
 func do_preload():
 	var broadcaster_id = TwitchSetting.broadcaster_id;
@@ -53,9 +53,9 @@ func preload_emotes(channel_id: String = "global") -> void:
 	if (!cached_emotes.has(channel_id)):
 		var response;
 		if channel_id == "global":
-			response = await twitch_repository.get_global_emotes();
+			response = await api.get_global_emotes();
 		else:
-			response = await twitch_repository.get_emotes(channel_id);
+			response = await api.get_channel_emotes(channel_id);
 		cached_emotes[channel_id] = _map_emotes(response);
 
 func get_emotes(emote_ids : Array[String]) -> Dictionary:
@@ -125,9 +125,9 @@ func preload_badges(channel_id: String = "global") -> void:
 	if not cached_badges.has(channel_id):
 		var response;
 		if channel_id == "global":
-			response = await(twitch_repository.get_global_badges());
+			response = await(api.get_global_chat_badges());
 		else:
-			response = await(twitch_repository.get_badges(channel_id));
+			response = await(api.get_channel_chat_badges(channel_id));
 		cached_badges[channel_id] = _cache_badges(response);
 
 func get_badges(badge_composites : Array[String], channel_id : String = "global", scale : String = "1x") -> Dictionary:

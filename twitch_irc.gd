@@ -37,7 +37,6 @@ func _init(twitch_auth : TwitchAuth) -> void:
 	auth = twitch_auth;
 	client.connection_state_changed.connect(_on_connection_state_changed);
 	client.message_received.connect(_data_received);
-	Engine.get_main_loop().process_frame.connect(_send_messages);
 
 ## Starts the connection to IRC
 func connect_to_irc() -> void:
@@ -45,10 +44,15 @@ func connect_to_irc() -> void:
 
 ## Called when the websocket state has changed
 func _on_connection_state_changed(state: WebSocketPeer.State):
+	var proc_frame = Engine.get_main_loop().process_frame as Signal;
 	if(state == WebSocketPeer.STATE_OPEN):
 		_login();
 		_request_capabilities();
 		_reconnect_to_channels();
+		proc_frame.connect(_send_messages);
+	else:
+		if proc_frame.is_connected(_send_messages):
+			proc_frame.disconnect(_send_messages);
 
 ## Sends the login message for authorization pupose and sets an username
 func _login() -> void:
@@ -69,10 +73,12 @@ func _reconnect_to_channels():
 	for channel_name in channel_maps: join_channel(channel_name);
 
 func _join_channels_on_connect():
-	for channel in TwitchSetting.irc_connect_to_channel:
-		join_channel(channel)
+	for channel_name in TwitchSetting.irc_connect_to_channel:
+		var channel = join_channel(channel_name);
 		var message: String = TwitchSetting.irc_login_message;
-		if message != "": chat(message, channel);
+		if message != "":
+			await channel.is_joined();
+			channel.chat(message);
 
 ## Receives data on the websocket aka new messages
 func _data_received(data : PackedByteArray) -> void:
@@ -119,7 +125,8 @@ func chat(message : String, channel_name : String = ""):
 	var channel_names : Array = channel_maps.keys();
 	if channel_name == "" && channel_names.size() == 1:
 		channel_name = channel_names[0];
-	else:
+
+	if channel_name == "":
 		printerr("[TwitchIRC] No channel is specified to send ", message);
 		return;
 
@@ -164,30 +171,33 @@ func _handle_message(received_message : String, tags : Dictionary) -> void:
 		"WHISPER": _handle_chat_message(from, message_parts, tags, whisper_message);
 		"USERSTATE", "ROOMSTATE":
 			var channel_name = message_parts[2];
-			_handle_cmd_state(channel_name, tags);
+			_handle_cmd_state(command, channel_name, tags);
 		_: unhandled_message.emit(received_message, tags);
 
 ## Handles the update of rooms when joining the channel or a moderator
 ## updates it (Example :tmi.twitch.tv ROOMSTATE #bar)
-func _handle_cmd_state(channel_name: String, tags: Dictionary) -> void:
+func _handle_cmd_state(command: String, channel_name: String, tags: Dictionary) -> void:
 	# right(-1) -> Remove the preceding # of the channel name
 	channel_name = channel_name.right(-1).to_lower();
 	if not channel_maps.has(channel_name):
 		channel_maps[channel_name] = _create_channel(channel_name);
 
 	var channel: TwitchChannel = channel_maps[channel_name];
-	channel.update_tags(tags);
+	channel.update_state(command, tags);
 	channel_data_updated.emit(channel_name, channel.data);
 	print("[TwitchIRC] Channel updated ", channel_name);
 
 func _create_channel(channel_name: String) -> TwitchChannel:
-	return TwitchChannel.new(channel_name, self);
+	var channel = TwitchChannel.new(channel_name, self);
+	channel_maps[channel_name] = channel;
+	return channel;
 
 ## Handles chat messages from whisper and rooms.
 ## (Example: PRIVMSG #<channel name> :HeyGuys <3 PartyTime)
 func _handle_chat_message(from: String, message_parts: Array[String], tags: Dictionary, output: Signal):
-	var channel_name := message_parts[2];
-	# right(-1) -> Removes  the : of the message
+	# right(-1) -> Removes the # of the channel name
+	var channel_name := message_parts[2].right(-1);
+	# right(-1) -> Removes the : of the message
 	var message := message_parts[3].right(-1);
 	var user = user_regex.search(from).get_string(1);
 	var channel = channel_maps[channel_name];

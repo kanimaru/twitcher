@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/twitcher/editor/twitch_api_generator.gd" id="1_deqev"]
 
-[node name="Utilities" type="Control"]
+[node name="TwitchUtilities" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,8 +11,10 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="GenerateRestApi" type="Button" parent="."]
-layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 31.0
+grow_horizontal = 2
 text = "Generate REST Api"
 script = ExtResource("1_deqev")

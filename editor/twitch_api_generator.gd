@@ -4,6 +4,7 @@ extends Button
 class_name Generator
 
 const SWAGGER_API = "https://twitch-api-swagger.surge.sh"
+const api_output_path = "res://addons/twitcher/generated/twitch_rest_api.gd"
 
 var client: BufferedHTTPClient;
 var definition: Dictionary = {};
@@ -26,32 +27,9 @@ func _load_swagger_definition() -> Dictionary:
 	var response = JSON.parse_string(response_str);
 	return response;
 
-func _generate_repositories(definition: Dictionary):
-	var template = SimpleTemplate.new()
-	#var repo_template = template.read_template_file("./template_repository.txt");
-	#var repo_methods = _get_repository_methods(definition);
-	#print(template.parse_template(file, template_data));
-	generate_gdscript_methods(definition);
-	print("API got generated");
-
-func _get_repository_methods(definition: Dictionary) -> Array[Dictionary]:
-	var data: Array[Dictionary] = [];
-	var paths = definition["paths"];
-	for path: String in paths:
-		var method_data = {};
-		data.append(method_data);
-
-		var path_data = paths[path];
-		for method in path_data:
-			var method_details = path_data[method]
-			var method_name = method_details["operationId"].replace("-", "_");
-			method_data["method_name"] = method_name;
-			method_data["summary"] = method_details["summary"];
-	return data;
-
-func generate_gdscript_methods(openapi_spec: Dictionary):
+func _generate_repositories(openapi_spec: Dictionary):
 	var template = SimpleTemplate.new();
-	var time_conversion = template.read_template_file("res://addons/twitcher/editor/template_time_conversion.txt");
+	var template_method = template.read_template_file("res://addons/twitcher/editor/template_method.txt");
 	var gdscript_code := ""
 	var paths = openapi_spec.get("paths", {})
 	var data = [];
@@ -61,31 +39,38 @@ func generate_gdscript_methods(openapi_spec: Dictionary):
 			var method_spec = methods[http_method] as Dictionary;
 			var method_name = method_spec.get("operationId", "method_" + http_method).replace("-", "_")
 			var summary = method_spec.get("summary", "No summary provided.")
+			var description = method_spec.get("description", "No description provided.")
+			var url = method_spec.get("externalDocs", {}).get("url", "No link provided")
 			var parameters = _parse_parameters(method_spec)
 			var parameters_code = parameters["parameters_code"];
 			var has_body = parameters["has_body"];
 			var header_code = "{}"
 			var responses = method_spec.get("responses", {})
-			var result_type = "void"
+			var result_type = "BufferedHTTPClient.ResponseData"
 			http_method = http_method.to_upper()
 			if responses.has("200"):
 				result_type = "Dictionary"  # Assuming the successful response is a JSON object
-			var request_path = _generate_request_path(path, parameters["query_params"])
 
-			data.append({
+			var method_data = {
 				"summary": summary,
+				"description": description,
+				"url": url,
 				"name": method_name,
 				"parameters": parameters_code,
 				"result_type": result_type,
-				"request_path": request_path,
+				"request_path": "/helix" + path + "?",
 				"method": http_method,
 				"header": header_code,
-				"body": "body" if has_body else "",
-				"has_return_value": result_type != "void",
-				"time_parameter": template.parse_template(time_conversion, {"time_parameters": parameters["time_parameters"]})
-			})
-
-	template.process_template("res://addons/twitcher/editor/template_method.txt", {'methods': data}, "res://addons/twitcher/generated/twitch_rest_api.gd")
+				"body": "body" if has_body else "\"\"",
+				"has_return_value": result_type != "BufferedHTTPClient.ResponseData",
+				"time_parameters": parameters["time_parameters"],
+				"array_parameters": parameters["array_parameters"],
+				"query_parameters": parameters["query_params"]
+			};
+			var method_code = template.parse_template(template_method, method_data)
+			data.append(method_code)
+	template.process_template("res://addons/twitcher/editor/template_api.txt", {'methods': data}, api_output_path)
+	print("Twitch API got generated succesfullt into ", api_output_path);
 
 func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 	var query_params: Array[String] = [];
@@ -94,15 +79,21 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 	var append_broadcaster = false
 	var has_body = false
 	var time_parameters = []
+	var array_parameters = []
 	for param in parameters:
 		if param.name == "broadcaster_id":
+			query_params.append(param.name)
 			append_broadcaster = true
 		elif param.in == "query":
 			var type = _get_param_type(param);
 			parameters_code += "%s: %s, " % [param.name, type]
-			query_params.append(param.name)
-			if param["schema"].get("format", "") == "date-time":
+			var schema = param["schema"];
+			if schema.get("format", "") == "date-time":
 				time_parameters.append(param.name)
+			if schema.get("type", "") == "array":
+				array_parameters.append(param.name)
+			else:
+				query_params.append(param.name)
 
 	if method_spec.has("requestBody"):
 		parameters_code += "body: Dictionary, "
@@ -116,25 +107,23 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 		"parameters_code": parameters_code.rstrip(", "),
 		"has_body": has_body,
 		"query_params": query_params,
-		"time_parameters": time_parameters
+		"time_parameters": time_parameters,
+		"array_parameters": array_parameters
 	}
 
 func _get_param_type(param: Dictionary) -> String:
 	var type = param["schema"]["type"];
-	var format = param["schema"].get("format", "")
+	var format = param["schema"].get("format", "");
 	match type:
 		"string":
 			if format == "date-time":
 				return "Variant";
-			return "String"
+			return "String";
 		"integer":
 			return "int";
+		"array":
+			if param["schema"]["items"]["type"] == "string":
+				return "Array[String]";
+			else:
+				return "Array";
 		_: return "Variant";
-
-## Builds queries to this form: ?broadcaster_id=%s" % [broadcaster_id]
-# Hate myself for this method sorry =__=
-func _generate_request_path(path: String, query_params: Array[String]) -> String:
-	if query_params.is_empty():
-		return "\"%s\"" % path;
-	var query = "&".join(query_params.map(func(p): return p + "=%s"));
-	return "\"" + path + "?" + query + "\" % [" + ",".join(query_params) + "]"

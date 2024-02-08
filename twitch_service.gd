@@ -10,6 +10,7 @@ var eventsub: TwitchEventsub;
 var eventsub_debug: TwitchEventsub;
 var commands: TwitchCommandHandler;
 var cheer_repository: TwitchCheerRepository;
+var api: TwitchRestAPI
 var reward_map: Dictionary;
 
 var is_twitch_ready: bool;
@@ -26,10 +27,11 @@ func setup() -> void:
 	print("Twitch Service: setup")
 	auth = TwitchAuth.new();
 	repository = TwitchRepository.new(auth);
-	icon_loader = TwitchIconLoader.new(repository);
-	eventsub = TwitchEventsub.new(repository);
-	eventsub_debug = TwitchEventsub.new(repository);
-	commands = TwitchCommandHandler.new()
+	api = TwitchRestAPI.new(repository);
+	icon_loader = TwitchIconLoader.new(api);
+	eventsub = TwitchEventsub.new(api);
+	eventsub_debug = TwitchEventsub.new(api);
+	commands = TwitchCommandHandler.new();
 	irc = TwitchIRC.new(auth);
 
 	print("Twitch Service: start")
@@ -48,12 +50,12 @@ func is_ready() -> void:
 #region User
 func get_user_by_id(user_id: String) -> TwitchUser:
 	if user_id == null || user_id == "": return null;
-	var user_data := await repository.get_users([], [user_id]);
+	var user_data := await api.get_users([], [user_id]);
 	if user_data['data'].is_empty(): return null;
 	return TwitchUser.load_from_json(user_data['data'][0]);
 
 func get_user(username: String) -> TwitchUser:
-	var user_data := await repository.get_users([username], []);
+	var user_data := await api.get_users([username], []);
 	return TwitchUser.load_from_json(user_data['data'][0]);
 
 func load_profile_image(user: TwitchUser) -> ImageTexture:
@@ -99,7 +101,7 @@ func _load_rewards() -> void:
 		reward_map[reward.id] = reward;
 
 func get_custom_rewards() -> Array:
-	var response = await repository.get_custom_rewards();
+	var response = await api.get_custom_reward([], false); # TODO
 	return response['data'];
 
 func toggle_enable_custom_reward(id: String) -> void:
@@ -154,11 +156,14 @@ func get_channel(channel_name) -> TwitchChannel:
 	return irc.get_channel(channel_name);
 
 func shoutout(user_id: String) -> void:
-	repository.shoutout(user_id);
+	api.send_a_shoutout(TwitchSetting.broadcaster_id, user_id, TwitchSetting.broadcaster_id)
 
 func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY):
 	var broadcaster_id = TwitchSetting.broadcaster_id;
-	repository.announcement(broadcaster_id, message, color);
+	api.send_chat_announcement(broadcaster_id, {
+		"message": message,
+		"color": color.value
+	})
 
 func add_command(command: String, callback: Callable, args_min: int, args_max: int) -> void:
 	commands.add_command(command, callback, args_min, args_max);
@@ -185,7 +190,7 @@ func get_badges(badge: Array[String], channel_id: String = "global") -> Dictiona
 #region Cheermotes
 
 func _init_cheermotes() -> void:
-	cheer_repository = await TwitchCheerRepository.new(repository);
+	cheer_repository = await TwitchCheerRepository.new(api);
 
 func get_cheermote_data() -> Array[TwitchCheerRepository.CheerData]:
 	await cheer_repository.wait_is_ready();

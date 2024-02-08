@@ -1,3 +1,0 @@
-{for time_parameters as param}
-	{param} = get_rfc_3339_date_format({param});
-{/for}

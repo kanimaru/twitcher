@@ -55,10 +55,9 @@ var data: Array[CheerData];
 var is_ready: bool;
 var _cache: Dictionary;
 
-func _init(repo: TwitchRepository) -> void:
-	fallback_texture = TwitchSetting.fallback_texture2d
-	var broadcaster_id = TwitchSetting.broadcaster_id;
-	var cheer_emote_response = await repo.get_cheermotes(broadcaster_id);
+func _init(api: TwitchRestAPI) -> void:
+	fallback_texture = TwitchSetting.fallback_texture2d;
+	var cheer_emote_response = await api.get_cheermotes();
 	for d in cheer_emote_response['data']: data.append(CheerData.new(d));
 	is_ready = true;
 	ready.emit();
