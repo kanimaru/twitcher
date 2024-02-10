@@ -18,22 +18,32 @@ var color: String;
 
 static func from_json(d: Dictionary) -> TwitchPredictionOutcome:
 	var result = TwitchPredictionOutcome.new();
-	result.id = d["id"];
-	result.title = d["title"];
-	result.users = d["users"];
-	result.channel_points = d["channel_points"];
+
+
+
+
+
+	for value in d["top_predictors"]:
+		result.top_predictors.append(value);
+{elif property.is_typed_array}
+	for value in d["top_predictors"]:
+		result.top_predictors.append(.from_json(value));
+{elif property.is_sub_class}
+	result.top_predictors = Array.from_json(d["top_predictors"]);
+{else}
 	result.top_predictors = d["top_predictors"];
-	result.color = d["color"];
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["title"] = title;
-	d["users"] = users;
-	d["channel_points"] = channel_points;
-	d["top_predictors"] = top_predictors;
-	d["color"] = color;
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

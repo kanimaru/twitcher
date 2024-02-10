@@ -28,32 +28,32 @@ var sex_based_terms: int;
 
 static func from_json(d: Dictionary) -> TwitchAutoModSettings:
 	var result = TwitchAutoModSettings.new();
-	result.broadcaster_id = d["broadcaster_id"];
-	result.moderator_id = d["moderator_id"];
-	result.overall_level = d["overall_level"];
-	result.disability = d["disability"];
-	result.aggression = d["aggression"];
-	result.sexuality_sex_or_gender = d["sexuality_sex_or_gender"];
-	result.misogyny = d["misogyny"];
-	result.bullying = d["bullying"];
-	result.swearing = d["swearing"];
-	result.race_ethnicity_or_religion = d["race_ethnicity_or_religion"];
-	result.sex_based_terms = d["sex_based_terms"];
+
+
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["moderator_id"] = moderator_id;
-	d["overall_level"] = overall_level;
-	d["disability"] = disability;
-	d["aggression"] = aggression;
-	d["sexuality_sex_or_gender"] = sexuality_sex_or_gender;
-	d["misogyny"] = misogyny;
-	d["bullying"] = bullying;
-	d["swearing"] = swearing;
-	d["race_ethnicity_or_religion"] = race_ethnicity_or_religion;
-	d["sex_based_terms"] = sex_based_terms;
+
+
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

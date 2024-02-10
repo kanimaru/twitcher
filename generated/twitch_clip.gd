@@ -40,44 +40,44 @@ var is_featured: bool;
 
 static func from_json(d: Dictionary) -> TwitchClip:
 	var result = TwitchClip.new();
-	result.id = d["id"];
-	result.url = d["url"];
-	result.embed_url = d["embed_url"];
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.creator_id = d["creator_id"];
-	result.creator_name = d["creator_name"];
-	result.video_id = d["video_id"];
-	result.game_id = d["game_id"];
-	result.language = d["language"];
-	result.title = d["title"];
-	result.view_count = d["view_count"];
-	result.created_at = d["created_at"];
-	result.thumbnail_url = d["thumbnail_url"];
-	result.duration = d["duration"];
-	result.vod_offset = d["vod_offset"];
-	result.is_featured = d["is_featured"];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["url"] = url;
-	d["embed_url"] = embed_url;
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_name"] = broadcaster_name;
-	d["creator_id"] = creator_id;
-	d["creator_name"] = creator_name;
-	d["video_id"] = video_id;
-	d["game_id"] = game_id;
-	d["language"] = language;
-	d["title"] = title;
-	d["view_count"] = view_count;
-	d["created_at"] = created_at;
-	d["thumbnail_url"] = thumbnail_url;
-	d["duration"] = duration;
-	d["vod_offset"] = vod_offset;
-	d["is_featured"] = is_featured;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

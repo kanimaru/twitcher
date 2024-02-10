@@ -12,20 +12,20 @@ var total: int;
 
 static func from_json(d: Dictionary) -> TwitchGetChattersResponse:
 	var result = TwitchGetChattersResponse.new();
-	result.data = d["data"];
 
-	result.pagination = GetChattersResponsePagination.from_json(d["pagination"]);
 
-	result.total = d["total"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["data"] = data;
+
 
 	d["pagination"] = pagination.to_dict();
+{else}
+	d["pagination"] = pagination;
 
-	d["total"] = total;
+
 	return d;
 
 func to_json() -> String:

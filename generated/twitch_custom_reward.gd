@@ -46,70 +46,70 @@ var cooldown_expires_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchCustomReward:
 	var result = TwitchCustomReward.new();
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.id = d["id"];
-	result.title = d["title"];
-	result.prompt = d["prompt"];
-	result.cost = d["cost"];
-
-	result.image = CustomRewardImage.from_json(d["image"]);
 
 
-	result.default_image = CustomRewardDefaultImage.from_json(d["default_image"]);
-
-	result.background_color = d["background_color"];
-	result.is_enabled = d["is_enabled"];
-	result.is_user_input_required = d["is_user_input_required"];
-
-	result.max_per_stream_setting = CustomRewardMaxPerStreamSetting.from_json(d["max_per_stream_setting"]);
 
 
-	result.max_per_user_per_stream_setting = CustomRewardMaxPerUserPerStreamSetting.from_json(d["max_per_user_per_stream_setting"]);
 
 
-	result.global_cooldown_setting = CustomRewardGlobalCooldownSetting.from_json(d["global_cooldown_setting"]);
 
-	result.is_paused = d["is_paused"];
-	result.is_in_stock = d["is_in_stock"];
-	result.should_redemptions_skip_request_queue = d["should_redemptions_skip_request_queue"];
-	result.redemptions_redeemed_current_stream = d["redemptions_redeemed_current_stream"];
-	result.cooldown_expires_at = d["cooldown_expires_at"];
+
+
+
+
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["id"] = id;
-	d["title"] = title;
-	d["prompt"] = prompt;
-	d["cost"] = cost;
+
+
+
+
+
+
+
 
 	d["image"] = image.to_dict();
+{else}
+	d["image"] = image;
 
 
 	d["default_image"] = default_image.to_dict();
+{else}
+	d["default_image"] = default_image;
 
-	d["background_color"] = background_color;
-	d["is_enabled"] = is_enabled;
-	d["is_user_input_required"] = is_user_input_required;
+
+
+
 
 	d["max_per_stream_setting"] = max_per_stream_setting.to_dict();
+{else}
+	d["max_per_stream_setting"] = max_per_stream_setting;
 
 
 	d["max_per_user_per_stream_setting"] = max_per_user_per_stream_setting.to_dict();
+{else}
+	d["max_per_user_per_stream_setting"] = max_per_user_per_stream_setting;
 
 
 	d["global_cooldown_setting"] = global_cooldown_setting.to_dict();
+{else}
+	d["global_cooldown_setting"] = global_cooldown_setting;
 
-	d["is_paused"] = is_paused;
-	d["is_in_stock"] = is_in_stock;
-	d["should_redemptions_skip_request_queue"] = should_redemptions_skip_request_queue;
-	d["redemptions_redeemed_current_stream"] = redemptions_redeemed_current_stream;
-	d["cooldown_expires_at"] = cooldown_expires_at;
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

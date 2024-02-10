@@ -20,24 +20,24 @@ var last_updated: Variant;
 
 static func from_json(d: Dictionary) -> TwitchDropsEntitlement:
 	var result = TwitchDropsEntitlement.new();
-	result.id = d["id"];
-	result.benefit_id = d["benefit_id"];
-	result.timestamp = d["timestamp"];
-	result.user_id = d["user_id"];
-	result.game_id = d["game_id"];
-	result.fulfillment_status = d["fulfillment_status"];
-	result.last_updated = d["last_updated"];
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["benefit_id"] = benefit_id;
-	d["timestamp"] = timestamp;
-	d["user_id"] = user_id;
-	d["game_id"] = game_id;
-	d["fulfillment_status"] = fulfillment_status;
-	d["last_updated"] = last_updated;
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

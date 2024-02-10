@@ -18,22 +18,42 @@ var markers: Array;
 
 static func from_json(d: Dictionary) -> TwitchStreamMarkers:
 	var result = TwitchStreamMarkers.new();
-	result.user_id = d["user_id"];
-	result.user_name = d["user_name"];
-	result.user_login = d["user_login"];
+
+
+
+
+	for value in d["videos"]:
+		result.videos.append(value);
+{elif property.is_typed_array}
+	for value in d["videos"]:
+		result.videos.append(.from_json(value));
+{elif property.is_sub_class}
+	result.videos = Array.from_json(d["videos"]);
+{else}
 	result.videos = d["videos"];
-	result.video_id = d["video_id"];
+
+
+
+	for value in d["markers"]:
+		result.markers.append(value);
+{elif property.is_typed_array}
+	for value in d["markers"]:
+		result.markers.append(.from_json(value));
+{elif property.is_sub_class}
+	result.markers = Array.from_json(d["markers"]);
+{else}
 	result.markers = d["markers"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["user_name"] = user_name;
-	d["user_login"] = user_login;
-	d["videos"] = videos;
-	d["video_id"] = video_id;
-	d["markers"] = markers;
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

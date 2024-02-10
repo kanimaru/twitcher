@@ -10,17 +10,17 @@ var pagination: GetPredictionsResponsePagination;
 
 static func from_json(d: Dictionary) -> TwitchGetPredictionsResponse:
 	var result = TwitchGetPredictionsResponse.new();
-	result.data = d["data"];
 
-	result.pagination = GetPredictionsResponsePagination.from_json(d["pagination"]);
 
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["data"] = data;
+
 
 	d["pagination"] = pagination.to_dict();
+{else}
+	d["pagination"] = pagination;
 
 	return d;
 

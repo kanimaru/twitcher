@@ -12,16 +12,16 @@ var action: String;
 
 static func from_json(d: Dictionary) -> TwitchManageHeldAutoModMessagesBody:
 	var result = TwitchManageHeldAutoModMessagesBody.new();
-	result.user_id = d["user_id"];
-	result.msg_id = d["msg_id"];
-	result.action = d["action"];
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["msg_id"] = msg_id;
-	d["action"] = action;
+
+
+
 	return d;
 
 func to_json() -> String:

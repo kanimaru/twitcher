@@ -24,28 +24,28 @@ var moderator_name: String;
 
 static func from_json(d: Dictionary) -> TwitchBannedUser:
 	var result = TwitchBannedUser.new();
-	result.user_id = d["user_id"];
-	result.user_login = d["user_login"];
-	result.user_name = d["user_name"];
-	result.expires_at = d["expires_at"];
-	result.created_at = d["created_at"];
-	result.reason = d["reason"];
-	result.moderator_id = d["moderator_id"];
-	result.moderator_login = d["moderator_login"];
-	result.moderator_name = d["moderator_name"];
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	d["expires_at"] = expires_at;
-	d["created_at"] = created_at;
-	d["reason"] = reason;
-	d["moderator_id"] = moderator_id;
-	d["moderator_login"] = moderator_login;
-	d["moderator_name"] = moderator_name;
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

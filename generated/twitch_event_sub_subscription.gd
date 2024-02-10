@@ -22,30 +22,30 @@ var cost: int;
 
 static func from_json(d: Dictionary) -> TwitchEventSubSubscription:
 	var result = TwitchEventSubSubscription.new();
-	result.id = d["id"];
-	result.status = d["status"];
-	result.type = d["type"];
-	result.version = d["version"];
-	result.condition = d["condition"];
-	result.created_at = d["created_at"];
 
-	result.transport = EventSubSubscriptionTransport.from_json(d["transport"]);
 
-	result.cost = d["cost"];
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["status"] = status;
-	d["type"] = type;
-	d["version"] = version;
-	d["condition"] = condition;
-	d["created_at"] = created_at;
+
+
+
+
+
+
 
 	d["transport"] = transport.to_dict();
+{else}
+	d["transport"] = transport;
 
-	d["cost"] = cost;
+
 	return d;
 
 func to_json() -> String:

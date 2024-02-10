@@ -28,39 +28,39 @@ var video_settings: GuestStarSessionVideoSettings;
 
 static func from_json(d: Dictionary) -> TwitchGuestStarSession:
 	var result = TwitchGuestStarSession.new();
-	result.id = d["id"];
-	result.guests = d["guests"];
-	result.slot_id = d["slot_id"];
-	result.is_live = d["is_live"];
-	result.user_id = d["user_id"];
-	result.user_display_name = d["user_display_name"];
-	result.user_login = d["user_login"];
-	result.volume = d["volume"];
-	result.assigned_at = d["assigned_at"];
-
-	result.audio_settings = GuestStarSessionAudioSettings.from_json(d["audio_settings"]);
 
 
-	result.video_settings = GuestStarSessionVideoSettings.from_json(d["video_settings"]);
+
+
+
+
+
+
+
+
 
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["guests"] = guests;
-	d["slot_id"] = slot_id;
-	d["is_live"] = is_live;
-	d["user_id"] = user_id;
-	d["user_display_name"] = user_display_name;
-	d["user_login"] = user_login;
-	d["volume"] = volume;
-	d["assigned_at"] = assigned_at;
+
+
+
+
+
+
+
+
+
 
 	d["audio_settings"] = audio_settings.to_dict();
+{else}
+	d["audio_settings"] = audio_settings;
 
 
 	d["video_settings"] = video_settings.to_dict();
+{else}
+	d["video_settings"] = video_settings;
 
 	return d;
 

@@ -26,37 +26,37 @@ var target_amount: CharityCampaignTargetAmount;
 
 static func from_json(d: Dictionary) -> TwitchCharityCampaign:
 	var result = TwitchCharityCampaign.new();
-	result.id = d["id"];
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.charity_name = d["charity_name"];
-	result.charity_description = d["charity_description"];
-	result.charity_logo = d["charity_logo"];
-	result.charity_website = d["charity_website"];
-
-	result.current_amount = CharityCampaignCurrentAmount.from_json(d["current_amount"]);
 
 
-	result.target_amount = CharityCampaignTargetAmount.from_json(d["target_amount"]);
+
+
+
+
+
+
+
 
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["charity_name"] = charity_name;
-	d["charity_description"] = charity_description;
-	d["charity_logo"] = charity_logo;
-	d["charity_website"] = charity_website;
+
+
+
+
+
+
+
+
 
 	d["current_amount"] = current_amount.to_dict();
+{else}
+	d["current_amount"] = current_amount;
 
 
 	d["target_amount"] = target_amount.to_dict();
+{else}
+	d["target_amount"] = target_amount;
 
 	return d;
 

@@ -24,28 +24,28 @@ var created_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchCreatorGoal:
 	var result = TwitchCreatorGoal.new();
-	result.id = d["id"];
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.type = d["type"];
-	result.description = d["description"];
-	result.current_amount = d["current_amount"];
-	result.target_amount = d["target_amount"];
-	result.created_at = d["created_at"];
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_name"] = broadcaster_name;
-	d["broadcaster_login"] = broadcaster_login;
-	d["type"] = type;
-	d["description"] = description;
-	d["current_amount"] = current_amount;
-	d["target_amount"] = target_amount;
-	d["created_at"] = created_at;
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

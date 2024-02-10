@@ -14,18 +14,18 @@ var version: String;
 
 static func from_json(d: Dictionary) -> TwitchExtensionConfigurationSegment:
 	var result = TwitchExtensionConfigurationSegment.new();
-	result.segment = d["segment"];
-	result.broadcaster_id = d["broadcaster_id"];
-	result.content = d["content"];
-	result.version = d["version"];
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["segment"] = segment;
-	d["broadcaster_id"] = broadcaster_id;
-	d["content"] = content;
-	d["version"] = version;
+
+
+
+
 	return d;
 
 func to_json() -> String:

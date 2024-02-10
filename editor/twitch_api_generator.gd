@@ -53,8 +53,17 @@ func _generate_repositories():
 			var result_type = "BufferedHTTPClient.ResponseData"
 			http_method = http_method.to_upper()
 			if responses.has("200"):
-				result_type = "Dictionary"  # Assuming the successful response is a JSON object
-				var ref = responses["200"].get("content", {}).get("application/json", {}).get("schema", {}).get("$ref", "")
+				var content =  responses["200"].get("content", {});
+
+				# Assuming the successful response is a JSON object
+				result_type = "Dictionary"
+
+				# Special case for /schedule/icalendar
+				if content.has("text/calendar"):
+					result_type = "BufferedHTTPClient.ResponseData"
+
+				# Try to resolve the component references
+				var ref = content.get("application/json", {}).get("schema", {}).get("$ref", "")
 				if ref != "":
 					result_type = _resolve_ref(ref);
 
@@ -122,6 +131,8 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 		"array_parameters": array_parameters
 	}
 
+#endregion
+
 func _resolve_ref(ref: String) -> String:
 	return "Twitch" + ref.substr(ref.rfind("/") + 1);
 
@@ -158,7 +169,7 @@ func _get_param_type(schema: Dictionary) -> String:
 				return "Array";
 		_: return "Variant";
 
-#endregion
+#region Generate Components
 
 func _generate_components():
 	var template = SimpleTemplate.new();
@@ -177,6 +188,21 @@ func _generate_components():
 		template.process_template("res://addons/twitcher/editor/template_component.txt",
 				data, "res://addons/twitcher/generated/" + file_name);
 
+## Couple of names from the Twitch API are messed up like keywords for godot or numbers
+func _to_field_name(property_name: String) -> String:
+	match property_name:
+		"animated": return "animated_format";
+		"static": return "static_format";
+		"1": return "_1";
+		"2": return "_2";
+		"3": return "_3";
+		"4": return "_4";
+		"1.5": return "_1_5";
+		"100x100": return "_100x100";
+		"24x24": return "_24x24";
+		"300x200": return "_300x200";
+		_: return property_name;
+
 func _calculate_template(schema_name: String, schema: Dictionary, result_classes: Array, result_properties: Array[Dictionary]):
 	if schema["type"] != "object":
 		printerr("Not an object");
@@ -185,6 +211,9 @@ func _calculate_template(schema_name: String, schema: Dictionary, result_classes
 		var property = properties[property_name];
 		var type = _get_param_type(property)
 		var is_sub_class = false
+		var array_type = ""
+		var is_typed_array = false
+
 		if property.has("properties"):
 			var class_description = property['description'].replace("\n", " ");
 			var sub_class = _get_sub_classes(schema_name, property_name, property['properties'], class_description);
@@ -192,10 +221,23 @@ func _calculate_template(schema_name: String, schema: Dictionary, result_classes
 			type = sub_class["name"];
 			is_sub_class = true;
 
+		## Arrays that has custom types
+		var is_array = false;
+		if property.get("type", "") == "array":
+			if property.get("items", {}).has("$ref"):
+				is_typed_array = true;
+				array_type = _resolve_ref(property.get("items", {}).get("$ref"));
+			else:
+				is_array = true;
+
 		result_properties.append({
-			"name": property_name,
+			"field_name": _to_field_name(property_name),
+			"property_name": property_name,
 			"type": type,
+			"array_type": array_type,
 			"is_sub_class": is_sub_class,
+			"is_array": is_array,
+			"is_typed_array": is_typed_array,
 			"description": property.get("description", "No description available").replace("\n", " "),
 		})
 
@@ -208,7 +250,8 @@ func _get_sub_classes(schema_name: String, parent_property_name:String, properti
 		var property = properties[property_name];
 		var description = property.get("description", "No description available").replace("\n", " ");
 		property_data.append({
-			"name": property_name,
+			"field_name": _to_field_name(property_name),
+			"property_name": property_name,
 			"type": _get_param_type(property),
 			"description": description,
 		})
@@ -223,3 +266,5 @@ func _get_sub_classes(schema_name: String, parent_property_name:String, properti
 		"name": cls_name,
 		"code": template.parse_template(template_component_class, data)
 	}
+
+#endregion

@@ -28,32 +28,32 @@ var unique_chat_mode: bool;
 
 static func from_json(d: Dictionary) -> TwitchChatSettingsUpdated:
 	var result = TwitchChatSettingsUpdated.new();
-	result.broadcaster_id = d["broadcaster_id"];
-	result.emote_mode = d["emote_mode"];
-	result.follower_mode = d["follower_mode"];
-	result.follower_mode_duration = d["follower_mode_duration"];
-	result.moderator_id = d["moderator_id"];
-	result.non_moderator_chat_delay = d["non_moderator_chat_delay"];
-	result.non_moderator_chat_delay_duration = d["non_moderator_chat_delay_duration"];
-	result.slow_mode = d["slow_mode"];
-	result.slow_mode_wait_time = d["slow_mode_wait_time"];
-	result.subscriber_mode = d["subscriber_mode"];
-	result.unique_chat_mode = d["unique_chat_mode"];
+
+
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["emote_mode"] = emote_mode;
-	d["follower_mode"] = follower_mode;
-	d["follower_mode_duration"] = follower_mode_duration;
-	d["moderator_id"] = moderator_id;
-	d["non_moderator_chat_delay"] = non_moderator_chat_delay;
-	d["non_moderator_chat_delay_duration"] = non_moderator_chat_delay_duration;
-	d["slow_mode"] = slow_mode;
-	d["slow_mode_wait_time"] = slow_mode_wait_time;
-	d["subscriber_mode"] = subscriber_mode;
-	d["unique_chat_mode"] = unique_chat_mode;
+
+
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

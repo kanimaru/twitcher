@@ -16,20 +16,30 @@ var type: Array[String];
 
 static func from_json(d: Dictionary) -> TwitchUserExtension:
 	var result = TwitchUserExtension.new();
-	result.id = d["id"];
-	result.version = d["version"];
-	result.name = d["name"];
-	result.can_activate = d["can_activate"];
+
+
+
+
+
+	for value in d["type"]:
+		result.type.append(value);
+{elif property.is_typed_array}
+	for value in d["type"]:
+		result.type.append(.from_json(value));
+{elif property.is_sub_class}
+	result.type = Array[String].from_json(d["type"]);
+{else}
 	result.type = d["type"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["version"] = version;
-	d["name"] = name;
-	d["can_activate"] = can_activate;
-	d["type"] = type;
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

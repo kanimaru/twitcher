@@ -1,9 +1,11 @@
 extends Node
+## Access to the Twitch API. Combines all the stuff the library provides.
+## Makes some actions easier to use.
 
+## Send when the Twitch API was succesfully initialized
 signal twitch_ready;
 
 var auth: TwitchAuth;
-var repository: TwitchRepository;
 var icon_loader: TwitchIconLoader;
 var irc: TwitchIRC;
 var eventsub: TwitchEventsub;
@@ -26,8 +28,7 @@ func _init() -> void:
 func setup() -> void:
 	print("Twitch Service: setup")
 	auth = TwitchAuth.new();
-	repository = TwitchRepository.new(auth);
-	api = TwitchRestAPI.new(repository);
+	api = TwitchRestAPI.new(auth);
 	icon_loader = TwitchIconLoader.new(api);
 	eventsub = TwitchEventsub.new(api);
 	eventsub_debug = TwitchEventsub.new(api);
@@ -59,7 +60,29 @@ func get_user(username: String) -> TwitchUser:
 	return TwitchUser.from_json(user_data['data'][0]);
 
 func load_profile_image(user: TwitchUser) -> ImageTexture:
-	return await repository.load_image(user);
+	if user == null: return TwitchSetting.fallback_profile;
+	if(ResourceLoader.has_cached(user.profile_image_url)):
+		return ResourceLoader.load(user.profile_image_url);
+	var client : BufferedHTTPClient = HttpClientManager.get_client(TwitchSetting.twitch_image_cdn_host);
+	var request := client.request(user.profile_image_url, HTTPClient.METHOD_GET, BufferedHTTPClient.HEADERS, "")
+	var response_data := await client.wait_for_request(request);
+	var texture : ImageTexture = ImageTexture.new();
+	var response = response_data.response_data;
+	if !response.is_empty():
+		var img := Image.new();
+		var content_type = HttpUtil.get_header(response_data.client.get_response_headers(), "Content-Type")
+
+		match content_type:
+			"image/png": img.load_png_from_buffer(response);
+			"image/jpeg": img.load_jpg_from_buffer(response);
+			_: return TwitchSetting.fallback_profile;
+		texture.set_image(img);
+	else:
+		# Don't use `texture = TwitchSetting.fallback_profile` as texture cause the path will be taken over
+		# for caching purpose!
+		texture.set_image(TwitchSetting.fallback_profile.get_image());
+	texture.take_over_path(user.profile_image_url);
+	return texture;
 
 #endregion
 #region EventSub
@@ -107,42 +130,49 @@ func get_custom_rewards(only_manageable_rewards: bool = false) -> Array:
 	return [];
 
 func toggle_enable_custom_reward(id: String) -> void:
-	var rewardDto = TwitchModifyRewardDto.new();
-	rewardDto.is_enabled = true;
-	repository.modify_custom_reward(id, rewardDto);
+	var body: TwitchUpdateCustomRewardBody = TwitchUpdateCustomRewardBody.new();
+	body.is_enabled = true;
+	api.update_custom_reward(id, body);
 
 func toggle_pause_custom_reward(id: String) -> void:
-	var rewardDto = TwitchModifyRewardDto.new();
-	rewardDto.is_paused = true;
-	repository.modify_custom_reward(id, rewardDto);
+	var body: TwitchUpdateCustomRewardBody = TwitchUpdateCustomRewardBody.new();
+	body.is_paused = true;
+	api.update_custom_reward(id, body);
 
 func update_custom_reward(id: String, title: String, cost: int, prompt: String, is_input_required: bool, enabled: bool, paused: bool, auto_complete: bool) -> void:
-	var rewardDto = TwitchModifyRewardDto.new();
-	rewardDto.cost = cost;
-	rewardDto.title = title;
-	rewardDto.prompt = prompt;
-	rewardDto.is_user_input_required = is_input_required;
-	rewardDto.is_enabled = enabled;
-	rewardDto.is_paused = paused;
-	rewardDto.should_redemptions_skip_request_queue = auto_complete;
-	repository.modify_custom_reward(id, rewardDto);
+	var body: TwitchUpdateCustomRewardBody = TwitchUpdateCustomRewardBody.new();
+	body.cost = cost;
+	body.title = title;
+	body.prompt = prompt;
+	body.is_user_input_required = is_input_required;
+	body.is_enabled = enabled;
+	body.is_paused = paused;
+	body.should_redemptions_skip_request_queue = auto_complete;
+	api.update_custom_reward(id, body);
 
 func add_custom_reward(title: String, cost: int, prompt: String, is_input_required: bool, enabled: bool = true, auto_complete: bool = false) -> String:
-	var reward = TwitchCreateRewardDto.new(title, cost);
-	reward.prompt = prompt;
-	reward.is_enabled = enabled;
-	reward.is_user_input_required = is_input_required;
-	reward.should_redemptions_skip_request_queue = auto_complete;
-	var response = await repository.add_custom_reward(reward);
-	return response['data'][0]['id'];
+	var body = TwitchUpdateCustomRewardBody.new()
+	body.title = title;
+	body.cost = cost;
+	body.prompt = prompt;
+	body.is_enabled = enabled;
+	body.is_user_input_required = is_input_required;
+	body.should_redemptions_skip_request_queue = auto_complete;
+	var response: TwitchCreateCustomRewardsResponse = await api.create_custom_rewards(body);
+	return response.data[0].id;
 
-func remove_custom_reward(id: String) -> void: repository.remove_custom_reward(id);
+func remove_custom_reward(id: String) -> void:
+	api.delete_custom_reward(id);
 
 func complete_redemption(redemption_id: String, reward_id: String) -> void:
-	repository.update_redemtion(redemption_id, reward_id, TwitchRepository.STATUS_FULLFILLED);
+	var body : TwitchUpdateRedemptionStatusBody = TwitchUpdateRedemptionStatusBody.new();
+	body.status = "FULFILLED";
+	api.update_redemption_status([redemption_id], reward_id, body);
 
 func cancel_redemption(redemption_id: String, reward_id: String) -> void:
-	repository.update_redemtion(redemption_id, reward_id, TwitchRepository.STATUS_CANCELED);
+	var body : TwitchUpdateRedemptionStatusBody = TwitchUpdateRedemptionStatusBody.new();
+	body.status = "CANCELED";
+	api.update_redemption_status([redemption_id], reward_id, body);
 
 #endregion
 #region Chat
@@ -162,10 +192,10 @@ func shoutout(user_id: String) -> void:
 
 func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY):
 	var broadcaster_id = TwitchSetting.broadcaster_id;
-	api.send_chat_announcement(broadcaster_id, {
-		"message": message,
-		"color": color.value
-	})
+	var body = TwitchSendChatAnnouncementBody.new();
+	body.message = message;
+	body.color = color.value;
+	api.send_chat_announcement(broadcaster_id, body);
 
 func add_command(command: String, callback: Callable, args_min: int, args_max: int) -> void:
 	commands.add_command(command, callback, args_min, args_max);

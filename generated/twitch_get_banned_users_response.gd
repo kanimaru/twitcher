@@ -10,17 +10,17 @@ var pagination: GetBannedUsersResponsePagination;
 
 static func from_json(d: Dictionary) -> TwitchGetBannedUsersResponse:
 	var result = TwitchGetBannedUsersResponse.new();
-	result.data = d["data"];
 
-	result.pagination = GetBannedUsersResponsePagination.from_json(d["pagination"]);
 
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["data"] = data;
+
 
 	d["pagination"] = pagination.to_dict();
+{else}
+	d["pagination"] = pagination;
 
 	return d;
 

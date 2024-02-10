@@ -8,12 +8,12 @@ var data: Array[TwitchUserBlockList];
 
 static func from_json(d: Dictionary) -> TwitchGetUserBlockListResponse:
 	var result = TwitchGetUserBlockListResponse.new();
-	result.data = d["data"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["data"] = data;
+
 	return d;
 
 func to_json() -> String:

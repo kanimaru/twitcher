@@ -10,17 +10,17 @@ var pagination: GetModeratorsResponsePagination;
 
 static func from_json(d: Dictionary) -> TwitchGetModeratorsResponse:
 	var result = TwitchGetModeratorsResponse.new();
-	result.data = d["data"];
 
-	result.pagination = GetModeratorsResponsePagination.from_json(d["pagination"]);
 
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["data"] = data;
+
 
 	d["pagination"] = pagination.to_dict();
+{else}
+	d["pagination"] = pagination;
 
 	return d;
 

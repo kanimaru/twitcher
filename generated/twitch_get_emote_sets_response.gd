@@ -10,14 +10,14 @@ var template: String;
 
 static func from_json(d: Dictionary) -> TwitchGetEmoteSetsResponse:
 	var result = TwitchGetEmoteSetsResponse.new();
-	result.data = d["data"];
-	result.template = d["template"];
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["data"] = data;
-	d["template"] = template;
+
+
 	return d;
 
 func to_json() -> String:

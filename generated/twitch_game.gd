@@ -14,18 +14,18 @@ var igdb_id: String;
 
 static func from_json(d: Dictionary) -> TwitchGame:
 	var result = TwitchGame.new();
-	result.id = d["id"];
-	result.name = d["name"];
-	result.box_art_url = d["box_art_url"];
-	result.igdb_id = d["igdb_id"];
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["name"] = name;
-	d["box_art_url"] = box_art_url;
-	d["igdb_id"] = igdb_id;
+
+
+
+
 	return d;
 
 func to_json() -> String:

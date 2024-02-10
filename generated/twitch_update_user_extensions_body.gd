@@ -9,14 +9,14 @@ var data: UpdateUserExtensionsBodyData;
 static func from_json(d: Dictionary) -> TwitchUpdateUserExtensionsBody:
 	var result = TwitchUpdateUserExtensionsBody.new();
 
-	result.data = UpdateUserExtensionsBodyData.from_json(d["data"]);
-
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
 
 	d["data"] = data.to_dict();
+{else}
+	d["data"] = data;
 
 	return d;
 

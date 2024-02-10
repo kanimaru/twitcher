@@ -40,44 +40,54 @@ var muted_segments: Array;
 
 static func from_json(d: Dictionary) -> TwitchVideo:
 	var result = TwitchVideo.new();
-	result.id = d["id"];
-	result.stream_id = d["stream_id"];
-	result.user_id = d["user_id"];
-	result.user_login = d["user_login"];
-	result.user_name = d["user_name"];
-	result.title = d["title"];
-	result.description = d["description"];
-	result.created_at = d["created_at"];
-	result.published_at = d["published_at"];
-	result.url = d["url"];
-	result.thumbnail_url = d["thumbnail_url"];
-	result.viewable = d["viewable"];
-	result.view_count = d["view_count"];
-	result.language = d["language"];
-	result.type = d["type"];
-	result.duration = d["duration"];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	for value in d["muted_segments"]:
+		result.muted_segments.append(value);
+{elif property.is_typed_array}
+	for value in d["muted_segments"]:
+		result.muted_segments.append(.from_json(value));
+{elif property.is_sub_class}
+	result.muted_segments = Array.from_json(d["muted_segments"]);
+{else}
 	result.muted_segments = d["muted_segments"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["stream_id"] = stream_id;
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	d["title"] = title;
-	d["description"] = description;
-	d["created_at"] = created_at;
-	d["published_at"] = published_at;
-	d["url"] = url;
-	d["thumbnail_url"] = thumbnail_url;
-	d["viewable"] = viewable;
-	d["view_count"] = view_count;
-	d["language"] = language;
-	d["type"] = type;
-	d["duration"] = duration;
-	d["muted_segments"] = muted_segments;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

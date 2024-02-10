@@ -20,28 +20,28 @@ var is_recurring: bool;
 
 static func from_json(d: Dictionary) -> TwitchChannelStreamScheduleSegment:
 	var result = TwitchChannelStreamScheduleSegment.new();
-	result.id = d["id"];
-	result.start_time = d["start_time"];
-	result.end_time = d["end_time"];
-	result.title = d["title"];
-	result.canceled_until = d["canceled_until"];
 
-	result.category = ChannelStreamScheduleSegmentCategory.from_json(d["category"]);
 
-	result.is_recurring = d["is_recurring"];
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["start_time"] = start_time;
-	d["end_time"] = end_time;
-	d["title"] = title;
-	d["canceled_until"] = canceled_until;
+
+
+
+
+
 
 	d["category"] = category.to_dict();
+{else}
+	d["category"] = category;
 
-	d["is_recurring"] = is_recurring;
+
 	return d;
 
 func to_json() -> String:

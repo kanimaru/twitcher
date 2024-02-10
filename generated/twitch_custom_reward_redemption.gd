@@ -28,36 +28,36 @@ var redeemed_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchCustomRewardRedemption:
 	var result = TwitchCustomRewardRedemption.new();
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.id = d["id"];
-	result.user_id = d["user_id"];
-	result.user_name = d["user_name"];
-	result.user_login = d["user_login"];
 
-	result.reward = CustomRewardRedemptionReward.from_json(d["reward"]);
 
-	result.user_input = d["user_input"];
-	result.status = d["status"];
-	result.redeemed_at = d["redeemed_at"];
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["id"] = id;
-	d["user_id"] = user_id;
-	d["user_name"] = user_name;
-	d["user_login"] = user_login;
+
+
+
+
+
+
+
 
 	d["reward"] = reward.to_dict();
+{else}
+	d["reward"] = reward;
 
-	d["user_input"] = user_input;
-	d["status"] = status;
-	d["redeemed_at"] = redeemed_at;
+
+
+
 	return d;
 
 func to_json() -> String:

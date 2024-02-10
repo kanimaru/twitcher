@@ -5,16 +5,22 @@ class_name {class_name}
 
 {for properties as property}
 ## {property.description}
-var {property.name}: {property.type};
+var {property.field_name}: {property.type};
 {/for}
 
 static func from_json(d: Dictionary) -> {class_name}:
 	var result = {class_name}.new();
 {for properties as property}
-{if property.is_sub_class}
-	result.{property.name} = {property.type}.from_json(d["{property.name}"]);
+{if property.is_array}
+	for value in d["{property.property_name}"]:
+		result.{property.field_name}.append(value);
+{elif property.is_typed_array}
+	for value in d["{property.property_name}"]:
+		result.{property.field_name}.append({property.array_type}.from_json(value));
+{elif property.is_sub_class}
+	result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
 {else}
-	result.{property.name} = d["{property.name}"];
+	result.{property.field_name} = d["{property.property_name}"];
 {/if}
 {/for}
 	return result;
@@ -23,9 +29,9 @@ func to_dict() -> Dictionary:
 	var d: Dictionary = {};
 {for properties as property}
 {if property.is_sub_class}
-	d["{property.name}"] = {property.name}.to_dict();
+	d["{property.property_name}"] = {property.field_name}.to_dict();
 {else}
-	d["{property.name}"] = {property.name};
+	d["{property.property_name}"] = {property.field_name};
 {/if}
 {/for}
 	return d;

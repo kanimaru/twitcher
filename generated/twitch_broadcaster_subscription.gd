@@ -30,34 +30,34 @@ var user_login: String;
 
 static func from_json(d: Dictionary) -> TwitchBroadcasterSubscription:
 	var result = TwitchBroadcasterSubscription.new();
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.gifter_id = d["gifter_id"];
-	result.gifter_login = d["gifter_login"];
-	result.gifter_name = d["gifter_name"];
-	result.is_gift = d["is_gift"];
-	result.plan_name = d["plan_name"];
-	result.tier = d["tier"];
-	result.user_id = d["user_id"];
-	result.user_name = d["user_name"];
-	result.user_login = d["user_login"];
+
+
+
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["gifter_id"] = gifter_id;
-	d["gifter_login"] = gifter_login;
-	d["gifter_name"] = gifter_name;
-	d["is_gift"] = is_gift;
-	d["plan_name"] = plan_name;
-	d["tier"] = tier;
-	d["user_id"] = user_id;
-	d["user_name"] = user_name;
-	d["user_login"] = user_login;
+
+
+
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

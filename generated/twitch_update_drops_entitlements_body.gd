@@ -10,14 +10,24 @@ var fulfillment_status: String;
 
 static func from_json(d: Dictionary) -> TwitchUpdateDropsEntitlementsBody:
 	var result = TwitchUpdateDropsEntitlementsBody.new();
+
+	for value in d["entitlement_ids"]:
+		result.entitlement_ids.append(value);
+{elif property.is_typed_array}
+	for value in d["entitlement_ids"]:
+		result.entitlement_ids.append(.from_json(value));
+{elif property.is_sub_class}
+	result.entitlement_ids = Array[String].from_json(d["entitlement_ids"]);
+{else}
 	result.entitlement_ids = d["entitlement_ids"];
-	result.fulfillment_status = d["fulfillment_status"];
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["entitlement_ids"] = entitlement_ids;
-	d["fulfillment_status"] = fulfillment_status;
+
+
 	return d;
 
 func to_json() -> String:

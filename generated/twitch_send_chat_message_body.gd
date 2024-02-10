@@ -14,18 +14,18 @@ var reply_parent_message_id: String;
 
 static func from_json(d: Dictionary) -> TwitchSendChatMessageBody:
 	var result = TwitchSendChatMessageBody.new();
-	result.broadcaster_id = d["broadcaster_id"];
-	result.sender_id = d["sender_id"];
-	result.message = d["message"];
-	result.reply_parent_message_id = d["reply_parent_message_id"];
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["sender_id"] = sender_id;
-	d["message"] = message;
-	d["reply_parent_message_id"] = reply_parent_message_id;
+
+
+
+
 	return d;
 
 func to_json() -> String:

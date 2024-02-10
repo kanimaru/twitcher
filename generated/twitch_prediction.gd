@@ -30,34 +30,34 @@ var locked_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchPrediction:
 	var result = TwitchPrediction.new();
-	result.id = d["id"];
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.title = d["title"];
-	result.winning_outcome_id = d["winning_outcome_id"];
-	result.outcomes = d["outcomes"];
-	result.prediction_window = d["prediction_window"];
-	result.status = d["status"];
-	result.created_at = d["created_at"];
-	result.ended_at = d["ended_at"];
-	result.locked_at = d["locked_at"];
+
+
+
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_name"] = broadcaster_name;
-	d["broadcaster_login"] = broadcaster_login;
-	d["title"] = title;
-	d["winning_outcome_id"] = winning_outcome_id;
-	d["outcomes"] = outcomes;
-	d["prediction_window"] = prediction_window;
-	d["status"] = status;
-	d["created_at"] = created_at;
-	d["ended_at"] = ended_at;
-	d["locked_at"] = locked_at;
+
+
+
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

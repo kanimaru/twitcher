@@ -46,14 +46,14 @@ func subscribe_all():
 ## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/ for details on
 ## which API versions are available and which conditions are required.
 func _subscribe_event(event_name : String, version : String, conditions : Dictionary, session_id: String):
-	var data : Dictionary = {}
-	data["type"] = event_name
-	data["version"] = version
-	data["condition"] = conditions
-	data["transport"] = {
-		"method":"websocket",
-		"session_id": session_id
-	}
+	var data : TwitchCreateEventSubSubscriptionBody = TwitchCreateEventSubSubscriptionBody.new();
+	var transport : TwitchCreateEventSubSubscriptionBody.CreateEventSubSubscriptionBodyTransport = TwitchCreateEventSubSubscriptionBody.CreateEventSubSubscriptionBodyTransport.new();
+	data.type = event_name
+	data.version = version
+	data.condition = conditions
+	data.transport = transport;
+	transport.method = "websocket";
+	transport.session_id = session_id;
 
 	var response = await api.create_eventsub_subscription(data);
 

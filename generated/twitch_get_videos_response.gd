@@ -10,17 +10,17 @@ var pagination: GetVideosResponsePagination;
 
 static func from_json(d: Dictionary) -> TwitchGetVideosResponse:
 	var result = TwitchGetVideosResponse.new();
-	result.data = d["data"];
 
-	result.pagination = GetVideosResponsePagination.from_json(d["pagination"]);
 
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["data"] = data;
+
 
 	d["pagination"] = pagination.to_dict();
+{else}
+	d["pagination"] = pagination;
 
 	return d;
 

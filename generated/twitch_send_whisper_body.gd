@@ -8,12 +8,12 @@ var message: String;
 
 static func from_json(d: Dictionary) -> TwitchSendWhisperBody:
 	var result = TwitchSendWhisperBody.new();
-	result.message = d["message"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["message"] = message;
+
 	return d;
 
 func to_json() -> String:

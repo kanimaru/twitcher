@@ -12,16 +12,16 @@ var extension_version: String;
 
 static func from_json(d: Dictionary) -> TwitchSendExtensionChatMessageBody:
 	var result = TwitchSendExtensionChatMessageBody.new();
-	result.text = d["text"];
-	result.extension_id = d["extension_id"];
-	result.extension_version = d["extension_version"];
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["text"] = text;
-	d["extension_id"] = extension_id;
-	d["extension_version"] = extension_version;
+
+
+
 	return d;
 
 func to_json() -> String:

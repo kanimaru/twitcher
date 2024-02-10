@@ -14,18 +14,18 @@ var name: String;
 
 static func from_json(d: Dictionary) -> TwitchUserExtensionPanel:
 	var result = TwitchUserExtensionPanel.new();
-	result.active = d["active"];
-	result.id = d["id"];
-	result.version = d["version"];
-	result.name = d["name"];
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["active"] = active;
-	d["id"] = id;
-	d["version"] = version;
-	d["name"] = name;
+
+
+
+
 	return d;
 
 func to_json() -> String:

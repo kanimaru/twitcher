@@ -20,24 +20,24 @@ var is_audio_available: bool;
 
 static func from_json(d: Dictionary) -> TwitchGuestStarInvite:
 	var result = TwitchGuestStarInvite.new();
-	result.user_id = d["user_id"];
-	result.invited_at = d["invited_at"];
-	result.status = d["status"];
-	result.is_video_enabled = d["is_video_enabled"];
-	result.is_audio_enabled = d["is_audio_enabled"];
-	result.is_video_available = d["is_video_available"];
-	result.is_audio_available = d["is_audio_available"];
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["invited_at"] = invited_at;
-	d["status"] = status;
-	d["is_video_enabled"] = is_video_enabled;
-	d["is_audio_enabled"] = is_audio_enabled;
-	d["is_video_available"] = is_video_available;
-	d["is_audio_available"] = is_audio_available;
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

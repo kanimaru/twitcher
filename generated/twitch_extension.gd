@@ -52,60 +52,90 @@ var allowlisted_panel_urls: Array[String];
 
 static func from_json(d: Dictionary) -> TwitchExtension:
 	var result = TwitchExtension.new();
-	result.author_name = d["author_name"];
-	result.bits_enabled = d["bits_enabled"];
-	result.can_install = d["can_install"];
-	result.configuration_location = d["configuration_location"];
-	result.description = d["description"];
-	result.eula_tos_url = d["eula_tos_url"];
-	result.has_chat_support = d["has_chat_support"];
-	result.icon_url = d["icon_url"];
-	result.icon_urls = d["icon_urls"];
-	result.id = d["id"];
-	result.name = d["name"];
-	result.privacy_policy_url = d["privacy_policy_url"];
-	result.request_identity_link = d["request_identity_link"];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	for value in d["screenshot_urls"]:
+		result.screenshot_urls.append(value);
+{elif property.is_typed_array}
+	for value in d["screenshot_urls"]:
+		result.screenshot_urls.append(.from_json(value));
+{elif property.is_sub_class}
+	result.screenshot_urls = Array[String].from_json(d["screenshot_urls"]);
+{else}
 	result.screenshot_urls = d["screenshot_urls"];
-	result.state = d["state"];
-	result.subscriptions_support_level = d["subscriptions_support_level"];
-	result.summary = d["summary"];
-	result.support_email = d["support_email"];
-	result.version = d["version"];
-	result.viewer_summary = d["viewer_summary"];
 
-	result.views = ExtensionViews.from_json(d["views"]);
 
+
+
+
+
+
+
+
+	for value in d["allowlisted_config_urls"]:
+		result.allowlisted_config_urls.append(value);
+{elif property.is_typed_array}
+	for value in d["allowlisted_config_urls"]:
+		result.allowlisted_config_urls.append(.from_json(value));
+{elif property.is_sub_class}
+	result.allowlisted_config_urls = Array[String].from_json(d["allowlisted_config_urls"]);
+{else}
 	result.allowlisted_config_urls = d["allowlisted_config_urls"];
+
+
+	for value in d["allowlisted_panel_urls"]:
+		result.allowlisted_panel_urls.append(value);
+{elif property.is_typed_array}
+	for value in d["allowlisted_panel_urls"]:
+		result.allowlisted_panel_urls.append(.from_json(value));
+{elif property.is_sub_class}
+	result.allowlisted_panel_urls = Array[String].from_json(d["allowlisted_panel_urls"]);
+{else}
 	result.allowlisted_panel_urls = d["allowlisted_panel_urls"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["author_name"] = author_name;
-	d["bits_enabled"] = bits_enabled;
-	d["can_install"] = can_install;
-	d["configuration_location"] = configuration_location;
-	d["description"] = description;
-	d["eula_tos_url"] = eula_tos_url;
-	d["has_chat_support"] = has_chat_support;
-	d["icon_url"] = icon_url;
-	d["icon_urls"] = icon_urls;
-	d["id"] = id;
-	d["name"] = name;
-	d["privacy_policy_url"] = privacy_policy_url;
-	d["request_identity_link"] = request_identity_link;
-	d["screenshot_urls"] = screenshot_urls;
-	d["state"] = state;
-	d["subscriptions_support_level"] = subscriptions_support_level;
-	d["summary"] = summary;
-	d["support_email"] = support_email;
-	d["version"] = version;
-	d["viewer_summary"] = viewer_summary;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	d["views"] = views.to_dict();
+{else}
+	d["views"] = views;
 
-	d["allowlisted_config_urls"] = allowlisted_config_urls;
-	d["allowlisted_panel_urls"] = allowlisted_panel_urls;
+
+
 	return d;
 
 func to_json() -> String:

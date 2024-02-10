@@ -34,38 +34,48 @@ var ended_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchPoll:
 	var result = TwitchPoll.new();
-	result.id = d["id"];
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.title = d["title"];
+
+
+
+
+
+
+	for value in d["choices"]:
+		result.choices.append(value);
+{elif property.is_typed_array}
+	for value in d["choices"]:
+		result.choices.append(.from_json(value));
+{elif property.is_sub_class}
+	result.choices = Array.from_json(d["choices"]);
+{else}
 	result.choices = d["choices"];
-	result.bits_voting_enabled = d["bits_voting_enabled"];
-	result.bits_per_vote = d["bits_per_vote"];
-	result.channel_points_voting_enabled = d["channel_points_voting_enabled"];
-	result.channel_points_per_vote = d["channel_points_per_vote"];
-	result.status = d["status"];
-	result.duration = d["duration"];
-	result.started_at = d["started_at"];
-	result.ended_at = d["ended_at"];
+
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_name"] = broadcaster_name;
-	d["broadcaster_login"] = broadcaster_login;
-	d["title"] = title;
-	d["choices"] = choices;
-	d["bits_voting_enabled"] = bits_voting_enabled;
-	d["bits_per_vote"] = bits_per_vote;
-	d["channel_points_voting_enabled"] = channel_points_voting_enabled;
-	d["channel_points_per_vote"] = channel_points_per_vote;
-	d["status"] = status;
-	d["duration"] = duration;
-	d["started_at"] = started_at;
-	d["ended_at"] = ended_at;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

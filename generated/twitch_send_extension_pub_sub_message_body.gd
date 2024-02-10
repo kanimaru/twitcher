@@ -14,18 +14,28 @@ var message: String;
 
 static func from_json(d: Dictionary) -> TwitchSendExtensionPubSubMessageBody:
 	var result = TwitchSendExtensionPubSubMessageBody.new();
+
+	for value in d["target"]:
+		result.target.append(value);
+{elif property.is_typed_array}
+	for value in d["target"]:
+		result.target.append(.from_json(value));
+{elif property.is_sub_class}
+	result.target = Array[String].from_json(d["target"]);
+{else}
 	result.target = d["target"];
-	result.broadcaster_id = d["broadcaster_id"];
-	result.is_global_broadcast = d["is_global_broadcast"];
-	result.message = d["message"];
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["target"] = target;
-	d["broadcaster_id"] = broadcaster_id;
-	d["is_global_broadcast"] = is_global_broadcast;
-	d["message"] = message;
+
+
+
+
 	return d;
 
 func to_json() -> String:

@@ -20,24 +20,44 @@ var is_branded_content: bool;
 
 static func from_json(d: Dictionary) -> TwitchModifyChannelInformationBody:
 	var result = TwitchModifyChannelInformationBody.new();
-	result.game_id = d["game_id"];
-	result.broadcaster_language = d["broadcaster_language"];
-	result.title = d["title"];
-	result.delay = d["delay"];
+
+
+
+
+
+	for value in d["tags"]:
+		result.tags.append(value);
+{elif property.is_typed_array}
+	for value in d["tags"]:
+		result.tags.append(.from_json(value));
+{elif property.is_sub_class}
+	result.tags = Array[String].from_json(d["tags"]);
+{else}
 	result.tags = d["tags"];
+
+
+	for value in d["content_classification_labels"]:
+		result.content_classification_labels.append(value);
+{elif property.is_typed_array}
+	for value in d["content_classification_labels"]:
+		result.content_classification_labels.append(.from_json(value));
+{elif property.is_sub_class}
+	result.content_classification_labels = Array.from_json(d["content_classification_labels"]);
+{else}
 	result.content_classification_labels = d["content_classification_labels"];
-	result.is_branded_content = d["is_branded_content"];
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["game_id"] = game_id;
-	d["broadcaster_language"] = broadcaster_language;
-	d["title"] = title;
-	d["delay"] = delay;
-	d["tags"] = tags;
-	d["content_classification_labels"] = content_classification_labels;
-	d["is_branded_content"] = is_branded_content;
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

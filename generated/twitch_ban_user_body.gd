@@ -9,14 +9,14 @@ var data: BanUserBodyData;
 static func from_json(d: Dictionary) -> TwitchBanUserBody:
 	var result = TwitchBanUserBody.new();
 
-	result.data = BanUserBodyData.from_json(d["data"]);
-
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
 
 	d["data"] = data.to_dict();
+{else}
+	d["data"] = data;
 
 	return d;
 

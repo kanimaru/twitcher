@@ -10,14 +10,14 @@ var description: String;
 
 static func from_json(d: Dictionary) -> TwitchCreateStreamMarkerBody:
 	var result = TwitchCreateStreamMarkerBody.new();
-	result.user_id = d["user_id"];
-	result.description = d["description"];
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["description"] = description;
+
+
 	return d;
 
 func to_json() -> String:

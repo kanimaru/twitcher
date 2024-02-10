@@ -8,12 +8,12 @@ var data: Array[TwitchChannelTeam];
 
 static func from_json(d: Dictionary) -> TwitchGetChannelTeamsResponse:
 	var result = TwitchGetChannelTeamsResponse.new();
-	result.data = d["data"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["data"] = data;
+
 	return d;
 
 func to_json() -> String:

@@ -36,40 +36,60 @@ var is_mature: bool;
 
 static func from_json(d: Dictionary) -> TwitchStream:
 	var result = TwitchStream.new();
-	result.id = d["id"];
-	result.user_id = d["user_id"];
-	result.user_login = d["user_login"];
-	result.user_name = d["user_name"];
-	result.game_id = d["game_id"];
-	result.game_name = d["game_name"];
-	result.type = d["type"];
-	result.title = d["title"];
-	result.viewer_count = d["viewer_count"];
-	result.started_at = d["started_at"];
-	result.language = d["language"];
-	result.thumbnail_url = d["thumbnail_url"];
+
+
+
+
+
+
+
+
+
+
+
+
+
+	for value in d["tag_ids"]:
+		result.tag_ids.append(value);
+{elif property.is_typed_array}
+	for value in d["tag_ids"]:
+		result.tag_ids.append(.from_json(value));
+{elif property.is_sub_class}
+	result.tag_ids = Array[String].from_json(d["tag_ids"]);
+{else}
 	result.tag_ids = d["tag_ids"];
+
+
+	for value in d["tags"]:
+		result.tags.append(value);
+{elif property.is_typed_array}
+	for value in d["tags"]:
+		result.tags.append(.from_json(value));
+{elif property.is_sub_class}
+	result.tags = Array[String].from_json(d["tags"]);
+{else}
 	result.tags = d["tags"];
-	result.is_mature = d["is_mature"];
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	d["game_id"] = game_id;
-	d["game_name"] = game_name;
-	d["type"] = type;
-	d["title"] = title;
-	d["viewer_count"] = viewer_count;
-	d["started_at"] = started_at;
-	d["language"] = language;
-	d["thumbnail_url"] = thumbnail_url;
-	d["tag_ids"] = tag_ids;
-	d["tags"] = tags;
-	d["is_mature"] = is_mature;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

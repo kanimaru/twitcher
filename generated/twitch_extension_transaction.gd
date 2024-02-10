@@ -26,33 +26,33 @@ var product_data: ExtensionTransactionProductData;
 
 static func from_json(d: Dictionary) -> TwitchExtensionTransaction:
 	var result = TwitchExtensionTransaction.new();
-	result.id = d["id"];
-	result.timestamp = d["timestamp"];
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.user_id = d["user_id"];
-	result.user_login = d["user_login"];
-	result.user_name = d["user_name"];
-	result.product_type = d["product_type"];
 
-	result.product_data = ExtensionTransactionProductData.from_json(d["product_data"]);
+
+
+
+
+
+
+
+
 
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["timestamp"] = timestamp;
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	d["product_type"] = product_type;
+
+
+
+
+
+
+
+
+
 
 	d["product_data"] = product_data.to_dict();
+{else}
+	d["product_data"] = product_data;
 
 	return d;
 

@@ -14,21 +14,21 @@ var date_range: ExtensionAnalyticsDateRange;
 
 static func from_json(d: Dictionary) -> TwitchExtensionAnalytics:
 	var result = TwitchExtensionAnalytics.new();
-	result.extension_id = d["extension_id"];
-	result.URL = d["URL"];
-	result.type = d["type"];
 
-	result.date_range = ExtensionAnalyticsDateRange.from_json(d["date_range"]);
+
+
 
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["extension_id"] = extension_id;
-	d["URL"] = URL;
-	d["type"] = type;
+
+
+
 
 	d["date_range"] = date_range.to_dict();
+{else}
+	d["date_range"] = date_range;
 
 	return d;
 

@@ -12,16 +12,16 @@ var id: String;
 
 static func from_json(d: Dictionary) -> TwitchCategory:
 	var result = TwitchCategory.new();
-	result.box_art_url = d["box_art_url"];
-	result.name = d["name"];
-	result.id = d["id"];
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["box_art_url"] = box_art_url;
-	d["name"] = name;
-	d["id"] = id;
+
+
+
 	return d;
 
 func to_json() -> String:

@@ -11,10 +11,10 @@ func {name}({parameters}) -> {result_type}:
 {/for}{for query_parameters as param}
 	path += "{param}=" + str({param}) + "&"
 {/for}
-	var response = await repo.request(path, HTTPClient.METHOD_{method}, {body});
+	var response = await request(path, HTTPClient.METHOD_{method}, {body});
 {if has_return_value}
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
-	return result;
+	return {result_type}.from_json(result);
 {else}
 	return response;
 {/if}

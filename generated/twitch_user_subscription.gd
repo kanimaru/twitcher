@@ -22,26 +22,26 @@ var tier: String;
 
 static func from_json(d: Dictionary) -> TwitchUserSubscription:
 	var result = TwitchUserSubscription.new();
-	result.broadcaster_id = d["broadcaster_id"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.broadcaster_name = d["broadcaster_name"];
-	result.gifter_id = d["gifter_id"];
-	result.gifter_login = d["gifter_login"];
-	result.gifter_name = d["gifter_name"];
-	result.is_gift = d["is_gift"];
-	result.tier = d["tier"];
+
+
+
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["gifter_id"] = gifter_id;
-	d["gifter_login"] = gifter_login;
-	d["gifter_name"] = gifter_name;
-	d["is_gift"] = is_gift;
-	d["tier"] = tier;
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

@@ -81,21 +81,81 @@ func _parse_loops(result: String, data: Dictionary) -> String:
 		matches = loop_regex.search(result)
 	return result;
 
-# Process conditionals with support for nested data
+class Condition extends RefCounted:
+	var expression: String;
+	var content: String;
+	var expression_is_true: bool;
+
+	func _init(exp: String, cont: String):
+		expression = exp;
+		content = cont;
+
+# Process conditionals with support for nested data and elif statements
 func _parse_conditionals(result: String, data: Dictionary) -> String:
-	var conditional_regex = RegEx.create_from_string("(?s){if ([^}]+)}([^{]+)(\n?{else}\n?(.*?))?\n?{/if}")
-	var matches = conditional_regex.search(result)
+
+	var response = result;
+
+	var conditional_regex = RegEx.create_from_string("(?s){if ([^}]+)}(.*?){/if}");
+	#conditional_regex.compile("(?s){if ([^}]+)}(.*?)(?:(\n?{elif [^}]+}.*?)*)(\n?{else}\n?(.*?))?\n?{/if}")
+	var matches = conditional_regex.search(result);
 	while matches:
-		var variable_path = matches.get_string(1).split(".")
+		var conditions: Array[Condition] = [];
+		var expression_text = matches.get_string(1);
+		var condition_body = matches.get_string(2);
+		var condition_regex = RegEx.create_from_string("(.*?)({elif|{else|{/if})");
+		var true_body_match = condition_regex.search(condition_body);
+		var true_body = true_body_match.get_string(1);
+		conditions.append(Condition.new(expression_text, true_body));
+		var elif_regex = RegEx.create_from_string("{elif ([^}]+)}(.*?)({elif|{else|{/if})");
+		var elif_matches = elif_regex.search_all(condition_body);
+		for elif_match in elif_matches:
+			var condition = elif_match.get_string(1);
+			true_body = elif_match.get_string(2);
+			conditions.append(Condition.new(condition, true_body));
+		var else_regex = RegEx.create_from_string("{else}(.*?)");
+		var else_match = else_regex.search(condition_body);
+		var else_body = else_match.get_start(0)
+		conditions.append(Condition.new("true", else_body));
+#TODO
+		for condition in conditions:
+			var expression: Expression = Expression.new();
+			expression.parse(condition.expression);
+			condition.expression_is_true = not expression.has_execute_failed();
+
+
+
+
+	return response;
+
+
+
+		expression.parse(expression_text, data.keys()) # TODO Maybe buggy cause of sort
+		var bool_result = bool(expression.execute(data.values()));
+
+
 		var true_body = matches.get_string(2)
-		var false_body = matches.get_string(4) # Capture group for the "else" clause content
+		var elif_bodies = matches.get_string(3)
+		var false_body = matches.get_string(5) # Capture group for the "else" clause content
 		var conditional_result = ""
 
 		var conditional_data = _get_nested_value(data, variable_path)
 		if conditional_data != null and bool(conditional_data):
 			conditional_result = parse_template(true_body, data)
-		elif false_body != null:
-			conditional_result = parse_template(false_body, data)
+		else:
+			var elif_processed = false
+			var elif_regex = RegEx.new()
+			elif_regex.compile("(?s){elif ([^}]+)}(.*?)")
+			var elif_matches = elif_regex.search(elif_bodies)
+			while elif_matches and not elif_processed:
+				var elif_condition_path = elif_matches.get_string(1).split(".")
+				var elif_body = elif_matches.get_string(2)
+				var elif_condition_data = _get_nested_value(data, elif_condition_path)
+				if elif_condition_data != null and bool(elif_condition_data):
+					conditional_result = parse_template(elif_body, data)
+					elif_processed = true
+				elif_matches = elif_regex.search(elif_bodies, elif_matches.get_end())
+			if not elif_processed and false_body != null:
+				conditional_result = parse_template(false_body, data)
 
 		# Replace the entire conditional block with the processed conditional result or an empty string
 		var conditional_block = matches.get_string(0)

@@ -18,26 +18,56 @@ var theme_mode: Array[String];
 
 static func from_json(d: Dictionary) -> TwitchGlobalEmote:
 	var result = TwitchGlobalEmote.new();
-	result.id = d["id"];
-	result.name = d["name"];
 
-	result.images = GlobalEmoteImages.from_json(d["images"]);
 
+
+
+	for value in d["format"]:
+		result.format.append(value);
+{elif property.is_typed_array}
+	for value in d["format"]:
+		result.format.append(.from_json(value));
+{elif property.is_sub_class}
+	result.format = Array[String].from_json(d["format"]);
+{else}
 	result.format = d["format"];
+
+
+	for value in d["scale"]:
+		result.scale.append(value);
+{elif property.is_typed_array}
+	for value in d["scale"]:
+		result.scale.append(.from_json(value));
+{elif property.is_sub_class}
+	result.scale = Array[String].from_json(d["scale"]);
+{else}
 	result.scale = d["scale"];
+
+
+	for value in d["theme_mode"]:
+		result.theme_mode.append(value);
+{elif property.is_typed_array}
+	for value in d["theme_mode"]:
+		result.theme_mode.append(.from_json(value));
+{elif property.is_sub_class}
+	result.theme_mode = Array[String].from_json(d["theme_mode"]);
+{else}
 	result.theme_mode = d["theme_mode"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["id"] = id;
-	d["name"] = name;
+
+
 
 	d["images"] = images.to_dict();
+{else}
+	d["images"] = images;
 
-	d["format"] = format;
-	d["scale"] = scale;
-	d["theme_mode"] = theme_mode;
+
+
+
 	return d;
 
 func to_json() -> String:

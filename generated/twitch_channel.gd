@@ -30,34 +30,54 @@ var started_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchChannel:
 	var result = TwitchChannel.new();
-	result.broadcaster_language = d["broadcaster_language"];
-	result.broadcaster_login = d["broadcaster_login"];
-	result.display_name = d["display_name"];
-	result.game_id = d["game_id"];
-	result.game_name = d["game_name"];
-	result.id = d["id"];
-	result.is_live = d["is_live"];
+
+
+
+
+
+
+
+
+	for value in d["tag_ids"]:
+		result.tag_ids.append(value);
+{elif property.is_typed_array}
+	for value in d["tag_ids"]:
+		result.tag_ids.append(.from_json(value));
+{elif property.is_sub_class}
+	result.tag_ids = Array[String].from_json(d["tag_ids"]);
+{else}
 	result.tag_ids = d["tag_ids"];
+
+
+	for value in d["tags"]:
+		result.tags.append(value);
+{elif property.is_typed_array}
+	for value in d["tags"]:
+		result.tags.append(.from_json(value));
+{elif property.is_sub_class}
+	result.tags = Array[String].from_json(d["tags"]);
+{else}
 	result.tags = d["tags"];
-	result.thumbnail_url = d["thumbnail_url"];
-	result.title = d["title"];
-	result.started_at = d["started_at"];
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["broadcaster_language"] = broadcaster_language;
-	d["broadcaster_login"] = broadcaster_login;
-	d["display_name"] = display_name;
-	d["game_id"] = game_id;
-	d["game_name"] = game_name;
-	d["id"] = id;
-	d["is_live"] = is_live;
-	d["tag_ids"] = tag_ids;
-	d["tags"] = tags;
-	d["thumbnail_url"] = thumbnail_url;
-	d["title"] = title;
-	d["started_at"] = started_at;
+
+
+
+
+
+
+
+
+
+
+
+
 	return d;
 
 func to_json() -> String:

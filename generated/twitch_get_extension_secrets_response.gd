@@ -8,12 +8,12 @@ var data: Array[TwitchExtensionSecret];
 
 static func from_json(d: Dictionary) -> TwitchGetExtensionSecretsResponse:
 	var result = TwitchGetExtensionSecretsResponse.new();
-	result.data = d["data"];
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["data"] = data;
+
 	return d;
 
 func to_json() -> String:

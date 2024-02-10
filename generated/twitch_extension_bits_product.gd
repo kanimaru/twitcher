@@ -18,26 +18,26 @@ var is_broadcast: bool;
 
 static func from_json(d: Dictionary) -> TwitchExtensionBitsProduct:
 	var result = TwitchExtensionBitsProduct.new();
-	result.sku = d["sku"];
 
-	result.cost = ExtensionBitsProductCost.from_json(d["cost"]);
 
-	result.in_development = d["in_development"];
-	result.display_name = d["display_name"];
-	result.expiration = d["expiration"];
-	result.is_broadcast = d["is_broadcast"];
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["sku"] = sku;
+
 
 	d["cost"] = cost.to_dict();
+{else}
+	d["cost"] = cost;
 
-	d["in_development"] = in_development;
-	d["display_name"] = display_name;
-	d["expiration"] = expiration;
-	d["is_broadcast"] = is_broadcast;
+
+
+
+
 	return d;
 
 func to_json() -> String:

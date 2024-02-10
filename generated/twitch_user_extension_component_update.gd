@@ -16,20 +16,20 @@ var y: int;
 
 static func from_json(d: Dictionary) -> TwitchUserExtensionComponentUpdate:
 	var result = TwitchUserExtensionComponentUpdate.new();
-	result.active = d["active"];
-	result.id = d["id"];
-	result.version = d["version"];
-	result.x = d["x"];
-	result.y = d["y"];
+
+
+
+
+
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["active"] = active;
-	d["id"] = id;
-	d["version"] = version;
-	d["x"] = x;
-	d["y"] = y;
+
+
+
+
+
 	return d;
 
 func to_json() -> String:
