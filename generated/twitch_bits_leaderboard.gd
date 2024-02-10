@@ -16,20 +16,25 @@ var score: int;
 
 static func from_json(d: Dictionary) -> TwitchBitsLeaderboard:
 	var result = TwitchBitsLeaderboard.new();
-
-
-
-
-
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
+	if d.has("user_name") && d["user_name"] != null:
+		result.user_name = d["user_name"];
+	if d.has("rank") && d["rank"] != null:
+		result.rank = d["rank"];
+	if d.has("score") && d["score"] != null:
+		result.score = d["score"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
+	d["user_id"] = user_id;
+	d["user_login"] = user_login;
+	d["user_name"] = user_name;
+	d["rank"] = rank;
+	d["score"] = score;
 	return d;
 
 func to_json() -> String:

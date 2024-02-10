@@ -10,24 +10,20 @@ var ids: Array[String];
 
 static func from_json(d: Dictionary) -> TwitchDropsEntitlementUpdated:
 	var result = TwitchDropsEntitlementUpdated.new();
-
-
-	for value in d["ids"]:
-		result.ids.append(value);
-{elif property.is_typed_array}
-	for value in d["ids"]:
-		result.ids.append(.from_json(value));
-{elif property.is_sub_class}
-	result.ids = Array[String].from_json(d["ids"]);
-{else}
-	result.ids = d["ids"];
-
+	if d.has("status") && d["status"] != null:
+		result.status = d["status"];
+	if d.has("ids") && d["ids"] != null:
+		for value in d["ids"]:
+			result.ids.append(value);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
+	d["status"] = status;
+	d["ids"] = [];
+	if ids != null:
+		for value in ids:
+			d["ids"].append(value);
 	return d;
 
 func to_json() -> String:

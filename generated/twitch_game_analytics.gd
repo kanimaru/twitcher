@@ -14,22 +14,23 @@ var date_range: GameAnalyticsDateRange;
 
 static func from_json(d: Dictionary) -> TwitchGameAnalytics:
 	var result = TwitchGameAnalytics.new();
-
-
-
-
+	if d.has("game_id") && d["game_id"] != null:
+		result.game_id = d["game_id"];
+	if d.has("URL") && d["URL"] != null:
+		result.URL = d["URL"];
+	if d.has("type") && d["type"] != null:
+		result.type = d["type"];
+	if d.has("date_range") && d["date_range"] != null:
+		result.date_range = GameAnalyticsDateRange.from_json(d["date_range"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-	d["date_range"] = date_range.to_dict();
-{else}
-	d["date_range"] = date_range;
-
+	d["game_id"] = game_id;
+	d["URL"] = URL;
+	d["type"] = type;
+	if date_range != null:
+		d["date_range"] = date_range.to_dict();
 	return d;
 
 func to_json() -> String:

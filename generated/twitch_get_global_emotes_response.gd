@@ -10,14 +10,20 @@ var template: String;
 
 static func from_json(d: Dictionary) -> TwitchGetGlobalEmotesResponse:
 	var result = TwitchGetGlobalEmotesResponse.new();
-
-
+	if d.has("data") && d["data"] != null:
+		for value in d["data"]:
+			result.data.append(TwitchGlobalEmote.from_json(value));
+	if d.has("template") && d["template"] != null:
+		result.template = d["template"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
+	d["data"] = [];
+	if data != null:
+		for value in data:
+			d["data"].append(value.to_dict());
+	d["template"] = template;
 	return d;
 
 func to_json() -> String:

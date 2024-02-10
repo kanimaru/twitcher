@@ -14,18 +14,22 @@ var localization_descriptions: Dictionary;
 
 static func from_json(d: Dictionary) -> TwitchStreamTag:
 	var result = TwitchStreamTag.new();
-
-
-
-
+	if d.has("tag_id") && d["tag_id"] != null:
+		result.tag_id = d["tag_id"];
+	if d.has("is_auto") && d["is_auto"] != null:
+		result.is_auto = d["is_auto"];
+	if d.has("localization_names") && d["localization_names"] != null:
+		result.localization_names = d["localization_names"];
+	if d.has("localization_descriptions") && d["localization_descriptions"] != null:
+		result.localization_descriptions = d["localization_descriptions"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
+	d["tag_id"] = tag_id;
+	d["is_auto"] = is_auto;
+	d["localization_names"] = localization_names;
+	d["localization_descriptions"] = localization_descriptions;
 	return d;
 
 func to_json() -> String:

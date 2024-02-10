@@ -123,10 +123,10 @@ func _load_rewards() -> void:
 		print("Reward %s for %s is loaded " % [ reward.id, path ]);
 		reward_map[reward.id] = reward;
 
-func get_custom_rewards(only_manageable_rewards: bool = false) -> Array:
+func get_custom_rewards(only_manageable_rewards: bool = false) -> Array[TwitchCustomReward]:
 	var response = await api.get_custom_reward([], only_manageable_rewards);
-	if response.has("data"):
-		return response['data'];
+	if response != null:
+		return response.data;
 	return [];
 
 func toggle_enable_custom_reward(id: String) -> void:

@@ -8,12 +8,13 @@ var text: String;
 
 static func from_json(d: Dictionary) -> TwitchAddBlockedTermBody:
 	var result = TwitchAddBlockedTermBody.new();
-
+	if d.has("text") && d["text"] != null:
+		result.text = d["text"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
+	d["text"] = text;
 	return d;
 
 func to_json() -> String:

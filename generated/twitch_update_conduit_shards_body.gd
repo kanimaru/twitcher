@@ -10,24 +10,20 @@ var shards: Array;
 
 static func from_json(d: Dictionary) -> TwitchUpdateConduitShardsBody:
 	var result = TwitchUpdateConduitShardsBody.new();
-
-
-	for value in d["shards"]:
-		result.shards.append(value);
-{elif property.is_typed_array}
-	for value in d["shards"]:
-		result.shards.append(.from_json(value));
-{elif property.is_sub_class}
-	result.shards = Array.from_json(d["shards"]);
-{else}
-	result.shards = d["shards"];
-
+	if d.has("conduit_id") && d["conduit_id"] != null:
+		result.conduit_id = d["conduit_id"];
+	if d.has("shards") && d["shards"] != null:
+		for value in d["shards"]:
+			result.shards.append(value);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
+	d["conduit_id"] = conduit_id;
+	d["shards"] = [];
+	if shards != null:
+		for value in shards:
+			d["shards"].append(value);
 	return d;
 
 func to_json() -> String:

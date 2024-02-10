@@ -30,34 +30,46 @@ var user_login: String;
 
 static func from_json(d: Dictionary) -> TwitchBroadcasterSubscription:
 	var result = TwitchBroadcasterSubscription.new();
-
-
-
-
-
-
-
-
-
-
-
-
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
+		result.broadcaster_login = d["broadcaster_login"];
+	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
+		result.broadcaster_name = d["broadcaster_name"];
+	if d.has("gifter_id") && d["gifter_id"] != null:
+		result.gifter_id = d["gifter_id"];
+	if d.has("gifter_login") && d["gifter_login"] != null:
+		result.gifter_login = d["gifter_login"];
+	if d.has("gifter_name") && d["gifter_name"] != null:
+		result.gifter_name = d["gifter_name"];
+	if d.has("is_gift") && d["is_gift"] != null:
+		result.is_gift = d["is_gift"];
+	if d.has("plan_name") && d["plan_name"] != null:
+		result.plan_name = d["plan_name"];
+	if d.has("tier") && d["tier"] != null:
+		result.tier = d["tier"];
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_name") && d["user_name"] != null:
+		result.user_name = d["user_name"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
-
-
+	d["broadcaster_id"] = broadcaster_id;
+	d["broadcaster_login"] = broadcaster_login;
+	d["broadcaster_name"] = broadcaster_name;
+	d["gifter_id"] = gifter_id;
+	d["gifter_login"] = gifter_login;
+	d["gifter_name"] = gifter_name;
+	d["is_gift"] = is_gift;
+	d["plan_name"] = plan_name;
+	d["tier"] = tier;
+	d["user_id"] = user_id;
+	d["user_name"] = user_name;
+	d["user_login"] = user_login;
 	return d;
 
 func to_json() -> String:

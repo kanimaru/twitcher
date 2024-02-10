@@ -16,20 +16,25 @@ var regenerate_browser_sources: bool;
 
 static func from_json(d: Dictionary) -> TwitchUpdateChannelGuestStarSettingsBody:
 	var result = TwitchUpdateChannelGuestStarSettingsBody.new();
-
-
-
-
-
+	if d.has("is_moderator_send_live_enabled") && d["is_moderator_send_live_enabled"] != null:
+		result.is_moderator_send_live_enabled = d["is_moderator_send_live_enabled"];
+	if d.has("slot_count") && d["slot_count"] != null:
+		result.slot_count = d["slot_count"];
+	if d.has("is_browser_source_audio_enabled") && d["is_browser_source_audio_enabled"] != null:
+		result.is_browser_source_audio_enabled = d["is_browser_source_audio_enabled"];
+	if d.has("group_layout") && d["group_layout"] != null:
+		result.group_layout = d["group_layout"];
+	if d.has("regenerate_browser_sources") && d["regenerate_browser_sources"] != null:
+		result.regenerate_browser_sources = d["regenerate_browser_sources"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
+	d["is_moderator_send_live_enabled"] = is_moderator_send_live_enabled;
+	d["slot_count"] = slot_count;
+	d["is_browser_source_audio_enabled"] = is_browser_source_audio_enabled;
+	d["group_layout"] = group_layout;
+	d["regenerate_browser_sources"] = regenerate_browser_sources;
 	return d;
 
 func to_json() -> String:

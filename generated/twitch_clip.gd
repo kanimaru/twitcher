@@ -40,44 +40,61 @@ var is_featured: bool;
 
 static func from_json(d: Dictionary) -> TwitchClip:
 	var result = TwitchClip.new();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("url") && d["url"] != null:
+		result.url = d["url"];
+	if d.has("embed_url") && d["embed_url"] != null:
+		result.embed_url = d["embed_url"];
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
+		result.broadcaster_name = d["broadcaster_name"];
+	if d.has("creator_id") && d["creator_id"] != null:
+		result.creator_id = d["creator_id"];
+	if d.has("creator_name") && d["creator_name"] != null:
+		result.creator_name = d["creator_name"];
+	if d.has("video_id") && d["video_id"] != null:
+		result.video_id = d["video_id"];
+	if d.has("game_id") && d["game_id"] != null:
+		result.game_id = d["game_id"];
+	if d.has("language") && d["language"] != null:
+		result.language = d["language"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("view_count") && d["view_count"] != null:
+		result.view_count = d["view_count"];
+	if d.has("created_at") && d["created_at"] != null:
+		result.created_at = d["created_at"];
+	if d.has("thumbnail_url") && d["thumbnail_url"] != null:
+		result.thumbnail_url = d["thumbnail_url"];
+	if d.has("duration") && d["duration"] != null:
+		result.duration = d["duration"];
+	if d.has("vod_offset") && d["vod_offset"] != null:
+		result.vod_offset = d["vod_offset"];
+	if d.has("is_featured") && d["is_featured"] != null:
+		result.is_featured = d["is_featured"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	d["id"] = id;
+	d["url"] = url;
+	d["embed_url"] = embed_url;
+	d["broadcaster_id"] = broadcaster_id;
+	d["broadcaster_name"] = broadcaster_name;
+	d["creator_id"] = creator_id;
+	d["creator_name"] = creator_name;
+	d["video_id"] = video_id;
+	d["game_id"] = game_id;
+	d["language"] = language;
+	d["title"] = title;
+	d["view_count"] = view_count;
+	d["created_at"] = created_at;
+	d["thumbnail_url"] = thumbnail_url;
+	d["duration"] = duration;
+	d["vod_offset"] = vod_offset;
+	d["is_featured"] = is_featured;
 	return d;
 
 func to_json() -> String:

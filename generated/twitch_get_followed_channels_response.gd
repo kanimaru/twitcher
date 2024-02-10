@@ -12,30 +12,24 @@ var total: int;
 
 static func from_json(d: Dictionary) -> TwitchGetFollowedChannelsResponse:
 	var result = TwitchGetFollowedChannelsResponse.new();
-
-	for value in d["data"]:
-		result.data.append(value);
-{elif property.is_typed_array}
-	for value in d["data"]:
-		result.data.append(.from_json(value));
-{elif property.is_sub_class}
-	result.data = Array.from_json(d["data"]);
-{else}
-	result.data = d["data"];
-
-
-
+	if d.has("data") && d["data"] != null:
+		for value in d["data"]:
+			result.data.append(value);
+	if d.has("pagination") && d["pagination"] != null:
+		result.pagination = GetFollowedChannelsResponsePagination.from_json(d["pagination"]);
+	if d.has("total") && d["total"] != null:
+		result.total = d["total"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-	d["pagination"] = pagination.to_dict();
-{else}
-	d["pagination"] = pagination;
-
-
+	d["data"] = [];
+	if data != null:
+		for value in data:
+			d["data"].append(value);
+	if pagination != null:
+		d["pagination"] = pagination.to_dict();
+	d["total"] = total;
 	return d;
 
 func to_json() -> String:

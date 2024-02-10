@@ -18,42 +18,36 @@ var markers: Array;
 
 static func from_json(d: Dictionary) -> TwitchStreamMarkers:
 	var result = TwitchStreamMarkers.new();
-
-
-
-
-	for value in d["videos"]:
-		result.videos.append(value);
-{elif property.is_typed_array}
-	for value in d["videos"]:
-		result.videos.append(.from_json(value));
-{elif property.is_sub_class}
-	result.videos = Array.from_json(d["videos"]);
-{else}
-	result.videos = d["videos"];
-
-
-
-	for value in d["markers"]:
-		result.markers.append(value);
-{elif property.is_typed_array}
-	for value in d["markers"]:
-		result.markers.append(.from_json(value));
-{elif property.is_sub_class}
-	result.markers = Array.from_json(d["markers"]);
-{else}
-	result.markers = d["markers"];
-
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_name") && d["user_name"] != null:
+		result.user_name = d["user_name"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
+	if d.has("videos") && d["videos"] != null:
+		for value in d["videos"]:
+			result.videos.append(value);
+	if d.has("video_id") && d["video_id"] != null:
+		result.video_id = d["video_id"];
+	if d.has("markers") && d["markers"] != null:
+		for value in d["markers"]:
+			result.markers.append(value);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
+	d["user_id"] = user_id;
+	d["user_name"] = user_name;
+	d["user_login"] = user_login;
+	d["videos"] = [];
+	if videos != null:
+		for value in videos:
+			d["videos"].append(value);
+	d["video_id"] = video_id;
+	d["markers"] = [];
+	if markers != null:
+		for value in markers:
+			d["markers"].append(value);
 	return d;
 
 func to_json() -> String:

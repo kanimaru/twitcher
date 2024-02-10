@@ -16,20 +16,25 @@ var version: String;
 
 static func from_json(d: Dictionary) -> TwitchSetExtensionConfigurationSegmentBody:
 	var result = TwitchSetExtensionConfigurationSegmentBody.new();
-
-
-
-
-
+	if d.has("extension_id") && d["extension_id"] != null:
+		result.extension_id = d["extension_id"];
+	if d.has("segment") && d["segment"] != null:
+		result.segment = d["segment"];
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("content") && d["content"] != null:
+		result.content = d["content"];
+	if d.has("version") && d["version"] != null:
+		result.version = d["version"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
+	d["extension_id"] = extension_id;
+	d["segment"] = segment;
+	d["broadcaster_id"] = broadcaster_id;
+	d["content"] = content;
+	d["version"] = version;
 	return d;
 
 func to_json() -> String:

@@ -13,7 +13,7 @@ var id: String;
 
 @export var redemption_handler: Script;
 
-func is_dirty(reward: Dictionary) -> bool:
+func is_dirty(reward: TwitchCustomReward) -> bool:
 	if reward.title != title: return true;
 	if reward.cost != cost: return true;
 	if reward.prompt != prompt: return true;

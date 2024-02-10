@@ -14,18 +14,22 @@ var winning_outcome_id: String;
 
 static func from_json(d: Dictionary) -> TwitchEndPredictionBody:
 	var result = TwitchEndPredictionBody.new();
-
-
-
-
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("status") && d["status"] != null:
+		result.status = d["status"];
+	if d.has("winning_outcome_id") && d["winning_outcome_id"] != null:
+		result.winning_outcome_id = d["winning_outcome_id"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
+	d["broadcaster_id"] = broadcaster_id;
+	d["id"] = id;
+	d["status"] = status;
+	d["winning_outcome_id"] = winning_outcome_id;
 	return d;
 
 func to_json() -> String:

@@ -26,34 +26,41 @@ var product_data: ExtensionTransactionProductData;
 
 static func from_json(d: Dictionary) -> TwitchExtensionTransaction:
 	var result = TwitchExtensionTransaction.new();
-
-
-
-
-
-
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("timestamp") && d["timestamp"] != null:
+		result.timestamp = d["timestamp"];
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
+		result.broadcaster_login = d["broadcaster_login"];
+	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
+		result.broadcaster_name = d["broadcaster_name"];
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
+	if d.has("user_name") && d["user_name"] != null:
+		result.user_name = d["user_name"];
+	if d.has("product_type") && d["product_type"] != null:
+		result.product_type = d["product_type"];
+	if d.has("product_data") && d["product_data"] != null:
+		result.product_data = ExtensionTransactionProductData.from_json(d["product_data"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
-	d["product_data"] = product_data.to_dict();
-{else}
-	d["product_data"] = product_data;
-
+	d["id"] = id;
+	d["timestamp"] = timestamp;
+	d["broadcaster_id"] = broadcaster_id;
+	d["broadcaster_login"] = broadcaster_login;
+	d["broadcaster_name"] = broadcaster_name;
+	d["user_id"] = user_id;
+	d["user_login"] = user_login;
+	d["user_name"] = user_name;
+	d["product_type"] = product_type;
+	if product_data != null:
+		d["product_data"] = product_data.to_dict();
 	return d;
 
 func to_json() -> String:

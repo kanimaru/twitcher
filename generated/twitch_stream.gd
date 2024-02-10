@@ -36,60 +36,63 @@ var is_mature: bool;
 
 static func from_json(d: Dictionary) -> TwitchStream:
 	var result = TwitchStream.new();
-
-
-
-
-
-
-
-
-
-
-
-
-
-	for value in d["tag_ids"]:
-		result.tag_ids.append(value);
-{elif property.is_typed_array}
-	for value in d["tag_ids"]:
-		result.tag_ids.append(.from_json(value));
-{elif property.is_sub_class}
-	result.tag_ids = Array[String].from_json(d["tag_ids"]);
-{else}
-	result.tag_ids = d["tag_ids"];
-
-
-	for value in d["tags"]:
-		result.tags.append(value);
-{elif property.is_typed_array}
-	for value in d["tags"]:
-		result.tags.append(.from_json(value));
-{elif property.is_sub_class}
-	result.tags = Array[String].from_json(d["tags"]);
-{else}
-	result.tags = d["tags"];
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
+	if d.has("user_name") && d["user_name"] != null:
+		result.user_name = d["user_name"];
+	if d.has("game_id") && d["game_id"] != null:
+		result.game_id = d["game_id"];
+	if d.has("game_name") && d["game_name"] != null:
+		result.game_name = d["game_name"];
+	if d.has("type") && d["type"] != null:
+		result.type = d["type"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("viewer_count") && d["viewer_count"] != null:
+		result.viewer_count = d["viewer_count"];
+	if d.has("started_at") && d["started_at"] != null:
+		result.started_at = d["started_at"];
+	if d.has("language") && d["language"] != null:
+		result.language = d["language"];
+	if d.has("thumbnail_url") && d["thumbnail_url"] != null:
+		result.thumbnail_url = d["thumbnail_url"];
+	if d.has("tag_ids") && d["tag_ids"] != null:
+		for value in d["tag_ids"]:
+			result.tag_ids.append(value);
+	if d.has("tags") && d["tags"] != null:
+		for value in d["tags"]:
+			result.tags.append(value);
+	if d.has("is_mature") && d["is_mature"] != null:
+		result.is_mature = d["is_mature"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	d["id"] = id;
+	d["user_id"] = user_id;
+	d["user_login"] = user_login;
+	d["user_name"] = user_name;
+	d["game_id"] = game_id;
+	d["game_name"] = game_name;
+	d["type"] = type;
+	d["title"] = title;
+	d["viewer_count"] = viewer_count;
+	d["started_at"] = started_at;
+	d["language"] = language;
+	d["thumbnail_url"] = thumbnail_url;
+	d["tag_ids"] = [];
+	if tag_ids != null:
+		for value in tag_ids:
+			d["tag_ids"].append(value);
+	d["tags"] = [];
+	if tags != null:
+		for value in tags:
+			d["tags"].append(value);
+	d["is_mature"] = is_mature;
 	return d;
 
 func to_json() -> String:

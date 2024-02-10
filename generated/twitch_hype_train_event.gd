@@ -16,24 +16,26 @@ var event_data: HypeTrainEventEventData;
 
 static func from_json(d: Dictionary) -> TwitchHypeTrainEvent:
 	var result = TwitchHypeTrainEvent.new();
-
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("event_type") && d["event_type"] != null:
+		result.event_type = d["event_type"];
+	if d.has("event_timestamp") && d["event_timestamp"] != null:
+		result.event_timestamp = d["event_timestamp"];
+	if d.has("version") && d["version"] != null:
+		result.version = d["version"];
+	if d.has("event_data") && d["event_data"] != null:
+		result.event_data = HypeTrainEventEventData.from_json(d["event_data"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-	d["event_data"] = event_data.to_dict();
-{else}
-	d["event_data"] = event_data;
-
+	d["id"] = id;
+	d["event_type"] = event_type;
+	d["event_timestamp"] = event_timestamp;
+	d["version"] = version;
+	if event_data != null:
+		d["event_data"] = event_data.to_dict();
 	return d;
 
 func to_json() -> String:

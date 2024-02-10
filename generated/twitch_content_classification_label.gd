@@ -12,16 +12,19 @@ var name: String;
 
 static func from_json(d: Dictionary) -> TwitchContentClassificationLabel:
 	var result = TwitchContentClassificationLabel.new();
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("description") && d["description"] != null:
+		result.description = d["description"];
+	if d.has("name") && d["name"] != null:
+		result.name = d["name"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
+	d["id"] = id;
+	d["description"] = description;
+	d["name"] = name;
 	return d;
 
 func to_json() -> String:

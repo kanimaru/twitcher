@@ -18,32 +18,32 @@ var is_charitable: bool;
 
 static func from_json(d: Dictionary) -> TwitchCheermote:
 	var result = TwitchCheermote.new();
-
-
-	for value in d["tiers"]:
-		result.tiers.append(value);
-{elif property.is_typed_array}
-	for value in d["tiers"]:
-		result.tiers.append(.from_json(value));
-{elif property.is_sub_class}
-	result.tiers = Array.from_json(d["tiers"]);
-{else}
-	result.tiers = d["tiers"];
-
-
-
-
-
+	if d.has("prefix") && d["prefix"] != null:
+		result.prefix = d["prefix"];
+	if d.has("tiers") && d["tiers"] != null:
+		for value in d["tiers"]:
+			result.tiers.append(value);
+	if d.has("type") && d["type"] != null:
+		result.type = d["type"];
+	if d.has("order") && d["order"] != null:
+		result.order = d["order"];
+	if d.has("last_updated") && d["last_updated"] != null:
+		result.last_updated = d["last_updated"];
+	if d.has("is_charitable") && d["is_charitable"] != null:
+		result.is_charitable = d["is_charitable"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
+	d["prefix"] = prefix;
+	d["tiers"] = [];
+	if tiers != null:
+		for value in tiers:
+			d["tiers"].append(value);
+	d["type"] = type;
+	d["order"] = order;
+	d["last_updated"] = last_updated;
+	d["is_charitable"] = is_charitable;
 	return d;
 
 func to_json() -> String:

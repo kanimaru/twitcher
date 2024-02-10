@@ -16,24 +16,30 @@ var pagination: GetEventSubSubscriptionsResponsePagination;
 
 static func from_json(d: Dictionary) -> TwitchGetEventSubSubscriptionsResponse:
 	var result = TwitchGetEventSubSubscriptionsResponse.new();
-
-
-
-
-
+	if d.has("data") && d["data"] != null:
+		for value in d["data"]:
+			result.data.append(TwitchEventSubSubscription.from_json(value));
+	if d.has("total") && d["total"] != null:
+		result.total = d["total"];
+	if d.has("total_cost") && d["total_cost"] != null:
+		result.total_cost = d["total_cost"];
+	if d.has("max_total_cost") && d["max_total_cost"] != null:
+		result.max_total_cost = d["max_total_cost"];
+	if d.has("pagination") && d["pagination"] != null:
+		result.pagination = GetEventSubSubscriptionsResponsePagination.from_json(d["pagination"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-	d["pagination"] = pagination.to_dict();
-{else}
-	d["pagination"] = pagination;
-
+	d["data"] = [];
+	if data != null:
+		for value in data:
+			d["data"].append(value.to_dict());
+	d["total"] = total;
+	d["total_cost"] = total_cost;
+	d["max_total_cost"] = max_total_cost;
+	if pagination != null:
+		d["pagination"] = pagination.to_dict();
 	return d;
 
 func to_json() -> String:

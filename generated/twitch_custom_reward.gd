@@ -46,70 +46,75 @@ var cooldown_expires_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchCustomReward:
 	var result = TwitchCustomReward.new();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
+		result.broadcaster_login = d["broadcaster_login"];
+	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
+		result.broadcaster_name = d["broadcaster_name"];
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("prompt") && d["prompt"] != null:
+		result.prompt = d["prompt"];
+	if d.has("cost") && d["cost"] != null:
+		result.cost = d["cost"];
+	if d.has("image") && d["image"] != null:
+		result.image = CustomRewardImage.from_json(d["image"]);
+	if d.has("default_image") && d["default_image"] != null:
+		result.default_image = CustomRewardDefaultImage.from_json(d["default_image"]);
+	if d.has("background_color") && d["background_color"] != null:
+		result.background_color = d["background_color"];
+	if d.has("is_enabled") && d["is_enabled"] != null:
+		result.is_enabled = d["is_enabled"];
+	if d.has("is_user_input_required") && d["is_user_input_required"] != null:
+		result.is_user_input_required = d["is_user_input_required"];
+	if d.has("max_per_stream_setting") && d["max_per_stream_setting"] != null:
+		result.max_per_stream_setting = CustomRewardMaxPerStreamSetting.from_json(d["max_per_stream_setting"]);
+	if d.has("max_per_user_per_stream_setting") && d["max_per_user_per_stream_setting"] != null:
+		result.max_per_user_per_stream_setting = CustomRewardMaxPerUserPerStreamSetting.from_json(d["max_per_user_per_stream_setting"]);
+	if d.has("global_cooldown_setting") && d["global_cooldown_setting"] != null:
+		result.global_cooldown_setting = CustomRewardGlobalCooldownSetting.from_json(d["global_cooldown_setting"]);
+	if d.has("is_paused") && d["is_paused"] != null:
+		result.is_paused = d["is_paused"];
+	if d.has("is_in_stock") && d["is_in_stock"] != null:
+		result.is_in_stock = d["is_in_stock"];
+	if d.has("should_redemptions_skip_request_queue") && d["should_redemptions_skip_request_queue"] != null:
+		result.should_redemptions_skip_request_queue = d["should_redemptions_skip_request_queue"];
+	if d.has("redemptions_redeemed_current_stream") && d["redemptions_redeemed_current_stream"] != null:
+		result.redemptions_redeemed_current_stream = d["redemptions_redeemed_current_stream"];
+	if d.has("cooldown_expires_at") && d["cooldown_expires_at"] != null:
+		result.cooldown_expires_at = d["cooldown_expires_at"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-	d["image"] = image.to_dict();
-{else}
-	d["image"] = image;
-
-
-	d["default_image"] = default_image.to_dict();
-{else}
-	d["default_image"] = default_image;
-
-
-
-
-
-	d["max_per_stream_setting"] = max_per_stream_setting.to_dict();
-{else}
-	d["max_per_stream_setting"] = max_per_stream_setting;
-
-
-	d["max_per_user_per_stream_setting"] = max_per_user_per_stream_setting.to_dict();
-{else}
-	d["max_per_user_per_stream_setting"] = max_per_user_per_stream_setting;
-
-
-	d["global_cooldown_setting"] = global_cooldown_setting.to_dict();
-{else}
-	d["global_cooldown_setting"] = global_cooldown_setting;
-
-
-
-
-
-
+	d["broadcaster_id"] = broadcaster_id;
+	d["broadcaster_login"] = broadcaster_login;
+	d["broadcaster_name"] = broadcaster_name;
+	d["id"] = id;
+	d["title"] = title;
+	d["prompt"] = prompt;
+	d["cost"] = cost;
+	if image != null:
+		d["image"] = image.to_dict();
+	if default_image != null:
+		d["default_image"] = default_image.to_dict();
+	d["background_color"] = background_color;
+	d["is_enabled"] = is_enabled;
+	d["is_user_input_required"] = is_user_input_required;
+	if max_per_stream_setting != null:
+		d["max_per_stream_setting"] = max_per_stream_setting.to_dict();
+	if max_per_user_per_stream_setting != null:
+		d["max_per_user_per_stream_setting"] = max_per_user_per_stream_setting.to_dict();
+	if global_cooldown_setting != null:
+		d["global_cooldown_setting"] = global_cooldown_setting.to_dict();
+	d["is_paused"] = is_paused;
+	d["is_in_stock"] = is_in_stock;
+	d["should_redemptions_skip_request_queue"] = should_redemptions_skip_request_queue;
+	d["redemptions_redeemed_current_stream"] = redemptions_redeemed_current_stream;
+	d["cooldown_expires_at"] = cooldown_expires_at;
 	return d;
 
 func to_json() -> String:

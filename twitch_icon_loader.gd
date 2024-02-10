@@ -83,11 +83,13 @@ func _load_emote(emote_id : String) -> BufferedHTTPClient.RequestData:
 	var client = HttpClientManager.get_client(TwitchSetting.twitch_image_cdn_host);
 	return client.request(request_path, HTTPClient.METHOD_GET, BufferedHTTPClient.HEADERS, "");
 
-func _map_emotes(result: Dictionary) -> Dictionary:
+func _map_emotes(result: Variant) -> Dictionary:
 	var mappings : Dictionary = {};
-	var emotes : Array = result["data"];
+	var emotes : Array = result.get("data");
+	if emotes == null:
+		return mappings;
 	for emote in emotes:
-		mappings[emote["id"]] = emote;
+		mappings[emote.get("id")] = emote;
 	return mappings;
 
 func get_cached_emotes(channel_id) -> Dictionary:
@@ -173,7 +175,7 @@ func _load_badge(badge_data: BadgeData) -> BufferedHTTPClient.RequestData:
 	return client.request(request_path, HTTPClient.METHOD_GET, BufferedHTTPClient.HEADERS, "");
 
 # Maps the badges into a dict of category / versions / badge_id
-func _cache_badges(result: Dictionary) -> Dictionary:
+func _cache_badges(result: Variant) -> Dictionary:
 	var mappings : Dictionary = {};
 	var badges : Array = result["data"];
 	for badge in badges:

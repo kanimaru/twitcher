@@ -24,28 +24,37 @@ var created_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchCreatorGoal:
 	var result = TwitchCreatorGoal.new();
-
-
-
-
-
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
+		result.broadcaster_name = d["broadcaster_name"];
+	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
+		result.broadcaster_login = d["broadcaster_login"];
+	if d.has("type") && d["type"] != null:
+		result.type = d["type"];
+	if d.has("description") && d["description"] != null:
+		result.description = d["description"];
+	if d.has("current_amount") && d["current_amount"] != null:
+		result.current_amount = d["current_amount"];
+	if d.has("target_amount") && d["target_amount"] != null:
+		result.target_amount = d["target_amount"];
+	if d.has("created_at") && d["created_at"] != null:
+		result.created_at = d["created_at"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
+	d["id"] = id;
+	d["broadcaster_id"] = broadcaster_id;
+	d["broadcaster_name"] = broadcaster_name;
+	d["broadcaster_login"] = broadcaster_login;
+	d["type"] = type;
+	d["description"] = description;
+	d["current_amount"] = current_amount;
+	d["target_amount"] = target_amount;
+	d["created_at"] = created_at;
 	return d;
 
 func to_json() -> String:

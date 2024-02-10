@@ -8,12 +8,13 @@ var is_active: bool;
 
 static func from_json(d: Dictionary) -> TwitchUpdateShieldModeStatusBody:
 	var result = TwitchUpdateShieldModeStatusBody.new();
-
+	if d.has("is_active") && d["is_active"] != null:
+		result.is_active = d["is_active"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
+	d["is_active"] = is_active;
 	return d;
 
 func to_json() -> String:

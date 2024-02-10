@@ -28,36 +28,44 @@ var redeemed_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchCustomRewardRedemption:
 	var result = TwitchCustomRewardRedemption.new();
-
-
-
-
-
-
-
-
-
-
-
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
+		result.broadcaster_login = d["broadcaster_login"];
+	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
+		result.broadcaster_name = d["broadcaster_name"];
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_name") && d["user_name"] != null:
+		result.user_name = d["user_name"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
+	if d.has("reward") && d["reward"] != null:
+		result.reward = CustomRewardRedemptionReward.from_json(d["reward"]);
+	if d.has("user_input") && d["user_input"] != null:
+		result.user_input = d["user_input"];
+	if d.has("status") && d["status"] != null:
+		result.status = d["status"];
+	if d.has("redeemed_at") && d["redeemed_at"] != null:
+		result.redeemed_at = d["redeemed_at"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-	d["reward"] = reward.to_dict();
-{else}
-	d["reward"] = reward;
-
-
-
-
+	d["broadcaster_id"] = broadcaster_id;
+	d["broadcaster_login"] = broadcaster_login;
+	d["broadcaster_name"] = broadcaster_name;
+	d["id"] = id;
+	d["user_id"] = user_id;
+	d["user_name"] = user_name;
+	d["user_login"] = user_login;
+	if reward != null:
+		d["reward"] = reward.to_dict();
+	d["user_input"] = user_input;
+	d["status"] = status;
+	d["redeemed_at"] = redeemed_at;
 	return d;
 
 func to_json() -> String:

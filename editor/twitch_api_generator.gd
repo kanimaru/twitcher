@@ -11,6 +11,7 @@ var client: BufferedHTTPClient;
 var definition: Dictionary = {};
 
 func _pressed() -> void:
+	print("start generating REST API")
 	if definition == {}:
 		print("load Twitch definition")
 		definition = await _load_swagger_definition();
@@ -224,6 +225,7 @@ func _calculate_template(schema_name: String, schema: Dictionary, result_classes
 		## Arrays that has custom types
 		var is_array = false;
 		if property.get("type", "") == "array":
+			is_sub_class = false;
 			if property.get("items", {}).has("$ref"):
 				is_typed_array = true;
 				array_type = _resolve_ref(property.get("items", {}).get("$ref"));
@@ -235,9 +237,10 @@ func _calculate_template(schema_name: String, schema: Dictionary, result_classes
 			"property_name": property_name,
 			"type": type,
 			"array_type": array_type,
-			"is_sub_class": is_sub_class,
-			"is_array": is_array,
-			"is_typed_array": is_typed_array,
+			"is_property_sub_class": is_sub_class,
+			"is_property_array": is_array,
+			"is_property_typed_array": is_typed_array,
+			"is_property_basic": (!is_typed_array && !is_array && !is_sub_class),
 			"description": property.get("description", "No description available").replace("\n", " "),
 		})
 

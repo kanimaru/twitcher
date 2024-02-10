@@ -18,32 +18,32 @@ var channel_points_per_vote: int;
 
 static func from_json(d: Dictionary) -> TwitchCreatePollBody:
 	var result = TwitchCreatePollBody.new();
-
-
-
-	for value in d["choices"]:
-		result.choices.append(value);
-{elif property.is_typed_array}
-	for value in d["choices"]:
-		result.choices.append(.from_json(value));
-{elif property.is_sub_class}
-	result.choices = Array.from_json(d["choices"]);
-{else}
-	result.choices = d["choices"];
-
-
-
-
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("choices") && d["choices"] != null:
+		for value in d["choices"]:
+			result.choices.append(value);
+	if d.has("duration") && d["duration"] != null:
+		result.duration = d["duration"];
+	if d.has("channel_points_voting_enabled") && d["channel_points_voting_enabled"] != null:
+		result.channel_points_voting_enabled = d["channel_points_voting_enabled"];
+	if d.has("channel_points_per_vote") && d["channel_points_per_vote"] != null:
+		result.channel_points_per_vote = d["channel_points_per_vote"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
+	d["broadcaster_id"] = broadcaster_id;
+	d["title"] = title;
+	d["choices"] = [];
+	if choices != null:
+		for value in choices:
+			d["choices"].append(value);
+	d["duration"] = duration;
+	d["channel_points_voting_enabled"] = channel_points_voting_enabled;
+	d["channel_points_per_vote"] = channel_points_per_vote;
 	return d;
 
 func to_json() -> String:

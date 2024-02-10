@@ -24,28 +24,37 @@ var moderator_name: String;
 
 static func from_json(d: Dictionary) -> TwitchBannedUser:
 	var result = TwitchBannedUser.new();
-
-
-
-
-
-
-
-
-
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
+	if d.has("user_name") && d["user_name"] != null:
+		result.user_name = d["user_name"];
+	if d.has("expires_at") && d["expires_at"] != null:
+		result.expires_at = d["expires_at"];
+	if d.has("created_at") && d["created_at"] != null:
+		result.created_at = d["created_at"];
+	if d.has("reason") && d["reason"] != null:
+		result.reason = d["reason"];
+	if d.has("moderator_id") && d["moderator_id"] != null:
+		result.moderator_id = d["moderator_id"];
+	if d.has("moderator_login") && d["moderator_login"] != null:
+		result.moderator_login = d["moderator_login"];
+	if d.has("moderator_name") && d["moderator_name"] != null:
+		result.moderator_name = d["moderator_name"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
+	d["user_id"] = user_id;
+	d["user_login"] = user_login;
+	d["user_name"] = user_name;
+	d["expires_at"] = expires_at;
+	d["created_at"] = created_at;
+	d["reason"] = reason;
+	d["moderator_id"] = moderator_id;
+	d["moderator_login"] = moderator_login;
+	d["moderator_name"] = moderator_name;
 	return d;
 
 func to_json() -> String:

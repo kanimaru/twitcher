@@ -10,18 +10,21 @@ var pagination: GetAllStreamTagsResponsePagination;
 
 static func from_json(d: Dictionary) -> TwitchGetAllStreamTagsResponse:
 	var result = TwitchGetAllStreamTagsResponse.new();
-
-
+	if d.has("data") && d["data"] != null:
+		for value in d["data"]:
+			result.data.append(TwitchStreamTag.from_json(value));
+	if d.has("pagination") && d["pagination"] != null:
+		result.pagination = GetAllStreamTagsResponsePagination.from_json(d["pagination"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-	d["pagination"] = pagination.to_dict();
-{else}
-	d["pagination"] = pagination;
-
+	d["data"] = [];
+	if data != null:
+		for value in data:
+			d["data"].append(value.to_dict());
+	if pagination != null:
+		d["pagination"] = pagination.to_dict();
 	return d;
 
 func to_json() -> String:

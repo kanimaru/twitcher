@@ -14,28 +14,26 @@ var prediction_window: int;
 
 static func from_json(d: Dictionary) -> TwitchCreatePredictionBody:
 	var result = TwitchCreatePredictionBody.new();
-
-
-
-	for value in d["outcomes"]:
-		result.outcomes.append(value);
-{elif property.is_typed_array}
-	for value in d["outcomes"]:
-		result.outcomes.append(.from_json(value));
-{elif property.is_sub_class}
-	result.outcomes = Array.from_json(d["outcomes"]);
-{else}
-	result.outcomes = d["outcomes"];
-
-
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("outcomes") && d["outcomes"] != null:
+		for value in d["outcomes"]:
+			result.outcomes.append(value);
+	if d.has("prediction_window") && d["prediction_window"] != null:
+		result.prediction_window = d["prediction_window"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
+	d["broadcaster_id"] = broadcaster_id;
+	d["title"] = title;
+	d["outcomes"] = [];
+	if outcomes != null:
+		for value in outcomes:
+			d["outcomes"].append(value);
+	d["prediction_window"] = prediction_window;
 	return d;
 
 func to_json() -> String:

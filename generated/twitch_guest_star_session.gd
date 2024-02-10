@@ -28,40 +28,45 @@ var video_settings: GuestStarSessionVideoSettings;
 
 static func from_json(d: Dictionary) -> TwitchGuestStarSession:
 	var result = TwitchGuestStarSession.new();
-
-
-
-
-
-
-
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("guests") && d["guests"] != null:
+		result.guests = d["guests"];
+	if d.has("slot_id") && d["slot_id"] != null:
+		result.slot_id = d["slot_id"];
+	if d.has("is_live") && d["is_live"] != null:
+		result.is_live = d["is_live"];
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_display_name") && d["user_display_name"] != null:
+		result.user_display_name = d["user_display_name"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
+	if d.has("volume") && d["volume"] != null:
+		result.volume = d["volume"];
+	if d.has("assigned_at") && d["assigned_at"] != null:
+		result.assigned_at = d["assigned_at"];
+	if d.has("audio_settings") && d["audio_settings"] != null:
+		result.audio_settings = GuestStarSessionAudioSettings.from_json(d["audio_settings"]);
+	if d.has("video_settings") && d["video_settings"] != null:
+		result.video_settings = GuestStarSessionVideoSettings.from_json(d["video_settings"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
-	d["audio_settings"] = audio_settings.to_dict();
-{else}
-	d["audio_settings"] = audio_settings;
-
-
-	d["video_settings"] = video_settings.to_dict();
-{else}
-	d["video_settings"] = video_settings;
-
+	d["id"] = id;
+	d["guests"] = guests;
+	d["slot_id"] = slot_id;
+	d["is_live"] = is_live;
+	d["user_id"] = user_id;
+	d["user_display_name"] = user_display_name;
+	d["user_login"] = user_login;
+	d["volume"] = volume;
+	d["assigned_at"] = assigned_at;
+	if audio_settings != null:
+		d["audio_settings"] = audio_settings.to_dict();
+	if video_settings != null:
+		d["video_settings"] = video_settings.to_dict();
 	return d;
 
 func to_json() -> String:

@@ -16,20 +16,25 @@ var browser_source_token: String;
 
 static func from_json(d: Dictionary) -> TwitchGetChannelGuestStarSettingsResponse:
 	var result = TwitchGetChannelGuestStarSettingsResponse.new();
-
-
-
-
-
+	if d.has("is_moderator_send_live_enabled") && d["is_moderator_send_live_enabled"] != null:
+		result.is_moderator_send_live_enabled = d["is_moderator_send_live_enabled"];
+	if d.has("slot_count") && d["slot_count"] != null:
+		result.slot_count = d["slot_count"];
+	if d.has("is_browser_source_audio_enabled") && d["is_browser_source_audio_enabled"] != null:
+		result.is_browser_source_audio_enabled = d["is_browser_source_audio_enabled"];
+	if d.has("group_layout") && d["group_layout"] != null:
+		result.group_layout = d["group_layout"];
+	if d.has("browser_source_token") && d["browser_source_token"] != null:
+		result.browser_source_token = d["browser_source_token"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
+	d["is_moderator_send_live_enabled"] = is_moderator_send_live_enabled;
+	d["slot_count"] = slot_count;
+	d["is_browser_source_audio_enabled"] = is_browser_source_audio_enabled;
+	d["group_layout"] = group_layout;
+	d["browser_source_token"] = browser_source_token;
 	return d;
 
 func to_json() -> String:

@@ -24,62 +24,50 @@ var theme_mode: Array[String];
 
 static func from_json(d: Dictionary) -> TwitchChannelEmote:
 	var result = TwitchChannelEmote.new();
-
-
-
-
-
-
-
-	for value in d["format"]:
-		result.format.append(value);
-{elif property.is_typed_array}
-	for value in d["format"]:
-		result.format.append(.from_json(value));
-{elif property.is_sub_class}
-	result.format = Array[String].from_json(d["format"]);
-{else}
-	result.format = d["format"];
-
-
-	for value in d["scale"]:
-		result.scale.append(value);
-{elif property.is_typed_array}
-	for value in d["scale"]:
-		result.scale.append(.from_json(value));
-{elif property.is_sub_class}
-	result.scale = Array[String].from_json(d["scale"]);
-{else}
-	result.scale = d["scale"];
-
-
-	for value in d["theme_mode"]:
-		result.theme_mode.append(value);
-{elif property.is_typed_array}
-	for value in d["theme_mode"]:
-		result.theme_mode.append(.from_json(value));
-{elif property.is_sub_class}
-	result.theme_mode = Array[String].from_json(d["theme_mode"]);
-{else}
-	result.theme_mode = d["theme_mode"];
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("name") && d["name"] != null:
+		result.name = d["name"];
+	if d.has("images") && d["images"] != null:
+		result.images = ChannelEmoteImages.from_json(d["images"]);
+	if d.has("tier") && d["tier"] != null:
+		result.tier = d["tier"];
+	if d.has("emote_type") && d["emote_type"] != null:
+		result.emote_type = d["emote_type"];
+	if d.has("emote_set_id") && d["emote_set_id"] != null:
+		result.emote_set_id = d["emote_set_id"];
+	if d.has("format") && d["format"] != null:
+		for value in d["format"]:
+			result.format.append(value);
+	if d.has("scale") && d["scale"] != null:
+		for value in d["scale"]:
+			result.scale.append(value);
+	if d.has("theme_mode") && d["theme_mode"] != null:
+		for value in d["theme_mode"]:
+			result.theme_mode.append(value);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-	d["images"] = images.to_dict();
-{else}
-	d["images"] = images;
-
-
-
-
-
-
-
+	d["id"] = id;
+	d["name"] = name;
+	if images != null:
+		d["images"] = images.to_dict();
+	d["tier"] = tier;
+	d["emote_type"] = emote_type;
+	d["emote_set_id"] = emote_set_id;
+	d["format"] = [];
+	if format != null:
+		for value in format:
+			d["format"].append(value);
+	d["scale"] = [];
+	if scale != null:
+		for value in scale:
+			d["scale"].append(value);
+	d["theme_mode"] = [];
+	if theme_mode != null:
+		for value in theme_mode:
+			d["theme_mode"].append(value);
 	return d;
 
 func to_json() -> String:

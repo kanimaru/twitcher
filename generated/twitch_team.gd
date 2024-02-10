@@ -26,40 +26,44 @@ var id: String;
 
 static func from_json(d: Dictionary) -> TwitchTeam:
 	var result = TwitchTeam.new();
-
-	for value in d["users"]:
-		result.users.append(value);
-{elif property.is_typed_array}
-	for value in d["users"]:
-		result.users.append(.from_json(value));
-{elif property.is_sub_class}
-	result.users = Array.from_json(d["users"]);
-{else}
-	result.users = d["users"];
-
-
-
-
-
-
-
-
-
-
+	if d.has("users") && d["users"] != null:
+		for value in d["users"]:
+			result.users.append(value);
+	if d.has("background_image_url") && d["background_image_url"] != null:
+		result.background_image_url = d["background_image_url"];
+	if d.has("banner") && d["banner"] != null:
+		result.banner = d["banner"];
+	if d.has("created_at") && d["created_at"] != null:
+		result.created_at = d["created_at"];
+	if d.has("updated_at") && d["updated_at"] != null:
+		result.updated_at = d["updated_at"];
+	if d.has("info") && d["info"] != null:
+		result.info = d["info"];
+	if d.has("thumbnail_url") && d["thumbnail_url"] != null:
+		result.thumbnail_url = d["thumbnail_url"];
+	if d.has("team_name") && d["team_name"] != null:
+		result.team_name = d["team_name"];
+	if d.has("team_display_name") && d["team_display_name"] != null:
+		result.team_display_name = d["team_display_name"];
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
+	d["users"] = [];
+	if users != null:
+		for value in users:
+			d["users"].append(value);
+	d["background_image_url"] = background_image_url;
+	d["banner"] = banner;
+	d["created_at"] = created_at;
+	d["updated_at"] = updated_at;
+	d["info"] = info;
+	d["thumbnail_url"] = thumbnail_url;
+	d["team_name"] = team_name;
+	d["team_display_name"] = team_display_name;
+	d["id"] = id;
 	return d;
 
 func to_json() -> String:

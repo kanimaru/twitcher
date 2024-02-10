@@ -18,22 +18,28 @@ var title: String;
 
 static func from_json(d: Dictionary) -> TwitchCreateChannelStreamScheduleSegmentBody:
 	var result = TwitchCreateChannelStreamScheduleSegmentBody.new();
-
-
-
-
-
-
+	if d.has("start_time") && d["start_time"] != null:
+		result.start_time = d["start_time"];
+	if d.has("timezone") && d["timezone"] != null:
+		result.timezone = d["timezone"];
+	if d.has("duration") && d["duration"] != null:
+		result.duration = d["duration"];
+	if d.has("is_recurring") && d["is_recurring"] != null:
+		result.is_recurring = d["is_recurring"];
+	if d.has("category_id") && d["category_id"] != null:
+		result.category_id = d["category_id"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
+	d["start_time"] = start_time;
+	d["timezone"] = timezone;
+	d["duration"] = duration;
+	d["is_recurring"] = is_recurring;
+	d["category_id"] = category_id;
+	d["title"] = title;
 	return d;
 
 func to_json() -> String:

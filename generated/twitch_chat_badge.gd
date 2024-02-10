@@ -10,24 +10,20 @@ var versions: Array;
 
 static func from_json(d: Dictionary) -> TwitchChatBadge:
 	var result = TwitchChatBadge.new();
-
-
-	for value in d["versions"]:
-		result.versions.append(value);
-{elif property.is_typed_array}
-	for value in d["versions"]:
-		result.versions.append(.from_json(value));
-{elif property.is_sub_class}
-	result.versions = Array.from_json(d["versions"]);
-{else}
-	result.versions = d["versions"];
-
+	if d.has("set_id") && d["set_id"] != null:
+		result.set_id = d["set_id"];
+	if d.has("versions") && d["versions"] != null:
+		for value in d["versions"]:
+			result.versions.append(value);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
+	d["set_id"] = set_id;
+	d["versions"] = [];
+	if versions != null:
+		for value in versions:
+			d["versions"].append(value);
 	return d;
 
 func to_json() -> String:

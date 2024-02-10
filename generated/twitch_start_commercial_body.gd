@@ -10,14 +10,16 @@ var length: int;
 
 static func from_json(d: Dictionary) -> TwitchStartCommercialBody:
 	var result = TwitchStartCommercialBody.new();
-
-
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("length") && d["length"] != null:
+		result.length = d["length"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
+	d["broadcaster_id"] = broadcaster_id;
+	d["length"] = length;
 	return d;
 
 func to_json() -> String:

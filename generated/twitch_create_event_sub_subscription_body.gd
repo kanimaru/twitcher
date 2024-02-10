@@ -14,22 +14,23 @@ var transport: CreateEventSubSubscriptionBodyTransport;
 
 static func from_json(d: Dictionary) -> TwitchCreateEventSubSubscriptionBody:
 	var result = TwitchCreateEventSubSubscriptionBody.new();
-
-
-
-
+	if d.has("type") && d["type"] != null:
+		result.type = d["type"];
+	if d.has("version") && d["version"] != null:
+		result.version = d["version"];
+	if d.has("condition") && d["condition"] != null:
+		result.condition = d["condition"];
+	if d.has("transport") && d["transport"] != null:
+		result.transport = CreateEventSubSubscriptionBodyTransport.from_json(d["transport"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-	d["transport"] = transport.to_dict();
-{else}
-	d["transport"] = transport;
-
+	d["type"] = type;
+	d["version"] = version;
+	d["condition"] = condition;
+	if transport != null:
+		d["transport"] = transport.to_dict();
 	return d;
 
 func to_json() -> String:

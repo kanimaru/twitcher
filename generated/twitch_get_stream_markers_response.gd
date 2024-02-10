@@ -10,18 +10,21 @@ var pagination: GetStreamMarkersResponsePagination;
 
 static func from_json(d: Dictionary) -> TwitchGetStreamMarkersResponse:
 	var result = TwitchGetStreamMarkersResponse.new();
-
-
+	if d.has("data") && d["data"] != null:
+		for value in d["data"]:
+			result.data.append(TwitchStreamMarkers.from_json(value));
+	if d.has("pagination") && d["pagination"] != null:
+		result.pagination = GetStreamMarkersResponsePagination.from_json(d["pagination"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-	d["pagination"] = pagination.to_dict();
-{else}
-	d["pagination"] = pagination;
-
+	d["data"] = [];
+	if data != null:
+		for value in data:
+			d["data"].append(value.to_dict());
+	if pagination != null:
+		d["pagination"] = pagination.to_dict();
 	return d;
 
 func to_json() -> String:

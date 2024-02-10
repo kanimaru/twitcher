@@ -10,24 +10,20 @@ var secrets: Array;
 
 static func from_json(d: Dictionary) -> TwitchExtensionSecret:
 	var result = TwitchExtensionSecret.new();
-
-
-	for value in d["secrets"]:
-		result.secrets.append(value);
-{elif property.is_typed_array}
-	for value in d["secrets"]:
-		result.secrets.append(.from_json(value));
-{elif property.is_sub_class}
-	result.secrets = Array.from_json(d["secrets"]);
-{else}
-	result.secrets = d["secrets"];
-
+	if d.has("format_version") && d["format_version"] != null:
+		result.format_version = d["format_version"];
+	if d.has("secrets") && d["secrets"] != null:
+		for value in d["secrets"]:
+			result.secrets.append(value);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
+	d["format_version"] = format_version;
+	d["secrets"] = [];
+	if secrets != null:
+		for value in secrets:
+			d["secrets"].append(value);
 	return d;
 
 func to_json() -> String:

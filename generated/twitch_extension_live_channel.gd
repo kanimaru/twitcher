@@ -16,20 +16,25 @@ var title: String;
 
 static func from_json(d: Dictionary) -> TwitchExtensionLiveChannel:
 	var result = TwitchExtensionLiveChannel.new();
-
-
-
-
-
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
+		result.broadcaster_name = d["broadcaster_name"];
+	if d.has("game_name") && d["game_name"] != null:
+		result.game_name = d["game_name"];
+	if d.has("game_id") && d["game_id"] != null:
+		result.game_id = d["game_id"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
+	d["broadcaster_id"] = broadcaster_id;
+	d["broadcaster_name"] = broadcaster_name;
+	d["game_name"] = game_name;
+	d["game_id"] = game_id;
+	d["title"] = title;
 	return d;
 
 func to_json() -> String:

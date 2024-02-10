@@ -28,32 +28,43 @@ var created_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchUser:
 	var result = TwitchUser.new();
-
-
-
-
-
-
-
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("login") && d["login"] != null:
+		result.login = d["login"];
+	if d.has("display_name") && d["display_name"] != null:
+		result.display_name = d["display_name"];
+	if d.has("type") && d["type"] != null:
+		result.type = d["type"];
+	if d.has("broadcaster_type") && d["broadcaster_type"] != null:
+		result.broadcaster_type = d["broadcaster_type"];
+	if d.has("description") && d["description"] != null:
+		result.description = d["description"];
+	if d.has("profile_image_url") && d["profile_image_url"] != null:
+		result.profile_image_url = d["profile_image_url"];
+	if d.has("offline_image_url") && d["offline_image_url"] != null:
+		result.offline_image_url = d["offline_image_url"];
+	if d.has("view_count") && d["view_count"] != null:
+		result.view_count = d["view_count"];
+	if d.has("email") && d["email"] != null:
+		result.email = d["email"];
+	if d.has("created_at") && d["created_at"] != null:
+		result.created_at = d["created_at"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
-
+	d["id"] = id;
+	d["login"] = login;
+	d["display_name"] = display_name;
+	d["type"] = type;
+	d["broadcaster_type"] = broadcaster_type;
+	d["description"] = description;
+	d["profile_image_url"] = profile_image_url;
+	d["offline_image_url"] = offline_image_url;
+	d["view_count"] = view_count;
+	d["email"] = email;
+	d["created_at"] = created_at;
 	return d;
 
 func to_json() -> String:

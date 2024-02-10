@@ -40,54 +40,65 @@ var muted_segments: Array;
 
 static func from_json(d: Dictionary) -> TwitchVideo:
 	var result = TwitchVideo.new();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	for value in d["muted_segments"]:
-		result.muted_segments.append(value);
-{elif property.is_typed_array}
-	for value in d["muted_segments"]:
-		result.muted_segments.append(.from_json(value));
-{elif property.is_sub_class}
-	result.muted_segments = Array.from_json(d["muted_segments"]);
-{else}
-	result.muted_segments = d["muted_segments"];
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("stream_id") && d["stream_id"] != null:
+		result.stream_id = d["stream_id"];
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
+	if d.has("user_name") && d["user_name"] != null:
+		result.user_name = d["user_name"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("description") && d["description"] != null:
+		result.description = d["description"];
+	if d.has("created_at") && d["created_at"] != null:
+		result.created_at = d["created_at"];
+	if d.has("published_at") && d["published_at"] != null:
+		result.published_at = d["published_at"];
+	if d.has("url") && d["url"] != null:
+		result.url = d["url"];
+	if d.has("thumbnail_url") && d["thumbnail_url"] != null:
+		result.thumbnail_url = d["thumbnail_url"];
+	if d.has("viewable") && d["viewable"] != null:
+		result.viewable = d["viewable"];
+	if d.has("view_count") && d["view_count"] != null:
+		result.view_count = d["view_count"];
+	if d.has("language") && d["language"] != null:
+		result.language = d["language"];
+	if d.has("type") && d["type"] != null:
+		result.type = d["type"];
+	if d.has("duration") && d["duration"] != null:
+		result.duration = d["duration"];
+	if d.has("muted_segments") && d["muted_segments"] != null:
+		for value in d["muted_segments"]:
+			result.muted_segments.append(value);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	d["id"] = id;
+	d["stream_id"] = stream_id;
+	d["user_id"] = user_id;
+	d["user_login"] = user_login;
+	d["user_name"] = user_name;
+	d["title"] = title;
+	d["description"] = description;
+	d["created_at"] = created_at;
+	d["published_at"] = published_at;
+	d["url"] = url;
+	d["thumbnail_url"] = thumbnail_url;
+	d["viewable"] = viewable;
+	d["view_count"] = view_count;
+	d["language"] = language;
+	d["type"] = type;
+	d["duration"] = duration;
+	d["muted_segments"] = [];
+	if muted_segments != null:
+		for value in muted_segments:
+			d["muted_segments"].append(value);
 	return d;
 
 func to_json() -> String:

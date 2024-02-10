@@ -18,22 +18,28 @@ var timezone: String;
 
 static func from_json(d: Dictionary) -> TwitchUpdateChannelStreamScheduleSegmentBody:
 	var result = TwitchUpdateChannelStreamScheduleSegmentBody.new();
-
-
-
-
-
-
+	if d.has("start_time") && d["start_time"] != null:
+		result.start_time = d["start_time"];
+	if d.has("duration") && d["duration"] != null:
+		result.duration = d["duration"];
+	if d.has("category_id") && d["category_id"] != null:
+		result.category_id = d["category_id"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("is_canceled") && d["is_canceled"] != null:
+		result.is_canceled = d["is_canceled"];
+	if d.has("timezone") && d["timezone"] != null:
+		result.timezone = d["timezone"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
+	d["start_time"] = start_time;
+	d["duration"] = duration;
+	d["category_id"] = category_id;
+	d["title"] = title;
+	d["is_canceled"] = is_canceled;
+	d["timezone"] = timezone;
 	return d;
 
 func to_json() -> String:

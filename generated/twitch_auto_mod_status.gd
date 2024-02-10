@@ -10,14 +10,16 @@ var is_permitted: bool;
 
 static func from_json(d: Dictionary) -> TwitchAutoModStatus:
 	var result = TwitchAutoModStatus.new();
-
-
+	if d.has("msg_id") && d["msg_id"] != null:
+		result.msg_id = d["msg_id"];
+	if d.has("is_permitted") && d["is_permitted"] != null:
+		result.is_permitted = d["is_permitted"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
+	d["msg_id"] = msg_id;
+	d["is_permitted"] = is_permitted;
 	return d;
 
 func to_json() -> String:

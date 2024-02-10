@@ -20,24 +20,31 @@ var is_audio_available: bool;
 
 static func from_json(d: Dictionary) -> TwitchGuestStarInvite:
 	var result = TwitchGuestStarInvite.new();
-
-
-
-
-
-
-
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("invited_at") && d["invited_at"] != null:
+		result.invited_at = d["invited_at"];
+	if d.has("status") && d["status"] != null:
+		result.status = d["status"];
+	if d.has("is_video_enabled") && d["is_video_enabled"] != null:
+		result.is_video_enabled = d["is_video_enabled"];
+	if d.has("is_audio_enabled") && d["is_audio_enabled"] != null:
+		result.is_audio_enabled = d["is_audio_enabled"];
+	if d.has("is_video_available") && d["is_video_available"] != null:
+		result.is_video_available = d["is_video_available"];
+	if d.has("is_audio_available") && d["is_audio_available"] != null:
+		result.is_audio_available = d["is_audio_available"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
+	d["user_id"] = user_id;
+	d["invited_at"] = invited_at;
+	d["status"] = status;
+	d["is_video_enabled"] = is_video_enabled;
+	d["is_audio_enabled"] = is_audio_enabled;
+	d["is_video_available"] = is_video_available;
+	d["is_audio_available"] = is_audio_available;
 	return d;
 
 func to_json() -> String:

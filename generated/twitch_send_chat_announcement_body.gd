@@ -10,14 +10,16 @@ var color: String;
 
 static func from_json(d: Dictionary) -> TwitchSendChatAnnouncementBody:
 	var result = TwitchSendChatAnnouncementBody.new();
-
-
+	if d.has("message") && d["message"] != null:
+		result.message = d["message"];
+	if d.has("color") && d["color"] != null:
+		result.color = d["color"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
+	d["message"] = message;
+	d["color"] = color;
 	return d;
 
 func to_json() -> String:

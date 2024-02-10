@@ -12,20 +12,24 @@ var total: int;
 
 static func from_json(d: Dictionary) -> TwitchGetBitsLeaderboardResponse:
 	var result = TwitchGetBitsLeaderboardResponse.new();
-
-
-
+	if d.has("data") && d["data"] != null:
+		for value in d["data"]:
+			result.data.append(TwitchBitsLeaderboard.from_json(value));
+	if d.has("date_range") && d["date_range"] != null:
+		result.date_range = GetBitsLeaderboardResponseDateRange.from_json(d["date_range"]);
+	if d.has("total") && d["total"] != null:
+		result.total = d["total"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-	d["date_range"] = date_range.to_dict();
-{else}
-	d["date_range"] = date_range;
-
-
+	d["data"] = [];
+	if data != null:
+		for value in data:
+			d["data"].append(value.to_dict());
+	if date_range != null:
+		d["date_range"] = date_range.to_dict();
+	d["total"] = total;
 	return d;
 
 func to_json() -> String:

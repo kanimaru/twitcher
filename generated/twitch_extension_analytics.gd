@@ -14,22 +14,23 @@ var date_range: ExtensionAnalyticsDateRange;
 
 static func from_json(d: Dictionary) -> TwitchExtensionAnalytics:
 	var result = TwitchExtensionAnalytics.new();
-
-
-
-
+	if d.has("extension_id") && d["extension_id"] != null:
+		result.extension_id = d["extension_id"];
+	if d.has("URL") && d["URL"] != null:
+		result.URL = d["URL"];
+	if d.has("type") && d["type"] != null:
+		result.type = d["type"];
+	if d.has("date_range") && d["date_range"] != null:
+		result.date_range = ExtensionAnalyticsDateRange.from_json(d["date_range"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-	d["date_range"] = date_range.to_dict();
-{else}
-	d["date_range"] = date_range;
-
+	d["extension_id"] = extension_id;
+	d["URL"] = URL;
+	d["type"] = type;
+	if date_range != null:
+		d["date_range"] = date_range.to_dict();
 	return d;
 
 func to_json() -> String:

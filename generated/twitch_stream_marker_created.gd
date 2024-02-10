@@ -14,18 +14,22 @@ var description: String;
 
 static func from_json(d: Dictionary) -> TwitchStreamMarkerCreated:
 	var result = TwitchStreamMarkerCreated.new();
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("created_at") && d["created_at"] != null:
+		result.created_at = d["created_at"];
+	if d.has("position_seconds") && d["position_seconds"] != null:
+		result.position_seconds = d["position_seconds"];
+	if d.has("description") && d["description"] != null:
+		result.description = d["description"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
+	d["id"] = id;
+	d["created_at"] = created_at;
+	d["position_seconds"] = position_seconds;
+	d["description"] = description;
 	return d;
 
 func to_json() -> String:

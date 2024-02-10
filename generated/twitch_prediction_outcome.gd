@@ -18,32 +18,32 @@ var color: String;
 
 static func from_json(d: Dictionary) -> TwitchPredictionOutcome:
 	var result = TwitchPredictionOutcome.new();
-
-
-
-
-
-	for value in d["top_predictors"]:
-		result.top_predictors.append(value);
-{elif property.is_typed_array}
-	for value in d["top_predictors"]:
-		result.top_predictors.append(.from_json(value));
-{elif property.is_sub_class}
-	result.top_predictors = Array.from_json(d["top_predictors"]);
-{else}
-	result.top_predictors = d["top_predictors"];
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("users") && d["users"] != null:
+		result.users = d["users"];
+	if d.has("channel_points") && d["channel_points"] != null:
+		result.channel_points = d["channel_points"];
+	if d.has("top_predictors") && d["top_predictors"] != null:
+		for value in d["top_predictors"]:
+			result.top_predictors.append(value);
+	if d.has("color") && d["color"] != null:
+		result.color = d["color"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
+	d["id"] = id;
+	d["title"] = title;
+	d["users"] = users;
+	d["channel_points"] = channel_points;
+	d["top_predictors"] = [];
+	if top_predictors != null:
+		for value in top_predictors:
+			d["top_predictors"].append(value);
+	d["color"] = color;
 	return d;
 
 func to_json() -> String:

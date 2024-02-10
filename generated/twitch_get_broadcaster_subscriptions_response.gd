@@ -14,22 +14,27 @@ var total: int;
 
 static func from_json(d: Dictionary) -> TwitchGetBroadcasterSubscriptionsResponse:
 	var result = TwitchGetBroadcasterSubscriptionsResponse.new();
-
-
-
-
+	if d.has("data") && d["data"] != null:
+		for value in d["data"]:
+			result.data.append(TwitchBroadcasterSubscription.from_json(value));
+	if d.has("pagination") && d["pagination"] != null:
+		result.pagination = GetBroadcasterSubscriptionsResponsePagination.from_json(d["pagination"]);
+	if d.has("points") && d["points"] != null:
+		result.points = d["points"];
+	if d.has("total") && d["total"] != null:
+		result.total = d["total"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-	d["pagination"] = pagination.to_dict();
-{else}
-	d["pagination"] = pagination;
-
-
-
+	d["data"] = [];
+	if data != null:
+		for value in data:
+			d["data"].append(value.to_dict());
+	if pagination != null:
+		d["pagination"] = pagination.to_dict();
+	d["points"] = points;
+	d["total"] = total;
 	return d;
 
 func to_json() -> String:

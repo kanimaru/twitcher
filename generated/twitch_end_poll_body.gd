@@ -12,16 +12,19 @@ var status: String;
 
 static func from_json(d: Dictionary) -> TwitchEndPollBody:
 	var result = TwitchEndPollBody.new();
-
-
-
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("status") && d["status"] != null:
+		result.status = d["status"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
+	d["broadcaster_id"] = broadcaster_id;
+	d["id"] = id;
+	d["status"] = status;
 	return d;
 
 func to_json() -> String:

@@ -34,48 +34,56 @@ var ended_at: Variant;
 
 static func from_json(d: Dictionary) -> TwitchPoll:
 	var result = TwitchPoll.new();
-
-
-
-
-
-
-	for value in d["choices"]:
-		result.choices.append(value);
-{elif property.is_typed_array}
-	for value in d["choices"]:
-		result.choices.append(.from_json(value));
-{elif property.is_sub_class}
-	result.choices = Array.from_json(d["choices"]);
-{else}
-	result.choices = d["choices"];
-
-
-
-
-
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
+		result.broadcaster_name = d["broadcaster_name"];
+	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
+		result.broadcaster_login = d["broadcaster_login"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("choices") && d["choices"] != null:
+		for value in d["choices"]:
+			result.choices.append(value);
+	if d.has("bits_voting_enabled") && d["bits_voting_enabled"] != null:
+		result.bits_voting_enabled = d["bits_voting_enabled"];
+	if d.has("bits_per_vote") && d["bits_per_vote"] != null:
+		result.bits_per_vote = d["bits_per_vote"];
+	if d.has("channel_points_voting_enabled") && d["channel_points_voting_enabled"] != null:
+		result.channel_points_voting_enabled = d["channel_points_voting_enabled"];
+	if d.has("channel_points_per_vote") && d["channel_points_per_vote"] != null:
+		result.channel_points_per_vote = d["channel_points_per_vote"];
+	if d.has("status") && d["status"] != null:
+		result.status = d["status"];
+	if d.has("duration") && d["duration"] != null:
+		result.duration = d["duration"];
+	if d.has("started_at") && d["started_at"] != null:
+		result.started_at = d["started_at"];
+	if d.has("ended_at") && d["ended_at"] != null:
+		result.ended_at = d["ended_at"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	d["id"] = id;
+	d["broadcaster_id"] = broadcaster_id;
+	d["broadcaster_name"] = broadcaster_name;
+	d["broadcaster_login"] = broadcaster_login;
+	d["title"] = title;
+	d["choices"] = [];
+	if choices != null:
+		for value in choices:
+			d["choices"].append(value);
+	d["bits_voting_enabled"] = bits_voting_enabled;
+	d["bits_per_vote"] = bits_per_vote;
+	d["channel_points_voting_enabled"] = channel_points_voting_enabled;
+	d["channel_points_per_vote"] = channel_points_per_vote;
+	d["status"] = status;
+	d["duration"] = duration;
+	d["started_at"] = started_at;
+	d["ended_at"] = ended_at;
 	return d;
 
 func to_json() -> String:

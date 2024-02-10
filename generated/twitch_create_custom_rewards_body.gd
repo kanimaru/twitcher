@@ -32,36 +32,49 @@ var should_redemptions_skip_request_queue: bool;
 
 static func from_json(d: Dictionary) -> TwitchCreateCustomRewardsBody:
 	var result = TwitchCreateCustomRewardsBody.new();
-
-
-
-
-
-
-
-
-
-
-
-
-
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("cost") && d["cost"] != null:
+		result.cost = d["cost"];
+	if d.has("prompt") && d["prompt"] != null:
+		result.prompt = d["prompt"];
+	if d.has("is_enabled") && d["is_enabled"] != null:
+		result.is_enabled = d["is_enabled"];
+	if d.has("background_color") && d["background_color"] != null:
+		result.background_color = d["background_color"];
+	if d.has("is_user_input_required") && d["is_user_input_required"] != null:
+		result.is_user_input_required = d["is_user_input_required"];
+	if d.has("is_max_per_stream_enabled") && d["is_max_per_stream_enabled"] != null:
+		result.is_max_per_stream_enabled = d["is_max_per_stream_enabled"];
+	if d.has("max_per_stream") && d["max_per_stream"] != null:
+		result.max_per_stream = d["max_per_stream"];
+	if d.has("is_max_per_user_per_stream_enabled") && d["is_max_per_user_per_stream_enabled"] != null:
+		result.is_max_per_user_per_stream_enabled = d["is_max_per_user_per_stream_enabled"];
+	if d.has("max_per_user_per_stream") && d["max_per_user_per_stream"] != null:
+		result.max_per_user_per_stream = d["max_per_user_per_stream"];
+	if d.has("is_global_cooldown_enabled") && d["is_global_cooldown_enabled"] != null:
+		result.is_global_cooldown_enabled = d["is_global_cooldown_enabled"];
+	if d.has("global_cooldown_seconds") && d["global_cooldown_seconds"] != null:
+		result.global_cooldown_seconds = d["global_cooldown_seconds"];
+	if d.has("should_redemptions_skip_request_queue") && d["should_redemptions_skip_request_queue"] != null:
+		result.should_redemptions_skip_request_queue = d["should_redemptions_skip_request_queue"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-
-
-
-
+	d["title"] = title;
+	d["cost"] = cost;
+	d["prompt"] = prompt;
+	d["is_enabled"] = is_enabled;
+	d["background_color"] = background_color;
+	d["is_user_input_required"] = is_user_input_required;
+	d["is_max_per_stream_enabled"] = is_max_per_stream_enabled;
+	d["max_per_stream"] = max_per_stream;
+	d["is_max_per_user_per_stream_enabled"] = is_max_per_user_per_stream_enabled;
+	d["max_per_user_per_stream"] = max_per_user_per_stream;
+	d["is_global_cooldown_enabled"] = is_global_cooldown_enabled;
+	d["global_cooldown_seconds"] = global_cooldown_seconds;
+	d["should_redemptions_skip_request_queue"] = should_redemptions_skip_request_queue;
 	return d;
 
 func to_json() -> String:

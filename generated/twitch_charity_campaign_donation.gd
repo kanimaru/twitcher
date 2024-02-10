@@ -18,26 +18,29 @@ var amount: CharityCampaignDonationAmount;
 
 static func from_json(d: Dictionary) -> TwitchCharityCampaignDonation:
 	var result = TwitchCharityCampaignDonation.new();
-
-
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("campaign_id") && d["campaign_id"] != null:
+		result.campaign_id = d["campaign_id"];
+	if d.has("user_id") && d["user_id"] != null:
+		result.user_id = d["user_id"];
+	if d.has("user_login") && d["user_login"] != null:
+		result.user_login = d["user_login"];
+	if d.has("user_name") && d["user_name"] != null:
+		result.user_name = d["user_name"];
+	if d.has("amount") && d["amount"] != null:
+		result.amount = CharityCampaignDonationAmount.from_json(d["amount"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-	d["amount"] = amount.to_dict();
-{else}
-	d["amount"] = amount;
-
+	d["id"] = id;
+	d["campaign_id"] = campaign_id;
+	d["user_id"] = user_id;
+	d["user_login"] = user_login;
+	d["user_name"] = user_name;
+	if amount != null:
+		d["amount"] = amount.to_dict();
 	return d;
 
 func to_json() -> String:

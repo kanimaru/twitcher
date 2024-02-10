@@ -20,44 +20,39 @@ var is_branded_content: bool;
 
 static func from_json(d: Dictionary) -> TwitchModifyChannelInformationBody:
 	var result = TwitchModifyChannelInformationBody.new();
-
-
-
-
-
-	for value in d["tags"]:
-		result.tags.append(value);
-{elif property.is_typed_array}
-	for value in d["tags"]:
-		result.tags.append(.from_json(value));
-{elif property.is_sub_class}
-	result.tags = Array[String].from_json(d["tags"]);
-{else}
-	result.tags = d["tags"];
-
-
-	for value in d["content_classification_labels"]:
-		result.content_classification_labels.append(value);
-{elif property.is_typed_array}
-	for value in d["content_classification_labels"]:
-		result.content_classification_labels.append(.from_json(value));
-{elif property.is_sub_class}
-	result.content_classification_labels = Array.from_json(d["content_classification_labels"]);
-{else}
-	result.content_classification_labels = d["content_classification_labels"];
-
-
+	if d.has("game_id") && d["game_id"] != null:
+		result.game_id = d["game_id"];
+	if d.has("broadcaster_language") && d["broadcaster_language"] != null:
+		result.broadcaster_language = d["broadcaster_language"];
+	if d.has("title") && d["title"] != null:
+		result.title = d["title"];
+	if d.has("delay") && d["delay"] != null:
+		result.delay = d["delay"];
+	if d.has("tags") && d["tags"] != null:
+		for value in d["tags"]:
+			result.tags.append(value);
+	if d.has("content_classification_labels") && d["content_classification_labels"] != null:
+		for value in d["content_classification_labels"]:
+			result.content_classification_labels.append(value);
+	if d.has("is_branded_content") && d["is_branded_content"] != null:
+		result.is_branded_content = d["is_branded_content"];
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
+	d["game_id"] = game_id;
+	d["broadcaster_language"] = broadcaster_language;
+	d["title"] = title;
+	d["delay"] = delay;
+	d["tags"] = [];
+	if tags != null:
+		for value in tags:
+			d["tags"].append(value);
+	d["content_classification_labels"] = [];
+	if content_classification_labels != null:
+		for value in content_classification_labels:
+			d["content_classification_labels"].append(value);
+	d["is_branded_content"] = is_branded_content;
 	return d;
 
 func to_json() -> String:

@@ -26,38 +26,42 @@ var target_amount: CharityCampaignTargetAmount;
 
 static func from_json(d: Dictionary) -> TwitchCharityCampaign:
 	var result = TwitchCharityCampaign.new();
-
-
-
-
-
-
-
-
-
-
+	if d.has("id") && d["id"] != null:
+		result.id = d["id"];
+	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+		result.broadcaster_id = d["broadcaster_id"];
+	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
+		result.broadcaster_login = d["broadcaster_login"];
+	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
+		result.broadcaster_name = d["broadcaster_name"];
+	if d.has("charity_name") && d["charity_name"] != null:
+		result.charity_name = d["charity_name"];
+	if d.has("charity_description") && d["charity_description"] != null:
+		result.charity_description = d["charity_description"];
+	if d.has("charity_logo") && d["charity_logo"] != null:
+		result.charity_logo = d["charity_logo"];
+	if d.has("charity_website") && d["charity_website"] != null:
+		result.charity_website = d["charity_website"];
+	if d.has("current_amount") && d["current_amount"] != null:
+		result.current_amount = CharityCampaignCurrentAmount.from_json(d["current_amount"]);
+	if d.has("target_amount") && d["target_amount"] != null:
+		result.target_amount = CharityCampaignTargetAmount.from_json(d["target_amount"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-
-
-
-
-
-
-
-
-
-	d["current_amount"] = current_amount.to_dict();
-{else}
-	d["current_amount"] = current_amount;
-
-
-	d["target_amount"] = target_amount.to_dict();
-{else}
-	d["target_amount"] = target_amount;
-
+	d["id"] = id;
+	d["broadcaster_id"] = broadcaster_id;
+	d["broadcaster_login"] = broadcaster_login;
+	d["broadcaster_name"] = broadcaster_name;
+	d["charity_name"] = charity_name;
+	d["charity_description"] = charity_description;
+	d["charity_logo"] = charity_logo;
+	d["charity_website"] = charity_website;
+	if current_amount != null:
+		d["current_amount"] = current_amount.to_dict();
+	if target_amount != null:
+		d["target_amount"] = target_amount.to_dict();
 	return d;
 
 func to_json() -> String:
