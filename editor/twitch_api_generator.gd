@@ -52,6 +52,7 @@ func _generate_repositories():
 			var header_code = "{}"
 			var responses = method_spec.get("responses", {})
 			var result_type = "BufferedHTTPClient.ResponseData"
+			var content_type = "";
 			http_method = http_method.to_upper()
 			if responses.has("200"):
 				var content =  responses["200"].get("content", {});
@@ -63,10 +64,24 @@ func _generate_repositories():
 				if content.has("text/calendar"):
 					result_type = "BufferedHTTPClient.ResponseData"
 
+				content_type = content.keys()[0];
+
 				# Try to resolve the component references
 				var ref = content.get("application/json", {}).get("schema", {}).get("$ref", "")
 				if ref != "":
 					result_type = _resolve_ref(ref);
+			elif responses.has("202"):
+				# Used for subscription for example that don't have a response but still have content-type parameters
+				var content =  responses["202"].get("content", {});
+				content_type = content.keys()[0];
+			elif responses.has("204"):
+				# Announcments for example need to have a content type try to get them with this case
+				if http_method == "POST":
+					if has_body:
+						# When it has a body, it uses JSON to send the body
+						content_type = "application/json"
+					else:
+						content_type = "application/x-www-form-urlencoded"
 
 			var method_data = {
 				"summary": summary,
@@ -75,6 +90,7 @@ func _generate_repositories():
 				"name": method_name,
 				"parameters": parameters_code,
 				"result_type": result_type,
+				"content_type": content_type,
 				"request_path": "/helix" + path + "?",
 				"method": http_method,
 				"header": header_code,

@@ -288,7 +288,7 @@ static func setup() -> void:
 	_log_enabled = Property.new("twitch/general/logging/enabled").as_bit_field(ALL_LOGGERS);
 
 	# Websocket
-	_use_test_server = Property.new("twitch/websocket/eventsub/use_test_server", "false").as_bool("Will try to connect to 'Twitch CLI' test server")
+	_use_test_server = Property.new("twitch/websocket/eventsub/use_test_server", false).as_bool("Will try to connect to 'Twitch CLI' test server")
 	_eventsub_test_server_url = Property.new("twitch/websocket/eventsub/test_server", "ws://127.0.0.1:8081/ws").as_str("In case the 'Twitch CLI' is used to test");
 	_eventsub_live_server_url = Property.new("twitch/websocket/eventsub/live_server", "wss://eventsub.wss.twitch.tv/ws").as_str();
 	_ignore_message_eventsub_in_seconds = Property.new("twitch/websocket/eventsub/ignore_messages_older_than_(in_seconds)", 600).as_num();

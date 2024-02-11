@@ -13,12 +13,13 @@ func _init(twitch_auth: TwitchAuth) -> void:
 	client = BufferedHTTPClient.new(TwitchSetting.api_host);
 	auth = twitch_auth;
 
-func request(path: String, method: int, body: Variant = "", content_type: String = "application/json", error_count: int = 0) -> BufferedHTTPClient.ResponseData:
+func request(path: String, method: int, body: Variant = "", content_type: String = "", error_count: int = 0) -> BufferedHTTPClient.ResponseData:
 	var header : Dictionary = {
 		"Authorization": "Bearer %s" % [await auth.get_token()],
-		"Client-ID": TwitchSetting.client_id,
-		"Content-Type": content_type
+		"Client-ID": TwitchSetting.client_id
 	};
+	if content_type != "":
+		header["Content-Type"] = content_type;
 
 	var request_body: String = "";
 	if body is Object && body.has_method("to_json"):

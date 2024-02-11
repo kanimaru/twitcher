@@ -51,13 +51,13 @@ func is_ready() -> void:
 #region User
 func get_user_by_id(user_id: String) -> TwitchUser:
 	if user_id == null || user_id == "": return null;
-	var user_data := await api.get_users([], [user_id]);
-	if user_data['data'].is_empty(): return null;
-	return TwitchUser.from_json(user_data['data'][0]);
+	var user_data : TwitchGetUsersResponse = await api.get_users([user_id], []);
+	if user_data.data.is_empty(): return null;
+	return user_data.data[0];
 
 func get_user(username: String) -> TwitchUser:
-	var user_data := await api.get_users([username], []);
-	return TwitchUser.from_json(user_data['data'][0]);
+	var user_data : TwitchGetUsersResponse = await api.get_users([], [username]);
+	return user_data.data[0];
 
 func load_profile_image(user: TwitchUser) -> ImageTexture:
 	if user == null: return TwitchSetting.fallback_profile;

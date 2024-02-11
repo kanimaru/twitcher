@@ -36,7 +36,8 @@ class Session extends RefCounted:
 		id = d["id"];
 		status = d["status"];
 		keepalive_timeout_seconds = d["keepalive_timeout_seconds"];
-		reconnect_url = d["reconnect_url"];
+		if d["reconnect_url"] != null:
+			reconnect_url = d["reconnect_url"];
 		connected_at = d["connected_at"];
 
 ## Called as soon the websocket got a connections
@@ -90,7 +91,7 @@ func wait_for_connection():
 ## Subscribes to all events that are defined in the Settings.
 ## Eventsub should be connected at this point otherwise this method does nothing.
 func subscribe_all():
-	if session != null: await session_id_received;
+	if session == null: await session_id_received;
 	var subscriptions: Dictionary = TwitchSetting.subscriptions;
 	for subscription: TwitchSubscriptions.Subscription in subscriptions:
 		var condition: Dictionary = subscriptions[subscription];

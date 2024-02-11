@@ -22,7 +22,10 @@ class Payload extends RefCounted:
 	var event: Dictionary;
 
 	func _init(d: Dictionary) -> void:
-		subscription = Subscription.new(d.get(subscription, {}))
+		var sub = d.get("subscription");
+		if sub != null:
+			subscription = Subscription.new(sub)
+
 		event = d["event"]
 
 ## An object that contains information about your subscription.
