@@ -63,7 +63,7 @@ func login() -> void:
 		# aka: /#access_token=.... that is not transfered to the backend for a good reason.
 		# That means you need to transfere it from the frontend to the backend yourself.
 		TwitchSetting.FLOW_IMPLICIT:
-			print("Twitch Auth: Implicit Flow is currently disabled. Normaly not recommended.")
+			print("Twitch Auth: Implicit Flow is currently disabled. Implicit flow is not recommended use Authorization Code Flow.")
 		#	await _start_login_process("token");
 	login_in_process = false;
 

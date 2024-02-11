@@ -8,7 +8,7 @@ var id: String;
 ## The name of the emote. This is the name that viewers type in the chat window to get the emote to appear.
 var name: String;
 ## The image URLs for the emote. These image URLs always provide a static, non-animated emote image with a light background.      **NOTE:** You should use the templated URL in the `template` field to fetch the image instead of using these URLs.
-var images: EmoteImages;
+var images: Images;
 ## The type of emote. The possible values are:       * bitstier — A Bits tier emote. * follower — A follower emote. * subscriptions — A subscriber emote.
 var emote_type: String;
 ## An ID that identifies the emote set that the emote belongs to.
@@ -29,7 +29,7 @@ static func from_json(d: Dictionary) -> TwitchEmote:
 	if d.has("name") && d["name"] != null:
 		result.name = d["name"];
 	if d.has("images") && d["images"] != null:
-		result.images = EmoteImages.from_json(d["images"]);
+		result.images = Images.from_json(d["images"]);
 	if d.has("emote_type") && d["emote_type"] != null:
 		result.emote_type = d["emote_type"];
 	if d.has("emote_set_id") && d["emote_set_id"] != null:
@@ -74,7 +74,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## The image URLs for the emote. These image URLs always provide a static, non-animated emote image with a light background.      **NOTE:** You should use the templated URL in the `template` field to fetch the image instead of using these URLs.
-class EmoteImages extends RefCounted:
+class Images extends RefCounted:
 	## A URL to the small version (28px x 28px) of the emote.
 	var url_1x: String;
 	## A URL to the medium version (56px x 56px) of the emote.
@@ -82,8 +82,8 @@ class EmoteImages extends RefCounted:
 	## A URL to the large version (112px x 112px) of the emote.
 	var url_4x: String;
 
-	static func from_json(d: Dictionary) -> EmoteImages:
-		var result = EmoteImages.new();
+	static func from_json(d: Dictionary) -> Images:
+		var result = Images.new();
 		result.url_1x = d["url_1x"];
 		result.url_2x = d["url_2x"];
 		result.url_4x = d["url_4x"];

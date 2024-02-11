@@ -227,7 +227,7 @@ static func setup() -> void:
 
 	# Auth
 	_broadcaster_id = Property.new("twitch/auth/broadcaster_id").as_str("Broadcaster ID of youself").basic();
-	_authorization_flow = Property.new("twitch/auth/authorization_flow", "AuthorizationCodeGrantFlow").as_select([FLOW_IMPLICIT, FLOW_CLIENT_CREDENTIALS, FLOW_AUTHORIZATION_CODE], false).basic();
+	_authorization_flow = Property.new("twitch/auth/authorization_flow", "AuthorizationCodeGrantFlow").as_select([FLOW_IMPLICIT, FLOW_CLIENT_CREDENTIALS, FLOW_AUTHORIZATION_CODE], false);
 	_client_id = Property.new("twitch/auth/client_id").as_str("Client ID you can find it in https://api.twitch.tv/").basic();
 	_client_secret = Property.new("twitch/auth/client_secret").as_password("Client Secret you can find it in https://api.twitch.tv/").basic();
 	_authorization_url = Property.new("twitch/auth/oauth2_authorize_url", "https://id.twitch.tv/oauth2/authorize").as_str("OAuth Auhtorization URL to get a bearer token from client credentials");
@@ -341,9 +341,9 @@ static func _setup_subscriptions():
 	for subscription in TwitchSubscriptions.get_all():
 		var subscription_properties = []
 		_subscriptions[subscription] = subscription_properties;
-		subscription_properties.append(Property.new("twitch/eventsub/%s/subscribed" % subscription.get_name(), false).as_bool());
+		subscription_properties.append(Property.new("twitch/eventsub/%s/subscribed" % subscription.get_name(), false).as_bool().basic());
 		for condition in subscription.conditions:
-			subscription_properties.append(Property.new("twitch/eventsub/%s/%s" % [subscription.get_name(), condition], "").as_str());
+			subscription_properties.append(Property.new("twitch/eventsub/%s/%s" % [subscription.get_name(), condition], "").as_str().basic());
 
 ## Return the subscribed subscriptions key = TwitchSubscriptions.Subscription, value = Dictionary with conditions (ready to use)
 static func get_subscriptions() -> Dictionary:

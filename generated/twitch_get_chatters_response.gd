@@ -6,7 +6,7 @@ class_name TwitchGetChattersResponse
 ## The list of users that are connected to the broadcaster’s chat room. The list is empty if no users are connected to the chat room.
 var data: Array[TwitchChatter];
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-var pagination: GetChattersResponsePagination;
+var pagination: Pagination;
 ## The total number of users that are connected to the broadcaster’s chat room. As you page through the list, the number of users may change as users join and leave the chat room.
 var total: int;
 
@@ -16,7 +16,7 @@ static func from_json(d: Dictionary) -> TwitchGetChattersResponse:
 		for value in d["data"]:
 			result.data.append(TwitchChatter.from_json(value));
 	if d.has("pagination") && d["pagination"] != null:
-		result.pagination = GetChattersResponsePagination.from_json(d["pagination"]);
+		result.pagination = Pagination.from_json(d["pagination"]);
 	if d.has("total") && d["total"] != null:
 		result.total = d["total"];
 	return result;
@@ -36,12 +36,12 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-class GetChattersResponsePagination extends RefCounted:
+class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
 	var cursor: String;
 
-	static func from_json(d: Dictionary) -> GetChattersResponsePagination:
-		var result = GetChattersResponsePagination.new();
+	static func from_json(d: Dictionary) -> Pagination:
+		var result = Pagination.new();
 		result.cursor = d["cursor"];
 		return result;
 

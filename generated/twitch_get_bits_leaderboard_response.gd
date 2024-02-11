@@ -6,7 +6,7 @@ class_name TwitchGetBitsLeaderboardResponse
 ## A list of leaderboard leaders. The leaders are returned in rank order by how much they’ve cheered. The array is empty if nobody has cheered bits.
 var data: Array[TwitchBitsLeaderboard];
 ## The reporting window’s start and end dates, in RFC3339 format. The dates are calculated by using the _started\_at_ and _period_ query parameters. If you don’t specify the _started\_at_ query parameter, the fields contain empty strings.
-var date_range: GetBitsLeaderboardResponseDateRange;
+var date_range: DateRange;
 ## The number of ranked users in `data`. This is the value in the _count_ query parameter or the total number of entries on the leaderboard, whichever is less.
 var total: int;
 
@@ -16,7 +16,7 @@ static func from_json(d: Dictionary) -> TwitchGetBitsLeaderboardResponse:
 		for value in d["data"]:
 			result.data.append(TwitchBitsLeaderboard.from_json(value));
 	if d.has("date_range") && d["date_range"] != null:
-		result.date_range = GetBitsLeaderboardResponseDateRange.from_json(d["date_range"]);
+		result.date_range = DateRange.from_json(d["date_range"]);
 	if d.has("total") && d["total"] != null:
 		result.total = d["total"];
 	return result;
@@ -36,14 +36,14 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## The reporting window’s start and end dates, in RFC3339 format. The dates are calculated by using the _started\_at_ and _period_ query parameters. If you don’t specify the _started\_at_ query parameter, the fields contain empty strings.
-class GetBitsLeaderboardResponseDateRange extends RefCounted:
+class DateRange extends RefCounted:
 	## The reporting window’s start date.
 	var started_at: Variant;
 	## The reporting window’s end date.
 	var ended_at: Variant;
 
-	static func from_json(d: Dictionary) -> GetBitsLeaderboardResponseDateRange:
-		var result = GetBitsLeaderboardResponseDateRange.new();
+	static func from_json(d: Dictionary) -> DateRange:
+		var result = DateRange.new();
 		result.started_at = d["started_at"];
 		result.ended_at = d["ended_at"];
 		return result;

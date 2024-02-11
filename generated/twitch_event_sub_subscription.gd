@@ -16,7 +16,7 @@ var condition: Dictionary;
 ## The date and time (in RFC3339 format) of when the subscription was created.
 var created_at: Variant;
 ## The transport details used to send the notifications.
-var transport: EventSubSubscriptionTransport;
+var transport: Transport;
 ## The amount that the subscription counts against your limit. [Learn More](https://dev.twitch.tv/docs/eventsub/manage-subscriptions/#subscription-limits)
 var cost: int;
 
@@ -35,7 +35,7 @@ static func from_json(d: Dictionary) -> TwitchEventSubSubscription:
 	if d.has("created_at") && d["created_at"] != null:
 		result.created_at = d["created_at"];
 	if d.has("transport") && d["transport"] != null:
-		result.transport = EventSubSubscriptionTransport.from_json(d["transport"]);
+		result.transport = Transport.from_json(d["transport"]);
 	if d.has("cost") && d["cost"] != null:
 		result.cost = d["cost"];
 	return result;
@@ -57,7 +57,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## The transport details used to send the notifications.
-class EventSubSubscriptionTransport extends RefCounted:
+class Transport extends RefCounted:
 	## The transport method. Possible values are:      * webhook * websocket
 	var method: String;
 	## The callback URL where the notifications are sent. Included only if `method` is set to **webhook**.
@@ -69,8 +69,8 @@ class EventSubSubscriptionTransport extends RefCounted:
 	## The UTC date and time that the WebSocket connection was lost. Included only if `method` is set to **websocket**.
 	var disconnected_at: Variant;
 
-	static func from_json(d: Dictionary) -> EventSubSubscriptionTransport:
-		var result = EventSubSubscriptionTransport.new();
+	static func from_json(d: Dictionary) -> Transport:
+		var result = Transport.new();
 		result.method = d["method"];
 		result.callback = d["callback"];
 		result.session_id = d["session_id"];

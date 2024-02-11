@@ -6,7 +6,7 @@ class_name TwitchGetConduitShardsResponse
 ## List of information about a conduit's shards.
 var data: Array;
 ## Contains information used to page through a list of results. The object is empty if there are no more pages left to page through.
-var pagination: GetConduitShardsResponsePagination;
+var pagination: Pagination;
 
 static func from_json(d: Dictionary) -> TwitchGetConduitShardsResponse:
 	var result = TwitchGetConduitShardsResponse.new();
@@ -14,7 +14,7 @@ static func from_json(d: Dictionary) -> TwitchGetConduitShardsResponse:
 		for value in d["data"]:
 			result.data.append(value);
 	if d.has("pagination") && d["pagination"] != null:
-		result.pagination = GetConduitShardsResponsePagination.from_json(d["pagination"]);
+		result.pagination = Pagination.from_json(d["pagination"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -31,12 +31,12 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## Contains information used to page through a list of results. The object is empty if there are no more pages left to page through.
-class GetConduitShardsResponsePagination extends RefCounted:
+class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Use the cursor to set the request’s after query parameter.
 	var cursor: String;
 
-	static func from_json(d: Dictionary) -> GetConduitShardsResponsePagination:
-		var result = GetConduitShardsResponsePagination.new();
+	static func from_json(d: Dictionary) -> Pagination:
+		var result = Pagination.new();
 		result.cursor = d["cursor"];
 		return result;
 

@@ -12,7 +12,7 @@ var total_cost: int;
 ## The maximum total cost that you're allowed to incur for all subscriptions that you create.
 var max_total_cost: int;
 ## An object that contains the cursor used to get the next page of subscriptions. The object is empty if there are no more pages to get. The number of subscriptions returned per page is undertermined.
-var pagination: GetEventSubSubscriptionsResponsePagination;
+var pagination: Pagination;
 
 static func from_json(d: Dictionary) -> TwitchGetEventSubSubscriptionsResponse:
 	var result = TwitchGetEventSubSubscriptionsResponse.new();
@@ -26,7 +26,7 @@ static func from_json(d: Dictionary) -> TwitchGetEventSubSubscriptionsResponse:
 	if d.has("max_total_cost") && d["max_total_cost"] != null:
 		result.max_total_cost = d["max_total_cost"];
 	if d.has("pagination") && d["pagination"] != null:
-		result.pagination = GetEventSubSubscriptionsResponsePagination.from_json(d["pagination"]);
+		result.pagination = Pagination.from_json(d["pagination"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -46,12 +46,12 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## An object that contains the cursor used to get the next page of subscriptions. The object is empty if there are no more pages to get. The number of subscriptions returned per page is undertermined.
-class GetEventSubSubscriptionsResponsePagination extends RefCounted:
+class Pagination extends RefCounted:
 	## The cursor value that you set the _after_ query parameter to.
 	var cursor: String;
 
-	static func from_json(d: Dictionary) -> GetEventSubSubscriptionsResponsePagination:
-		var result = GetEventSubSubscriptionsResponsePagination.new();
+	static func from_json(d: Dictionary) -> Pagination:
+		var result = Pagination.new();
 		result.cursor = d["cursor"];
 		return result;
 

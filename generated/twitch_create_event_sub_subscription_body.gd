@@ -10,7 +10,7 @@ var version: String;
 ## A JSON object that contains the parameter values that are specific to the specified subscription type. For the object’s required and optional fields, see the subscription type’s documentation.
 var condition: Dictionary;
 ## The transport details that you want Twitch to use when sending you notifications.
-var transport: CreateEventSubSubscriptionBodyTransport;
+var transport: Transport;
 
 static func from_json(d: Dictionary) -> TwitchCreateEventSubSubscriptionBody:
 	var result = TwitchCreateEventSubSubscriptionBody.new();
@@ -21,7 +21,7 @@ static func from_json(d: Dictionary) -> TwitchCreateEventSubSubscriptionBody:
 	if d.has("condition") && d["condition"] != null:
 		result.condition = d["condition"];
 	if d.has("transport") && d["transport"] != null:
-		result.transport = CreateEventSubSubscriptionBodyTransport.from_json(d["transport"]);
+		result.transport = Transport.from_json(d["transport"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -37,7 +37,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## The transport details that you want Twitch to use when sending you notifications.
-class CreateEventSubSubscriptionBodyTransport extends RefCounted:
+class Transport extends RefCounted:
 	## The transport method. Possible values are:      * webhook * websocket * conduit
 	var method: String;
 	## The callback URL where the notifications are sent. The URL must use the HTTPS protocol and port 443\. See [Processing an event](https://dev.twitch.tv/docs/eventsub/handling-webhook-events#processing-an-event). Specify this field only if `method` is set to **webhook**.  **NOTE**: Redirects are not followed.
@@ -49,8 +49,8 @@ class CreateEventSubSubscriptionBodyTransport extends RefCounted:
 	## An ID that identifies the conduit to send notifications to. When you create a conduit, the server returns the conduit ID. Specify this field only if `method` is set to **conduit**.
 	var conduit_id: String;
 
-	static func from_json(d: Dictionary) -> CreateEventSubSubscriptionBodyTransport:
-		var result = CreateEventSubSubscriptionBodyTransport.new();
+	static func from_json(d: Dictionary) -> Transport:
+		var result = Transport.new();
 		result.method = d["method"];
 		result.callback = d["callback"];
 		result.secret = d["secret"];

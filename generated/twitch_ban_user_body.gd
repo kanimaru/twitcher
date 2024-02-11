@@ -4,12 +4,12 @@ extends RefCounted
 class_name TwitchBanUserBody
 
 ## Identifies the user and type of ban.
-var data: BanUserBodyData;
+var data: Data;
 
 static func from_json(d: Dictionary) -> TwitchBanUserBody:
 	var result = TwitchBanUserBody.new();
 	if d.has("data") && d["data"] != null:
-		result.data = BanUserBodyData.from_json(d["data"]);
+		result.data = Data.from_json(d["data"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -22,7 +22,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## Identifies the user and type of ban.
-class BanUserBodyData extends RefCounted:
+class Data extends RefCounted:
 	## The ID of the user to ban or put in a timeout.
 	var user_id: String;
 	## To ban a user indefinitely, don’t include this field.      To put a user in a timeout, include this field and specify the timeout period, in seconds. The minimum timeout is 1 second and the maximum is 1,209,600 seconds (2 weeks).      To end a user’s timeout early, set this field to 1, or use the [Unban user](https://dev.twitch.tv/docs/api/reference#unban-user) endpoint.
@@ -30,8 +30,8 @@ class BanUserBodyData extends RefCounted:
 	## The reason the you’re banning the user or putting them in a timeout. The text is user defined and is limited to a maximum of 500 characters.
 	var reason: String;
 
-	static func from_json(d: Dictionary) -> BanUserBodyData:
-		var result = BanUserBodyData.new();
+	static func from_json(d: Dictionary) -> Data:
+		var result = Data.new();
 		result.user_id = d["user_id"];
 		result.duration = d["duration"];
 		result.reason = d["reason"];

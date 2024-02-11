@@ -6,7 +6,7 @@ class_name TwitchGetVideosResponse
 ## The list of published videos that match the filter criteria.
 var data: Array[TwitchVideo];
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-var pagination: GetVideosResponsePagination;
+var pagination: Pagination;
 
 static func from_json(d: Dictionary) -> TwitchGetVideosResponse:
 	var result = TwitchGetVideosResponse.new();
@@ -14,7 +14,7 @@ static func from_json(d: Dictionary) -> TwitchGetVideosResponse:
 		for value in d["data"]:
 			result.data.append(TwitchVideo.from_json(value));
 	if d.has("pagination") && d["pagination"] != null:
-		result.pagination = GetVideosResponsePagination.from_json(d["pagination"]);
+		result.pagination = Pagination.from_json(d["pagination"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -31,12 +31,12 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-class GetVideosResponsePagination extends RefCounted:
+class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Use the cursor to set the request's _after_ or _before_ query parameter depending on whether you're paging forwards or backwards through the results.
 	var cursor: String;
 
-	static func from_json(d: Dictionary) -> GetVideosResponsePagination:
-		var result = GetVideosResponsePagination.new();
+	static func from_json(d: Dictionary) -> Pagination:
+		var result = Pagination.new();
 		result.cursor = d["cursor"];
 		return result;
 

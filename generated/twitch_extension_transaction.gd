@@ -22,7 +22,7 @@ var user_name: String;
 ## The type of transaction. Possible values are:      * BITS\_IN\_EXTENSION
 var product_type: String;
 ## Contains details about the digital product.
-var product_data: ExtensionTransactionProductData;
+var product_data: ProductData;
 
 static func from_json(d: Dictionary) -> TwitchExtensionTransaction:
 	var result = TwitchExtensionTransaction.new();
@@ -45,7 +45,7 @@ static func from_json(d: Dictionary) -> TwitchExtensionTransaction:
 	if d.has("product_type") && d["product_type"] != null:
 		result.product_type = d["product_type"];
 	if d.has("product_data") && d["product_data"] != null:
-		result.product_data = ExtensionTransactionProductData.from_json(d["product_data"]);
+		result.product_data = ProductData.from_json(d["product_data"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -67,7 +67,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## Contains details about the digital product.
-class ExtensionTransactionProductData extends RefCounted:
+class ProductData extends RefCounted:
 	## An ID that identifies the digital product.
 	var sku: String;
 	## Set to `twitch.ext.` \+ `<the extension's ID>`.
@@ -83,8 +83,8 @@ class ExtensionTransactionProductData extends RefCounted:
 	## A Boolean value that determines whether the data was broadcast to all instances of the extension. Is **true** if the data was broadcast to all instances.
 	var broadcast: bool;
 
-	static func from_json(d: Dictionary) -> ExtensionTransactionProductData:
-		var result = ExtensionTransactionProductData.new();
+	static func from_json(d: Dictionary) -> ProductData:
+		var result = ProductData.new();
 		result.sku = d["sku"];
 		result.domain = d["domain"];
 		result.cost = d["cost"];

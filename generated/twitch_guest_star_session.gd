@@ -22,9 +22,9 @@ var volume: int;
 ## Timestamp when this guest was assigned a slot in the session.
 var assigned_at: Variant;
 ## Information about the guest’s audio settings
-var audio_settings: GuestStarSessionAudioSettings;
+var audio_settings: AudioSettings;
 ## Information about the guest’s video settings
-var video_settings: GuestStarSessionVideoSettings;
+var video_settings: VideoSettings;
 
 static func from_json(d: Dictionary) -> TwitchGuestStarSession:
 	var result = TwitchGuestStarSession.new();
@@ -47,9 +47,9 @@ static func from_json(d: Dictionary) -> TwitchGuestStarSession:
 	if d.has("assigned_at") && d["assigned_at"] != null:
 		result.assigned_at = d["assigned_at"];
 	if d.has("audio_settings") && d["audio_settings"] != null:
-		result.audio_settings = GuestStarSessionAudioSettings.from_json(d["audio_settings"]);
+		result.audio_settings = AudioSettings.from_json(d["audio_settings"]);
 	if d.has("video_settings") && d["video_settings"] != null:
-		result.video_settings = GuestStarSessionVideoSettings.from_json(d["video_settings"]);
+		result.video_settings = VideoSettings.from_json(d["video_settings"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -73,7 +73,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## Information about the guest’s audio settings
-class GuestStarSessionAudioSettings extends RefCounted:
+class AudioSettings extends RefCounted:
 	## Flag determining whether the host is allowing the guest’s audio to be seen or heard within the session.
 	var is_host_enabled: bool;
 	## Flag determining whether the guest is allowing their audio to be transmitted to the session.
@@ -81,8 +81,8 @@ class GuestStarSessionAudioSettings extends RefCounted:
 	## Flag determining whether the guest has an appropriate audio device available to be transmitted to the session.
 	var is_available: bool;
 
-	static func from_json(d: Dictionary) -> GuestStarSessionAudioSettings:
-		var result = GuestStarSessionAudioSettings.new();
+	static func from_json(d: Dictionary) -> AudioSettings:
+		var result = AudioSettings.new();
 		result.is_host_enabled = d["is_host_enabled"];
 		result.is_guest_enabled = d["is_guest_enabled"];
 		result.is_available = d["is_available"];
@@ -99,7 +99,7 @@ class GuestStarSessionAudioSettings extends RefCounted:
 		return d;
 
 ## Information about the guest’s video settings
-class GuestStarSessionVideoSettings extends RefCounted:
+class VideoSettings extends RefCounted:
 	## Flag determining whether the host is allowing the guest’s video to be seen or heard within the session.
 	var is_host_enabled: bool;
 	## Flag determining whether the guest is allowing their video to be transmitted to the session.
@@ -107,8 +107,8 @@ class GuestStarSessionVideoSettings extends RefCounted:
 	## Flag determining whether the guest has an appropriate video device available to be transmitted to the session.
 	var is_available: bool;
 
-	static func from_json(d: Dictionary) -> GuestStarSessionVideoSettings:
-		var result = GuestStarSessionVideoSettings.new();
+	static func from_json(d: Dictionary) -> VideoSettings:
+		var result = VideoSettings.new();
 		result.is_host_enabled = d["is_host_enabled"];
 		result.is_guest_enabled = d["is_guest_enabled"];
 		result.is_available = d["is_available"];

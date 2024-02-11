@@ -6,7 +6,7 @@ class_name TwitchUpdateExtensionBitsProductBody
 ## The product's SKU. The SKU must be unique within an extension. The product's SKU cannot be changed. The SKU may contain only alphanumeric characters, dashes (-), underscores (\_), and periods (.) and is limited to a maximum of 255 characters. No spaces.
 var sku: String;
 ## An object that contains the product's cost information.
-var cost: UpdateExtensionBitsProductBodyCost;
+var cost: Cost;
 ## The product's name as displayed in the extension. The maximum length is 255 characters.
 var display_name: String;
 ## A Boolean value that indicates whether the product is in development. Set to **true** if the product is in development and not available for public use. The default is **false**.
@@ -21,7 +21,7 @@ static func from_json(d: Dictionary) -> TwitchUpdateExtensionBitsProductBody:
 	if d.has("sku") && d["sku"] != null:
 		result.sku = d["sku"];
 	if d.has("cost") && d["cost"] != null:
-		result.cost = UpdateExtensionBitsProductBodyCost.from_json(d["cost"]);
+		result.cost = Cost.from_json(d["cost"]);
 	if d.has("display_name") && d["display_name"] != null:
 		result.display_name = d["display_name"];
 	if d.has("in_development") && d["in_development"] != null:
@@ -47,14 +47,14 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## An object that contains the product's cost information.
-class UpdateExtensionBitsProductBodyCost extends RefCounted:
+class Cost extends RefCounted:
 	## The product's price.
 	var amount: int;
 	## The type of currency. Possible values are:      * bits — The minimum price is 1 and the maximum is 10000.
 	var type: String;
 
-	static func from_json(d: Dictionary) -> UpdateExtensionBitsProductBodyCost:
-		var result = UpdateExtensionBitsProductBodyCost.new();
+	static func from_json(d: Dictionary) -> Cost:
+		var result = Cost.new();
 		result.amount = d["amount"];
 		result.type = d["type"];
 		return result;

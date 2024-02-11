@@ -6,7 +6,7 @@ class_name TwitchGetBannedUsersResponse
 ## The list of users that were banned or put in a timeout.
 var data: Array[TwitchBannedUser];
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-var pagination: GetBannedUsersResponsePagination;
+var pagination: Pagination;
 
 static func from_json(d: Dictionary) -> TwitchGetBannedUsersResponse:
 	var result = TwitchGetBannedUsersResponse.new();
@@ -14,7 +14,7 @@ static func from_json(d: Dictionary) -> TwitchGetBannedUsersResponse:
 		for value in d["data"]:
 			result.data.append(TwitchBannedUser.from_json(value));
 	if d.has("pagination") && d["pagination"] != null:
-		result.pagination = GetBannedUsersResponsePagination.from_json(d["pagination"]);
+		result.pagination = Pagination.from_json(d["pagination"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -31,12 +31,12 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-class GetBannedUsersResponsePagination extends RefCounted:
+class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
 	var cursor: String;
 
-	static func from_json(d: Dictionary) -> GetBannedUsersResponsePagination:
-		var result = GetBannedUsersResponsePagination.new();
+	static func from_json(d: Dictionary) -> Pagination:
+		var result = Pagination.new();
 		result.cursor = d["cursor"];
 		return result;
 

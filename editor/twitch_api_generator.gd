@@ -259,7 +259,7 @@ func _get_sub_classes(schema_name: String, parent_property_name:String, properti
 			"description": description,
 		})
 
-	var cls_name = schema_name + parent_property_name.capitalize().replace(" ", "");
+	var cls_name = parent_property_name.capitalize().replace(" ", "");
 	var data = {
 		"class_name": cls_name,
 		"class_description": class_description,

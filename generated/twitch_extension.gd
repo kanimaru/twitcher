@@ -44,7 +44,7 @@ var version: String;
 ## A brief description displayed on the channel to explain how the extension works.
 var viewer_summary: String;
 ## Describes all views-related information such as how the extension is displayed on mobile devices.
-var views: ExtensionViews;
+var views: Views;
 ## Allowlisted configuration URLs for displaying the extension (the allowlist is configured on Twitch’s [developer site](https://dev.twitch.tv/console/extensions) under the **Extensions** \-> **Extension** \-> **Version** \-> **Capabilities**).
 var allowlisted_config_urls: Array[String];
 ## Allowlisted panel URLs for displaying the extension (the allowlist is configured on Twitch’s [developer site](https://dev.twitch.tv/console/extensions) under the **Extensions** \-> **Extension** \-> **Version** \-> **Capabilities**).
@@ -94,7 +94,7 @@ static func from_json(d: Dictionary) -> TwitchExtension:
 	if d.has("viewer_summary") && d["viewer_summary"] != null:
 		result.viewer_summary = d["viewer_summary"];
 	if d.has("views") && d["views"] != null:
-		result.views = ExtensionViews.from_json(d["views"]);
+		result.views = Views.from_json(d["views"]);
 	if d.has("allowlisted_config_urls") && d["allowlisted_config_urls"] != null:
 		for value in d["allowlisted_config_urls"]:
 			result.allowlisted_config_urls.append(value);
@@ -144,7 +144,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## Describes all views-related information such as how the extension is displayed on mobile devices.
-class ExtensionViews extends RefCounted:
+class Views extends RefCounted:
 	## Describes how the extension is displayed on mobile devices.
 	var mobile: Dictionary;
 	## Describes how the extension is rendered if the extension may be activated as a panel extension.
@@ -156,8 +156,8 @@ class ExtensionViews extends RefCounted:
 	## Describes the view that is shown to broadcasters while they are configuring your extension within the Extension Manager.
 	var config: Dictionary;
 
-	static func from_json(d: Dictionary) -> ExtensionViews:
-		var result = ExtensionViews.new();
+	static func from_json(d: Dictionary) -> Views:
+		var result = Views.new();
 		result.mobile = d["mobile"];
 		result.panel = d["panel"];
 		result.video_overlay = d["video_overlay"];

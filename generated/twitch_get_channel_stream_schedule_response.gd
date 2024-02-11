@@ -4,12 +4,12 @@ extends RefCounted
 class_name TwitchGetChannelStreamScheduleResponse
 
 ## The broadcaster’s streaming schedule.
-var data: GetChannelStreamScheduleResponseData;
+var data: Data;
 
 static func from_json(d: Dictionary) -> TwitchGetChannelStreamScheduleResponse:
 	var result = TwitchGetChannelStreamScheduleResponse.new();
 	if d.has("data") && d["data"] != null:
-		result.data = GetChannelStreamScheduleResponseData.from_json(d["data"]);
+		result.data = Data.from_json(d["data"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -22,7 +22,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## The broadcaster’s streaming schedule.
-class GetChannelStreamScheduleResponseData extends RefCounted:
+class Data extends RefCounted:
 	## The list of broadcasts in the broadcaster’s streaming schedule.
 	var segments: Array[TwitchChannelStreamScheduleSegment];
 	## The ID of the broadcaster that owns the broadcast schedule.
@@ -36,8 +36,8 @@ class GetChannelStreamScheduleResponseData extends RefCounted:
 	## The information used to page through a list of results. The object is empty if there are no more pages left to page through. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
 	var pagination: Dictionary;
 
-	static func from_json(d: Dictionary) -> GetChannelStreamScheduleResponseData:
-		var result = GetChannelStreamScheduleResponseData.new();
+	static func from_json(d: Dictionary) -> Data:
+		var result = Data.new();
 		result.segments = d["segments"];
 		result.broadcaster_id = d["broadcaster_id"];
 		result.broadcaster_name = d["broadcaster_name"];

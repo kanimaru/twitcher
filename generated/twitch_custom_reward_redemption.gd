@@ -18,7 +18,7 @@ var user_name: String;
 ## The user’s login name.
 var user_login: String;
 ## An object that describes the reward that the user redeemed.
-var reward: CustomRewardRedemptionReward;
+var reward: Reward;
 ## The text that the user entered at the prompt when they redeemed the reward; otherwise, an empty string if user input was not required.
 var user_input: String;
 ## The state of the redemption. Possible values are:      * CANCELED * FULFILLED * UNFULFILLED
@@ -43,7 +43,7 @@ static func from_json(d: Dictionary) -> TwitchCustomRewardRedemption:
 	if d.has("user_login") && d["user_login"] != null:
 		result.user_login = d["user_login"];
 	if d.has("reward") && d["reward"] != null:
-		result.reward = CustomRewardRedemptionReward.from_json(d["reward"]);
+		result.reward = Reward.from_json(d["reward"]);
 	if d.has("user_input") && d["user_input"] != null:
 		result.user_input = d["user_input"];
 	if d.has("status") && d["status"] != null:
@@ -72,7 +72,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## An object that describes the reward that the user redeemed.
-class CustomRewardRedemptionReward extends RefCounted:
+class Reward extends RefCounted:
 	## The ID that uniquely identifies the reward.
 	var id: String;
 	## The reward’s title.
@@ -82,8 +82,8 @@ class CustomRewardRedemptionReward extends RefCounted:
 	## The reward’s cost, in Channel Points.
 	var cost: int;
 
-	static func from_json(d: Dictionary) -> CustomRewardRedemptionReward:
-		var result = CustomRewardRedemptionReward.new();
+	static func from_json(d: Dictionary) -> Reward:
+		var result = Reward.new();
 		result.id = d["id"];
 		result.title = d["title"];
 		result.prompt = d["prompt"];

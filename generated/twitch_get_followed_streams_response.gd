@@ -6,7 +6,7 @@ class_name TwitchGetFollowedStreamsResponse
 ## The list of live streams of broadcasters that the specified user follows. The list is in descending order by the number of viewers watching the stream. Because viewers come and go during a stream, it’s possible to find duplicate or missing streams in the list as you page through the results. The list is empty if none of the followed broadcasters are streaming live.
 var data: Array[TwitchStream];
 ## The information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-var pagination: GetFollowedStreamsResponsePagination;
+var pagination: Pagination;
 
 static func from_json(d: Dictionary) -> TwitchGetFollowedStreamsResponse:
 	var result = TwitchGetFollowedStreamsResponse.new();
@@ -14,7 +14,7 @@ static func from_json(d: Dictionary) -> TwitchGetFollowedStreamsResponse:
 		for value in d["data"]:
 			result.data.append(TwitchStream.from_json(value));
 	if d.has("pagination") && d["pagination"] != null:
-		result.pagination = GetFollowedStreamsResponsePagination.from_json(d["pagination"]);
+		result.pagination = Pagination.from_json(d["pagination"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -31,12 +31,12 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## The information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-class GetFollowedStreamsResponsePagination extends RefCounted:
+class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Set the request’s _after_ query parameter to this value.
 	var cursor: String;
 
-	static func from_json(d: Dictionary) -> GetFollowedStreamsResponsePagination:
-		var result = GetFollowedStreamsResponsePagination.new();
+	static func from_json(d: Dictionary) -> Pagination:
+		var result = Pagination.new();
 		result.cursor = d["cursor"];
 		return result;
 

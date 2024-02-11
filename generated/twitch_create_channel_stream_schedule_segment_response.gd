@@ -4,12 +4,12 @@ extends RefCounted
 class_name TwitchCreateChannelStreamScheduleSegmentResponse
 
 ## The broadcaster’s streaming scheduled.
-var data: CreateChannelStreamScheduleSegmentResponseData;
+var data: Data;
 
 static func from_json(d: Dictionary) -> TwitchCreateChannelStreamScheduleSegmentResponse:
 	var result = TwitchCreateChannelStreamScheduleSegmentResponse.new();
 	if d.has("data") && d["data"] != null:
-		result.data = CreateChannelStreamScheduleSegmentResponseData.from_json(d["data"]);
+		result.data = Data.from_json(d["data"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -22,7 +22,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## The broadcaster’s streaming scheduled.
-class CreateChannelStreamScheduleSegmentResponseData extends RefCounted:
+class Data extends RefCounted:
 	## A list that contains the single broadcast segment that you added.
 	var segments: Array[TwitchChannelStreamScheduleSegment];
 	## The ID of the broadcaster that owns the broadcast schedule.
@@ -34,8 +34,8 @@ class CreateChannelStreamScheduleSegmentResponseData extends RefCounted:
 	## The dates when the broadcaster is on vacation and not streaming. Is set to **null** if vacation mode is not enabled.
 	var vacation: Dictionary;
 
-	static func from_json(d: Dictionary) -> CreateChannelStreamScheduleSegmentResponseData:
-		var result = CreateChannelStreamScheduleSegmentResponseData.new();
+	static func from_json(d: Dictionary) -> Data:
+		var result = Data.new();
 		result.segments = d["segments"];
 		result.broadcaster_id = d["broadcaster_id"];
 		result.broadcaster_name = d["broadcaster_name"];

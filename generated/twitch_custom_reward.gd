@@ -18,9 +18,9 @@ var prompt: String;
 ## The cost of the reward in Channel Points.
 var cost: int;
 ## A set of custom images for the reward. This field is **null** if the broadcaster didn’t upload images.
-var image: CustomRewardImage;
+var image: Image;
 ## A set of default images for the reward.
-var default_image: CustomRewardDefaultImage;
+var default_image: DefaultImage;
 ## The background color to use for the reward. The color is in Hex format (for example, #00E5CB).
 var background_color: String;
 ## A Boolean value that determines whether the reward is enabled. Is **true** if enabled; otherwise, **false**. Disabled rewards aren’t shown to the user.
@@ -28,11 +28,11 @@ var is_enabled: bool;
 ## A Boolean value that determines whether the user must enter information when they redeem the reward. Is **true** if the user is prompted.
 var is_user_input_required: bool;
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per live stream.
-var max_per_stream_setting: CustomRewardMaxPerStreamSetting;
+var max_per_stream_setting: MaxPerStreamSetting;
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per user per live stream.
-var max_per_user_per_stream_setting: CustomRewardMaxPerUserPerStreamSetting;
+var max_per_user_per_stream_setting: MaxPerUserPerStreamSetting;
 ## The settings used to determine whether to apply a cooldown period between redemptions and the length of the cooldown.
-var global_cooldown_setting: CustomRewardGlobalCooldownSetting;
+var global_cooldown_setting: GlobalCooldownSetting;
 ## A Boolean value that determines whether the reward is currently paused. Is **true** if the reward is paused. Viewers can’t redeem paused rewards.
 var is_paused: bool;
 ## A Boolean value that determines whether the reward is currently in stock. Is **true** if the reward is in stock. Viewers can’t redeem out of stock rewards.
@@ -61,9 +61,9 @@ static func from_json(d: Dictionary) -> TwitchCustomReward:
 	if d.has("cost") && d["cost"] != null:
 		result.cost = d["cost"];
 	if d.has("image") && d["image"] != null:
-		result.image = CustomRewardImage.from_json(d["image"]);
+		result.image = Image.from_json(d["image"]);
 	if d.has("default_image") && d["default_image"] != null:
-		result.default_image = CustomRewardDefaultImage.from_json(d["default_image"]);
+		result.default_image = DefaultImage.from_json(d["default_image"]);
 	if d.has("background_color") && d["background_color"] != null:
 		result.background_color = d["background_color"];
 	if d.has("is_enabled") && d["is_enabled"] != null:
@@ -71,11 +71,11 @@ static func from_json(d: Dictionary) -> TwitchCustomReward:
 	if d.has("is_user_input_required") && d["is_user_input_required"] != null:
 		result.is_user_input_required = d["is_user_input_required"];
 	if d.has("max_per_stream_setting") && d["max_per_stream_setting"] != null:
-		result.max_per_stream_setting = CustomRewardMaxPerStreamSetting.from_json(d["max_per_stream_setting"]);
+		result.max_per_stream_setting = MaxPerStreamSetting.from_json(d["max_per_stream_setting"]);
 	if d.has("max_per_user_per_stream_setting") && d["max_per_user_per_stream_setting"] != null:
-		result.max_per_user_per_stream_setting = CustomRewardMaxPerUserPerStreamSetting.from_json(d["max_per_user_per_stream_setting"]);
+		result.max_per_user_per_stream_setting = MaxPerUserPerStreamSetting.from_json(d["max_per_user_per_stream_setting"]);
 	if d.has("global_cooldown_setting") && d["global_cooldown_setting"] != null:
-		result.global_cooldown_setting = CustomRewardGlobalCooldownSetting.from_json(d["global_cooldown_setting"]);
+		result.global_cooldown_setting = GlobalCooldownSetting.from_json(d["global_cooldown_setting"]);
 	if d.has("is_paused") && d["is_paused"] != null:
 		result.is_paused = d["is_paused"];
 	if d.has("is_in_stock") && d["is_in_stock"] != null:
@@ -121,7 +121,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## A set of custom images for the reward. This field is **null** if the broadcaster didn’t upload images.
-class CustomRewardImage extends RefCounted:
+class Image extends RefCounted:
 	## The URL to a small version of the image.
 	var url_1x: String;
 	## The URL to a medium version of the image.
@@ -129,8 +129,8 @@ class CustomRewardImage extends RefCounted:
 	## The URL to a large version of the image.
 	var url_4x: String;
 
-	static func from_json(d: Dictionary) -> CustomRewardImage:
-		var result = CustomRewardImage.new();
+	static func from_json(d: Dictionary) -> Image:
+		var result = Image.new();
 		result.url_1x = d["url_1x"];
 		result.url_2x = d["url_2x"];
 		result.url_4x = d["url_4x"];
@@ -147,7 +147,7 @@ class CustomRewardImage extends RefCounted:
 		return d;
 
 ## A set of default images for the reward.
-class CustomRewardDefaultImage extends RefCounted:
+class DefaultImage extends RefCounted:
 	## The URL to a small version of the image.
 	var url_1x: String;
 	## The URL to a medium version of the image.
@@ -155,8 +155,8 @@ class CustomRewardDefaultImage extends RefCounted:
 	## The URL to a large version of the image.
 	var url_4x: String;
 
-	static func from_json(d: Dictionary) -> CustomRewardDefaultImage:
-		var result = CustomRewardDefaultImage.new();
+	static func from_json(d: Dictionary) -> DefaultImage:
+		var result = DefaultImage.new();
 		result.url_1x = d["url_1x"];
 		result.url_2x = d["url_2x"];
 		result.url_4x = d["url_4x"];
@@ -173,14 +173,14 @@ class CustomRewardDefaultImage extends RefCounted:
 		return d;
 
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per live stream.
-class CustomRewardMaxPerStreamSetting extends RefCounted:
+class MaxPerStreamSetting extends RefCounted:
 	## A Boolean value that determines whether the reward applies a limit on the number of redemptions allowed per live stream. Is **true** if the reward applies a limit.
 	var is_enabled: bool;
 	## The maximum number of redemptions allowed per live stream.
 	var max_per_stream: int;
 
-	static func from_json(d: Dictionary) -> CustomRewardMaxPerStreamSetting:
-		var result = CustomRewardMaxPerStreamSetting.new();
+	static func from_json(d: Dictionary) -> MaxPerStreamSetting:
+		var result = MaxPerStreamSetting.new();
 		result.is_enabled = d["is_enabled"];
 		result.max_per_stream = d["max_per_stream"];
 		return result;
@@ -195,14 +195,14 @@ class CustomRewardMaxPerStreamSetting extends RefCounted:
 		return d;
 
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per user per live stream.
-class CustomRewardMaxPerUserPerStreamSetting extends RefCounted:
+class MaxPerUserPerStreamSetting extends RefCounted:
 	## A Boolean value that determines whether the reward applies a limit on the number of redemptions allowed per user per live stream. Is **true** if the reward applies a limit.
 	var is_enabled: bool;
 	## The maximum number of redemptions allowed per user per live stream.
 	var max_per_user_per_stream: int;
 
-	static func from_json(d: Dictionary) -> CustomRewardMaxPerUserPerStreamSetting:
-		var result = CustomRewardMaxPerUserPerStreamSetting.new();
+	static func from_json(d: Dictionary) -> MaxPerUserPerStreamSetting:
+		var result = MaxPerUserPerStreamSetting.new();
 		result.is_enabled = d["is_enabled"];
 		result.max_per_user_per_stream = d["max_per_user_per_stream"];
 		return result;
@@ -217,14 +217,14 @@ class CustomRewardMaxPerUserPerStreamSetting extends RefCounted:
 		return d;
 
 ## The settings used to determine whether to apply a cooldown period between redemptions and the length of the cooldown.
-class CustomRewardGlobalCooldownSetting extends RefCounted:
+class GlobalCooldownSetting extends RefCounted:
 	## A Boolean value that determines whether to apply a cooldown period. Is **true** if a cooldown period is enabled.
 	var is_enabled: bool;
 	## The cooldown period, in seconds.
 	var global_cooldown_seconds: int;
 
-	static func from_json(d: Dictionary) -> CustomRewardGlobalCooldownSetting:
-		var result = CustomRewardGlobalCooldownSetting.new();
+	static func from_json(d: Dictionary) -> GlobalCooldownSetting:
+		var result = GlobalCooldownSetting.new();
 		result.is_enabled = d["is_enabled"];
 		result.global_cooldown_seconds = d["global_cooldown_seconds"];
 		return result;

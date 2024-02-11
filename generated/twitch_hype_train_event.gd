@@ -12,7 +12,7 @@ var event_timestamp: Variant;
 ## The version number of the definition of the event’s data. For example, the value is 1 if the data in `event_data` uses the first definition of the event’s data.
 var version: String;
 ## The event’s data.
-var event_data: HypeTrainEventEventData;
+var event_data: EventData;
 
 static func from_json(d: Dictionary) -> TwitchHypeTrainEvent:
 	var result = TwitchHypeTrainEvent.new();
@@ -25,7 +25,7 @@ static func from_json(d: Dictionary) -> TwitchHypeTrainEvent:
 	if d.has("version") && d["version"] != null:
 		result.version = d["version"];
 	if d.has("event_data") && d["event_data"] != null:
-		result.event_data = HypeTrainEventEventData.from_json(d["event_data"]);
+		result.event_data = EventData.from_json(d["event_data"]);
 	return result;
 
 func to_dict() -> Dictionary:
@@ -42,7 +42,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## The event’s data.
-class HypeTrainEventEventData extends RefCounted:
+class EventData extends RefCounted:
 	## The ID of the broadcaster that’s running the Hype Train.
 	var broadcaster_id: String;
 	## The UTC date and time (in RFC3339 format) that another Hype Train can start.
@@ -64,8 +64,8 @@ class HypeTrainEventEventData extends RefCounted:
 	## The current total amount raised.
 	var total: int;
 
-	static func from_json(d: Dictionary) -> HypeTrainEventEventData:
-		var result = HypeTrainEventEventData.new();
+	static func from_json(d: Dictionary) -> EventData:
+		var result = EventData.new();
 		result.broadcaster_id = d["broadcaster_id"];
 		result.cooldown_end_time = d["cooldown_end_time"];
 		result.expires_at = d["expires_at"];
