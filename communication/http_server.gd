@@ -2,6 +2,8 @@ extends RefCounted
 
 class_name HTTPServer
 
+var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_HTTP_SERVER);
+
 var server : TCPServer
 
 class Client extends RefCounted:
@@ -27,12 +29,12 @@ func poll() -> void:
 		_handle_disconnect(client);
 
 func start():
-	print("HTTP: Start Server")
+	log.i("start server")
 	if server.listen(listening_port) != OK:
-		print("Could not listen to port %d" % listening_port);
+		log.i("Could not listen to port %d" % listening_port);
 
 func stop():
-	print("HTTP: Stop Server")
+	log.i("Stop Server")
 	server.stop()
 
 func _handle_connect() -> void:
@@ -40,21 +42,21 @@ func _handle_connect() -> void:
 	var client := Client.new()
 	client.peer = peer;
 	clients.append(client);
-	print("HTTP: Client connected")
+	log.i("Client connected")
 
 func _process_request(client: Client) -> void:
 	var peer := client.peer;
 	if(peer.get_status() == StreamPeerTCP.STATUS_CONNECTED):
 		var error = peer.poll();
 		if(error != OK):
-			printerr("Can't poll data: ", error_string(error))
+			log.e("Can't poll data: %s" % error_string(error))
 		elif (peer.get_available_bytes() > 0):
 			for handler in request_handler:
 				handler.call(self, client);
 
 func _handle_disconnect(client: Client) -> void:
 	if(client.peer.get_status() != StreamPeerTCP.STATUS_CONNECTED):
-		print("HTTP: Client disconnected")
+		log.i("Client disconnected")
 		clients.erase(client);
 
 func add_request_handler(handler: Callable) -> void:
@@ -62,7 +64,7 @@ func add_request_handler(handler: Callable) -> void:
 
 func send_response(peer: StreamPeerTCP, response_code : String, body : PackedByteArray) -> void:
 	peer.put_data(("HTTP/1.1 %s\r\n" % response_code).to_utf8_buffer())
-	peer.put_data("Server: Godot Engine\r\n".to_utf8_buffer())
+	peer.put_data("Server: Godot Engine (Twitcher)\r\n".to_utf8_buffer())
 	peer.put_data(("Content-Length: %d\r\n"% body.size()).to_utf8_buffer())
 	peer.put_data("Connection: close\r\n".to_utf8_buffer())
 	peer.put_data("Content-Type: text/html; charset=UTF-8\r\n".to_utf8_buffer())

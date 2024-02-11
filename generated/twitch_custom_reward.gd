@@ -18,7 +18,7 @@ var prompt: String;
 ## The cost of the reward in Channel Points.
 var cost: int;
 ## A set of custom images for the reward. This field is **null** if the broadcaster didn’t upload images.
-var image: Image;
+var image: TwitchImage;
 ## A set of default images for the reward.
 var default_image: DefaultImage;
 ## The background color to use for the reward. The color is in Hex format (for example, #00E5CB).
@@ -61,7 +61,7 @@ static func from_json(d: Dictionary) -> TwitchCustomReward:
 	if d.has("cost") && d["cost"] != null:
 		result.cost = d["cost"];
 	if d.has("image") && d["image"] != null:
-		result.image = Image.from_json(d["image"]);
+		result.image = TwitchImage.from_json(d["image"]);
 	if d.has("default_image") && d["default_image"] != null:
 		result.default_image = DefaultImage.from_json(d["default_image"]);
 	if d.has("background_color") && d["background_color"] != null:
@@ -121,7 +121,7 @@ func to_json() -> String:
 	return JSON.stringify(to_dict());
 
 ## A set of custom images for the reward. This field is **null** if the broadcaster didn’t upload images.
-class Image extends RefCounted:
+class TwitchImage extends RefCounted:
 	## The URL to a small version of the image.
 	var url_1x: String;
 	## The URL to a medium version of the image.
@@ -129,8 +129,8 @@ class Image extends RefCounted:
 	## The URL to a large version of the image.
 	var url_4x: String;
 
-	static func from_json(d: Dictionary) -> Image:
-		var result = Image.new();
+	static func from_json(d: Dictionary) -> TwitchImage:
+		var result = TwitchImage.new();
 		result.url_1x = d["url_1x"];
 		result.url_2x = d["url_2x"];
 		result.url_4x = d["url_4x"];

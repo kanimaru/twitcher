@@ -2,6 +2,8 @@ extends RefCounted
 
 class_name TwitchIRC
 
+var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_IRC);
+
 ## Called when a chat message got received
 signal chat_message(senderdata : TwitchSenderData, message : String);
 ## Called when a whisper message got received
@@ -63,7 +65,7 @@ func _login() -> void:
 func _on_login(success: bool):
 	if success:
 		_join_channels_on_connect();
-	else: printerr("[TwitchIRC] Can't connect");
+	else: log.e("Can't connect");
 
 func _request_capabilities() -> void:
 	_send("CAP REQ :" + " ".join(TwitchSetting.irc_capabilities));
@@ -91,13 +93,13 @@ func _data_received(data : PackedByteArray) -> void:
 			var msg : PackedStringArray = message.split(" ", false, 1);
 			tags = _parse_tags(msg[0]);
 			message = msg[1];
-		if is_debug: print("[TwitchIRC] > " + message);
+		if is_debug: log.i("> " + message);
 		_handle_message(message, tags);
 
 ## Tries to send messages as long as the websocket is open
 func _send_messages() -> void:
 	if client.connection_state != WebSocketPeer.STATE_OPEN:
-		printerr("[TwitchIRC] Can't send message. Connection not open.")
+		log.e("Can't send message. Connection not open.")
 		# Maybe buggy when the websocket got opened but not authorized yet
 		# Can possible happen when we have a lot of load and a reconnect in the socket
 		return;
@@ -127,7 +129,7 @@ func chat(message : String, channel_name : String = ""):
 		channel_name = channel_names[0];
 
 	if channel_name == "":
-		printerr("[TwitchIRC] No channel is specified to send ", message);
+		log.e("No channel is specified to send %s" % message);
 		return;
 
 	chat_queue.append("PRIVMSG #%s :%s\r\n" % [channel_name, message]);
@@ -142,7 +144,7 @@ func chat(message : String, channel_name : String = ""):
 ## Sends a string message to Twitch.
 func _send(text : String) -> void:
 	client.send_text(text);
-	if is_debug: print("[TwitchIRC] < " + text.strip_edges(false));
+	if is_debug: log.i("< " + text.strip_edges(false));
 
 func _parse_tags(tags: String) -> Dictionary:
 	var parsed_tags : Dictionary = {};
@@ -165,7 +167,7 @@ func _handle_message(received_message : String, tags : Dictionary) -> void:
 			if not await _handle_cmd_notice(info):
 				unhandled_message.emit(received_message, tags);
 		"001":
-			print("[TwitchIRC] Authentication successful.");
+			log.i("Authentication successful.");
 			_on_login(true);
 		"PRIVMSG": _handle_chat_message(from, message_parts, tags, chat_message);
 		"WHISPER": _handle_chat_message(from, message_parts, tags, whisper_message);
@@ -185,7 +187,7 @@ func _handle_cmd_state(command: String, channel_name: String, tags: Dictionary) 
 	var channel: TwitchIrcChannel = channel_maps[channel_name];
 	channel.update_state(command, tags);
 	channel_data_updated.emit(channel_name, channel.data);
-	print("[TwitchIRC] Channel updated ", channel_name);
+	log.i("Channel updated %s" % channel_name);
 
 func _create_channel(channel_name: String) -> TwitchIrcChannel:
 	var channel = TwitchIrcChannel.new(channel_name, self);
@@ -206,17 +208,17 @@ func _handle_chat_message(from: String, message_parts: Array[String], tags: Dict
 
 func _handle_cmd_notice(info: String) -> bool:
 	if info == "Login authentication failed" || info == "Login unsuccessful":
-		print("[TwitchIRC] Authentication failed.");
+		log.e("Authentication failed.");
 		_on_login(false);
 		return true;
 	elif info == "You don't have permission to perform that action":
-		print("[TwitchIRC] No permission. Attempting to obtain new token.");
+		log.i("No permission. Attempting to obtain new token.");
 		await auth.refresh_token();
 		if auth.is_authenticated():
 			_login();
 			return true;
 		else:
-			print("[TwitchIRC] Please check if you have all required scopes.");
+			log.i("Please check if you have all required scopes.");
 			client.close(1000, "Token became invalid.");
 			return true;
 

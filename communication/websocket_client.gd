@@ -3,6 +3,8 @@ extends RefCounted
 ## Advanced websocket client that automatically reconnects to the server
 class_name WebsocketClient
 
+var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_WEBSOCKET);
+
 signal message_received(message: PackedByteArray);
 
 signal connection_state_changed(state : WebSocketPeer.State);
@@ -22,19 +24,19 @@ func _init():
 	Engine.get_main_loop().process_frame.connect(_poll);
 
 func connect_to(url: String) -> void:
-	print("[WebsocketClient]: Connecting to ", url);
+	log.i("Set connection to %s" % url);
 	connection_url = url;
 
 func establish_connection() -> void:
 	if connecting: return;
 	connecting = true;
 	var wait_time = pow(2, tries);
-	print("[WebsocketClient]: Wait %s before connecting" % [wait_time]);
+	log.i("Wait %s before connecting" % [wait_time]);
 	await Engine.get_main_loop().create_timer(wait_time).timeout;
-	print("[WebsocketClient]: Connecting to ", connection_url);
+	log.i("Connecting to %s" % connection_url);
 	var err = peer.connect_to_url(connection_url);
 	if err != OK:
-		printerr("[WebsocketClient]: Coulnd't connect to %s cause of %s" % [connection_url, error_string(err)])
+		log.e("Coulnd't connect to %s cause of %s" % [connection_url, error_string(err)])
 	tries+=1;
 	connecting = false;
 
@@ -60,11 +62,11 @@ func _handle_state_changes(state: WebSocketPeer.State) -> void:
 		_on_close_connection();
 
 func _on_open_connection():
-	print("[WebsocketClient]: connected to ", connection_url);
+	log.i("connected to %s" % connection_url);
 	tries = 0;
 
 func _on_close_connection():
-	print("[WebsocketClient]: connection to %s was closed [%s]: %s" % [connection_url, peer.get_close_code(), peer.get_close_reason()]);
+	log.i("connection to %s was closed [%s]: %s" % [connection_url, peer.get_close_code(), peer.get_close_reason()]);
 
 func _read_data() -> void:
 	while (peer.get_available_packet_count()):

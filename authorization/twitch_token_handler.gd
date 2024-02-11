@@ -3,6 +3,8 @@ extends RefCounted
 ## Handles refreshing and resolving access and refresh tokens.
 class_name TwitchTokenHandler
 
+var log : TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_AUTH);
+
 const HEADERS = {
 	"User-Agent": "godot/twitcher/1.0 (Godot)",
 	"Accept": "*/*",
@@ -32,14 +34,14 @@ func _init() -> void:
 func _check_token_refresh() -> void:
 	if requesting_token: return;
 	if !tokens.is_token_valid() && tokens.has_refresh_token():
-		print("Twitch Auth: token needs refresh");
+		log.i("token needs refresh");
 		refresh_tokens();
 
 ## Requests the tokens with the client credential flow
 func request_token(grant_type: String, auth_code: String = ""):
 	if requesting_token: return;
 	requesting_token = true;
-	print("Twitch Auth: request token")
+	log.i("request token")
 	var request_body = "client_id=%s&client_secret=%s&grant_type=%s" % [
 		TwitchSetting.client_id, TwitchSetting.client_secret, grant_type
 	]
@@ -51,7 +53,7 @@ func request_token(grant_type: String, auth_code: String = ""):
 	var request = http_client.request(TwitchSetting.token_endpoint, HTTPClient.METHOD_POST, HEADERS, request_body);
 	if(await _handle_token_request(request)):
 		token_resolved.emit(tokens.access_token);
-		print("Twitch Auth: token resolved")
+		log.i("token resolved")
 	else:
 		refresh_tokens();
 	requesting_token = false;
@@ -60,12 +62,12 @@ func request_token(grant_type: String, auth_code: String = ""):
 func refresh_tokens() -> void:
 	if requesting_token: return;
 	requesting_token = true;
-	print("Twitch Auth: refresh token")
+	log.i("refresh token")
 	var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [TwitchSetting.client_id, TwitchSetting.client_secret, tokens.refresh_token];
 	var request = http_client.request(TwitchSetting.token_endpoint, HTTPClient.METHOD_POST, HEADERS, request_body);
 	if(await _handle_token_request(request)):
 		token_resolved.emit(tokens.access_token);
-		print("Twitch Auth: token refreshed")
+		log.i("token refreshed")
 	else:
 		unauthenticated.emit();
 	requesting_token = false;
@@ -75,7 +77,7 @@ func set_access_token(access_token: String):
 	tokens._update_values(access_token, "", -1);
 	tokens._persist_tokens();
 	token_resolved.emit(tokens.access_token);
-	print("Twitch Auth: token received")
+	log.i("token received")
 
 ## Gets information from the twitch response and update values
 func _handle_token_request(request: BufferedHTTPClient.RequestData) -> bool:
@@ -89,7 +91,7 @@ func _handle_token_request(request: BufferedHTTPClient.RequestData) -> bool:
 	else:
 		# Reset expiration cause token got not refreshed correctly.
 		tokens.expire_date = 0;
-	printerr("Twitch Auth: Token could not be fetched ResponseCode %s / Status %s" % [response.client.get_response_code(), response.client.get_status()])
+	log.e("Token could not be fetched ResponseCode %s / Status %s" % [response.client.get_response_code(), response.client.get_status()])
 	return false;
 
 ## Checks if the token are valud

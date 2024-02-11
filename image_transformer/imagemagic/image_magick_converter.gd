@@ -3,6 +3,8 @@ extends Node
 
 class_name ImageMagickConverter
 
+var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_IMAGE_LOADER);
+
 # Current conversion in progress (key: path, value: mutex)
 var converting: Dictionary = {};
 var fallback_sprite_frames: SpriteFrames;
@@ -51,13 +53,13 @@ func _do_work(path: String, buffer: PackedByteArray, output: String, mutex) -> S
 
 	# dump the buffer
 	if FileAccess.file_exists(path):
-		print("File found at %s, loading it instead of using the buffer." % path)
+		log.i("File found at %s, loading it instead of using the buffer." % path)
 		buffer = FileAccess.get_file_as_bytes(path)
 	else:
 		DirAccess.make_dir_recursive_absolute(path.get_base_dir());
 		var f = FileAccess.open(path, FileAccess.WRITE)
 		if f == null:
-			push_error("Can't open file ", path, " cause of ", FileAccess.get_open_error())
+			log.e("Can't open file %s cause of %s" %[ path, FileAccess.get_open_error()])
 		f.store_buffer(buffer)
 		f.close()
 
@@ -118,7 +120,7 @@ func _extract_images(file: String, target_folder: String) -> bool:
 	var glob_extracted_file_path = ProjectSettings.globalize_path(target_folder + "%02d.png")
 	var code = OS.execute("magick", [ "convert", "-coalesce", glob_file_path, glob_extracted_file_path ], out, true);
 	if code != 0:
-		printerr("unable to convert: %s" % "\n".join(out));
+		log.e("unable to convert: %s" % "\n".join(out));
 		return false;
 	return true;
 

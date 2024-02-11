@@ -12,6 +12,30 @@ const FLOW_CLIENT_CREDENTIALS = "ClientCredentialsGrantFlow";
 ## Uses the auth code flow see also: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow
 const FLOW_AUTHORIZATION_CODE = "AuthorizationCodeGrantFlow";
 
+const LOGGER_NAME_AUTH = "TwitchAuthorization"
+const LOGGER_NAME_EVENT_SUB = "TwitchEventSub"
+const LOGGER_NAME_REST_API = "TwitchRestAPI"
+const LOGGER_NAME_IRC = "TwitchIRC"
+const LOGGER_NAME_IMAGE_LOADER = "TwitchImageLoader"
+const LOGGER_NAME_COMMAND_HANDLING = "TwitchCommandHandling"
+const LOGGER_NAME_SERVICE = "TwitchService"
+const LOGGER_NAME_HTTP_CLIENT = "TwitchHttpClient"
+const LOGGER_NAME_HTTP_SERVER = "TwitchHttpServer"
+const LOGGER_NAME_WEBSOCKET = "TwitchWebsocket"
+
+const ALL_LOGGERS: Array[String] = [
+	LOGGER_NAME_AUTH,
+	LOGGER_NAME_EVENT_SUB,
+	LOGGER_NAME_REST_API,
+	LOGGER_NAME_IRC,
+	LOGGER_NAME_IMAGE_LOADER,
+	LOGGER_NAME_COMMAND_HANDLING,
+	LOGGER_NAME_SERVICE,
+	LOGGER_NAME_HTTP_CLIENT,
+	LOGGER_NAME_HTTP_SERVER,
+	LOGGER_NAME_WEBSOCKET,
+];
+
 class Property:
 	var key: String;
 	var default_value: Variant;
@@ -223,6 +247,10 @@ static var _http_client_max: Property;
 static var http_client_max: int:
 	get: return _http_client_max.get_val();
 
+static var _log_enabled: Property;
+static var log_enabled: Array[String]:
+	get: return get_log_enabled()
+
 static func setup() -> void:
 
 	# Auth
@@ -257,6 +285,8 @@ static func setup() -> void:
 	_http_client_min = Property.new("twitch/general/http_client/min_amount", 3).as_num();
 	_http_client_max = Property.new("twitch/general/http_client/max_amount", 10).as_num();
 
+	_log_enabled = Property.new("twitch/general/logging/enabled").as_bit_field(ALL_LOGGERS);
+
 	# Websocket
 	_use_test_server = Property.new("twitch/websocket/eventsub/use_test_server", "false").as_bool("Will try to connect to 'Twitch CLI' test server")
 	_eventsub_test_server_url = Property.new("twitch/websocket/eventsub/test_server", "ws://127.0.0.1:8081/ws").as_str("In case the 'Twitch CLI' is used to test");
@@ -271,6 +301,23 @@ static func setup() -> void:
 	var default_caps: Array[TwitchIrcCapabilities.Capability] = [TwitchIrcCapabilities.COMMANDS, TwitchIrcCapabilities.TAGS];
 	var default_cap_val = TwitchIrcCapabilities.get_bit_value(default_caps);
 	_irc_capabilities = Property.new("twitch/websocket/irc/capabilities", default_cap_val).as_bit_field(_get_all_irc_capabilities()).basic();
+
+static func get_log_enabled() -> Array[String]:
+	var result: Array[String] = [];
+	# Other classes can be initialized before the settings and use the log.
+	if _log_enabled == null:
+		return result;
+	var bitset = _log_enabled.get_val();
+	if typeof(bitset) == TYPE_STRING && bitset == "" || typeof(bitset) == TYPE_INT && bitset == 0:
+		return result
+	for logger_idx: int in range(ALL_LOGGERS.size()):
+		var bit_value = 1 << logger_idx;
+		if bitset & bit_value == bit_value:
+			result.append(ALL_LOGGERS[logger_idx])
+	return result
+
+static func is_log_enabled(logger: String) -> bool:
+	return log_enabled.find(logger) != -1;
 
 static func get_image_transformers() -> Array[String]:
 	var result: Array[String] = [];

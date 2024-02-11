@@ -5,6 +5,8 @@ extends Node
 ## Send when the Twitch API was succesfully initialized
 signal twitch_ready;
 
+var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_SERVICE)
+
 var auth: TwitchAuth;
 var icon_loader: TwitchIconLoader;
 var irc: TwitchIRC;
@@ -16,32 +18,30 @@ var api: TwitchRestAPI
 var reward_map: Dictionary;
 
 var is_twitch_ready: bool;
-var debug: bool :
-	set(val):
-		if val: eventsub_debug.connect_to_eventsub(TwitchSetting.eventsub_test_server_url);
-		else: eventsub_debug.connect_to_eventsub(TwitchSetting.eventsub_test_server_url);
 
 func _init() -> void:
-	print("Twitch Service: init")
+	log.i("Init")
 	TwitchSetting.setup();
 
 func setup() -> void:
-	print("Twitch Service: setup")
+	log.i("Setup")
 	auth = TwitchAuth.new();
 	api = TwitchRestAPI.new(auth);
 	icon_loader = TwitchIconLoader.new(api);
 	eventsub = TwitchEventsub.new(api);
 	eventsub_debug = TwitchEventsub.new(api);
+	if TwitchSetting.use_test_server:
+		eventsub_debug.connect_to_eventsub(TwitchSetting.eventsub_test_server_url);
 	commands = TwitchCommandHandler.new();
 	irc = TwitchIRC.new(auth);
 
-	print("Twitch Service: start")
+	log.i("Start")
 	await auth.ensure_authentication();
 	await _init_chat();
 	_init_eventsub();
 	_init_custom_rewards();
 	_init_cheermotes();
-	print("Twitch Service: initialized")
+	log.i("Initialized and ready")
 	is_twitch_ready = true;
 	twitch_ready.emit();
 
@@ -109,7 +109,7 @@ func _load_rewards() -> void:
 	var reward_definition_paths := DirAccess.get_files_at("res://rewards/");
 	for path in reward_definition_paths:
 		path = path.trim_suffix(".remap");
-		print("Load Reward %s " % [ path ]);
+		log.i("Load Reward %s " % [ path ]);
 
 		var reward = load("res://rewards/" + path) as TwitchCustomRewardResource;
 		var rewards_data = all_rewards.filter(func(r): return r.title == reward.title);
@@ -120,7 +120,7 @@ func _load_rewards() -> void:
 			reward.id = rewards_data[0]['id'];
 			update_custom_reward(reward.id, reward.title, reward.cost, reward.prompt, reward.input_required, reward.enabled, reward.pause, reward.auto_complete);
 		else: reward.id = rewards_data[0]['id'];
-		print("Reward %s for %s is loaded " % [ reward.id, path ]);
+		log.i("Reward %s for %s is loaded " % [ reward.id, path ]);
 		reward_map[reward.id] = reward;
 
 func get_custom_rewards(only_manageable_rewards: bool = false) -> Array[TwitchCustomReward]:

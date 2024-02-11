@@ -3,6 +3,8 @@ extends RefCounted
 ## Handles the evensub part of twitch. Returns the event data when receives it.
 class_name TwitchEventsub;
 
+var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_EVENT_SUB)
+
 ## An object that identifies the message.
 class Metadata extends RefCounted:
 	## An ID that uniquely identifies the message. Twitch sends messages at least once, but if Twitch is unsure of whether you received a notification, it’ll resend the message. This means you may receive a notification twice. If Twitch resends the message, the message ID is the same.
@@ -109,11 +111,11 @@ func _subscribe_event(event_name : String, version : String, conditions : Dictio
 	var response = await api.create_eventsub_subscription(data);
 
 	if not str(response.response_code).begins_with("2"):
-		print("REST: Subscription failed for event '%s'. Error %s: %s" % [event_name, response.response_code, response.response_data.get_string_from_utf8()])
+		log.e("Subscription failed for event '%s'. Error %s: %s" % [event_name, response.response_code, response.response_data.get_string_from_utf8()])
 		return
 	elif (response.response_data.is_empty()):
 		return
-	print("REST: Now listening to '%s' events." % event_name)
+	log.i("Now listening to '%s' events." % event_name)
 
 func _data_received(data : PackedByteArray) -> void:
 	var message_str : String = data.get_string_from_utf8();
@@ -157,7 +159,7 @@ func _data_received(data : PackedByteArray) -> void:
 	_cleanup();
 
 func _handle_reconnect(reconnect_message: TwitchReconnectMessage):
-	print("[TwitchEventsub]: Session is forced to reconnect");
+	log.i("Session is forced to reconnect");
 	var reconnect_url = reconnect_message.payload.session.reconnect_url;
 	swap_over_client = WebsocketClient.new();
 	swap_over_client.message_received.connect(_data_received);
@@ -166,7 +168,7 @@ func _handle_reconnect(reconnect_message: TwitchReconnectMessage):
 	client.close(1000, "Closed cause of reconnect.");
 	client = swap_over_client;
 	swap_over_client = null;
-	print("[TwitchEventsub]: Session reconnected on ", reconnect_url);
+	log.i("Session reconnected on %s" % reconnect_url);
 
 ## Cleanup old messages that won't be processed anymore cause of time to prevent a
 ## memory problem on long runinng applications.

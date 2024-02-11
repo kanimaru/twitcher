@@ -4,6 +4,8 @@ extends RefCounted
 ## Http client that bufferes the requests and sends them sequentialy
 class_name BufferedHTTPClient
 
+var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_HTTP_CLIENT)
+
 ## Will be send when a request is done.
 signal request_done(response: ResponseData)
 
@@ -51,10 +53,10 @@ func _init(url: String, p: int = -1) -> void:
 	Engine.get_main_loop().process_frame.connect(_poll);
 
 func _connect() -> void:
-	print("[BufferedHttpClient] Connecting to ", base_url);
+	log.i("connecting to %s" % base_url);
 	var err = client.connect_to_host(base_url, port);
 	if err != OK:
-		printerr("Can't connect to %s cause of %s" % [base_url, error_string(err)]);
+		log.e("Can't connect to %s cause of %s" % [base_url, error_string(err)]);
 		return;
 
 	# Wait until its conneceted
@@ -63,7 +65,7 @@ func _connect() -> void:
 
 	if client.get_status() != HTTPClient.STATUS_CONNECTED:
 		error_count += 1;
-		printerr("[BufferedHttpClient] can't connect to %s" % [base_url])
+		log.e("can't connect to %s" % [base_url])
 
 	#print("Current State: %s" % client.get_status())
 	assert(client.get_status() == HTTPClient.STATUS_CONNECTED)
@@ -78,7 +80,7 @@ func shutdown() -> void:
 ## Starts a request that will be handled as soon as the client gets free.
 ## Use HTTPClient.METHOD_* for the method.
 func request(path: String, method: int, headers: Dictionary, body: String) -> RequestData:
-	print("[BufferedHttpClient] Start Request(%s) %s" % [ method, path ]);
+	log.i("Start Request(%s) %s" % [ method, path ]);
 	headers = headers.duplicate();
 	headers.merge(HEADERS);
 	var req = RequestData.new();
@@ -159,7 +161,7 @@ func _poll() -> void:
 
 func _handle_error():
 	await _wait_error_duration();
-	print("Error happend")
+	log.e("Error happend current client status: %s" % client.get_status())
 	error_count += 1;
 	connected = false;
 	if error_count <= max_error_count || max_error_count == -1:
@@ -171,8 +173,8 @@ func _handle_error():
 		var response_data = _create_response();
 		response_data.error = true;
 		request_done.emit(response_data);
-		printerr("[BufferedHttpClient] Abort request %s max retries reached. (%s)" % [current_request.path, client.get_status()])
-	printerr("[BufferedHttpClient] Problem with client status: %s/%s cause of %s" % [client.get_status(), client.get_response_code(), current_response_data.get_string_from_utf8()])
+		log.e("Abort request %s max retries reached. (%s)" % [current_request.path, client.get_status()])
+	log.e("Problem with client status: %s/%s cause of %s" % [client.get_status(), client.get_response_code(), current_response_data.get_string_from_utf8()])
 
 func _reset_request():
 	current_request = null;
@@ -181,14 +183,14 @@ func _reset_request():
 func _check_status(response_data: ResponseData) -> void:
 	var response_code = client.get_response_code();
 	if !str(response_code).begins_with("2"):
-		print("[BufferedHttpClient] Problems with %s result %s body: \n%s" % [response_data.request_data.path, response_code, response_data.response_data.get_string_from_utf8()])
+		log.i("Problems with %s result %s body: \n%s" % [response_data.request_data.path, response_code, response_data.response_data.get_string_from_utf8()])
 
 func _start_request() -> void:
 	current_request = requests.pop_front() as RequestData;
 	var headers = HEADERS if current_request.headers == null else current_request.headers;
 	var packed_headers = _pack_headers(headers);
 	client.request(current_request.method, current_request.path, packed_headers, current_request.body);
-	print("[BufferedHttpClient] Start request processing ", current_request.path)
+	log.i("Start request processing %s" % current_request.path)
 
 func _pack_headers(headers: Dictionary) -> PackedStringArray:
 	var result: PackedStringArray = [];
@@ -204,5 +206,5 @@ func _handle_response() -> void:
 		if chunk.size() > 0:
 			current_response_data += chunk;
 	else:
-		printerr("[BufferedHttpClient] No Response?");
+		log.e("No Response? Shouldn't happen.");
 

@@ -189,6 +189,11 @@ func _generate_components():
 		template.process_template("res://addons/twitcher/editor/template_component.txt",
 				data, "res://addons/twitcher/generated/" + file_name);
 
+func _sanatize_classname(cls_name: String) -> String:
+	match cls_name:
+		"Image": return "TwitchImage";
+		_: return cls_name;
+
 ## Couple of names from the Twitch API are messed up like keywords for godot or numbers
 func _to_field_name(property_name: String) -> String:
 	match property_name:
@@ -260,6 +265,7 @@ func _get_sub_classes(schema_name: String, parent_property_name:String, properti
 		})
 
 	var cls_name = parent_property_name.capitalize().replace(" ", "");
+	cls_name = _sanatize_classname(cls_name);
 	var data = {
 		"class_name": cls_name,
 		"class_description": class_description,
