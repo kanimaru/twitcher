@@ -39,7 +39,7 @@ class Subscription extends RefCounted:
 	## The version number of the subscription type’s definition.
 	var version: String;
 	## The event’s cost. See Subscription limits. (https://dev.twitch.tv/docs/eventsub/manage-subscriptions#subscription-limits)
-	var cost: String;
+	var cost: int;
 	## The conditions under which the event fires. For example, if you requested notifications when a broadcaster gets a new follower, this object contains the broadcaster’s ID. For information about the condition’s data, see the subscription type’s description in Subscription types. (https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types)
 	var condition: Dictionary;
 	## An object that contains information about the transport used for notifications.

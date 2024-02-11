@@ -149,7 +149,7 @@ func get_badges(badge_composites : Array[String], channel_id : String = "global"
 	for badge_composite in requests:
 		var badge_data: BadgeData = BadgeData.new(badge_composite, scale, channel_id);
 		var request = requests[badge_composite];
-		var id : String = badge_data.get_id();
+		var id : String = badge_data.get_cache_id();
 		var badge_path : String = TwitchSetting.cache_badge.path_join(id);
 		var sprite_frames = await _convert_response(request, badge_path);
 		response[badge_composite] = sprite_frames;
