@@ -15,7 +15,6 @@ var eventsub_debug: TwitchEventsub;
 var commands: TwitchCommandHandler;
 var cheer_repository: TwitchCheerRepository;
 var api: TwitchRestAPI
-var reward_map: Dictionary;
 
 var is_twitch_ready: bool;
 
@@ -39,7 +38,6 @@ func setup() -> void:
 	await auth.ensure_authentication();
 	await _init_chat();
 	_init_eventsub();
-	_init_custom_rewards();
 	_init_cheermotes();
 	log.i("Initialized and ready")
 	is_twitch_ready = true;
@@ -94,87 +92,7 @@ func wait_for_connection() -> void:
 	await eventsub.wait_for_connection();
 
 #endregion
-#region CustomRewards
 
-func _init_custom_rewards():
-	_load_rewards();
-
-func get_reward(reward_id: String) -> TwitchCustomRewardResource:
-	if reward_map.has(reward_id):
-		return reward_map[reward_id];
-	return null;
-
-func _load_rewards() -> void:
-	var all_rewards = await TwitchService.get_custom_rewards();
-	var reward_definition_paths := DirAccess.get_files_at("res://rewards/");
-	for path in reward_definition_paths:
-		path = path.trim_suffix(".remap");
-		log.i("Load Reward %s " % [ path ]);
-
-		var reward = load("res://rewards/" + path) as TwitchCustomRewardResource;
-		var rewards_data = all_rewards.filter(func(r): return r.title == reward.title);
-		if rewards_data.is_empty():
-			var id = await add_custom_reward(reward.title, reward.cost, reward.prompt, reward.input_required, reward.enabled);
-			reward.id = id;
-		elif reward.is_dirty(rewards_data[0]):
-			reward.id = rewards_data[0]['id'];
-			update_custom_reward(reward.id, reward.title, reward.cost, reward.prompt, reward.input_required, reward.enabled, reward.pause, reward.auto_complete);
-		else: reward.id = rewards_data[0]['id'];
-		log.i("Reward %s for %s is loaded " % [ reward.id, path ]);
-		reward_map[reward.id] = reward;
-
-func get_custom_rewards(only_manageable_rewards: bool = false) -> Array[TwitchCustomReward]:
-	var response = await api.get_custom_reward([], only_manageable_rewards);
-	if response != null:
-		return response.data;
-	return [];
-
-func toggle_enable_custom_reward(id: String) -> void:
-	var body: TwitchUpdateCustomRewardBody = TwitchUpdateCustomRewardBody.new();
-	body.is_enabled = true;
-	api.update_custom_reward(id, body);
-
-func toggle_pause_custom_reward(id: String) -> void:
-	var body: TwitchUpdateCustomRewardBody = TwitchUpdateCustomRewardBody.new();
-	body.is_paused = true;
-	api.update_custom_reward(id, body);
-
-func update_custom_reward(id: String, title: String, cost: int, prompt: String, is_input_required: bool, enabled: bool, paused: bool, auto_complete: bool) -> void:
-	var body: TwitchUpdateCustomRewardBody = TwitchUpdateCustomRewardBody.new();
-	body.cost = cost;
-	body.title = title;
-	body.prompt = prompt;
-	body.is_user_input_required = is_input_required;
-	body.is_enabled = enabled;
-	body.is_paused = paused;
-	body.should_redemptions_skip_request_queue = auto_complete;
-	api.update_custom_reward(id, body);
-
-func add_custom_reward(title: String, cost: int, prompt: String, is_input_required: bool, enabled: bool = true, auto_complete: bool = false) -> String:
-	var body = TwitchUpdateCustomRewardBody.new()
-	body.title = title;
-	body.cost = cost;
-	body.prompt = prompt;
-	body.is_enabled = enabled;
-	body.is_user_input_required = is_input_required;
-	body.should_redemptions_skip_request_queue = auto_complete;
-	var response: TwitchCreateCustomRewardsResponse = await api.create_custom_rewards(body);
-	return response.data[0].id;
-
-func remove_custom_reward(id: String) -> void:
-	api.delete_custom_reward(id);
-
-func complete_redemption(redemption_id: String, reward_id: String) -> void:
-	var body : TwitchUpdateRedemptionStatusBody = TwitchUpdateRedemptionStatusBody.new();
-	body.status = "FULFILLED";
-	api.update_redemption_status([redemption_id], reward_id, body);
-
-func cancel_redemption(redemption_id: String, reward_id: String) -> void:
-	var body : TwitchUpdateRedemptionStatusBody = TwitchUpdateRedemptionStatusBody.new();
-	body.status = "CANCELED";
-	api.update_redemption_status([redemption_id], reward_id, body);
-
-#endregion
 #region Chat
 
 func _init_chat() -> void:
