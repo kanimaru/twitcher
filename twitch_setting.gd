@@ -3,6 +3,15 @@ extends Object
 
 class_name TwitchSetting
 
+
+## Uses the implicit auth flow see also: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow
+## @deprecated use AuthorizationCodeGrantFlow... Implicit is almost completly implemented just deactivated
+const FLOW_IMPLICIT = "ImplicitGrantFlow";
+## Uses the client credentials auth flow see also: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#client-credentials-grant-flow
+const FLOW_CLIENT_CREDENTIALS = "ClientCredentialsGrantFlow";
+## Uses the auth code flow see also: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow
+const FLOW_AUTHORIZATION_CODE = "AuthorizationCodeGrantFlow";
+
 class Property:
 	var key: String;
 	var default_value: Variant;
@@ -27,9 +36,11 @@ class Property:
 	func as_str(description: String = "") -> Property:
 		return _add_type_def(TYPE_STRING, PROPERTY_HINT_PLACEHOLDER_TEXT, description);
 
-	func as_select(values: Array[String]) -> Property:
+	func as_select(values: Array[String], optional: bool = true) -> Property:
 		var hint_string = ",".join(values);
-		return _add_type_def(TYPE_STRING, PROPERTY_HINT_ENUM_SUGGESTION, hint_string);
+		var enum_hint = PROPERTY_HINT_ENUM;
+		if optional: enum_hint = PROPERTY_HINT_ENUM_SUGGESTION;
+		return _add_type_def(TYPE_STRING, enum_hint, hint_string);
 
 	func as_bit_field(values: Array[String]) -> Property:
 		var hint_string = ",".join(values);
@@ -73,6 +84,10 @@ class Property:
 static var _broadcaster_id: Property
 static var broadcaster_id: String:
 	get: return _broadcaster_id.get_val()
+
+static var _authorization_flow: Property
+static var authorization_flow: String:
+	get: return _authorization_flow.get_val()
 
 static var _client_id: Property
 static var client_id: String:
@@ -212,6 +227,7 @@ static func setup() -> void:
 
 	# Auth
 	_broadcaster_id = Property.new("twitch/auth/broadcaster_id").as_str("Broadcaster ID of youself").basic();
+	_authorization_flow = Property.new("twitch/auth/authorization_flow", "AuthorizationCodeGrantFlow").as_select([FLOW_IMPLICIT, FLOW_CLIENT_CREDENTIALS, FLOW_AUTHORIZATION_CODE], false).basic();
 	_client_id = Property.new("twitch/auth/client_id").as_str("Client ID you can find it in https://api.twitch.tv/").basic();
 	_client_secret = Property.new("twitch/auth/client_secret").as_password("Client Secret you can find it in https://api.twitch.tv/").basic();
 	_authorization_url = Property.new("twitch/auth/oauth2_authorize_url", "https://id.twitch.tv/oauth2/authorize").as_str("OAuth Auhtorization URL to get a bearer token from client credentials");

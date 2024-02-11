@@ -57,8 +57,9 @@ var _cache: Dictionary;
 
 func _init(api: TwitchRestAPI) -> void:
 	fallback_texture = TwitchSetting.fallback_texture2d;
-	var cheer_emote_response = await api.get_cheermotes();
-	for d in cheer_emote_response['data']: data.append(CheerData.new(d));
+	var cheer_emote_response: TwitchGetCheermotesResponse = await api.get_cheermotes();
+	#for d in cheer_emote_response.data: TODO
+	#	data.append(CheerData.new(d));
 	is_ready = true;
 	ready.emit();
 

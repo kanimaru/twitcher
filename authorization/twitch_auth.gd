@@ -9,19 +9,6 @@ signal auth_succeed(code: String);
 ## In case the authorization wasn't succesfull
 signal auth_error(error: String, error_description: String);
 
-#@export var SCOPES := " ".join([
-	#"chat:edit",
-	#"chat:read",
-	#"moderator:read:followers",
-	#"channel:manage:broadcast",
-	#"channel:manage:raids",
-	#"channel:manage:redemptions",
-	#"channel:read:subscriptions",
-	#"bits:read",
-	#"moderator:manage:shoutouts",
-	#"moderator:manage:announcements"
-#]);
-
 var auth_http_server: HTTPServer;
 var token_handler: TwitchTokenHandler;
 var login_in_process: bool;
@@ -54,11 +41,9 @@ func get_token() -> String:
 		await token_handler.token_resolved;
 	return token_handler.tokens.access_token;
 
-## Opens the browser to login into twitch and waits for the response to be handled.
-## Only one login process at the time. All other tries wait until the first process was succesful.
-## Processes like:
-## 1. Gets the Auth Code to authenticate
-## 2. Uses the Auth Code to authorize at the token endpoint to receive a set of tokens
+## Depending on the TwitchSetting.authorization_flow it gets resolves the token via the different
+## Flow types. Only one login process at the time. All other tries wait until the first process
+## was succesful.
 func login() -> void:
 	if login_in_process:
 		print("Twitch Auth: another process tries already to login. Abort");
@@ -67,27 +52,54 @@ func login() -> void:
 
 	login_in_process = true;
 	print("Twitch Auth: do login")
-	auth_http_server.start();
-	var query_param = [TwitchSetting.client_id, TwitchSetting.get_scopes(), TwitchSetting.redirect_url, TwitchSetting.force_verify].map(func (a : String): return a.uri_encode());
-	OS.shell_open(TwitchSetting.authorization_url + "?response_type=code&client_id=%s&scope=%s&redirect_uri=%s&force_verify=%s" % query_param)
-	print("Twitch Auth: Waiting for user to login.")
-	var auth_code = await auth_succeed;
-	token_handler.request_token(auth_code);
-	await token_handler.token_resolved;
-	auth_http_server.stop();
+	match TwitchSetting.authorization_flow:
+		TwitchSetting.FLOW_AUTHORIZATION_CODE:
+			await _start_login_process("code");
+		TwitchSetting.FLOW_CLIENT_CREDENTIALS:
+			await token_handler.request_token("client_credentials");
+		# Implicit flow is activly deactivated. Don't use it in Backend Application FLOW_AUTHORIZATION_CODE
+		# does the same but has advantages like refresh codes. I let this code in to remind you about that.
+		# When you want to have it you have to solve the problem that Twitch redirects the token to a fragment
+		# aka: /#access_token=.... that is not transfered to the backend for a good reason.
+		# That means you need to transfere it from the frontend to the backend yourself.
+		TwitchSetting.FLOW_IMPLICIT:
+			print("Twitch Auth: Implicit Flow is currently disabled. Normaly not recommended.")
+		#	await _start_login_process("token");
 	login_in_process = false;
+
+func _start_login_process(response_type: String):
+	auth_http_server.start();
+	var query_param = [
+			response_type,
+			TwitchSetting.client_id,
+			TwitchSetting.get_scopes(),
+			TwitchSetting.redirect_url,
+			TwitchSetting.force_verify
+		].map(func (a : String): return a.uri_encode());
+
+	var url = TwitchSetting.authorization_url;
+	url += "?response_type=%s&client_id=%s&scope=%s&redirect_uri=%s&force_verify=%s" % query_param;
+	OS.shell_open(url);
+	print("Twitch Auth: Waiting for user to login.")
+	if response_type == "code":
+		var auth_code = await auth_succeed;
+		token_handler.request_token("authorization_code", auth_code);
+		await token_handler.token_resolved;
+	elif response_type == "token":
+		await token_handler.token_resolved;
+	auth_http_server.stop();
 
 ## Handles the response after Twitch auth endpoint redirects to our server with the response
 func _process_request(server: HTTPServer, client: HTTPServer.Client) -> void:
 	var request = client.peer.get_utf8_string(client.peer.get_available_bytes());
 	if (request == ""):
 		print("Empty response. Check if your redirect URL is set to %s." % TwitchSetting.redirect_url)
-		return
+		return;
 
 	# Firstline contains request path and parameters
 	var first_line = request.substr(0, request.find("/n"));
 	var query_params_str = first_line.split(" ")[1];
-	query_params_str = query_params_str.substr(2); # remove /?
+	query_params_str = query_params_str.substr(2); # remove /? or /# depending on auth flow
 
 	# Don't send unauthorized cause it could be a favicon request
 	if not _response_is_valid(first_line, client): return;
@@ -102,8 +114,9 @@ func _process_request(server: HTTPServer, client: HTTPServer.Client) -> void:
 ## Checks if the response has query parameters to be valid
 func _response_is_valid(first_line: String, client: HTTPServer.Client) -> bool:
 	# Tries to find the query parameters within request / response of Twitch auth
-	var start : int = first_line.find("?")
-	if (start == -1):
+	var start_query : int = first_line.find("?"); # needed for auth code workflow
+	var start_fragment : int = first_line.find("#"); # needed for implicit workflow
+	if start_query == -1 && start_fragment == -1:
 		print ("Response from Twitch does not contain the required data.");
 		client.peer.disconnect_from_host();
 		return false;
@@ -113,11 +126,17 @@ func _response_is_valid(first_line: String, client: HTTPServer.Client) -> bool:
 func _handle_success(server: HTTPServer, client: HTTPServer.Client, query_params : Dictionary) -> void:
 	print("Twitch Auth: authentication success.");
 	server.send_response(client.peer, "200 OK", "<html><head><title>Twitch Login</title><script>window.close()</script></head><body>Success!</body></html>".to_utf8_buffer());
-	auth_succeed.emit(query_params['code']);
+
+	# Handle implicit success
+	if query_params.has("access_token"):
+		var access_token = query_params.get("access_token");
+		token_handler.set_access_token(access_token);
+		pass
+	elif query_params.has("code"):
+		auth_succeed.emit(query_params['code']);
 
 ## Handles the error in case that Twitch Auth API has a problem
 func _handle_error(server: HTTPServer, client: HTTPServer.Client, query_params : Dictionary) -> void:
 	var msg = "Error %s: %s" % [query_params["error"], query_params["error_description"]];
 	print("Twitch Auth: Error ", msg);
 	server.send_response(client.peer, "400 BAD REQUEST",  msg.to_utf8_buffer());
-
