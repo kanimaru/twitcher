@@ -20,7 +20,7 @@ class Payload extends RefCounted:
 	var subscription: Subscription;
 
 	func _init(d: Dictionary) -> void:
-		subscription = Subscription.new(d["subscription"])
+		subscription = Subscription.new(d.get("subscription", {}))
 
 ## An object that contains information about your subscription.
 class Subscription extends RefCounted:
@@ -51,7 +51,7 @@ class Subscription extends RefCounted:
 		version = d["version"];
 		cost = d["cost"];
 		condition = d["condition"];
-		transport = Transport.new(d["transport"]);
+		transport = Transport.new(d.get("transport", {}));
 		created_at = d["created_at"];
 
 ## An object that contains information about the transport used for notifications.
@@ -72,5 +72,5 @@ var metadata: Metadata;
 var payload: Payload;
 
 func _init(d: Dictionary) -> void:
-	metadata = Metadata.new(d["metadata"])
-	payload = Payload.new(d["payload"])
+	metadata = Metadata.new(d.get("metadata", {}))
+	payload = Payload.new(d.get("payload", {}))

@@ -9,5 +9,5 @@ var metadata: TwitchEventsub.Metadata;
 var payload: Dictionary = {};
 
 func _init(d: Dictionary) -> void:
-	metadata = TwitchEventsub.Metadata.new(d["metadata"]);
+	metadata = TwitchEventsub.Metadata.new(d.get("metadata", {}));
 	payload = d["payload"];

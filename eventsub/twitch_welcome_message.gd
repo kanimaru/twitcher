@@ -8,11 +8,11 @@ class TwitchWelcomeMessagePayload extends RefCounted:
 	var session: TwitchEventsub.Session;
 
 	func _init(d: Dictionary) -> void:
-		session = TwitchEventsub.Session.new(d["session"]);
+		session = TwitchEventsub.Session.new(d.get("session", {}));
 
 var metadata: TwitchEventsub.Metadata;
 var payload: TwitchWelcomeMessagePayload;
 
 func _init(d: Dictionary) -> void:
-	metadata = TwitchEventsub.Metadata.new(d["metadata"]);
-	payload = TwitchWelcomeMessagePayload.new(d["payload"]);
+	metadata = TwitchEventsub.Metadata.new(d.get("metadata", {}));
+	payload = TwitchWelcomeMessagePayload.new(d.get("payload", {}));
