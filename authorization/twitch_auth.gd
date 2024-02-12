@@ -80,6 +80,7 @@ func _start_login_process(response_type: String):
 		].map(func (a : String): return a.uri_encode());
 
 	var url = TwitchSetting.authorization_url;
+	log.i("Start login process for %s" % TwitchSetting.get_scopes())
 	url += "?response_type=%s&client_id=%s&scope=%s&redirect_uri=%s&force_verify=%s" % query_param;
 	OS.shell_open(url);
 	log.i("Waiting for user to login.")

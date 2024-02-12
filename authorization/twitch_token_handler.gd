@@ -41,14 +41,14 @@ func _check_token_refresh() -> void:
 func request_token(grant_type: String, auth_code: String = ""):
 	if requesting_token: return;
 	requesting_token = true;
-	log.i("request token")
+	log.i("request token via %s" % grant_type)
 	var request_body = "client_id=%s&client_secret=%s&grant_type=%s" % [
 		TwitchSetting.client_id, TwitchSetting.client_secret, grant_type
 	]
 	if auth_code != "":
-		request_body = "&code=%s" % auth_code;
+		request_body += "&code=%s" % auth_code;
 	if grant_type == "authorization_code":
-		request_body = "&redirect_uri=%s" % TwitchSetting.redirect_url;
+		request_body += "&redirect_uri=%s" % TwitchSetting.redirect_url;
 
 	var request = http_client.request(TwitchSetting.token_endpoint, HTTPClient.METHOD_POST, HEADERS, request_body);
 	if(await _handle_token_request(request)):
@@ -91,7 +91,7 @@ func _handle_token_request(request: BufferedHTTPClient.RequestData) -> bool:
 	else:
 		# Reset expiration cause token got not refreshed correctly.
 		tokens.expire_date = 0;
-	log.e("Token could not be fetched ResponseCode %s / Status %s" % [response.client.get_response_code(), response.client.get_status()])
+	log.e("Token could not be fetched ResponseCode %s / Status %s / Body %s" % [response.client.get_response_code(), response.client.get_status(), response_string])
 	return false;
 
 ## Checks if the token are valud

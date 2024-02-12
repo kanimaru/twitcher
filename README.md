@@ -4,6 +4,15 @@
 Uses a modified version of [MagicDumps](https://github.com/erodozer/magick-dumps)
 but has the same limitations. Changed the library to use SpriteFrames instead of AnimatedTextures
 
+## Install
+1. Checkout the project into your addon folder or use the AssetLib
+1. Then enable the Plugin via Project -> Project Settings -> Plugins
+1. Insert your credentials too: Project -> Project Settings -> Twitch -> Auth
+	1. Insert client credentials, find them at [Twitch Dev Console](https://dev.twitch.tv/) use the [guide](https://dev.twitch.tv/docs/authentication/register-app/)
+
+
+1. Call `TwitchService.setup();` at somepoint in your application when you want to start the Twitch integration.
+
 ## Image Transformer
 
 TODO:

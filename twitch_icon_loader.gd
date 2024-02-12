@@ -39,6 +39,7 @@ func _fireup_cache() -> void:
 	_cache_directory(TwitchSetting.cache_badge);
 
 func _cache_directory(path: String):
+	DirAccess.make_dir_recursive_absolute(path);
 	var files = DirAccess.get_files_at(path);
 	for file in files:
 		if file.ends_with(".res"):

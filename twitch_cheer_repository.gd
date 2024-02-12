@@ -120,7 +120,7 @@ func _load_cheermote(cheer_tier: CheerTier, theme: String, type: String, scale: 
 func _wait_for_cheeremote(request: BufferedHTTPClient.RequestData, cheer_id: String) -> SpriteFrames:
 	var client = request.client;
 	var response = await client.wait_for_request(request);
-	var sprite_frames = await Magick.dump_and_convert("user://cheermotes/%s" % cheer_id, response.response_data) as SpriteFrames;
+	var sprite_frames = await TwitchSetting.image_transformer.dump_and_convert("user://cheermotes/%s" % cheer_id, response.response_data) as SpriteFrames;
 	sprite_frames.take_over_path(cheer_id);
 	_cache[cheer_id] = sprite_frames;
 	return sprite_frames;
