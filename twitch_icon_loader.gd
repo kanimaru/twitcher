@@ -59,28 +59,43 @@ func preload_emotes(channel_id: String = "global") -> void:
 			response = await api.get_channel_emotes(channel_id);
 		cached_emotes[channel_id] = _map_emotes(response);
 
+## Returns requested emotes.
+## Key: EmoteID as String ; Value: SpriteFrames
 func get_emotes(emote_ids : Array[String]) -> Dictionary:
+	var requests: Array[TwitchEmoteDefinition] = []
+	for id in emote_ids:
+		requests.append(TwitchEmoteDefinition.new(id));
+	var emotes = await get_emotes_by_definition(requests);
+	var result = {};
+	# Remap the emotes to string value easier for processing
+	for requested_emote in requests:
+		result[requested_emote.id] = emotes[requested_emote];
+	return result;
+
+## Returns requested emotes.
+## Key: TwitchEmoteDefinition ; Value: SpriteFrames
+func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) -> Dictionary:
 	var response: Dictionary = {};
 	var requests: Dictionary = {};
 
-	for emote_id in emote_ids:
-		var emote_path: String = TwitchSetting.cache_emote.path_join(emote_id);
+	for emote_definition: TwitchEmoteDefinition in emote_definitions:
+		var emote_path: String = emote_definition.get_cache_path();
 		if ResourceLoader.has_cached(emote_path):
-			response[emote_id] = ResourceLoader.load(emote_path);
+			response[emote_definition] = ResourceLoader.load(emote_path);
 		else:
-			var request : BufferedHTTPClient.RequestData = _load_emote(emote_id);
-			requests[emote_id] = request;
+			var request : BufferedHTTPClient.RequestData = _load_emote(emote_definition);
+			requests[emote_definition] = request;
 
-	for emote_id in requests:
-		var emote_path: String = TwitchSetting.cache_emote.path_join(emote_id);
-		var request = requests[emote_id];
+	for emote_definition: TwitchEmoteDefinition in requests:
+		var emote_path: String = emote_definition.get_cache_path();
+		var request = requests[emote_definition];
 		var sprite_frames = await _convert_response(request, emote_path);
-		response[emote_id] = sprite_frames;
+		response[emote_definition] = sprite_frames;
 		_cached_images.append(sprite_frames);
 	return response;
 
-func _load_emote(emote_id : String) -> BufferedHTTPClient.RequestData:
-	var request_path = "/emoticons/v2/%s/default/dark/1.0" % [emote_id];
+func _load_emote(emote_definition : TwitchEmoteDefinition) -> BufferedHTTPClient.RequestData:
+	var request_path = "/emoticons/v2/%s/%s/%s/%1.1f" % [emote_definition.id, emote_definition._type, emote_definition._theme, emote_definition._scale];
 	var client = HttpClientManager.get_client(TwitchSetting.twitch_image_cdn_host);
 	return client.request(request_path, HTTPClient.METHOD_GET, BufferedHTTPClient.HEADERS, "");
 
@@ -105,14 +120,15 @@ func get_cached_emotes(channel_id) -> Dictionary:
 class BadgeData extends RefCounted:
 	var badge_set: String;
 	var badge_id: String;
-	var scale: String;
+	var scale: int;
 	var channel: String;
 
 	## badge_composite example: "subscriber/6;"
-	func _init(badge_composite: String, badge_scale: String, badge_channel: String) -> void:
+	func _init(badge_composite: String, badge_scale: int, badge_channel: String) -> void:
 		var badge_data : PackedStringArray = badge_composite.split("/", ALLOW_EMPTY, MAX_SPLITS);
 		badge_set = badge_data[0];
 		badge_id = badge_data[1];
+		assert(badge_scale == 1 || badge_scale == 2 || badge_scale == 4)
 		scale = badge_scale;
 		channel = badge_channel;
 
@@ -133,7 +149,9 @@ func preload_badges(channel_id: String = "global") -> void:
 			response = await(api.get_channel_chat_badges(channel_id));
 		cached_badges[channel_id] = _cache_badges(response);
 
-func get_badges(badge_composites : Array[String], channel_id : String = "global", scale : String = "1x") -> Dictionary:
+## Returns the requested badge either from cache or loads from web. Scale can be 1, 2 or 4.
+## Key: Badge Composite ; Value: SpriteFrames
+func get_badges(badge_composites : Array[String], channel_id : String = "global", scale : int = 1) -> Dictionary:
 	var response: Dictionary = {};
 	var requests: Dictionary = {};
 
@@ -175,7 +193,7 @@ func _load_badge(badge_data: BadgeData) -> BufferedHTTPClient.RequestData:
 	var client = HttpClientManager.get_client(base_url);
 	return client.request(request_path, HTTPClient.METHOD_GET, BufferedHTTPClient.HEADERS, "");
 
-# Maps the badges into a dict of category / versions / badge_id
+## Maps the badges into a dict of category / versions / badge_id
 func _cache_badges(result: Variant) -> Dictionary:
 	var mappings : Dictionary = {};
 	var badges : Array = result["data"];

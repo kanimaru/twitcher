@@ -1,24 +1,44 @@
 [gd_scene load_steps=2 format=3 uid="uid://5lyf04rwo1mf"]
 
-[ext_resource type="Script" path="res://Chat.gd" id="1_rxgbp"]
+[ext_resource type="Script" path="res://addons/twitcher/example/Chat.gd" id="1_rxgbp"]
 
 [node name="Chat" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -952.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rxgbp")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="."]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 0)
+[node name="ChatContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -1.0
-grow_horizontal = 0
+grow_horizontal = 2
 grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ChatContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ChatContainer" type="VBoxContainer" parent="ChatContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="InputContainer" type="HBoxContainer" parent="ChatContainer"]
+layout_mode = 2
+
+[node name="InputLine" type="LineEdit" parent="ChatContainer/InputContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Send" type="Button" parent="ChatContainer/InputContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Send"

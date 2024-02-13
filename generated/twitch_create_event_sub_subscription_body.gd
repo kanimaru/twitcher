@@ -49,17 +49,20 @@ class Transport extends RefCounted:
 	## An ID that identifies the conduit to send notifications to. When you create a conduit, the server returns the conduit ID. Specify this field only if `method` is set to **conduit**.
 	var conduit_id: String;
 
+
 	static func from_json(d: Dictionary) -> Transport:
 		var result = Transport.new();
-		result.method = d["method"];
-		result.callback = d["callback"];
-		result.secret = d["secret"];
-		result.session_id = d["session_id"];
-		result.conduit_id = d["conduit_id"];
+		if d.has("method") && d["method"] != null:
+			result.method = d["method"];
+		if d.has("callback") && d["callback"] != null:
+			result.callback = d["callback"];
+		if d.has("secret") && d["secret"] != null:
+			result.secret = d["secret"];
+		if d.has("session_id") && d["session_id"] != null:
+			result.session_id = d["session_id"];
+		if d.has("conduit_id") && d["conduit_id"] != null:
+			result.conduit_id = d["conduit_id"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -69,4 +72,8 @@ class Transport extends RefCounted:
 		d["session_id"] = session_id;
 		d["conduit_id"] = conduit_id;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

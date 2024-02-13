@@ -82,16 +82,18 @@ class Reward extends RefCounted:
 	## The reward’s cost, in Channel Points.
 	var cost: int;
 
+
 	static func from_json(d: Dictionary) -> Reward:
 		var result = Reward.new();
-		result.id = d["id"];
-		result.title = d["title"];
-		result.prompt = d["prompt"];
-		result.cost = d["cost"];
+		if d.has("id") && d["id"] != null:
+			result.id = d["id"];
+		if d.has("title") && d["title"] != null:
+			result.title = d["title"];
+		if d.has("prompt") && d["prompt"] != null:
+			result.prompt = d["prompt"];
+		if d.has("cost") && d["cost"] != null:
+			result.cost = d["cost"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -100,4 +102,8 @@ class Reward extends RefCounted:
 		d["prompt"] = prompt;
 		d["cost"] = cost;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

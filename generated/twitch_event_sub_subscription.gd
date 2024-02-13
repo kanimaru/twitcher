@@ -69,17 +69,20 @@ class Transport extends RefCounted:
 	## The UTC date and time that the WebSocket connection was lost. Included only if `method` is set to **websocket**.
 	var disconnected_at: Variant;
 
+
 	static func from_json(d: Dictionary) -> Transport:
 		var result = Transport.new();
-		result.method = d["method"];
-		result.callback = d["callback"];
-		result.session_id = d["session_id"];
-		result.connected_at = d["connected_at"];
-		result.disconnected_at = d["disconnected_at"];
+		if d.has("method") && d["method"] != null:
+			result.method = d["method"];
+		if d.has("callback") && d["callback"] != null:
+			result.callback = d["callback"];
+		if d.has("session_id") && d["session_id"] != null:
+			result.session_id = d["session_id"];
+		if d.has("connected_at") && d["connected_at"] != null:
+			result.connected_at = d["connected_at"];
+		if d.has("disconnected_at") && d["disconnected_at"] != null:
+			result.disconnected_at = d["disconnected_at"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -89,4 +92,8 @@ class Transport extends RefCounted:
 		d["connected_at"] = connected_at;
 		d["disconnected_at"] = disconnected_at;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

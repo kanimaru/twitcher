@@ -186,6 +186,27 @@ func _get_param_type(schema: Dictionary) -> String:
 				return "Array";
 		_: return "Variant";
 
+func _sanatize_classname(cls_name: String) -> String:
+	match cls_name:
+		"Image": return "TwitchImage";
+		"Panel": return "TwitchPanel";
+		_: return cls_name;
+
+## Couple of names from the Twitch API are messed up like keywords for godot or numbers
+func _to_field_name(property_name: String) -> String:
+	match property_name:
+		"animated": return "animated_format";
+		"static": return "static_format";
+		"1": return "_1";
+		"2": return "_2";
+		"3": return "_3";
+		"4": return "_4";
+		"1.5": return "_1_5";
+		"100x100": return "_100x100";
+		"24x24": return "_24x24";
+		"300x200": return "_300x200";
+		_: return property_name;
+
 #region Generate Components
 
 func _generate_components():
@@ -205,40 +226,23 @@ func _generate_components():
 		template.process_template("res://addons/twitcher/editor/template_component.txt",
 				data, "res://addons/twitcher/generated/" + file_name);
 
-func _sanatize_classname(cls_name: String) -> String:
-	match cls_name:
-		"Image": return "TwitchImage";
-		_: return cls_name;
-
-## Couple of names from the Twitch API are messed up like keywords for godot or numbers
-func _to_field_name(property_name: String) -> String:
-	match property_name:
-		"animated": return "animated_format";
-		"static": return "static_format";
-		"1": return "_1";
-		"2": return "_2";
-		"3": return "_3";
-		"4": return "_4";
-		"1.5": return "_1_5";
-		"100x100": return "_100x100";
-		"24x24": return "_24x24";
-		"300x200": return "_300x200";
-		_: return property_name;
-
 func _calculate_template(schema_name: String, schema: Dictionary, result_classes: Array, result_properties: Array[Dictionary]):
 	if schema["type"] != "object":
 		printerr("Not an object");
 	var properties = schema["properties"];
+	_parse_properties(properties, result_classes, result_properties);
+
+func _parse_properties(properties: Dictionary, result_classes: Array, result_properties: Array[Dictionary]):
 	for property_name in properties:
 		var property = properties[property_name];
 		var type = _get_param_type(property)
-		var is_sub_class = false
+		var is_sub_class = property.has("$ref");
 		var array_type = ""
 		var is_typed_array = false
 
 		if property.has("properties"):
 			var class_description = property['description'].replace("\n", " ");
-			var sub_class = _get_sub_classes(schema_name, property_name, property['properties'], class_description);
+			var sub_class = _get_sub_classes(property_name, property['properties'], result_classes, class_description);
 			result_classes.append(sub_class["code"]);
 			type = sub_class["name"];
 			is_sub_class = true;
@@ -247,9 +251,17 @@ func _calculate_template(schema_name: String, schema: Dictionary, result_classes
 		var is_array = false;
 		if property.get("type", "") == "array":
 			is_sub_class = false;
-			if property.get("items", {}).has("$ref"):
+			var items = property.get("items", {});
+			if items.has("$ref"):
 				is_typed_array = true;
 				array_type = _resolve_ref(property.get("items", {}).get("$ref"));
+			elif items.has("properties"):
+				var array_properties = items.get("properties")
+				var sub_class = _get_sub_classes(property_name, array_properties, result_classes);
+				result_classes.append(sub_class["code"]);
+				array_type = sub_class["name"];
+				type = "Array[" + sub_class["name"] + "]";
+				is_typed_array = true;
 			else:
 				is_array = true;
 
@@ -265,27 +277,20 @@ func _calculate_template(schema_name: String, schema: Dictionary, result_classes
 			"description": property.get("description", "No description available").replace("\n", " "),
 		})
 
-func _get_sub_classes(schema_name: String, parent_property_name:String, properties: Dictionary, class_description: String = "") -> Dictionary:
+func _get_sub_classes(parent_property_name:String, properties: Dictionary, result_classes: Array, class_description: String = "") -> Dictionary:
 	var template = SimpleTemplate.new()
 	var template_component_class = template.read_template_file(
 			"res://addons/twitcher/editor/template_component_class.txt");
-	var property_data = [];
-	for property_name in properties:
-		var property = properties[property_name];
-		var description = property.get("description", "No description available").replace("\n", " ");
-		property_data.append({
-			"field_name": _to_field_name(property_name),
-			"property_name": property_name,
-			"type": _get_param_type(property),
-			"description": description,
-		})
+	var result_properties: Array[Dictionary] = [];
+
+	_parse_properties(properties, result_classes, result_properties);
 
 	var cls_name = parent_property_name.capitalize().replace(" ", "");
 	cls_name = _sanatize_classname(cls_name);
 	var data = {
 		"class_name": cls_name,
 		"class_description": class_description,
-		"properties": property_data
+		"properties": result_properties
 	};
 	return {
 		"name": cls_name,

@@ -82,15 +82,16 @@ class Images extends RefCounted:
 	## A URL to the large version (112px x 112px) of the emote.
 	var url_4x: String;
 
+
 	static func from_json(d: Dictionary) -> Images:
 		var result = Images.new();
-		result.url_1x = d["url_1x"];
-		result.url_2x = d["url_2x"];
-		result.url_4x = d["url_4x"];
+		if d.has("url_1x") && d["url_1x"] != null:
+			result.url_1x = d["url_1x"];
+		if d.has("url_2x") && d["url_2x"] != null:
+			result.url_2x = d["url_2x"];
+		if d.has("url_4x") && d["url_4x"] != null:
+			result.url_4x = d["url_4x"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -98,4 +99,8 @@ class Images extends RefCounted:
 		d["url_2x"] = url_2x;
 		d["url_4x"] = url_4x;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

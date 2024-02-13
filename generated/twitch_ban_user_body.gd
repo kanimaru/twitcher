@@ -30,15 +30,16 @@ class Data extends RefCounted:
 	## The reason the you’re banning the user or putting them in a timeout. The text is user defined and is limited to a maximum of 500 characters.
 	var reason: String;
 
+
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
-		result.user_id = d["user_id"];
-		result.duration = d["duration"];
-		result.reason = d["reason"];
+		if d.has("user_id") && d["user_id"] != null:
+			result.user_id = d["user_id"];
+		if d.has("duration") && d["duration"] != null:
+			result.duration = d["duration"];
+		if d.has("reason") && d["reason"] != null:
+			result.reason = d["reason"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -46,4 +47,8 @@ class Data extends RefCounted:
 		d["duration"] = duration;
 		d["reason"] = reason;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

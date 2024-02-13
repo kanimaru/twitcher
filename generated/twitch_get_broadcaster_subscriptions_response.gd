@@ -45,16 +45,19 @@ class Pagination extends RefCounted:
 	## The cursor used to get the next or previous page of results. Use the cursor to set the request’s _after_ or _before_ query parameter depending on whether you’re paging forwards or backwards.
 	var cursor: String;
 
+
 	static func from_json(d: Dictionary) -> Pagination:
 		var result = Pagination.new();
-		result.cursor = d["cursor"];
+		if d.has("cursor") && d["cursor"] != null:
+			result.cursor = d["cursor"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
 		d["cursor"] = cursor;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

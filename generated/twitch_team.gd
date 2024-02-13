@@ -4,7 +4,7 @@ extends RefCounted
 class_name TwitchTeam
 
 ## The list of team members.
-var users: Array;
+var users: Array[Users];
 ## A URL to the team’s background image.
 var background_image_url: String;
 ## A URL to the team’s banner.
@@ -28,7 +28,7 @@ static func from_json(d: Dictionary) -> TwitchTeam:
 	var result = TwitchTeam.new();
 	if d.has("users") && d["users"] != null:
 		for value in d["users"]:
-			result.users.append(value);
+			result.users.append(Users.from_json(value));
 	if d.has("background_image_url") && d["background_image_url"] != null:
 		result.background_image_url = d["background_image_url"];
 	if d.has("banner") && d["banner"] != null:
@@ -54,7 +54,7 @@ func to_dict() -> Dictionary:
 	d["users"] = [];
 	if users != null:
 		for value in users:
-			d["users"].append(value);
+			d["users"].append(value.to_dict());
 	d["background_image_url"] = background_image_url;
 	d["banner"] = banner;
 	d["created_at"] = created_at;
@@ -68,4 +68,35 @@ func to_dict() -> Dictionary:
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
+
+## 
+class Users extends RefCounted:
+	## An ID that identifies the team member.
+	var user_id: String;
+	## The team member’s login name.
+	var user_login: String;
+	## The team member’s display name.
+	var user_name: String;
+
+
+	static func from_json(d: Dictionary) -> Users:
+		var result = Users.new();
+		if d.has("user_id") && d["user_id"] != null:
+			result.user_id = d["user_id"];
+		if d.has("user_login") && d["user_login"] != null:
+			result.user_login = d["user_login"];
+		if d.has("user_name") && d["user_name"] != null:
+			result.user_name = d["user_name"];
+		return result;
+
+	func to_dict() -> Dictionary:
+		var d: Dictionary = {};
+		d["user_id"] = user_id;
+		d["user_login"] = user_login;
+		d["user_name"] = user_name;
+		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

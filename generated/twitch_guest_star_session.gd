@@ -81,15 +81,16 @@ class AudioSettings extends RefCounted:
 	## Flag determining whether the guest has an appropriate audio device available to be transmitted to the session.
 	var is_available: bool;
 
+
 	static func from_json(d: Dictionary) -> AudioSettings:
 		var result = AudioSettings.new();
-		result.is_host_enabled = d["is_host_enabled"];
-		result.is_guest_enabled = d["is_guest_enabled"];
-		result.is_available = d["is_available"];
+		if d.has("is_host_enabled") && d["is_host_enabled"] != null:
+			result.is_host_enabled = d["is_host_enabled"];
+		if d.has("is_guest_enabled") && d["is_guest_enabled"] != null:
+			result.is_guest_enabled = d["is_guest_enabled"];
+		if d.has("is_available") && d["is_available"] != null:
+			result.is_available = d["is_available"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -97,6 +98,10 @@ class AudioSettings extends RefCounted:
 		d["is_guest_enabled"] = is_guest_enabled;
 		d["is_available"] = is_available;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 
 ## Information about the guest’s video settings
 class VideoSettings extends RefCounted:
@@ -107,15 +112,16 @@ class VideoSettings extends RefCounted:
 	## Flag determining whether the guest has an appropriate video device available to be transmitted to the session.
 	var is_available: bool;
 
+
 	static func from_json(d: Dictionary) -> VideoSettings:
 		var result = VideoSettings.new();
-		result.is_host_enabled = d["is_host_enabled"];
-		result.is_guest_enabled = d["is_guest_enabled"];
-		result.is_available = d["is_available"];
+		if d.has("is_host_enabled") && d["is_host_enabled"] != null:
+			result.is_host_enabled = d["is_host_enabled"];
+		if d.has("is_guest_enabled") && d["is_guest_enabled"] != null:
+			result.is_guest_enabled = d["is_guest_enabled"];
+		if d.has("is_available") && d["is_available"] != null:
+			result.is_available = d["is_available"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -123,4 +129,8 @@ class VideoSettings extends RefCounted:
 		d["is_guest_enabled"] = is_guest_enabled;
 		d["is_available"] = is_available;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

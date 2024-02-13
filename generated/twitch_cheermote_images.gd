@@ -11,15 +11,17 @@ var dark: TwitchCheermoteImageTheme;
 static func from_json(d: Dictionary) -> TwitchCheermoteImages:
 	var result = TwitchCheermoteImages.new();
 	if d.has("light") && d["light"] != null:
-		result.light = d["light"];
+		result.light = TwitchCheermoteImageTheme.from_json(d["light"]);
 	if d.has("dark") && d["dark"] != null:
-		result.dark = d["dark"];
+		result.dark = TwitchCheermoteImageTheme.from_json(d["dark"]);
 	return result;
 
 func to_dict() -> Dictionary:
 	var d: Dictionary = {};
-	d["light"] = light;
-	d["dark"] = dark;
+	if light != null:
+		d["light"] = light.to_dict();
+	if dark != null:
+		d["dark"] = dark.to_dict();
 	return d;
 
 func to_json() -> String:
