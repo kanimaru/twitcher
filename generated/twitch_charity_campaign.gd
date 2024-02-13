@@ -76,15 +76,16 @@ class CurrentAmount extends RefCounted:
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
 	var currency: String;
 
+
 	static func from_json(d: Dictionary) -> CurrentAmount:
 		var result = CurrentAmount.new();
-		result.value = d["value"];
-		result.decimal_places = d["decimal_places"];
-		result.currency = d["currency"];
+		if d.has("value") && d["value"] != null:
+			result.value = d["value"];
+		if d.has("decimal_places") && d["decimal_places"] != null:
+			result.decimal_places = d["decimal_places"];
+		if d.has("currency") && d["currency"] != null:
+			result.currency = d["currency"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -92,6 +93,10 @@ class CurrentAmount extends RefCounted:
 		d["decimal_places"] = decimal_places;
 		d["currency"] = currency;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 
 ## The campaign’s fundraising goal. This field is **null** if the broadcaster has not defined a fundraising goal.
 class TargetAmount extends RefCounted:
@@ -102,15 +107,16 @@ class TargetAmount extends RefCounted:
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
 	var currency: String;
 
+
 	static func from_json(d: Dictionary) -> TargetAmount:
 		var result = TargetAmount.new();
-		result.value = d["value"];
-		result.decimal_places = d["decimal_places"];
-		result.currency = d["currency"];
+		if d.has("value") && d["value"] != null:
+			result.value = d["value"];
+		if d.has("decimal_places") && d["decimal_places"] != null:
+			result.decimal_places = d["decimal_places"];
+		if d.has("currency") && d["currency"] != null:
+			result.currency = d["currency"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -118,4 +124,8 @@ class TargetAmount extends RefCounted:
 		d["decimal_places"] = decimal_places;
 		d["currency"] = currency;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

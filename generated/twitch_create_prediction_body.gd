@@ -8,7 +8,7 @@ var broadcaster_id: String;
 ## The question that the broadcaster is asking. For example, _Will I finish this entire pizza?_ The title is limited to a maximum of 45 characters.
 var title: String;
 ## The list of possible outcomes that the viewers may choose from. The list must contain a minimum of 2 choices and up to a maximum of 10 choices.
-var outcomes: Array;
+var outcomes: Array[Outcomes];
 ## The length of time (in seconds) that the prediction will run for. The minimum is 30 seconds and the maximum is 1800 seconds (30 minutes).
 var prediction_window: int;
 
@@ -20,7 +20,7 @@ static func from_json(d: Dictionary) -> TwitchCreatePredictionBody:
 		result.title = d["title"];
 	if d.has("outcomes") && d["outcomes"] != null:
 		for value in d["outcomes"]:
-			result.outcomes.append(value);
+			result.outcomes.append(Outcomes.from_json(value));
 	if d.has("prediction_window") && d["prediction_window"] != null:
 		result.prediction_window = d["prediction_window"];
 	return result;
@@ -32,10 +32,31 @@ func to_dict() -> Dictionary:
 	d["outcomes"] = [];
 	if outcomes != null:
 		for value in outcomes:
-			d["outcomes"].append(value);
+			d["outcomes"].append(value.to_dict());
 	d["prediction_window"] = prediction_window;
 	return d;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
+
+## 
+class Outcomes extends RefCounted:
+	## The text of one of the outcomes that the viewer may select. The title is limited to a maximum of 25 characters.
+	var title: String;
+
+
+	static func from_json(d: Dictionary) -> Outcomes:
+		var result = Outcomes.new();
+		if d.has("title") && d["title"] != null:
+			result.title = d["title"];
+		return result;
+
+	func to_dict() -> Dictionary:
+		var d: Dictionary = {};
+		d["title"] = title;
+		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

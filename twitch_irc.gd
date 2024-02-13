@@ -33,7 +33,6 @@ var user_regex : RegEx = RegEx.create_from_string("!([\\w]*)@")
 
 var auth: TwitchAuth;
 
-var is_debug := OS.is_debug_build(); # TODO make it different
 
 func _init(twitch_auth : TwitchAuth) -> void:
 	auth = twitch_auth;
@@ -93,7 +92,7 @@ func _data_received(data : PackedByteArray) -> void:
 			var msg : PackedStringArray = message.split(" ", false, 1);
 			tags = _parse_tags(msg[0]);
 			message = msg[1];
-		if is_debug: log.i("> " + message);
+		log.i("> " + message);
 		_handle_message(message, tags);
 
 ## Tries to send messages as long as the websocket is open
@@ -144,7 +143,7 @@ func chat(message : String, channel_name : String = ""):
 ## Sends a string message to Twitch.
 func _send(text : String) -> void:
 	client.send_text(text);
-	if is_debug: log.i("< " + text.strip_edges(false));
+	log.i("< " + text.strip_edges(false));
 
 func _parse_tags(tags: String) -> Dictionary:
 	var parsed_tags : Dictionary = {};

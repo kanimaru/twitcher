@@ -58,18 +58,22 @@ class Category extends RefCounted:
 	## The name of the category. For example, the game’s title if the broadcaster will play a game or Just Chatting if the broadcaster will host a talk show.
 	var name: String;
 
+
 	static func from_json(d: Dictionary) -> Category:
 		var result = Category.new();
-		result.id = d["id"];
-		result.name = d["name"];
+		if d.has("id") && d["id"] != null:
+			result.id = d["id"];
+		if d.has("name") && d["name"] != null:
+			result.name = d["name"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
 		d["id"] = id;
 		d["name"] = name;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

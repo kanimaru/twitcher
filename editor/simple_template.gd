@@ -22,11 +22,9 @@ func read_template_file(file_path: String) -> String:
 # Parses the template content and replaces variables, loops, and conditions with data.
 func parse_template(template_content: String, data: Dictionary) -> String:
 	var result = template_content
-
 	result = _parse_variables(result, data);
 	result = _parse_loops(result, data);
 	result = _parse_conditionals(result, data);
-
 	return result
 
 # Helper function to retrieve nested values from a dictionary
@@ -44,10 +42,8 @@ func _parse_variables(result: String, data: Dictionary, variable_pattern = "{([a
 	var variable_regex = RegEx.create_from_string(variable_pattern)
 	var matches = variable_regex.search(result)
 	while matches:
-
 		var full_match = matches.get_string(0)
 		var variable_path = matches.get_string(1).split(".")
-
 		var value = _get_nested_value(data, variable_path)
 		var value_length = 0;
 		if value != null:
@@ -60,8 +56,8 @@ func _parse_variables(result: String, data: Dictionary, variable_pattern = "{([a
 # Process loops
 # TODO Nested for loops not supported -> the /for is tracked to early in regex
 func _parse_loops(result: String, data: Dictionary) -> String:
-	var loop_regex = RegEx.create_from_string( "(?s){for (.*?) as (.*?)}\n(.*?){/for}\n?")
-	var matches = loop_regex.search(result)
+	var loop_regex = RegEx.create_from_string("(?s){for (.*?) as (.*?)}\n(.*?){/for}\n?");
+	var matches: RegExMatch = loop_regex.search(result);
 	while matches:
 		var variable_path = matches.get_string(1).split(".")
 		var each_name = matches.get_string(2)

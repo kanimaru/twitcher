@@ -53,18 +53,22 @@ class Cost extends RefCounted:
 	## The type of currency. Possible values are:      * bits — The minimum price is 1 and the maximum is 10000.
 	var type: String;
 
+
 	static func from_json(d: Dictionary) -> Cost:
 		var result = Cost.new();
-		result.amount = d["amount"];
-		result.type = d["type"];
+		if d.has("amount") && d["amount"] != null:
+			result.amount = d["amount"];
+		if d.has("type") && d["type"] != null:
+			result.type = d["type"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
 		d["amount"] = amount;
 		d["type"] = type;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

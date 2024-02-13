@@ -66,6 +66,32 @@ func to_dict() -> Dictionary:
 func to_json() -> String:
 	return JSON.stringify(to_dict());
 
+## Contains details about the digital product’s cost.
+class Cost extends RefCounted:
+	## The amount exchanged for the digital product.
+	var amount: int;
+	## The type of currency exchanged. Possible values are:      * bits
+	var type: String;
+
+
+	static func from_json(d: Dictionary) -> Cost:
+		var result = Cost.new();
+		if d.has("amount") && d["amount"] != null:
+			result.amount = d["amount"];
+		if d.has("type") && d["type"] != null:
+			result.type = d["type"];
+		return result;
+
+	func to_dict() -> Dictionary:
+		var d: Dictionary = {};
+		d["amount"] = amount;
+		d["type"] = type;
+		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
+
 ## Contains details about the digital product.
 class ProductData extends RefCounted:
 	## An ID that identifies the digital product.
@@ -73,7 +99,7 @@ class ProductData extends RefCounted:
 	## Set to `twitch.ext.` \+ `<the extension's ID>`.
 	var domain: String;
 	## Contains details about the digital product’s cost.
-	var cost: Dictionary;
+	var cost: Cost;
 	## A Boolean value that determines whether the product is in development. Is **true** if the digital product is in development and cannot be exchanged.
 	var inDevelopment: bool;
 	## The name of the digital product.
@@ -83,28 +109,38 @@ class ProductData extends RefCounted:
 	## A Boolean value that determines whether the data was broadcast to all instances of the extension. Is **true** if the data was broadcast to all instances.
 	var broadcast: bool;
 
+
 	static func from_json(d: Dictionary) -> ProductData:
 		var result = ProductData.new();
-		result.sku = d["sku"];
-		result.domain = d["domain"];
-		result.cost = d["cost"];
-		result.inDevelopment = d["inDevelopment"];
-		result.displayName = d["displayName"];
-		result.expiration = d["expiration"];
-		result.broadcast = d["broadcast"];
+		if d.has("sku") && d["sku"] != null:
+			result.sku = d["sku"];
+		if d.has("domain") && d["domain"] != null:
+			result.domain = d["domain"];
+		if d.has("cost") && d["cost"] != null:
+			result.cost = Cost.from_json(d["cost"]);
+		if d.has("inDevelopment") && d["inDevelopment"] != null:
+			result.inDevelopment = d["inDevelopment"];
+		if d.has("displayName") && d["displayName"] != null:
+			result.displayName = d["displayName"];
+		if d.has("expiration") && d["expiration"] != null:
+			result.expiration = d["expiration"];
+		if d.has("broadcast") && d["broadcast"] != null:
+			result.broadcast = d["broadcast"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
 		d["sku"] = sku;
 		d["domain"] = domain;
-		d["cost"] = cost;
+		if cost != null:
+			d["cost"] = cost.to_dict();
 		d["inDevelopment"] = inDevelopment;
 		d["displayName"] = displayName;
 		d["expiration"] = expiration;
 		d["broadcast"] = broadcast;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

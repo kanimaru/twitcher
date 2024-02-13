@@ -42,18 +42,22 @@ class DateRange extends RefCounted:
 	## The reporting window’s end date.
 	var ended_at: Variant;
 
+
 	static func from_json(d: Dictionary) -> DateRange:
 		var result = DateRange.new();
-		result.started_at = d["started_at"];
-		result.ended_at = d["ended_at"];
+		if d.has("started_at") && d["started_at"] != null:
+			result.started_at = d["started_at"];
+		if d.has("ended_at") && d["ended_at"] != null:
+			result.ended_at = d["ended_at"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
 		d["started_at"] = started_at;
 		d["ended_at"] = ended_at;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

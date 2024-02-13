@@ -14,7 +14,7 @@ var broadcaster_login: String;
 ## The question that viewers are voting on. For example, _What game should I play next?_ The title may contain a maximum of 60 characters.
 var title: String;
 ## A list of choices that viewers can choose from. The list will contain a minimum of two choices and up to a maximum of five choices.
-var choices: Array;
+var choices: Array[Choices];
 ## Not used; will be set to **false**.
 var bits_voting_enabled: bool;
 ## Not used; will be set to 0.
@@ -46,7 +46,7 @@ static func from_json(d: Dictionary) -> TwitchPoll:
 		result.title = d["title"];
 	if d.has("choices") && d["choices"] != null:
 		for value in d["choices"]:
-			result.choices.append(value);
+			result.choices.append(Choices.from_json(value));
 	if d.has("bits_voting_enabled") && d["bits_voting_enabled"] != null:
 		result.bits_voting_enabled = d["bits_voting_enabled"];
 	if d.has("bits_per_vote") && d["bits_per_vote"] != null:
@@ -75,7 +75,7 @@ func to_dict() -> Dictionary:
 	d["choices"] = [];
 	if choices != null:
 		for value in choices:
-			d["choices"].append(value);
+			d["choices"].append(value.to_dict());
 	d["bits_voting_enabled"] = bits_voting_enabled;
 	d["bits_per_vote"] = bits_per_vote;
 	d["channel_points_voting_enabled"] = channel_points_voting_enabled;
@@ -88,4 +88,45 @@ func to_dict() -> Dictionary:
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
+
+## 
+class Choices extends RefCounted:
+	## An ID that identifies this choice.
+	var id: String;
+	## The choice’s title. The title may contain a maximum of 25 characters.
+	var title: String;
+	## The total number of votes cast for this choice.
+	var votes: int;
+	## The number of votes cast using Channel Points.
+	var channel_points_votes: int;
+	## Not used; will be set to 0.
+	var bits_votes: int;
+
+
+	static func from_json(d: Dictionary) -> Choices:
+		var result = Choices.new();
+		if d.has("id") && d["id"] != null:
+			result.id = d["id"];
+		if d.has("title") && d["title"] != null:
+			result.title = d["title"];
+		if d.has("votes") && d["votes"] != null:
+			result.votes = d["votes"];
+		if d.has("channel_points_votes") && d["channel_points_votes"] != null:
+			result.channel_points_votes = d["channel_points_votes"];
+		if d.has("bits_votes") && d["bits_votes"] != null:
+			result.bits_votes = d["bits_votes"];
+		return result;
+
+	func to_dict() -> Dictionary:
+		var d: Dictionary = {};
+		d["id"] = id;
+		d["title"] = title;
+		d["votes"] = votes;
+		d["channel_points_votes"] = channel_points_votes;
+		d["bits_votes"] = bits_votes;
+		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

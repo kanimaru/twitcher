@@ -36,7 +36,7 @@ var type: String;
 ## The video's length in ISO 8601 duration format. For example, 3m21s represents 3 minutes, 21 seconds.
 var duration: String;
 ## The segments that Twitch Audio Recognition muted; otherwise, **null**.
-var muted_segments: Array;
+var muted_segments: Array[MutedSegments];
 
 static func from_json(d: Dictionary) -> TwitchVideo:
 	var result = TwitchVideo.new();
@@ -74,7 +74,7 @@ static func from_json(d: Dictionary) -> TwitchVideo:
 		result.duration = d["duration"];
 	if d.has("muted_segments") && d["muted_segments"] != null:
 		for value in d["muted_segments"]:
-			result.muted_segments.append(value);
+			result.muted_segments.append(MutedSegments.from_json(value));
 	return result;
 
 func to_dict() -> Dictionary:
@@ -98,9 +98,35 @@ func to_dict() -> Dictionary:
 	d["muted_segments"] = [];
 	if muted_segments != null:
 		for value in muted_segments:
-			d["muted_segments"].append(value);
+			d["muted_segments"].append(value.to_dict());
 	return d;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
+
+## 
+class MutedSegments extends RefCounted:
+	## The duration of the muted segment, in seconds.
+	var duration: int;
+	## The offset, in seconds, from the beginning of the video to where the muted segment begins.
+	var offset: int;
+
+
+	static func from_json(d: Dictionary) -> MutedSegments:
+		var result = MutedSegments.new();
+		if d.has("duration") && d["duration"] != null:
+			result.duration = d["duration"];
+		if d.has("offset") && d["offset"] != null:
+			result.offset = d["offset"];
+		return result;
+
+	func to_dict() -> Dictionary:
+		var d: Dictionary = {};
+		d["duration"] = duration;
+		d["offset"] = offset;
+		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

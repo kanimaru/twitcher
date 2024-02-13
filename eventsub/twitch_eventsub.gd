@@ -66,6 +66,7 @@ var session: Session;
 var eventsub_messages: Dictionary = {};
 var last_keepalive: int;
 var is_conntected: bool;
+var subscriptions_left: int;
 
 func _init(twitch_api: TwitchRestAPI) -> void:
 	api = twitch_api;
@@ -84,15 +85,18 @@ func _on_connection_state_changed(state : WebSocketPeer.State):
 	else:
 		is_conntected = false;
 
-## Awaits until the websocket is connected. Eventsub is not ready or subscribed at this point in time.
+## Awaits until the websocket is connected and the session id was received
+## at this point we can subscribe to events.
 func wait_for_connection():
 	if not is_conntected: await connected;
+	if session == null: await session_id_received;
 
 ## Subscribes to all events that are defined in the Settings.
 ## Eventsub should be connected at this point otherwise this method does nothing.
 func subscribe_all():
 	if session == null: await session_id_received;
 	var subscriptions: Dictionary = TwitchSetting.subscriptions;
+	subscriptions_left = TwitchSetting.subscriptions.size();
 	for subscription: TwitchSubscriptions.Subscription in subscriptions:
 		var condition: Dictionary = subscriptions[subscription];
 		_subscribe_event(subscription.value, subscription.version, condition, session.id);

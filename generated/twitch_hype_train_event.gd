@@ -41,6 +41,68 @@ func to_dict() -> Dictionary:
 func to_json() -> String:
 	return JSON.stringify(to_dict());
 
+## The most recent contribution towards the Hype Train’s goal.
+class LastContribution extends RefCounted:
+	## The total amount contributed. If `type` is BITS, `total` represents the amount of Bits used. If `type` is SUBS, `total` is 500, 1000, or 2500 to represent tier 1, 2, or 3 subscriptions, respectively.
+	var total: int;
+	## The contribution method used. Possible values are:      * BITS — Cheering with Bits. * SUBS — Subscription activity like subscribing or gifting subscriptions. * OTHER — Covers other contribution methods not listed.
+	var type: String;
+	## The ID of the user that made the contribution.
+	var user: String;
+
+
+	static func from_json(d: Dictionary) -> LastContribution:
+		var result = LastContribution.new();
+		if d.has("total") && d["total"] != null:
+			result.total = d["total"];
+		if d.has("type") && d["type"] != null:
+			result.type = d["type"];
+		if d.has("user") && d["user"] != null:
+			result.user = d["user"];
+		return result;
+
+	func to_dict() -> Dictionary:
+		var d: Dictionary = {};
+		d["total"] = total;
+		d["type"] = type;
+		d["user"] = user;
+		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
+
+## 
+class TopContributions extends RefCounted:
+	## The total amount contributed. If `type` is BITS, `total` represents the amount of Bits used. If `type` is SUBS, `total` is 500, 1000, or 2500 to represent tier 1, 2, or 3 subscriptions, respectively.
+	var total: int;
+	## The contribution method used. Possible values are:      * BITS — Cheering with Bits. * SUBS — Subscription activity like subscribing or gifting subscriptions. * OTHER — Covers other contribution methods not listed.
+	var type: String;
+	## The ID of the user that made the contribution.
+	var user: String;
+
+
+	static func from_json(d: Dictionary) -> TopContributions:
+		var result = TopContributions.new();
+		if d.has("total") && d["total"] != null:
+			result.total = d["total"];
+		if d.has("type") && d["type"] != null:
+			result.type = d["type"];
+		if d.has("user") && d["user"] != null:
+			result.user = d["user"];
+		return result;
+
+	func to_dict() -> Dictionary:
+		var d: Dictionary = {};
+		d["total"] = total;
+		d["type"] = type;
+		d["user"] = user;
+		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
+
 ## The event’s data.
 class EventData extends RefCounted:
 	## The ID of the broadcaster that’s running the Hype Train.
@@ -54,32 +116,41 @@ class EventData extends RefCounted:
 	## An ID that identifies this Hype Train.
 	var id: String;
 	## The most recent contribution towards the Hype Train’s goal.
-	var last_contribution: Dictionary;
+	var last_contribution: LastContribution;
 	## The highest level that the Hype Train reached (the levels are 1 through 5).
 	var level: int;
 	## The UTC date and time (in RFC3339 format) that this Hype Train started.
 	var started_at: Variant;
 	## The top contributors for each contribution type. For example, the top contributor using BITS (by aggregate) and the top contributor using SUBS (by count).
-	var top_contributions: Array;
+	var top_contributions: Array[TopContributions];
 	## The current total amount raised.
 	var total: int;
 
+
 	static func from_json(d: Dictionary) -> EventData:
 		var result = EventData.new();
-		result.broadcaster_id = d["broadcaster_id"];
-		result.cooldown_end_time = d["cooldown_end_time"];
-		result.expires_at = d["expires_at"];
-		result.goal = d["goal"];
-		result.id = d["id"];
-		result.last_contribution = d["last_contribution"];
-		result.level = d["level"];
-		result.started_at = d["started_at"];
-		result.top_contributions = d["top_contributions"];
-		result.total = d["total"];
+		if d.has("broadcaster_id") && d["broadcaster_id"] != null:
+			result.broadcaster_id = d["broadcaster_id"];
+		if d.has("cooldown_end_time") && d["cooldown_end_time"] != null:
+			result.cooldown_end_time = d["cooldown_end_time"];
+		if d.has("expires_at") && d["expires_at"] != null:
+			result.expires_at = d["expires_at"];
+		if d.has("goal") && d["goal"] != null:
+			result.goal = d["goal"];
+		if d.has("id") && d["id"] != null:
+			result.id = d["id"];
+		if d.has("last_contribution") && d["last_contribution"] != null:
+			result.last_contribution = LastContribution.from_json(d["last_contribution"]);
+		if d.has("level") && d["level"] != null:
+			result.level = d["level"];
+		if d.has("started_at") && d["started_at"] != null:
+			result.started_at = d["started_at"];
+		if d.has("top_contributions") && d["top_contributions"] != null:
+			for value in d["top_contributions"]:
+				result.top_contributions.append(TopContributions.from_json(value));
+		if d.has("total") && d["total"] != null:
+			result.total = d["total"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -88,10 +159,18 @@ class EventData extends RefCounted:
 		d["expires_at"] = expires_at;
 		d["goal"] = goal;
 		d["id"] = id;
-		d["last_contribution"] = last_contribution;
+		if last_contribution != null:
+			d["last_contribution"] = last_contribution.to_dict();
 		d["level"] = level;
 		d["started_at"] = started_at;
-		d["top_contributions"] = top_contributions;
+		d["top_contributions"] = [];
+		if top_contributions != null:
+			for value in top_contributions:
+				d["top_contributions"].append(value.to_dict());
 		d["total"] = total;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

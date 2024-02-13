@@ -1,15 +1,17 @@
 extends RefCounted
+
+## The definition of a twitch command.
 class_name Command
 
-var func_ref : Callable
+var function_reference : Callable
 var permission_level : int
-var max_args : int
-var min_args : int
+var max_arguments : int
+var min_arguments : int
 var where : int
 
-func _init(f_ref : Callable, perm_lvl : int, mx_args : int, mn_args : int, whr : int):
-	func_ref = f_ref
-	permission_level = perm_lvl
-	max_args = mx_args
-	min_args = mn_args
+func _init(function_ref : Callable, pemission_lvl : int, max_args : int, min_args : int, whr : int):
+	function_reference = function_ref
+	permission_level = pemission_lvl
+	max_arguments = max_args
+	min_arguments = min_args
 	where = whr

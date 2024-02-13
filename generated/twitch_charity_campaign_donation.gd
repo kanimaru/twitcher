@@ -55,15 +55,16 @@ class Amount extends RefCounted:
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
 	var currency: String;
 
+
 	static func from_json(d: Dictionary) -> Amount:
 		var result = Amount.new();
-		result.value = d["value"];
-		result.decimal_places = d["decimal_places"];
-		result.currency = d["currency"];
+		if d.has("value") && d["value"] != null:
+			result.value = d["value"];
+		if d.has("decimal_places") && d["decimal_places"] != null:
+			result.decimal_places = d["decimal_places"];
+		if d.has("currency") && d["currency"] != null:
+			result.currency = d["currency"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -71,4 +72,8 @@ class Amount extends RefCounted:
 		d["decimal_places"] = decimal_places;
 		d["currency"] = currency;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

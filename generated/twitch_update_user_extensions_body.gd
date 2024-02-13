@@ -30,15 +30,16 @@ class Data extends RefCounted:
 	## No description available
 	var component: Dictionary;
 
+
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
-		result.panel = d["panel"];
-		result.overlay = d["overlay"];
-		result.component = d["component"];
+		if d.has("panel") && d["panel"] != null:
+			result.panel = d["panel"];
+		if d.has("overlay") && d["overlay"] != null:
+			result.overlay = d["overlay"];
+		if d.has("component") && d["component"] != null:
+			result.component = d["component"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -46,4 +47,8 @@ class Data extends RefCounted:
 		d["overlay"] = overlay;
 		d["component"] = component;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

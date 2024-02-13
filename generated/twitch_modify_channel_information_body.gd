@@ -14,7 +14,7 @@ var delay: int;
 ## A list of channel-defined tags to apply to the channel. To remove all tags from the channel, set tags to an empty array. Tags help identify the content that the channel streams. [Learn More](https://help.twitch.tv/s/article/guide-to-tags)      A channel may specify a maximum of 10 tags. Each tag is limited to a maximum of 25 characters and may not be an empty string or contain spaces or special characters. Tags are case insensitive. For readability, consider using camelCasing or PascalCasing.
 var tags: Array[String];
 ## List of labels that should be set as the Channel’s CCLs.
-var content_classification_labels: Array;
+var content_classification_labels: Array[ContentClassificationLabels];
 ## Boolean flag indicating if the channel has branded content.
 var is_branded_content: bool;
 
@@ -33,7 +33,7 @@ static func from_json(d: Dictionary) -> TwitchModifyChannelInformationBody:
 			result.tags.append(value);
 	if d.has("content_classification_labels") && d["content_classification_labels"] != null:
 		for value in d["content_classification_labels"]:
-			result.content_classification_labels.append(value);
+			result.content_classification_labels.append(ContentClassificationLabels.from_json(value));
 	if d.has("is_branded_content") && d["is_branded_content"] != null:
 		result.is_branded_content = d["is_branded_content"];
 	return result;
@@ -51,10 +51,36 @@ func to_dict() -> Dictionary:
 	d["content_classification_labels"] = [];
 	if content_classification_labels != null:
 		for value in content_classification_labels:
-			d["content_classification_labels"].append(value);
+			d["content_classification_labels"].append(value.to_dict());
 	d["is_branded_content"] = is_branded_content;
 	return d;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
+
+## 
+class ContentClassificationLabels extends RefCounted:
+	## ID of the [Content Classification Labels](https://blog.twitch.tv/en/2023/06/20/introducing-content-classification-labels/) that must be added/removed from the channel. Can be one of the following values:      * DrugsIntoxication * SexualThemes * ViolentGraphic * Gambling * ProfanityVulgarity
+	var id: String;
+	## Boolean flag indicating whether the label should be enabled (true) or disabled for the channel.
+	var is_enabled: bool;
+
+
+	static func from_json(d: Dictionary) -> ContentClassificationLabels:
+		var result = ContentClassificationLabels.new();
+		if d.has("id") && d["id"] != null:
+			result.id = d["id"];
+		if d.has("is_enabled") && d["is_enabled"] != null:
+			result.is_enabled = d["is_enabled"];
+		return result;
+
+	func to_dict() -> Dictionary:
+		var d: Dictionary = {};
+		d["id"] = id;
+		d["is_enabled"] = is_enabled;
+		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 

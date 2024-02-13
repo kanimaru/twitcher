@@ -129,15 +129,16 @@ class TwitchImage extends RefCounted:
 	## The URL to a large version of the image.
 	var url_4x: String;
 
+
 	static func from_json(d: Dictionary) -> TwitchImage:
 		var result = TwitchImage.new();
-		result.url_1x = d["url_1x"];
-		result.url_2x = d["url_2x"];
-		result.url_4x = d["url_4x"];
+		if d.has("url_1x") && d["url_1x"] != null:
+			result.url_1x = d["url_1x"];
+		if d.has("url_2x") && d["url_2x"] != null:
+			result.url_2x = d["url_2x"];
+		if d.has("url_4x") && d["url_4x"] != null:
+			result.url_4x = d["url_4x"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -145,6 +146,10 @@ class TwitchImage extends RefCounted:
 		d["url_2x"] = url_2x;
 		d["url_4x"] = url_4x;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 
 ## A set of default images for the reward.
 class DefaultImage extends RefCounted:
@@ -155,15 +160,16 @@ class DefaultImage extends RefCounted:
 	## The URL to a large version of the image.
 	var url_4x: String;
 
+
 	static func from_json(d: Dictionary) -> DefaultImage:
 		var result = DefaultImage.new();
-		result.url_1x = d["url_1x"];
-		result.url_2x = d["url_2x"];
-		result.url_4x = d["url_4x"];
+		if d.has("url_1x") && d["url_1x"] != null:
+			result.url_1x = d["url_1x"];
+		if d.has("url_2x") && d["url_2x"] != null:
+			result.url_2x = d["url_2x"];
+		if d.has("url_4x") && d["url_4x"] != null:
+			result.url_4x = d["url_4x"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
@@ -172,6 +178,10 @@ class DefaultImage extends RefCounted:
 		d["url_4x"] = url_4x;
 		return d;
 
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
+
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per live stream.
 class MaxPerStreamSetting extends RefCounted:
 	## A Boolean value that determines whether the reward applies a limit on the number of redemptions allowed per live stream. Is **true** if the reward applies a limit.
@@ -179,20 +189,24 @@ class MaxPerStreamSetting extends RefCounted:
 	## The maximum number of redemptions allowed per live stream.
 	var max_per_stream: int;
 
+
 	static func from_json(d: Dictionary) -> MaxPerStreamSetting:
 		var result = MaxPerStreamSetting.new();
-		result.is_enabled = d["is_enabled"];
-		result.max_per_stream = d["max_per_stream"];
+		if d.has("is_enabled") && d["is_enabled"] != null:
+			result.is_enabled = d["is_enabled"];
+		if d.has("max_per_stream") && d["max_per_stream"] != null:
+			result.max_per_stream = d["max_per_stream"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
 		d["is_enabled"] = is_enabled;
 		d["max_per_stream"] = max_per_stream;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per user per live stream.
 class MaxPerUserPerStreamSetting extends RefCounted:
@@ -201,20 +215,24 @@ class MaxPerUserPerStreamSetting extends RefCounted:
 	## The maximum number of redemptions allowed per user per live stream.
 	var max_per_user_per_stream: int;
 
+
 	static func from_json(d: Dictionary) -> MaxPerUserPerStreamSetting:
 		var result = MaxPerUserPerStreamSetting.new();
-		result.is_enabled = d["is_enabled"];
-		result.max_per_user_per_stream = d["max_per_user_per_stream"];
+		if d.has("is_enabled") && d["is_enabled"] != null:
+			result.is_enabled = d["is_enabled"];
+		if d.has("max_per_user_per_stream") && d["max_per_user_per_stream"] != null:
+			result.max_per_user_per_stream = d["max_per_user_per_stream"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
 		d["is_enabled"] = is_enabled;
 		d["max_per_user_per_stream"] = max_per_user_per_stream;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 
 ## The settings used to determine whether to apply a cooldown period between redemptions and the length of the cooldown.
 class GlobalCooldownSetting extends RefCounted:
@@ -223,18 +241,22 @@ class GlobalCooldownSetting extends RefCounted:
 	## The cooldown period, in seconds.
 	var global_cooldown_seconds: int;
 
+
 	static func from_json(d: Dictionary) -> GlobalCooldownSetting:
 		var result = GlobalCooldownSetting.new();
-		result.is_enabled = d["is_enabled"];
-		result.global_cooldown_seconds = d["global_cooldown_seconds"];
+		if d.has("is_enabled") && d["is_enabled"] != null:
+			result.is_enabled = d["is_enabled"];
+		if d.has("global_cooldown_seconds") && d["global_cooldown_seconds"] != null:
+			result.global_cooldown_seconds = d["global_cooldown_seconds"];
 		return result;
-
-	func to_json() -> String:
-		return JSON.stringify(to_dict());
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
 		d["is_enabled"] = is_enabled;
 		d["global_cooldown_seconds"] = global_cooldown_seconds;
 		return d;
+
+
+	func to_json() -> String:
+		return JSON.stringify(to_dict());
 
