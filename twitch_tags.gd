@@ -47,20 +47,40 @@ class Message extends RefCounted:
 
 #region Lowlevel Tags
 
-static func parse_tags(tag_string: String, output: Variant) -> void:
-	if tag_string.left(1) == "@":
-		tag_string = tag_string.substr(1);
+class BaseTags:
 
-	var tags = tag_string.split(";");
-	for tag in tags:
-		var tag_value = tag.split("=");
-		var property_name = tag_value[0].replace("-", "_");
-		output.set(property_name, tag_value[1]);
+	var _unmapped: Dictionary = {};
+
+	func parse_tags(tag_string: String, output: Object) -> void:
+		if tag_string.left(1) == "@":
+			tag_string = tag_string.substr(1);
+
+		var tags = tag_string.split(";");
+		for tag in tags:
+			var tag_value = tag.split("=");
+			var property_name = tag_value[0].replace("-", "_");
+			if _has_property(output, property_name):
+				output.set(property_name, tag_value[1]);
+			else:
+				output._unmapped[property_name] = tag_value[1];
+
+	func _has_property(obj: Object, property_name: String) -> bool:
+		var properties = obj.get_property_list();
+		for property in properties:
+			if property.name == property_name:
+				return true;
+		return false;
+
+	func get_unmapped(property: String) -> Variant:
+		return _unmapped[property];
+
+	func has_unmapped(property: String) -> bool:
+		return _unmapped.has(property);
 
 ## Sent when the bot or moderator removes all messages from the chat room or removes all messages for the specified user. [br]
 ## @ban-duration=<duration>;room-id=<room-id>;target-user-id=<user-id>;tmi-sent-ts=<timestamp> [br]
 ## See: https://dev.twitch.tv/docs/irc/tags/#clearchat-tags
-class ClearChat extends RefCounted:
+class ClearChat extends BaseTags:
 	## Optional. The message includes this tag if the user was put in a timeout. The tag contains the duration of the timeout, in seconds.
 	var ban_duration: String
 	## The ID of the channel where the messages were removed from.
@@ -71,12 +91,12 @@ class ClearChat extends RefCounted:
 	var tmi_sent_ts: String
 
 	func _init(tags: String) -> void:
-		TwitchTags.parse_tags(tags, self);
+		parse_tags(tags, self);
 
 ## Sent when the bot removes a single message from the chat room. [br]
 ## @login=<login>;room-id=<room-id>;target-msg-id=<target-msg-id>;tmi-sent-ts=<timestamp> [br]
 ## See: https://dev.twitch.tv/docs/irc/tags/#clearmsg-tags
-class ClearMsg extends RefCounted:
+class ClearMsg extends BaseTags:
 	## The name of the user who sent the message.
 	var login: String;
 	## Optional. The ID of the channel (chat room) where the message was removed from.
@@ -87,12 +107,12 @@ class ClearMsg extends RefCounted:
 	var tmi_sent_ts: String;
 
 	func _init(tags: String) -> void:
-		TwitchTags.parse_tags(tags, self);
+		parse_tags(tags, self);
 
 ## Sent when the bot authenticates with the server. [br]
 ## @badge-info=<badge-info>;badges=<badges>;color=<color>;display-name=<display-name>;emote-sets=<emote-sets>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type> [br]
 ## See https://dev.twitch.tv/docs/irc/tags/#globaluserstate-tags
-class GlobalUserState extends RefCounted:
+class GlobalUserState extends BaseTags:
 	## Contains metadata related to the chat badges in the badges tag. [br]
 	## Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber.
 	var badge_info: String
@@ -112,24 +132,24 @@ class GlobalUserState extends RefCounted:
 	var user_type: String
 
 	func _init(tags: String) -> void:
-		TwitchTags.parse_tags(tags, self);
+		parse_tags(tags, self);
 
 ## Sent to indicate the outcome of an action like banning a user. [br]
 ## @msg-id=<msg-id>;target-user-id=<user-id> [br]
 ## See: https://dev.twitch.tv/docs/irc/tags/#notice-tags
-class Notice extends RefCounted:
+class Notice extends BaseTags:
 	## An ID that you can use to programmatically determine the action’s outcome. For a list of possible IDs, see NOTICE Message IDs.
 	var msg_id: String;
 	## The ID of the user that the action targeted.
 	var target_user_id: String;
 
 	func _init(tags: String) -> void:
-		TwitchTags.parse_tags(tags, self);
+		parse_tags(tags, self);
 
 ## Sent when a user posts a message to the chat room. [br]
 ## @badge-info=<badge-info>;badges=<badges>;bits=<bits>client-nonce=<nonce>;color=<color>;display-name=<display-name>;emotes=<emotes>;first-msg=<first-msg>;flags=<flags>;id=<msg-id>;mod=<mod>;room-id=<room-id>;subscriber=<subscriber>;tmi-sent-ts=<timestamp>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type>;reply-parent-msg-id=<reply-parent-msg-id>;reply-parent-user-id=<reply-parent-user-id>;reply-parent-user-login=<reply-parent-user-login>;reply-parent-display-name=<reply-parent-display-name>;reply-parent-msg-body=<reply-parent-msg-body>;reply-thread-parent-msg-id=<reply-thread-parent-msg-id>;reply-thread-parent-user-login=<reply-thread-parent-user-login>;vip=<vip> [br]
 ## See: https://dev.twitch.tv/docs/irc/tags/#privmsg-tags
-class PrivMsg extends RefCounted:
+class PrivMsg extends BaseTags:
 	## Contains metadata related to the chat badges in the badges tag. [br]
 	##Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber.
 	var badge_info: String;
@@ -193,12 +213,12 @@ class PrivMsg extends RefCounted:
 	var client_nonce: String
 
 	func _init(tags: String) -> void:
-		TwitchTags.parse_tags(tags, self);
+		parse_tags(tags, self);
 
 ## Sent when the bot joins a channel or when the channel’s chat room settings change.  [br]
 ## @emote-only=<emote-only>;followers-only=<followers-only>;r9k=<r9k>;rituals=<rituals>;room-id=<room-id>;slow=<slow>;subs-only=<subs-only> [br]
 ## See: https://dev.twitch.tv/docs/irc/tags/#roomstate-tags
-class Roomstate extends RefCounted:
+class Roomstate extends BaseTags:
 	## A Boolean value that determines whether the chat room allows only messages with emotes. Is true (1) if only emotes are allowed; otherwise, false (0).
 	var emote_only: String;
 	## An integer value that determines whether only followers can post messages in the chat room. The value indicates how long, in minutes, the user must have followed the broadcaster before posting chat messages. If the value is -1, the chat room is not restricted to followers only.
@@ -213,12 +233,12 @@ class Roomstate extends RefCounted:
 	var subs_only: String;
 
 	func _init(tags: String) -> void:
-		TwitchTags.parse_tags(tags, self);
+		parse_tags(tags, self);
 
 ## Sent when events like someone subscribing to the channel occurs.[br]
 ## @badge-info=<badge-info>;badges=<badges>;color=<color>;display-name=<display-name>;emotes=<emotes>;id=<id-of-msg>;login=<user>;mod=<mod>;msg-id=<msg-id>;room-id=<room-id>;subscriber=<subscriber>;system-msg=<system-msg>;tmi-sent-ts=<timestamp>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type>[br]
 ## See: https://dev.twitch.tv/docs/irc/tags/#usernotice-tags
-class Usernotice extends RefCounted:
+class Usernotice extends BaseTags:
 	## Contains metadata related to the chat badges in the badges tag. [br]
 	## Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber.
 	var badge_info: String;
@@ -320,12 +340,12 @@ class Usernotice extends RefCounted:
 	var msg_param_gift_months: String;
 
 	func _init(tags: String) -> void:
-		TwitchTags.parse_tags(tags, self);
+		parse_tags(tags, self);
 
 ## Sent when the bot joins a channel or sends a PRIVMSG message. [br]
 ## @badge-info=<badge-info>;badges=<badges>;color=<color>;display-name=<display-name>;emote-sets=<emote-sets>;id=<id>;mod=<mod>;subscriber=<subscriber>;turbo=<turbo>;user-type=<user-type>[br][br]
 ## See: https://dev.twitch.tv/docs/irc/tags/#userstate-tags
-class Userstate extends RefCounted:
+class Userstate extends BaseTags:
 	## Contains metadata related to the chat badges in the badges tag. [br]
 	## Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber.
 	var badge_info: String;
@@ -349,12 +369,12 @@ class Userstate extends RefCounted:
 	var user_type: String
 
 	func _init(tags: String) -> void:
-		TwitchTags.parse_tags(tags, self);
+		parse_tags(tags, self);
 
 ## Sent when someone sends your bot a whisper message. [br]
 ## @badges=<badges>;color=<color>;display-name=<display-name>;emotes=<emotes>;message-id=<msg-id>;thread-id=<thread-id>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type>[br]
 ## See: https://dev.twitch.tv/docs/irc/tags/#whisper-tags
-class Whisper extends RefCounted:
+class Whisper extends BaseTags:
 	## Comma-separated list of chat badges in the form, <badge>/<version>. For example, admin/1. There are many possible badge values.
 	var badges: String;
 	## The color of the user’s name in the chat room. This is a hexadecimal RGB color code in the form, #<RGB>. This tag may be empty if it is never set.
@@ -375,6 +395,6 @@ class Whisper extends RefCounted:
 	var user_type: String;
 
 	func _init(tags: String) -> void:
-		TwitchTags.parse_tags(tags, self);
+		parse_tags(tags, self);
 
 #endregion

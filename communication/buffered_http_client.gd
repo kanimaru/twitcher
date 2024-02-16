@@ -4,6 +4,8 @@ extends RefCounted
 ## Http client that bufferes the requests and sends them sequentialy
 class_name BufferedHTTPClient
 
+static var index = 0;
+
 var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_HTTP_CLIENT)
 
 ## Will be send when a request is done.
@@ -47,6 +49,8 @@ var error_count : int;
 var max_error_count : int = -1;
 
 func _init(url: String, p: int = -1) -> void:
+	index += 1;
+	log.set_suffix(str(index));
 	base_url = url;
 	port = p;
 	var main_loop = Engine.get_main_loop();
@@ -133,7 +137,7 @@ func empty_response(request_data: RequestData) -> ResponseData:
 
 func _poll() -> void:
 	if(!connected):
-		_connect();
+		await _connect();
 
 	if(!requests.is_empty() && current_request == null):
 		_start_request();

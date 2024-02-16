@@ -10,6 +10,7 @@ var _theme: String;
 
 func _init(emote_id: String) -> void:
 	id = emote_id;
+	scale_1().type_default().theme_dark();
 
 func scale_1() -> TwitchEmoteDefinition: _scale = 1; return self;
 func scale_2() -> TwitchEmoteDefinition: _scale = 2; return self;

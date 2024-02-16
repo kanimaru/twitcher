@@ -4,8 +4,6 @@ extends Node
 
 ## Send when the Twitch API was succesfully initialized
 signal twitch_ready;
-## Use this for recieve chat messages. TODO Implement
-signal chat_message_received(username: String, message: String, tags: TwitchTags.PrivMsg);
 
 var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_SERVICE)
 
@@ -177,7 +175,10 @@ func _init_cheermotes() -> void:
 	cheer_repository = await TwitchCheerRepository.new(api);
 
 ## Returns the complete parsed data out of a cheer word.
-func get_cheer_tier(cheer_word: String, theme: String = "dark", type: String = "animated", scale: String = "1") -> TwitchCheerRepository.CheerResult:
+func get_cheer_tier(cheer_word: String,
+	theme: TwitchCheerRepository.Themes = TwitchCheerRepository.Themes.DARK,
+	type: TwitchCheerRepository.Types = TwitchCheerRepository.Types.ANIMATED,
+	scale: TwitchCheerRepository.Scales = TwitchCheerRepository.Scales._1) -> TwitchCheerRepository.CheerResult:
 	return await cheer_repository.get_cheer_tier(cheer_word, theme, type, scale);
 
 ## Returns the data of the Cheermotes.
@@ -191,7 +192,10 @@ func is_cheermote_prefix_existing(prefix: String) -> bool:
 
 ## Returns all cheertiers in form of:
 ## Key: TwitchCheermote.Tiers ; Value: SpriteFrames
-func get_cheermotes(cheermote: TwitchCheermote, theme: String, type: String, scale: String) -> Dictionary:
+func get_cheermotes(cheermote: TwitchCheermote,
+	theme: TwitchCheerRepository.Themes = TwitchCheerRepository.Themes.DARK,
+	type: TwitchCheerRepository.Types = TwitchCheerRepository.Types.ANIMATED,
+	scale: TwitchCheerRepository.Scales = TwitchCheerRepository.Scales._1) -> Dictionary:
 	return await cheer_repository.get_cheermotes(cheermote, theme, type, scale);
 
 #endregion

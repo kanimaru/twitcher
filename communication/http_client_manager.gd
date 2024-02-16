@@ -33,11 +33,12 @@ func _get_or_create_client(host: String, port: int = -1) -> BufferedHTTPClient:
 		clients.append(client);
 		return client;
 	else:
-		http_client_map[host_key] = [];
+		var typed_array: Array[BufferedHTTPClient] = []
+		http_client_map[host_key] = typed_array;
 		for i in range(TwitchSetting.http_client_min):
 			var client: BufferedHTTPClient = BufferedHTTPClient.new(host, port);
-			http_client_map[host_key].append(client);
-		return http_client_map[host_key][0];
+			typed_array.append(client);
+		return typed_array[0];
 
 ## Returns an free client, creates one when not available or picks random when the
 ## max amount of clients per host is reached.

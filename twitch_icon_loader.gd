@@ -162,7 +162,7 @@ func get_badges(badge_composites : Array[String], channel_id : String = "global"
 		if ResourceLoader.has_cached(badge_path):
 			response[badge_composite] = ResourceLoader.load(badge_path);
 		else:
-			var request = _load_badge(badge_data);
+			var request = await _load_badge(badge_data);
 			requests[badge_composite] = request;
 
 	for badge_composite in requests:
@@ -184,11 +184,11 @@ func _load_badge(badge_data: BadgeData) -> BufferedHTTPClient.RequestData:
 
 	var is_global_chanel = channel_id == "global";
 	if cached_badges.has(channel_id):
-
+		await preload_badges(channel_id);
 	var channel_has_badge = cached_badges[channel_id].has(badge_set) && cached_badges[channel_id][badge_set]["versions"].has(badge_id);
 	if (!is_global_chanel && !channel_has_badge):
 		badge_data.channel = "global";
-		return _load_badge(badge_data);
+		return await _load_badge(badge_data);
 
 	var base_url = TwitchSetting.twitch_image_cdn_host;
 	var request_path = cached_badges[channel_id][badge_set]["versions"][badge_id]["image_url_%sx" % scale].trim_prefix(base_url);
