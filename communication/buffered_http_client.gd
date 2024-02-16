@@ -155,6 +155,7 @@ func _poll() -> void:
 
 	elif(client.get_status() == HTTPClient.STATUS_DISCONNECTED):
 		connected = false;
+		log.i("Retry cause of disconnect %s" % current_request.path)
 		requests.append(current_request);
 
 	else: _handle_error();
@@ -165,7 +166,7 @@ func _handle_error():
 	error_count += 1;
 	connected = false;
 	if error_count <= max_error_count || max_error_count == -1:
-		# Retry
+		log.i("Retry cause of error %s" % current_request.path)
 		requests.append(current_request);
 		_reset_request();
 	else:
@@ -187,10 +188,10 @@ func _check_status(response_data: ResponseData) -> void:
 
 func _start_request() -> void:
 	current_request = requests.pop_front() as RequestData;
+	log.i("Start request processing %s" % current_request.path)
 	var headers = HEADERS if current_request.headers == null else current_request.headers;
 	var packed_headers = _pack_headers(headers);
 	client.request(current_request.method, current_request.path, packed_headers, current_request.body);
-	log.i("Start request processing %s" % current_request.path)
 
 func _pack_headers(headers: Dictionary) -> PackedStringArray:
 	var result: PackedStringArray = [];

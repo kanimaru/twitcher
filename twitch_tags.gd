@@ -22,6 +22,30 @@ const MSG_ID_RAID := &"raid";
 const MSG_ID_UNRAID := &"unraid";
 const MSG_ID_RITUAL := &"ritual";
 const MSG_ID_BITSBADGETIER := &"bitsbadgetier";
+#region TagWrapper
+
+class Message extends RefCounted:
+	var priv_msg: PrivMsg
+
+	func _init(tag: PrivMsg) -> void:
+		priv_msg = tag;
+
+	func get_color(default_color: Color = Color.BLACK) -> Color:
+		return Color.from_string(priv_msg.color, default_color);
+
+	func get_badges() -> Array[SpriteFrames]:
+		var badge_composite : Array[String] = [];
+		for badge in priv_msg.badges.split(",", false):
+			badge_composite.append(badge);
+		var result = await(TwitchService.get_badges(badge_composite, priv_msg.room_id))
+		var sprite_frames : Array[SpriteFrames] = [];
+		for sprite_frame in result.values():
+			sprite_frames.append(sprite_frame);
+		return sprite_frames;
+
+#endregion
+
+#region Lowlevel Tags
 
 static func parse_tags(tag_string: String, output: Variant) -> void:
 	if tag_string.left(1) == "@":
@@ -29,9 +53,9 @@ static func parse_tags(tag_string: String, output: Variant) -> void:
 
 	var tags = tag_string.split(";");
 	for tag in tags:
-		var property_name = tag.replace("-", "_");
 		var tag_value = tag.split("=");
-		output[property_name] = tag_value[1];
+		var property_name = tag_value[0].replace("-", "_");
+		output.set(property_name, tag_value[1]);
 
 ## Sent when the bot or moderator removes all messages from the chat room or removes all messages for the specified user. [br]
 ## @ban-duration=<duration>;room-id=<room-id>;target-user-id=<user-id>;tmi-sent-ts=<timestamp> [br]
@@ -163,6 +187,10 @@ class PrivMsg extends RefCounted:
 	var user_type: String;
 	## A Boolean value that determines whether the user that sent the chat is a VIP. The message includes this tag if the user is a VIP; otherwise, the message doesn’t include this tag (check for the presence of the tag instead of whether the tag is set to true or false).
 	var vip: String;
+	## Not documented by Twitch.
+	var first_msg: String;
+	## Not documented by Twitch.
+	var client_nonce: String
 
 	func _init(tags: String) -> void:
 		TwitchTags.parse_tags(tags, self);
@@ -348,3 +376,5 @@ class Whisper extends RefCounted:
 
 	func _init(tags: String) -> void:
 		TwitchTags.parse_tags(tags, self);
+
+#endregion

@@ -4,6 +4,8 @@ extends Node
 
 ## Send when the Twitch API was succesfully initialized
 signal twitch_ready;
+## Use this for recieve chat messages. TODO Implement
+signal chat_message_received(username: String, message: String, tags: TwitchTags.PrivMsg);
 
 var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_SERVICE)
 
@@ -20,21 +22,21 @@ var is_twitch_ready: bool;
 
 func _init() -> void:
 	# Setup Twitch setting before it is needed
-	TwitchSetting.setup();
-
-## Call this to setup the complete Twitch integration whenever you need.
-## It boots everything up this Lib supports.
-func setup() -> void:
 	log.i("Setup")
+	TwitchSetting.setup();
 	auth = TwitchAuth.new();
 	api = TwitchRestAPI.new(auth);
 	icon_loader = TwitchIconLoader.new(api);
 	eventsub = TwitchEventsub.new(api);
 	eventsub_debug = TwitchEventsub.new(api);
-	if TwitchSetting.use_test_server:
-		eventsub_debug.connect_to_eventsub(TwitchSetting.eventsub_test_server_url);
 	commands = TwitchCommandHandler.new();
 	irc = TwitchIRC.new(auth);
+
+## Call this to setup the complete Twitch integration whenever you need.
+## It boots everything up this Lib supports.
+func setup() -> void:
+	if TwitchSetting.use_test_server:
+		eventsub_debug.connect_to_eventsub(TwitchSetting.eventsub_test_server_url);
 
 	log.i("Start")
 	await auth.ensure_authentication();
@@ -110,15 +112,11 @@ func wait_for_connection() -> void:
 
 ## Initializes the chat connects to IRC and preloads everything
 func _init_chat() -> void:
-	irc.chat_message.connect(commands.handle_command.bind(false))
-	irc.whisper_message.connect(commands.handle_command.bind(true))
+	#irc.chat_message.connect(commands.handle_command.bind(false))
+	#irc.whisper_message.connect(commands.handle_command.bind(true))
 	irc.connect_to_irc();
 	icon_loader.do_preload();
 	await icon_loader.preload_done;
-
-## Gets a specific channel or joins it when not joined yet.
-func join_channel(channel_name) -> TwitchIrcChannel:
-	return irc.join_channel(channel_name);
 
 ## Sends out a shoutout to a specific user
 func shoutout(user: TwitchUser) -> void:
@@ -142,8 +140,8 @@ func remove_command(command: String) -> void:
 
 ## Sends a chat to the only connected channel or in case of multiple channels doesn't do anything see
 ## join_channel to get a specific channel to send to it.
-func chat(message: String) -> void:
-	irc.chat(message);
+func chat(message: String, channel_name: String = "") -> void:
+	irc.chat(message, channel_name);
 
 ## Returns the definition of emotes for given channel or for the global emotes.
 ## Key: EmoteID as String ; Value: TwitchGlobalEmote | TwitchChannelEmote
@@ -168,7 +166,7 @@ func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionar
 
 ## Get the requested badges. (valid scale values are 1,2,3)
 ## Loads from cache if possible otherwise downloads and transforms them.
-##
+## Key: Badge Composite ; Value: SpriteFrames
 func get_badges(badge: Array[String], channel_id: String = "global", scale: int = 1) -> Dictionary:
 	return await icon_loader.get_badges(badge, channel_id);
 
