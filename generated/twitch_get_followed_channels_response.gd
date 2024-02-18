@@ -35,7 +35,7 @@ func to_dict() -> Dictionary:
 func to_json() -> String:
 	return JSON.stringify(to_dict());
 
-## 
+##
 class Data extends RefCounted:
 	## An ID that uniquely identifies the broadcaster that this user is following.
 	var broadcaster_id: String;

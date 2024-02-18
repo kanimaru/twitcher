@@ -30,11 +30,14 @@ func poll() -> void:
 
 func start():
 	log.i("start server")
-	if server.listen(listening_port) != OK:
-		log.i("Could not listen to port %d" % listening_port);
+	var status = server.listen(listening_port);
+	if status != OK:
+		log.i("Could not listen to port %d: %s" % [listening_port, error_string(status)]);
 
 func stop():
 	log.i("Stop Server")
+	for client in clients:
+		client.peer.disconnect_from_host();
 	server.stop()
 
 func _handle_connect() -> void:

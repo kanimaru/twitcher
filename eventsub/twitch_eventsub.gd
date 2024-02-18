@@ -63,10 +63,12 @@ var swap_over_client : WebsocketClient;
 var api: TwitchRestAPI;
 
 var session: Session;
+
+## Holds the messages that was processed already.
+## Key: MessageID ; Value: Timestamp
 var eventsub_messages: Dictionary = {};
 var last_keepalive: int;
 var is_conntected: bool;
-var subscriptions_left: int;
 
 func _init(twitch_api: TwitchRestAPI) -> void:
 	api = twitch_api;
@@ -96,7 +98,6 @@ func wait_for_connection():
 func subscribe_all():
 	if session == null: await session_id_received;
 	var subscriptions: Dictionary = TwitchSetting.subscriptions;
-	subscriptions_left = TwitchSetting.subscriptions.size();
 	for subscription: TwitchSubscriptions.Subscription in subscriptions:
 		var condition: Dictionary = subscriptions[subscription];
 		_subscribe_event(subscription.value, subscription.version, condition, session.id);
