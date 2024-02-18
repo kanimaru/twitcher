@@ -100,6 +100,11 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 func _init_eventsub() -> void:
 	eventsub.connect_to_eventsub(TwitchSetting.eventsub_live_server_url);
 
+## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/ for details on
+## which API versions are available and which conditions are required.
+func subscribe_event(event_name : String, version : String, conditions : Dictionary, session_id: String):
+	eventsub.subscribe_event(event_name, version, conditions, session_id)
+
 ## Waits for connection to eventsub. Eventsub is ready to subscribe events.
 func wait_for_connection() -> void:
 	await eventsub.wait_for_connection();

@@ -33,10 +33,6 @@ class RequestData extends RefCounted:
 	var headers: Dictionary;
 	var body: String = "";
 
-	func _notification(what: int) -> void:
-		if what == NOTIFICATION_PREDELETE:
-			print("Request %s done - freed" % path)
-
 ## Contains the response data
 class ResponseData extends RefCounted:
 	var client: HTTPClient;
