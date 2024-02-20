@@ -19,3 +19,6 @@ TODO:
 - Add info about custom image transformer
 - Add info about send_message_delay (## Time to wait in msec after each sent chat message. Values below ~310 might lead to a disconnect after 100 messages.)
 
+- Make Userstate Roomstate handling globally in the twitch_irc. To support "joining" multiple times the same room aka create new TwitchRooms without problems / Test it
+- Eventsub needs to resubscribe after reconnecting
+- Fix CommandManager

@@ -63,16 +63,20 @@ var swap_over_client : WebsocketClient;
 var api: TwitchRestAPI;
 
 var session: Session;
+## All the subscriptions that should be subscribed or resubscribed in case of reconnection.
+## Notice: Wanted to do a Dict<EventName, Request> but you can subscribe to multiple event names from different streams..
+var subscriptions: Array = [];
+## Holds the messages that was processed already.
+## Key: MessageID ; Value: Timestamp
 var eventsub_messages: Dictionary = {};
 var last_keepalive: int;
 var is_conntected: bool;
-var subscriptions_left: int;
 
 func _init(twitch_api: TwitchRestAPI) -> void:
 	api = twitch_api;
 	client.message_received.connect(_data_received);
 	client.connection_state_changed.connect(_on_connection_state_changed)
-	subscribe_all();
+	_create_subscriptions_from_config();
 
 ## Connects to this url starts the whole eventsub connection.
 func connect_to_eventsub(url: String) -> void:
@@ -82,45 +86,50 @@ func _on_connection_state_changed(state : WebSocketPeer.State):
 	if state == WebSocketPeer.State.STATE_OPEN:
 		is_conntected = true;
 		connected.emit();
+		_subscribe_all();
 	else:
 		is_conntected = false;
 
 ## Awaits until the websocket is connected and the session id was received
 ## at this point we can subscribe to events.
-func wait_for_connection():
+func wait_for_connection() -> void:
 	if not is_conntected: await connected;
 	if session == null: await session_id_received;
 
-## Subscribes to all events that are defined in the Settings.
-## Eventsub should be connected at this point otherwise this method does nothing.
-func subscribe_all():
+func _subscribe_all() -> void:
+	await wait_for_connection()
+	for subscription in subscriptions:
+		subscribe(subscription);
+
+func _create_subscriptions_from_config() -> void:
 	if session == null: await session_id_received;
 	var subscriptions: Dictionary = TwitchSetting.subscriptions;
-	subscriptions_left = TwitchSetting.subscriptions.size();
 	for subscription: TwitchSubscriptions.Subscription in subscriptions:
 		var condition: Dictionary = subscriptions[subscription];
-		_subscribe_event(subscription.value, subscription.version, condition, session.id);
+		create_subscription(subscription.value, subscription.version, condition);
+
+func create_subscription(event_name : String, version : String, conditions : Dictionary) -> void:
+	var data : TwitchCreateEventSubSubscriptionBody = TwitchCreateEventSubSubscriptionBody.new();
+	var transport : TwitchCreateEventSubSubscriptionBody.Transport = TwitchCreateEventSubSubscriptionBody.Transport.new();
+	data.type = event_name;
+	data.version = version;
+	data.condition = conditions;
+	data.transport = transport;
+	transport.method = "websocket";
+	transport.session_id = session.id;
+	subscriptions.append(data);
 
 ## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/ for details on
 ## which API versions are available and which conditions are required.
-func _subscribe_event(event_name : String, version : String, conditions : Dictionary, session_id: String):
-	var data : TwitchCreateEventSubSubscriptionBody = TwitchCreateEventSubSubscriptionBody.new();
-	var transport : TwitchCreateEventSubSubscriptionBody.Transport = TwitchCreateEventSubSubscriptionBody.Transport.new();
-	data.type = event_name
-	data.version = version
-	data.condition = conditions
-	data.transport = transport;
-	transport.method = "websocket";
-	transport.session_id = session_id;
-
+func subscribe(data: TwitchCreateEventSubSubscriptionBody):
 	var response = await api.create_eventsub_subscription(data);
 
 	if not str(response.response_code).begins_with("2"):
-		log.e("Subscription failed for event '%s'. Error %s: %s" % [event_name, response.response_code, response.response_data.get_string_from_utf8()])
+		log.e("Subscription failed for event '%s'. Error %s: %s" % [data.type, response.response_code, response.response_data.get_string_from_utf8()])
 		return
 	elif (response.response_data.is_empty()):
 		return
-	log.i("Now listening to '%s' events." % event_name)
+	log.i("Now listening to '%s' events." % data.type)
 
 func _data_received(data : PackedByteArray) -> void:
 	var message_str : String = data.get_string_from_utf8();
@@ -182,7 +191,6 @@ func _cleanup() -> void:
 		var timestamp = eventsub_messages[message_id];
 		if _message_is_to_old(timestamp):
 			eventsub_messages.erase(message_id);
-
 
 func _message_got_processed(message_id: String) -> bool:
 	return eventsub_messages.has(message_id);

@@ -107,7 +107,7 @@ func _get_frame_delay(file: String) -> Array[int]:
 	var out = [];
 	var glob_path = ProjectSettings.globalize_path(file);
 	OS.execute("magick", [ glob_path, "-format", "%T\\n", "info:" ], out);
-	var frame_delays = [];
+	var frame_delays: Array[int] = [];
 	for delay in out[0].split("\n"):
 		# convert x100 to x1000(ms)
 		frame_delays.append(delay.to_int() * 10);

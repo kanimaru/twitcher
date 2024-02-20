@@ -11,7 +11,6 @@ func _enter_tree():
 	TwitchSetting.setup();
 	add_ui()
 
-	# FIXME Doesn't work! See console
 	var importer = preload("./image_transformer/imagemagic/importer.gd")
 	add_import_plugin(importer)
 	add_autoload_singleton(SERVICE_AUTOLOAD_NAME, "res://addons/twitcher/twitch_service.gd");

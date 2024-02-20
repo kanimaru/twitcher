@@ -104,7 +104,7 @@ func to_dict() -> Dictionary:
 func to_json() -> String:
 	return JSON.stringify(to_dict());
 
-## 
+##
 class MutedSegments extends RefCounted:
 	## The duration of the muted segment, in seconds.
 	var duration: int;

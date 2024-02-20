@@ -4,10 +4,15 @@ extends RefCounted
 ## Http client that bufferes the requests and sends them sequentialy
 class_name BufferedHTTPClient
 
+static var index = 0;
+
 var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_HTTP_CLIENT)
 
 ## Will be send when a request is done.
 signal request_done(response: ResponseData)
+
+## Will return information if the client has connected or got disconnected
+signal connection_status_changed(connected: bool);
 
 ## After this amount of request in the buffer the client isn't free anymore.
 const FREE_THRESHOLD = 2;
@@ -40,37 +45,35 @@ var client: HTTPClient = HTTPClient.new();
 var requests : Array[RequestData] = [];
 var current_request : RequestData;
 var current_response_data : PackedByteArray = PackedByteArray();
-var connected : bool;
+var connected : bool:
+	set(val):
+		connected = val;
+		connection_status_changed.emit(val);
+		log.i("Connection state changed: %s" % val)
+
 var responses : Dictionary = {};
 var error_count : int;
 ## When a request fails max_error_count then cancel that request -1 for endless amount of tries.
 var max_error_count : int = -1;
+## Only one poll at a time so block for all other tries to call it
+var polling: bool;
 
 func _init(url: String, p: int = -1) -> void:
+	index += 1;
+	log.set_suffix(str(index));
 	base_url = url;
 	port = p;
 	var main_loop = Engine.get_main_loop();
 	Engine.get_main_loop().process_frame.connect(_poll);
+	connection_status_changed.emit(false);
+	connect_to_host();
 
-func _connect() -> void:
+func connect_to_host() -> void:
 	log.i("connecting to %s" % base_url);
 	var err = client.connect_to_host(base_url, port);
 	if err != OK:
 		log.e("Can't connect to %s cause of %s" % [base_url, error_string(err)]);
 		return;
-
-	# Wait until its conneceted
-	while(client.get_status() == HTTPClient.STATUS_CONNECTING || client.get_status() == HTTPClient.STATUS_RESOLVING):
-		client.poll();
-
-	if client.get_status() != HTTPClient.STATUS_CONNECTED:
-		error_count += 1;
-		log.e("can't connect to %s" % [base_url])
-
-	#print("Current State: %s" % client.get_status())
-	assert(client.get_status() == HTTPClient.STATUS_CONNECTED)
-
-	connected = true;
 
 ## Removes the complete http client. Don't use it after calling this method!
 func shutdown() -> void:
@@ -112,6 +115,7 @@ func is_free() -> bool:
 func _wait_error_duration():
 	var duration = pow(2, error_count);
 	duration = min(duration, 30);
+	log.i("Wait for %s in seconds" % duration);
 	await Engine.get_main_loop().create_timer(duration).timeout
 
 func _create_response() -> ResponseData:
@@ -130,10 +134,24 @@ func empty_response(request_data: RequestData) -> ResponseData:
 	response_data.response_code = 0;
 	return response_data;
 
+func _connecting():
+	if(client.get_status() == HTTPClient.STATUS_CANT_CONNECT):
+		client.close();
+		connect_to_host();
+	elif(client.get_status() == HTTPClient.STATUS_CONNECTING ||
+		client.get_status() == HTTPClient.STATUS_RESOLVING):
+		client.poll();
+
+	if(client.get_status() == HTTPClient.STATUS_CONNECTED):
+		connected = true;
 
 func _poll() -> void:
-	if(!connected):
-		_connect();
+	if(not connected):
+		_connecting();
+		return;
+
+	if polling: return;
+	polling = true;
 
 	if(!requests.is_empty() && current_request == null):
 		_start_request();
@@ -153,22 +171,25 @@ func _poll() -> void:
 			request_done.emit(response_data);
 			_reset_request();
 
-	elif(client.get_status() == HTTPClient.STATUS_DISCONNECTED):
+	elif(client.get_status() == HTTPClient.STATUS_DISCONNECTED ||
+		client.get_status() == HTTPClient.STATUS_CONNECTION_ERROR):
+		client.close();
 		connected = false;
+		log.i("Retry cause of disconnect %s" % current_request.path)
 		requests.append(current_request);
+		_reset_request();
+		connect_to_host();
 
-	else: _handle_error();
+	else:
+		await _handle_error();
+
+	polling = false;
 
 func _handle_error():
 	await _wait_error_duration();
-	log.e("Error happend current client status: %s" % client.get_status())
+	log.e("Error happened (client status: %s)" % client.get_status())
 	error_count += 1;
-	connected = false;
-	if error_count <= max_error_count || max_error_count == -1:
-		# Retry
-		requests.append(current_request);
-		_reset_request();
-	else:
+	if error_count >= max_error_count && max_error_count != -1:
 		# Giveup
 		var response_data = _create_response();
 		response_data.error = true;
@@ -187,10 +208,10 @@ func _check_status(response_data: ResponseData) -> void:
 
 func _start_request() -> void:
 	current_request = requests.pop_front() as RequestData;
+	log.i("Start request processing %s" % current_request.path)
 	var headers = HEADERS if current_request.headers == null else current_request.headers;
 	var packed_headers = _pack_headers(headers);
 	client.request(current_request.method, current_request.path, packed_headers, current_request.body);
-	log.i("Start request processing %s" % current_request.path)
 
 func _pack_headers(headers: Dictionary) -> PackedStringArray:
 	var result: PackedStringArray = [];

@@ -22,6 +22,7 @@ const LOGGER_NAME_SERVICE = "TwitchService"
 const LOGGER_NAME_HTTP_CLIENT = "TwitchHttpClient"
 const LOGGER_NAME_HTTP_SERVER = "TwitchHttpServer"
 const LOGGER_NAME_WEBSOCKET = "TwitchWebsocket"
+const LOGGER_NAME_CUSTOM_REWARDS = "TwitchCustomRewards"
 
 const ALL_LOGGERS: Array[String] = [
 	LOGGER_NAME_AUTH,
@@ -34,6 +35,7 @@ const ALL_LOGGERS: Array[String] = [
 	LOGGER_NAME_HTTP_CLIENT,
 	LOGGER_NAME_HTTP_SERVER,
 	LOGGER_NAME_WEBSOCKET,
+	LOGGER_NAME_CUSTOM_REWARDS,
 ];
 
 class Property:
@@ -282,8 +284,8 @@ static func setup() -> void:
 	_cache_badge = Property.new("twitch/general/assets/cache_badge", "user://badges").as_dir();
 	_cache_cheermote = Property.new("twitch/general/assets/cache_cheermote", "user://cheermotes").as_dir();
 
-	_http_client_min = Property.new("twitch/general/http_client/min_amount", 3).as_num();
-	_http_client_max = Property.new("twitch/general/http_client/max_amount", 10).as_num();
+	_http_client_min = Property.new("twitch/general/http_client/min_amount", 2).as_num();
+	_http_client_max = Property.new("twitch/general/http_client/max_amount", 4).as_num();
 
 	_log_enabled = Property.new("twitch/general/logging/enabled").as_bit_field(ALL_LOGGERS);
 
