@@ -43,6 +43,24 @@ class Message extends RefCounted:
 			sprite_frames.append(sprite_frame);
 		return sprite_frames;
 
+	func get_emotes() -> Array[TwitchIRC.EmoteLocation]:
+		var locations : Array[TwitchIRC.EmoteLocation] = [];
+		var emotes_to_load : Array[String] = [];
+		if priv_msg.emotes != null && priv_msg.emotes != "":
+			for emote in priv_msg.emotes.split("/", false):
+				var data : Array = emote.split(":");
+				for d in data[1].split(","):
+					var start_end = d.split("-");
+					locations.append(TwitchIRC.EmoteLocation.new(data[0], int(start_end[0]), int(start_end[1])));
+					emotes_to_load.append(data[0]);
+		locations.sort_custom(Callable(TwitchIRC.EmoteLocation, "smaller"));
+
+		var emotes: Dictionary = await TwitchService.icon_loader.get_emotes(emotes_to_load);
+		for emote_location: TwitchIRC.EmoteLocation in locations:
+			emote_location.sprite_frames = emotes[emote_location.id];
+
+		return locations;
+
 #endregion
 
 #region Lowlevel Tags

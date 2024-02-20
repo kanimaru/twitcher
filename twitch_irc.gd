@@ -110,6 +110,20 @@ class ParsedMessage extends RefCounted:
 			channel = matches.get_string(4);
 			message = matches.get_string(5);
 
+class EmoteLocation extends RefCounted:
+	var id : Variant;
+	var start : int;
+	var end : int;
+	var sprite_frames: SpriteFrames;
+
+	func _init(emote_id: Variant, start_idx: int, end_idx: int):
+		self.id = emote_id;
+		self.start = start_idx;
+		self.end = end_idx;
+
+	static func smaller(a : EmoteLocation, b : EmoteLocation):
+		return a.start < b.start;
+
 var auth: TwitchAuth;
 
 func _init(twitch_auth : TwitchAuth) -> void:

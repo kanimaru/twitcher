@@ -53,7 +53,7 @@ func to_dict() -> Dictionary:
 func to_json() -> String:
 	return JSON.stringify(to_dict());
 
-## 
+##
 class Markers extends RefCounted:
 	## An ID that identifies this marker.
 	var id: String;

@@ -183,7 +183,7 @@ func _load_badge(badge_data: BadgeData) -> BufferedHTTPClient.RequestData:
 	var scale = badge_data.scale;
 
 	var is_global_chanel = channel_id == "global";
-	if cached_badges.has(channel_id):
+	if not cached_badges.has(channel_id):
 		await preload_badges(channel_id);
 	var channel_has_badge = cached_badges[channel_id].has(badge_set) && cached_badges[channel_id][badge_set]["versions"].has(badge_id);
 	if (!is_global_chanel && !channel_has_badge):
