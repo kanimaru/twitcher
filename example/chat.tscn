@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://5lyf04rwo1mf"]
 
-[ext_resource type="Script" path="res://addons/twitcher/example/Chat.gd" id="1_rxgbp"]
+[ext_resource type="Script" path="res://addons/twitcher/example/chat.gd" id="1_rxgbp"]
 [ext_resource type="Script" path="res://addons/twitcher/twitch_irc_channel.gd" id="2_2gnd4"]
 
 [node name="Chat" type="Control"]

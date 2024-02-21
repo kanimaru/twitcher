@@ -49,7 +49,7 @@ func _exit_tree() -> void:
 
 func _on_message_received(channel: String, from_user: String, message: String, tags: TwitchTags.PrivMsg):
 	if channel_name != channel: return;
-	var message_tag = TwitchTags.Message.new(tags);
+	var message_tag = TwitchTags.Message.from_priv_msg(tags);
 	message_received.emit(from_user, message, message_tag);
 
 func _on_roomstate_received(channel: String, tags: TwitchTags.Roomstate):

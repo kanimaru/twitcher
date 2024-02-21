@@ -13,12 +13,17 @@ but has the same limitations. Changed the library to use SpriteFrames instead of
 
 1. Call `TwitchService.setup();` at somepoint in your application when you want to start the Twitch integration.
 
-## Image Transformer
 
 TODO:
+**Documentation**
 - Add info about custom image transformer
 - Add info about send_message_delay (## Time to wait in msec after each sent chat message. Values below ~310 might lead to a disconnect after 100 messages.)
+- Step by step installation
 
-- Make Userstate Roomstate handling globally in the twitch_irc. To support "joining" multiple times the same room aka create new TwitchRooms without problems / Test it
-- Eventsub needs to resubscribe after reconnecting
-- Fix CommandManager
+**Bugs
+- Fix the static image transformer aka default can't handle animated images yet.
+
+**Nice to Have**
+- Add continious deployment to Godot AssetLib
+- Implement a native gif parser for godot
+- Implement all eventsub datastructures?

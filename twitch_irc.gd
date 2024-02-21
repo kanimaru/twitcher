@@ -57,6 +57,7 @@ class ChannelData extends RefCounted:
 	var joined: bool;
 	var channel_name: String;
 	var nodes: Array[TwitchIrcChannel] = [];
+	var user_state: TwitchTags.Userstate;
 	var room_state: TwitchTags.Roomstate:
 		set(val):
 			room_state = val;
@@ -173,7 +174,7 @@ func _join_channels_on_connect():
 		var message: String = TwitchSetting.irc_login_message;
 		if message != "":
 			await channel.is_joined();
-			channel.chat(message);
+			chat(message, channel_name);
 
 ## Receives data on the websocket aka new messages
 func _data_received(data : PackedByteArray) -> void:
@@ -230,13 +231,17 @@ func chat(message : String, channel_name : String = ""):
 
 	chat_queue.append("PRIVMSG #%s :%s\r\n" % [channel_name, message]);
 
+	# Call it defered otherwise the response of the bot will be send before the command.
+	_send_message_to_channel.call_deferred(channel_name, message);
+
+## send the message of the bot to the channel for display purpose
+func _send_message_to_channel(channel_name: String, message: String) -> void:
 	if channel_maps.has(channel_name):
-		received_privmsg
-		## TODO
-		var channel = channel_maps[channel_name] as TwitchIrcChannel;
-		var user_name = channel.data['display-name'];
-		var sender_data: TwitchSenderData = TwitchSenderData.new(user_name, channel, channel.data);
-		channel.handle_message_received(sender_data, message);
+		var channel = channel_maps[channel_name] as ChannelData;
+		var username = channel.user_state.display_name;
+		# Convert the tags in a dirty way
+		var tag = TwitchTags.PrivMsg.new(channel.user_state._raw);
+		received_privmsg.emit(channel_name, username, message, tag);
 
 ## Sends a string message to Twitch.
 func _send(text : String) -> void:
@@ -298,8 +303,12 @@ func _handle_message(parsed_message : ParsedMessage) -> void:
 			received_usernotice.emit(parsed_message.channel, parsed_message.message, user_notice_tags);
 
 		"USERSTATE":
-			var user_state_tags = TwitchTags.Userstate.new(parsed_message.tags);
-			received_usernotice.emit(parsed_message.channel, user_state_tags);
+			var userstate_tags = TwitchTags.Userstate.new(parsed_message.tags);
+			var channel_name = parsed_message.channel;
+			received_usernotice.emit(channel_name, userstate_tags);
+
+			var channel = channel_maps[channel_name] as ChannelData;
+			channel.user_state = userstate_tags;
 
 		"WHISPER":
 			var whisper_tags = TwitchTags.Whisper.new(parsed_message.tags);

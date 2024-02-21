@@ -115,8 +115,8 @@ func wait_for_connection() -> void:
 
 ## Initializes the chat connects to IRC and preloads everything
 func _init_chat() -> void:
-	#irc.chat_message.connect(commands.handle_command.bind(false))
-	#irc.whisper_message.connect(commands.handle_command.bind(true))
+	irc.received_privmsg.connect(commands.handle_chat_command);
+	irc.received_whisper.connect(commands.handle_whisper_command);
 	irc.connect_to_irc();
 	icon_loader.do_preload();
 	await icon_loader.preload_done;
@@ -134,7 +134,10 @@ func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnounc
 	api.send_chat_announcement(broadcaster_id, body);
 
 ## Add a new command handler and register it for a command.
-func add_command(command: String, callback: Callable, args_min: int, args_max: int) -> void:
+## The callback will receive [code]info: TwitchCommandInfo, args: Array[String][/code][br]
+## Args are optional depending on the configuration.[br]
+## args_max == -1 => no upper limit for arguments
+func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1) -> void:
 	commands.add_command(command, callback, args_min, args_max);
 
 ## Removes a command
@@ -145,6 +148,11 @@ func remove_command(command: String) -> void:
 ## join_channel to get a specific channel to send to it.
 func chat(message: String, channel_name: String = "") -> void:
 	irc.chat(message, channel_name);
+
+## Whispers to another user.
+## @deprecated not supported by twitch anymore
+func whisper(message: String, username: String) -> void:
+	log.e("Whipser from bots aren't supported by Twitch anymore. See https://dev.twitch.tv/docs/irc/chat-commands/ at /w")
 
 ## Returns the definition of emotes for given channel or for the global emotes.
 ## Key: EmoteID as String ; Value: TwitchGlobalEmote | TwitchChannelEmote

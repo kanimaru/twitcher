@@ -39,6 +39,7 @@ func _on_chat_message(from_user: String, message: String, tags: TwitchTags.Messa
 	result_message += part;
 	result_message = sprite_effect.prepare_message(result_message, chat_message);
 	chat_message.text = result_message;
+
 func _get_time() -> String:
 	var time_data = Time.get_time_dict_from_system();
 	return "%02d:%02d" % [time_data["hour"], time_data["minute"]];

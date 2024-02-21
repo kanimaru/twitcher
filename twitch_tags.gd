@@ -25,19 +25,29 @@ const MSG_ID_BITSBADGETIER := &"bitsbadgetier";
 #region TagWrapper
 
 class Message extends RefCounted:
-	var priv_msg: PrivMsg
+	var color: String;
+	var badges: String;
+	var emotes: String;
+	var room_id: String;
+	var raw: Variant;
 
-	func _init(tag: PrivMsg) -> void:
-		priv_msg = tag;
+	static func from_priv_msg(tag: PrivMsg) -> Message:
+		var msg = Message.new();
+		msg.color = tag.color;
+		msg.badges = tag.badges;
+		msg.emotes = tag.emotes;
+		msg.room_id = tag.room_id;
+		msg.raw = tag;
+		return msg;
 
 	func get_color(default_color: Color = Color.BLACK) -> Color:
-		return Color.from_string(priv_msg.color, default_color);
+		return Color.from_string(color, default_color);
 
 	func get_badges() -> Array[SpriteFrames]:
 		var badge_composite : Array[String] = [];
-		for badge in priv_msg.badges.split(",", false):
+		for badge in badges.split(",", false):
 			badge_composite.append(badge);
-		var result = await(TwitchService.get_badges(badge_composite, priv_msg.room_id))
+		var result = await(TwitchService.get_badges(badge_composite, room_id))
 		var sprite_frames : Array[SpriteFrames] = [];
 		for sprite_frame in result.values():
 			sprite_frames.append(sprite_frame);
@@ -46,8 +56,8 @@ class Message extends RefCounted:
 	func get_emotes() -> Array[TwitchIRC.EmoteLocation]:
 		var locations : Array[TwitchIRC.EmoteLocation] = [];
 		var emotes_to_load : Array[String] = [];
-		if priv_msg.emotes != null && priv_msg.emotes != "":
-			for emote in priv_msg.emotes.split("/", false):
+		if emotes != null && emotes != "":
+			for emote in emotes.split("/", false):
 				var data : Array = emote.split(":");
 				for d in data[1].split(","):
 					var start_end = d.split("-");
@@ -66,10 +76,11 @@ class Message extends RefCounted:
 #region Lowlevel Tags
 
 class BaseTags:
-
+	var _raw: String;
 	var _unmapped: Dictionary = {};
 
 	func parse_tags(tag_string: String, output: Object) -> void:
+		_raw = tag_string;
 		if tag_string.left(1) == "@":
 			tag_string = tag_string.substr(1);
 
