@@ -272,7 +272,7 @@ static func setup() -> void:
 
 	# General
 	_api_host = Property.new("twitch/general/api/api_host", "https://api.twitch.tv").as_str();
-	_imagemagic_path = Property.new("twitch/general/images/image_magic", "magick").as_global();
+	_imagemagic_path = Property.new("twitch/general/images/image_magic", "").as_global();
 	_image_tranformer_path = Property.new("twitch/general/images/image_transformer", "TwitchImageTransformer").as_select(get_image_transformers());
 	_twitch_image_cdn_host = Property.new("twitch/general/cdn/twitch_host", "https://static-cdn.jtvnw.net").as_str("Default host for getting twitch emojis/cheermoji/badges.");
 

@@ -6,11 +6,16 @@ class_name TwitchIconLoader
 ## Will be sent when the emotes and badges got preloaded
 signal preload_done;
 
+## Called when an emoji was succesfully loaded
+signal emoji_loaded(definition: TwitchEmoteDefinition);
+
 const ALLOW_EMPTY = true;
 const MAX_SPLITS = 1;
 
 var api: TwitchRestAPI;
 
+## All requests that are currently in progress
+var requests_in_progress : Array[StringName];
 ## Badge definition for global and the channel.
 var cached_badges : Dictionary = {};
 ## Emote definition for global and the channel.
@@ -79,10 +84,14 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 	var requests: Dictionary = {};
 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
+		var emote_path: String = emote_definition.get_cache_path();
+
+		if requests_in_progress.has(emote_path): continue;
+		requests_in_progress.append(emote_path);
+
 		if not TwitchSetting.image_transformer.is_supporting_animation():
 			emote_definition.type_static();
 
-		var emote_path: String = emote_definition.get_cache_path();
 		if ResourceLoader.has_cached(emote_path):
 			response[emote_definition] = ResourceLoader.load(emote_path);
 		else:
@@ -95,6 +104,13 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 		var sprite_frames = await _convert_response(request, emote_path);
 		response[emote_definition] = sprite_frames;
 		_cached_images.append(sprite_frames);
+		requests_in_progress.erase(emote_path);
+		emoji_loaded.emit(emote_definition);
+
+	for emote_definition: TwitchEmoteDefinition in emote_definitions:
+		if not response.has(emote_definition):
+			response[emote_definition] = ResourceLoader.load(emote_definition.get_cache_path());
+
 	return response;
 
 func _load_emote(emote_definition : TwitchEmoteDefinition) -> BufferedHTTPClient.RequestData:

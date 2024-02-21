@@ -50,6 +50,9 @@ func _process_custom_fx(char_fx: CharFXTransform) -> bool:
 	var id = char_fx.env['id'];
 	# unknown image just ignore
 	if(!cache.has(id)): return true;
+	char_fx.visible = false;
+
+	if char_fx.relative_index != 0: return true;
 
 	var node = cache[id];
 	var image_size = node.get_meta("size");
@@ -61,7 +64,7 @@ func _process_custom_fx(char_fx: CharFXTransform) -> bool:
 	# but we don't get the info about the line height to center it correctly
 	var vertical_offset: float = right_bottom.y - image_height / 4.0;
 	# Divided by 2 cause the origin of the image is centered
-	var horizontal_offset: float = right_bottom.x - image_width / 2.0;
+	var horizontal_offset: float = right_bottom.x + image_width / 2.0;
 	cache[id].position = Vector2(horizontal_offset, vertical_offset);
 
 	return true;

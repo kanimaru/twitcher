@@ -7,6 +7,9 @@ var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_IMAGE_LOADER)
 
 var converter: ImageMagickConverter;
 
+func is_supporting_animation():
+	return true;
+
 func is_supported() -> bool:
 	if TwitchSetting.imagemagic_path != "":
 		var out = []

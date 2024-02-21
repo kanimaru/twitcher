@@ -18,10 +18,21 @@ but has the same limitations. Changed the library to use SpriteFrames instead of
 TODO:
 **Documentation**
 - Add info about custom image transformer
+- Add info how to setup imagemagic for animated emojis
 - Add info about send_message_delay (## Time to wait in msec after each sent chat message. Values below ~310 might lead to a disconnect after 100 messages.)
 - Step by step installation
+- Add the note that the path has to be res:/addons/Twitcher
+- More doc to the examples
+- Add do not change to the header of generated folder
+- Make it obviously what kind of redirect url is needed
+- Windows Step Recorder to capture the Creating Credential Process
 
 **Known Bugs**
+- Can't move multiple gifs at once -> SpriteFrames will be the same
+- Color wasn't shown in chat example
+- soooo the gif thing also freaks out when there's a gif that's longer then like 50 frames ; it places some of the frames in random other
+
+- After loading the emojis the message doesn't get shown
 
 **Nice to Have**
 - Add continious deployment to Godot AssetLib
