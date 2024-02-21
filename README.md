@@ -21,8 +21,7 @@ TODO:
 - Add info about send_message_delay (## Time to wait in msec after each sent chat message. Values below ~310 might lead to a disconnect after 100 messages.)
 - Step by step installation
 
-**Bugs
-- Fix the static image transformer aka default can't handle animated images yet.
+**Known Bugs**
 
 **Nice to Have**
 - Add continious deployment to Godot AssetLib
