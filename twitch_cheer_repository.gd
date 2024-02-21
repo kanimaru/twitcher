@@ -113,6 +113,8 @@ func get_cheermotes(cheermote: TwitchCheermote, theme: Themes, type: Types, scal
 	for tier: TwitchCheermote.Tiers in cheermote.tiers:
 		var id = _get_id(cheermote, tier, theme, type, scale);
 		if ResourceLoader.has_cached(id): response[tier] = ResourceLoader.load(id);
+		if not TwitchSetting.image_transformer.is_supporting_animation():
+			type = Types.STATIC;
 		else: requests[tier] = _request_cheermote(tier, theme, type, scale);
 
 	for tier: TwitchCheermote.Tiers in requests:

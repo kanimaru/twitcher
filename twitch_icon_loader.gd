@@ -79,6 +79,9 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 	var requests: Dictionary = {};
 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
+		if not TwitchSetting.image_transformer.is_supporting_animation():
+			emote_definition.type_static();
+
 		var emote_path: String = emote_definition.get_cache_path();
 		if ResourceLoader.has_cached(emote_path):
 			response[emote_definition] = ResourceLoader.load(emote_path);
