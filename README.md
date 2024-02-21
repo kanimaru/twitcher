@@ -1,4 +1,5 @@
-# THIS IS A PREVIEW ITS NOT COMPLETE YET WIP
+# [Alpha] for experienced user
+Most of the features are implemented. Bugs are very likly, cause of the amount of generated code.
 
 ## See also:
 Uses a modified version of [MagicDumps](https://github.com/erodozer/magick-dumps)
