@@ -28,11 +28,6 @@ TODO:
 - Windows Step Recorder to capture the Creating Credential Process
 
 **Known Bugs**
-- Can't move multiple gifs at once -> SpriteFrames will be the same
-- Color wasn't shown in chat example
-- soooo the gif thing also freaks out when there's a gif that's longer then like 50 frames ; it places some of the frames in random other
-
-- After loading the emojis the message doesn't get shown
 
 **Nice to Have**
 - Add continious deployment to Godot AssetLib

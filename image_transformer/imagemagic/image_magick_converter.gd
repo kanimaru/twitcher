@@ -41,10 +41,11 @@ func dump_and_convert(path: String, buffer_in: PackedByteArray = [], output = "%
 		mutex.unlock();
 		converting.erase(output);
 
-	_save_converted_file(tex, output);
+	if not output.is_empty():
+		_save_converted_file(tex, output);
 	return tex;
 
-func _do_work(path: String, buffer: PackedByteArray, output: String, mutex) -> SpriteFrames:
+func _do_work(path: String, buffer: PackedByteArray, output: String, mutex: Mutex) -> SpriteFrames:
 	if mutex != null:
 		mutex.lock();
 		# load from cache if another thread already completed converting this same resource
@@ -68,7 +69,8 @@ func _do_work(path: String, buffer: PackedByteArray, output: String, mutex) -> S
 	if not _extract_images(path, folder_path):
 		return _create_fallback_texture();
 	var sprite_frames: SpriteFrames = _build_frames(folder_path, frame_delays);
-	sprite_frames.take_over_path(output);
+	if not output.is_empty():
+		sprite_frames.take_over_path(output);
 
 	# delete the temp directory
 	delete_mutex.lock()
@@ -93,12 +95,13 @@ func _create_unique_key(length: int = 8) -> String:
 ## Creates a folder to store the extracted images (needs the / at the end!)
 func _create_temp_filename() -> String:
 	var folder_path: String = "";
+	var uniq = _create_unique_key();
 	if Engine.is_editor_hint():
-		folder_path = "res://.godot/magick_tmp/%d/" % Time.get_unix_time_from_system();
+		folder_path = "res://.godot/magick_tmp/%s_%d/" % [uniq, Time.get_unix_time_from_system()];
 	else:
-		var uniq = _create_unique_key();
 		folder_path = "user://.magick_tmp/%s_%d/" % [uniq, Time.get_unix_time_from_system()];
 
+	log.i("Create temp folder")
 	DirAccess.make_dir_recursive_absolute(folder_path);
 	return folder_path;
 
@@ -117,7 +120,7 @@ func _get_frame_delay(file: String) -> Array[int]:
 func _extract_images(file: String, target_folder: String) -> bool:
 	var out = [];
 	var glob_file_path = ProjectSettings.globalize_path(file);
-	var glob_extracted_file_path = ProjectSettings.globalize_path(target_folder + "%02d.png")
+	var glob_extracted_file_path = ProjectSettings.globalize_path(target_folder + "%04d.png")
 	var code = OS.execute("magick", [ "convert", "-coalesce", glob_file_path, glob_extracted_file_path ], out, true);
 	if code != 0:
 		log.e("unable to convert: %s" % "\n".join(out));
@@ -130,6 +133,7 @@ func _create_fallback_texture():
 	return sprite_frames;
 
 func _build_frames(folder_path: String, frame_delays: Array[int]):
+	log.i("Build Frames")
 	var frames = DirAccess.get_files_at(folder_path);
 	if len(frames) == 0:
 		return _create_fallback_texture();

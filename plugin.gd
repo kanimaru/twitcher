@@ -5,21 +5,20 @@ const SERVICE_AUTOLOAD_NAME: String = "TwitchService"
 const HTTP_CLIENT_AUTOLOAD_NAME: String = "HttpClientManager"
 
 var settings: TwitchSetting;
+var gif_importer: GifImporter = GifImporter.new();
 
 func _enter_tree():
-	print("Twitch Service Plugin loading...")
+	print("Twitch Plugin loading...")
 	TwitchSetting.setup();
 	add_ui()
 
-	var importer = preload("./image_transformer/imagemagic/importer.gd")
-	add_import_plugin(importer)
+	add_import_plugin(gif_importer)
 	add_autoload_singleton(SERVICE_AUTOLOAD_NAME, "res://addons/twitcher/twitch_service.gd");
 	add_autoload_singleton(HTTP_CLIENT_AUTOLOAD_NAME, "res://addons/twitcher/communication/http_client_manager.gd");
-	print("Twitch Service Plugin loading ended")
+	print("Twitch Plugin loading ended")
 
 func _exit_tree():
-	var importer = preload("./image_transformer/imagemagic/importer.gd")
-	remove_import_plugin(importer)
+	remove_import_plugin(gif_importer)
 	remove_autoload_singleton(SERVICE_AUTOLOAD_NAME);
 	remove_autoload_singleton(HTTP_CLIENT_AUTOLOAD_NAME);
 
