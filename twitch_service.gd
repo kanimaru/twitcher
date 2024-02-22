@@ -138,10 +138,12 @@ func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnounc
 ## Args are optional depending on the configuration.[br]
 ## args_max == -1 => no upper limit for arguments
 func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1) -> void:
+	log.i("Register command %s" % command)
 	commands.add_command(command, callback, args_min, args_max);
 
 ## Removes a command
 func remove_command(command: String) -> void:
+	log.i("Remove command %s" % command)
 	commands.remove_command(command);
 
 ## Sends a chat to the only connected channel or in case of multiple channels doesn't do anything see

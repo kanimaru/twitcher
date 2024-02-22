@@ -254,7 +254,6 @@ static var log_enabled: Array[String]:
 	get: return get_log_enabled()
 
 static func setup() -> void:
-
 	# Auth
 	_broadcaster_id = Property.new("twitch/auth/broadcaster_id").as_str("Broadcaster ID of youself").basic();
 	_authorization_flow = Property.new("twitch/auth/authorization_flow", "AuthorizationCodeGrantFlow").as_select([FLOW_IMPLICIT, FLOW_CLIENT_CREDENTIALS, FLOW_AUTHORIZATION_CODE], false);

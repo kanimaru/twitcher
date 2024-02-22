@@ -5,7 +5,7 @@ class_name ImageMagickConverter
 
 var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_IMAGE_LOADER);
 
-# Current conversion in progress (key: path, value: mutex)
+## Current conversion in progress (key: path ; value: mutex)
 var converting: Dictionary = {};
 var fallback_sprite_frames: SpriteFrames;
 
