@@ -40,8 +40,8 @@ class Message extends RefCounted:
 		msg.raw = tag;
 		return msg;
 
-	func get_color(default_color: Color = Color.BLACK) -> Color:
-		return Color.from_string(color, default_color);
+	func get_color() -> String:
+		return color;
 
 	func get_badges() -> Array[SpriteFrames]:
 		var badge_composite : Array[String] = [];
