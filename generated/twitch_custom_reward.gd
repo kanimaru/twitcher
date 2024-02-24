@@ -124,59 +124,29 @@ func to_json() -> String:
 
 ## A set of custom images for the reward. This field is **null** if the broadcaster didn’t upload images.
 class TwitchImage extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The URL to a small version of the image.
+	var url_1x: String;
+	## The URL to a medium version of the image.
+	var url_2x: String;
+	## The URL to a large version of the image.
+	var url_4x: String;
 
 
 	static func from_json(d: Dictionary) -> TwitchImage:
 		var result = TwitchImage.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("url_1x") && d["url_1x"] != null:
+			result.url_1x = d["url_1x"];
+		if d.has("url_2x") && d["url_2x"] != null:
+			result.url_2x = d["url_2x"];
+		if d.has("url_4x") && d["url_4x"] != null:
+			result.url_4x = d["url_4x"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["url_1x"] = url_1x;
+		d["url_2x"] = url_2x;
+		d["url_4x"] = url_4x;
 		return d;
 
 
@@ -185,59 +155,29 @@ class TwitchImage extends RefCounted:
 
 ## A set of default images for the reward.
 class DefaultImage extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The URL to a small version of the image.
+	var url_1x: String;
+	## The URL to a medium version of the image.
+	var url_2x: String;
+	## The URL to a large version of the image.
+	var url_4x: String;
 
 
 	static func from_json(d: Dictionary) -> DefaultImage:
 		var result = DefaultImage.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("url_1x") && d["url_1x"] != null:
+			result.url_1x = d["url_1x"];
+		if d.has("url_2x") && d["url_2x"] != null:
+			result.url_2x = d["url_2x"];
+		if d.has("url_4x") && d["url_4x"] != null:
+			result.url_4x = d["url_4x"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["url_1x"] = url_1x;
+		d["url_2x"] = url_2x;
+		d["url_4x"] = url_4x;
 		return d;
 
 
@@ -246,59 +186,24 @@ class DefaultImage extends RefCounted:
 
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per live stream.
 class MaxPerStreamSetting extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## A Boolean value that determines whether the reward applies a limit on the number of redemptions allowed per live stream. Is **true** if the reward applies a limit.
+	var is_enabled: bool;
+	## The maximum number of redemptions allowed per live stream.
+	var max_per_stream: int;
 
 
 	static func from_json(d: Dictionary) -> MaxPerStreamSetting:
 		var result = MaxPerStreamSetting.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("is_enabled") && d["is_enabled"] != null:
+			result.is_enabled = d["is_enabled"];
+		if d.has("max_per_stream") && d["max_per_stream"] != null:
+			result.max_per_stream = d["max_per_stream"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["is_enabled"] = is_enabled;
+		d["max_per_stream"] = max_per_stream;
 		return d;
 
 
@@ -307,59 +212,24 @@ class MaxPerStreamSetting extends RefCounted:
 
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per user per live stream.
 class MaxPerUserPerStreamSetting extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## A Boolean value that determines whether the reward applies a limit on the number of redemptions allowed per user per live stream. Is **true** if the reward applies a limit.
+	var is_enabled: bool;
+	## The maximum number of redemptions allowed per user per live stream.
+	var max_per_user_per_stream: int;
 
 
 	static func from_json(d: Dictionary) -> MaxPerUserPerStreamSetting:
 		var result = MaxPerUserPerStreamSetting.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("is_enabled") && d["is_enabled"] != null:
+			result.is_enabled = d["is_enabled"];
+		if d.has("max_per_user_per_stream") && d["max_per_user_per_stream"] != null:
+			result.max_per_user_per_stream = d["max_per_user_per_stream"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["is_enabled"] = is_enabled;
+		d["max_per_user_per_stream"] = max_per_user_per_stream;
 		return d;
 
 
@@ -368,59 +238,24 @@ class MaxPerUserPerStreamSetting extends RefCounted:
 
 ## The settings used to determine whether to apply a cooldown period between redemptions and the length of the cooldown.
 class GlobalCooldownSetting extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## A Boolean value that determines whether to apply a cooldown period. Is **true** if a cooldown period is enabled.
+	var is_enabled: bool;
+	## The cooldown period, in seconds.
+	var global_cooldown_seconds: int;
 
 
 	static func from_json(d: Dictionary) -> GlobalCooldownSetting:
 		var result = GlobalCooldownSetting.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("is_enabled") && d["is_enabled"] != null:
+			result.is_enabled = d["is_enabled"];
+		if d.has("global_cooldown_seconds") && d["global_cooldown_seconds"] != null:
+			result.global_cooldown_seconds = d["global_cooldown_seconds"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["is_enabled"] = is_enabled;
+		d["global_cooldown_seconds"] = global_cooldown_seconds;
 		return d;
 
 

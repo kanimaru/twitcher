@@ -40,59 +40,39 @@ func to_json() -> String:
 
 ## The transport details that you want Twitch to use when sending you notifications.
 class Transport extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The transport method. Possible values are:      * webhook * websocket * conduit
+	var method: String;
+	## The callback URL where the notifications are sent. The URL must use the HTTPS protocol and port 443\. See [Processing an event](https://dev.twitch.tv/docs/eventsub/handling-webhook-events#processing-an-event). Specify this field only if `method` is set to **webhook**.  **NOTE**: Redirects are not followed.
+	var callback: String;
+	## The secret used to verify the signature. The secret must be an ASCII string that’s a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see [Verifying the event message](https://dev.twitch.tv/docs/eventsub/handling-webhook-events#verifying-the-event-message). Specify this field only if `method` is set to **webhook**.
+	var secret: String;
+	## An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message. Specify this field only if `method` is set to **websocket**.
+	var session_id: String;
+	## An ID that identifies the conduit to send notifications to. When you create a conduit, the server returns the conduit ID. Specify this field only if `method` is set to **conduit**.
+	var conduit_id: String;
 
 
 	static func from_json(d: Dictionary) -> Transport:
 		var result = Transport.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("method") && d["method"] != null:
+			result.method = d["method"];
+		if d.has("callback") && d["callback"] != null:
+			result.callback = d["callback"];
+		if d.has("secret") && d["secret"] != null:
+			result.secret = d["secret"];
+		if d.has("session_id") && d["session_id"] != null:
+			result.session_id = d["session_id"];
+		if d.has("conduit_id") && d["conduit_id"] != null:
+			result.conduit_id = d["conduit_id"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["method"] = method;
+		d["callback"] = callback;
+		d["secret"] = secret;
+		d["session_id"] = session_id;
+		d["conduit_id"] = conduit_id;
 		return d;
 
 

@@ -28,59 +28,24 @@ func to_json() -> String:
 
 ## 
 class Data extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## A URL that you can use to edit the clip’s title, identify the part of the clip to publish, and publish the clip. [Learn More](https://help.twitch.tv/s/article/how-to-use-clips)      The URL is valid for up to 24 hours or until the clip is published, whichever comes first.
+	var edit_url: String;
+	## An ID that uniquely identifies the clip.
+	var id: String;
 
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("edit_url") && d["edit_url"] != null:
+			result.edit_url = d["edit_url"];
+		if d.has("id") && d["id"] != null:
+			result.id = d["id"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["edit_url"] = edit_url;
+		d["id"] = id;
 		return d;
 
 

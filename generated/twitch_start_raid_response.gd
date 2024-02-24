@@ -28,59 +28,24 @@ func to_json() -> String:
 
 ## 
 class Data extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The UTC date and time, in RFC3339 format, of when the raid was requested.
+	var created_at: Variant;
+	## A Boolean value that indicates whether the channel being raided contains mature content.
+	var is_mature: bool;
 
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("created_at") && d["created_at"] != null:
+			result.created_at = d["created_at"];
+		if d.has("is_mature") && d["is_mature"] != null:
+			result.is_mature = d["is_mature"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["created_at"] = created_at;
+		d["is_mature"] = is_mature;
 		return d;
 
 

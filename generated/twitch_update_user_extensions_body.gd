@@ -25,59 +25,29 @@ func to_json() -> String:
 
 ## The extensions to update. The `data` field is a dictionary of extension types. The dictionary’s possible keys are: panel, overlay, or component. The key’s value is a dictionary of extensions.      For the extension’s dictionary, the key is a sequential number beginning with 1\. For panel and overlay extensions, the key’s value is an object that contains the following fields: `active` (true/false), `id` (the extension’s ID), and `version` (the extension’s version).      For component extensions, the key’s value includes the above fields plus the `x` and `y` fields, which identify the coordinate where the extension is placed.
 class Data extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## No description available
+	var panel: Dictionary;
+	## No description available
+	var overlay: Dictionary;
+	## No description available
+	var component: Dictionary;
 
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("panel") && d["panel"] != null:
+			result.panel = d["panel"];
+		if d.has("overlay") && d["overlay"] != null:
+			result.overlay = d["overlay"];
+		if d.has("component") && d["component"] != null:
+			result.component = d["component"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["panel"] = panel;
+		d["overlay"] = overlay;
+		d["component"] = component;
 		return d;
 
 

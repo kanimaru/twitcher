@@ -33,59 +33,54 @@ func to_json() -> String:
 
 ## 
 class Versions extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## An ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde.
+	var id: String;
+	## A URL to the small version (18px x 18px) of the badge.
+	var image_url_1x: String;
+	## A URL to the medium version (36px x 36px) of the badge.
+	var image_url_2x: String;
+	## A URL to the large version (72px x 72px) of the badge.
+	var image_url_4x: String;
+	## The title of the badge.
+	var title: String;
+	## The description of the badge.
+	var description: String;
+	## The action to take when clicking on the badge. Set to `null` if no action is specified.
+	var click_action: String;
+	## The URL to navigate to when clicking on the badge. Set to `null` if no URL is specified.
+	var click_url: String;
 
 
 	static func from_json(d: Dictionary) -> Versions:
 		var result = Versions.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("id") && d["id"] != null:
+			result.id = d["id"];
+		if d.has("image_url_1x") && d["image_url_1x"] != null:
+			result.image_url_1x = d["image_url_1x"];
+		if d.has("image_url_2x") && d["image_url_2x"] != null:
+			result.image_url_2x = d["image_url_2x"];
+		if d.has("image_url_4x") && d["image_url_4x"] != null:
+			result.image_url_4x = d["image_url_4x"];
+		if d.has("title") && d["title"] != null:
+			result.title = d["title"];
+		if d.has("description") && d["description"] != null:
+			result.description = d["description"];
+		if d.has("click_action") && d["click_action"] != null:
+			result.click_action = d["click_action"];
+		if d.has("click_url") && d["click_url"] != null:
+			result.click_url = d["click_url"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["id"] = id;
+		d["image_url_1x"] = image_url_1x;
+		d["image_url_2x"] = image_url_2x;
+		d["image_url_4x"] = image_url_4x;
+		d["title"] = title;
+		d["description"] = description;
+		d["click_action"] = click_action;
+		d["click_url"] = click_url;
 		return d;
 
 

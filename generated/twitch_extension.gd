@@ -148,59 +148,19 @@ func to_json() -> String:
 
 ## Describes how the extension is displayed on mobile devices.
 class Mobile extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The HTML file that is shown to viewers on mobile devices. This page is presented to viewers as a panel behind the chat area of the mobile app.
+	var viewer_url: String;
 
 
 	static func from_json(d: Dictionary) -> Mobile:
 		var result = Mobile.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("viewer_url") && d["viewer_url"] != null:
+			result.viewer_url = d["viewer_url"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["viewer_url"] = viewer_url;
 		return d;
 
 
@@ -209,59 +169,29 @@ class Mobile extends RefCounted:
 
 ## Describes how the extension is rendered if the extension may be activated as a panel extension.
 class TwitchPanel extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The HTML file that is shown to viewers on the channel page when the extension is activated in a Panel slot.
+	var viewer_url: String;
+	## The height, in pixels, of the panel component that the extension is rendered in.
+	var height: int;
+	## A Boolean value that determines whether the extension can link to non-Twitch domains.
+	var can_link_external_content: bool;
 
 
 	static func from_json(d: Dictionary) -> TwitchPanel:
 		var result = TwitchPanel.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("viewer_url") && d["viewer_url"] != null:
+			result.viewer_url = d["viewer_url"];
+		if d.has("height") && d["height"] != null:
+			result.height = d["height"];
+		if d.has("can_link_external_content") && d["can_link_external_content"] != null:
+			result.can_link_external_content = d["can_link_external_content"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["viewer_url"] = viewer_url;
+		d["height"] = height;
+		d["can_link_external_content"] = can_link_external_content;
 		return d;
 
 
@@ -270,59 +200,24 @@ class TwitchPanel extends RefCounted:
 
 ## Describes how the extension is rendered if the extension may be activated as a video-overlay extension.
 class VideoOverlay extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The HTML file that is shown to viewers on the channel page when the extension is activated on the Video - Overlay slot.
+	var viewer_url: String;
+	## A Boolean value that determines whether the extension can link to non-Twitch domains.
+	var can_link_external_content: bool;
 
 
 	static func from_json(d: Dictionary) -> VideoOverlay:
 		var result = VideoOverlay.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("viewer_url") && d["viewer_url"] != null:
+			result.viewer_url = d["viewer_url"];
+		if d.has("can_link_external_content") && d["can_link_external_content"] != null:
+			result.can_link_external_content = d["can_link_external_content"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["viewer_url"] = viewer_url;
+		d["can_link_external_content"] = can_link_external_content;
 		return d;
 
 
@@ -331,59 +226,49 @@ class VideoOverlay extends RefCounted:
 
 ## Describes how the extension is rendered if the extension may be activated as a video-component extension.
 class Component extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The HTML file that is shown to viewers on the channel page when the extension is activated in a Video - Component slot.
+	var viewer_url: String;
+	## The width value of the ratio (width : height) which determines the extension’s width, and how the extension’s iframe will resize in different video player environments.
+	var aspect_ratio_x: int;
+	## The height value of the ratio (width : height) which determines the extension’s height, and how the extension’s iframe will resize in different video player environments.
+	var aspect_ratio_y: int;
+	## A Boolean value that determines whether to apply CSS zoom. If **true**, a CSS zoom is applied such that the size of the extension is variable but the inner dimensions are fixed based on Scale Pixels. This allows your extension to render as if it is of fixed width and height. If **false**, the inner dimensions of the extension iframe are variable, meaning your extension must implement responsiveness.
+	var autoscale: bool;
+	## The base width, in pixels, of the extension to use when scaling (see `autoscale`). This value is ignored if `autoscale` is **false**.
+	var scale_pixels: int;
+	## The height as a percent of the maximum height of a video component extension. Values are between 1% - 100%.
+	var target_height: int;
+	## A Boolean value that determines whether the extension can link to non-Twitch domains.
+	var can_link_external_content: bool;
 
 
 	static func from_json(d: Dictionary) -> Component:
 		var result = Component.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("viewer_url") && d["viewer_url"] != null:
+			result.viewer_url = d["viewer_url"];
+		if d.has("aspect_ratio_x") && d["aspect_ratio_x"] != null:
+			result.aspect_ratio_x = d["aspect_ratio_x"];
+		if d.has("aspect_ratio_y") && d["aspect_ratio_y"] != null:
+			result.aspect_ratio_y = d["aspect_ratio_y"];
+		if d.has("autoscale") && d["autoscale"] != null:
+			result.autoscale = d["autoscale"];
+		if d.has("scale_pixels") && d["scale_pixels"] != null:
+			result.scale_pixels = d["scale_pixels"];
+		if d.has("target_height") && d["target_height"] != null:
+			result.target_height = d["target_height"];
+		if d.has("can_link_external_content") && d["can_link_external_content"] != null:
+			result.can_link_external_content = d["can_link_external_content"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["viewer_url"] = viewer_url;
+		d["aspect_ratio_x"] = aspect_ratio_x;
+		d["aspect_ratio_y"] = aspect_ratio_y;
+		d["autoscale"] = autoscale;
+		d["scale_pixels"] = scale_pixels;
+		d["target_height"] = target_height;
+		d["can_link_external_content"] = can_link_external_content;
 		return d;
 
 
@@ -392,59 +277,24 @@ class Component extends RefCounted:
 
 ## Describes the view that is shown to broadcasters while they are configuring your extension within the Extension Manager.
 class Config extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The HTML file shown to broadcasters while they are configuring your extension within the Extension Manager.
+	var viewer_url: String;
+	## A Boolean value that determines whether the extension can link to non-Twitch domains.
+	var can_link_external_content: bool;
 
 
 	static func from_json(d: Dictionary) -> Config:
 		var result = Config.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("viewer_url") && d["viewer_url"] != null:
+			result.viewer_url = d["viewer_url"];
+		if d.has("can_link_external_content") && d["can_link_external_content"] != null:
+			result.can_link_external_content = d["can_link_external_content"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["viewer_url"] = viewer_url;
+		d["can_link_external_content"] = can_link_external_content;
 		return d;
 
 
@@ -453,59 +303,44 @@ class Config extends RefCounted:
 
 ## Describes all views-related information such as how the extension is displayed on mobile devices.
 class Views extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## Describes how the extension is displayed on mobile devices.
+	var mobile: Mobile;
+	## Describes how the extension is rendered if the extension may be activated as a panel extension.
+	var panel: TwitchPanel;
+	## Describes how the extension is rendered if the extension may be activated as a video-overlay extension.
+	var video_overlay: VideoOverlay;
+	## Describes how the extension is rendered if the extension may be activated as a video-component extension.
+	var component: Component;
+	## Describes the view that is shown to broadcasters while they are configuring your extension within the Extension Manager.
+	var config: Config;
 
 
 	static func from_json(d: Dictionary) -> Views:
 		var result = Views.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("mobile") && d["mobile"] != null:
+			result.mobile = Mobile.from_json(d["mobile"]);
+		if d.has("panel") && d["panel"] != null:
+			result.panel = TwitchPanel.from_json(d["panel"]);
+		if d.has("video_overlay") && d["video_overlay"] != null:
+			result.video_overlay = VideoOverlay.from_json(d["video_overlay"]);
+		if d.has("component") && d["component"] != null:
+			result.component = Component.from_json(d["component"]);
+		if d.has("config") && d["config"] != null:
+			result.config = Config.from_json(d["config"]);
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		if mobile != null:
+			d["mobile"] = mobile.to_dict();
+		if panel != null:
+			d["panel"] = panel.to_dict();
+		if video_overlay != null:
+			d["video_overlay"] = video_overlay.to_dict();
+		if component != null:
+			d["component"] = component.to_dict();
+		if config != null:
+			d["config"] = config.to_dict();
 		return d;
 
 

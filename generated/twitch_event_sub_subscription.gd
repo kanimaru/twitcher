@@ -60,59 +60,39 @@ func to_json() -> String:
 
 ## The transport details used to send the notifications.
 class Transport extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## The transport method. Possible values are:      * webhook * websocket
+	var method: String;
+	## The callback URL where the notifications are sent. Included only if `method` is set to **webhook**.
+	var callback: String;
+	## An ID that identifies the WebSocket that notifications are sent to. Included only if `method` is set to **websocket**.
+	var session_id: String;
+	## The UTC date and time that the WebSocket connection was established. Included only if `method` is set to **websocket**.
+	var connected_at: Variant;
+	## The UTC date and time that the WebSocket connection was lost. Included only if `method` is set to **websocket**.
+	var disconnected_at: Variant;
 
 
 	static func from_json(d: Dictionary) -> Transport:
 		var result = Transport.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("method") && d["method"] != null:
+			result.method = d["method"];
+		if d.has("callback") && d["callback"] != null:
+			result.callback = d["callback"];
+		if d.has("session_id") && d["session_id"] != null:
+			result.session_id = d["session_id"];
+		if d.has("connected_at") && d["connected_at"] != null:
+			result.connected_at = d["connected_at"];
+		if d.has("disconnected_at") && d["disconnected_at"] != null:
+			result.disconnected_at = d["disconnected_at"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["method"] = method;
+		d["callback"] = callback;
+		d["session_id"] = session_id;
+		d["connected_at"] = connected_at;
+		d["disconnected_at"] = disconnected_at;
 		return d;
 
 

@@ -93,59 +93,39 @@ func to_json() -> String:
 
 ## 
 class Choices extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## An ID that identifies this choice.
+	var id: String;
+	## The choice’s title. The title may contain a maximum of 25 characters.
+	var title: String;
+	## The total number of votes cast for this choice.
+	var votes: int;
+	## The number of votes cast using Channel Points.
+	var channel_points_votes: int;
+	## Not used; will be set to 0.
+	var bits_votes: int;
 
 
 	static func from_json(d: Dictionary) -> Choices:
 		var result = Choices.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("id") && d["id"] != null:
+			result.id = d["id"];
+		if d.has("title") && d["title"] != null:
+			result.title = d["title"];
+		if d.has("votes") && d["votes"] != null:
+			result.votes = d["votes"];
+		if d.has("channel_points_votes") && d["channel_points_votes"] != null:
+			result.channel_points_votes = d["channel_points_votes"];
+		if d.has("bits_votes") && d["bits_votes"] != null:
+			result.bits_votes = d["bits_votes"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["id"] = id;
+		d["title"] = title;
+		d["votes"] = votes;
+		d["channel_points_votes"] = channel_points_votes;
+		d["bits_votes"] = bits_votes;
 		return d;
 
 

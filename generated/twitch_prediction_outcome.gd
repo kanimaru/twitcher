@@ -53,59 +53,39 @@ func to_json() -> String:
 
 ## 
 class TopPredictors extends RefCounted:
-{for properties as property}
-	## {property.description}
-	var {property.field_name}: {property.type};
-{/for}
+	## An ID that identifies the viewer.
+	var user_id: String;
+	## The viewer’s display name.
+	var user_name: String;
+	## The viewer’s login name.
+	var user_login: String;
+	## The number of Channel Points the viewer spent.
+	var channel_points_used: int;
+	## The number of Channel Points distributed to the viewer.
+	var channel_points_won: int;
 
 
 	static func from_json(d: Dictionary) -> TopPredictors:
 		var result = TopPredictors.new();
-{for properties as property}
-{if property.is_property_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append(value);
-{/if}
-{if property.is_property_typed_array}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			for value in d["{property.property_name}"]:
-				result.{property.field_name}.append({property.array_type}.from_json(value));
-{/if}
-{if property.is_property_sub_class}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = {property.type}.from_json(d["{property.property_name}"]);
-{/if}
-{if property.is_property_basic}
-		if d.has("{property.property_name}") && d["{property.property_name}"] != null:
-			result.{property.field_name} = d["{property.property_name}"];
-{/if}
-{/for}
+		if d.has("user_id") && d["user_id"] != null:
+			result.user_id = d["user_id"];
+		if d.has("user_name") && d["user_name"] != null:
+			result.user_name = d["user_name"];
+		if d.has("user_login") && d["user_login"] != null:
+			result.user_login = d["user_login"];
+		if d.has("channel_points_used") && d["channel_points_used"] != null:
+			result.channel_points_used = d["channel_points_used"];
+		if d.has("channel_points_won") && d["channel_points_won"] != null:
+			result.channel_points_won = d["channel_points_won"];
 		return result;
 
 	func to_dict() -> Dictionary:
 		var d: Dictionary = {};
-{for properties as property}
-{if property.is_property_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value);
-{/if}
-{if property.is_property_typed_array}
-		d["{property.property_name}"] = [];
-		if {property.field_name} != null:
-			for value in {property.field_name}:
-				d["{property.property_name}"].append(value.to_dict());
-{/if}
-{if property.is_property_sub_class}
-		if {property.field_name} != null:
-			d["{property.property_name}"] = {property.field_name}.to_dict();
-{/if}
-{if property.is_property_basic}
-		d["{property.property_name}"] = {property.field_name};
-{/if}
-{/for}
+		d["user_id"] = user_id;
+		d["user_name"] = user_name;
+		d["user_login"] = user_login;
+		d["channel_points_used"] = channel_points_used;
+		d["channel_points_won"] = channel_points_won;
 		return d;
 
 

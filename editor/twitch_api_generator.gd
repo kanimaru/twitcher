@@ -287,14 +287,19 @@ func _get_sub_classes(parent_property_name:String, properties: Dictionary, resul
 
 	var cls_name = parent_property_name.capitalize().replace(" ", "");
 	cls_name = _sanatize_classname(cls_name);
+
 	var data = {
 		"class_name": cls_name,
 		"class_description": class_description,
 		"properties": result_properties
 	};
+	var code = template.parse_template(template_component_class, data);
+	if cls_name == "Tiers":
+		print(code);
+
 	return {
 		"name": cls_name,
-		"code": template.parse_template(template_component_class, data)
+		"code": code
 	}
 
 #endregion

@@ -11,8 +11,8 @@ are beginner Devs at all.
   - Requested Auth Scopes
   - Subscribed events for EventSub. All possible events with their needed configurations.
   - ...
-- Easy integration of chat support via `TwitchIrcChannel`
-- Easy integration of event sub via `TwitchEventListener`
+- Easy integration of chat support via Node `TwitchIrcChannel`
+- Easy integration of event sub via Node `TwitchEventListener`
 - Complete REST Api (provided by [https://twitch-api-swagger.surge.sh/](https://twitch-api-swagger.surge.sh/)) with data classes for type safety 
 - Cheer Emote parsing
 - Command Handler for easy implementing custom commands
