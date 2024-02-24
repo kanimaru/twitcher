@@ -1,4 +1,4 @@
-extends Node
+extends RefCounted
 
 ## Wrapper for the tokens. Hint never store the token value as string in
 ## your code to reduce the chance to dox the tokens always use the getter.
