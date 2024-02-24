@@ -1,7 +1,8 @@
 @tool
-extends Button
+extends RefCounted
 
 ## Please do not touch! Insane code ahead! Last Warning!
+
 class_name Generator
 
 const SWAGGER_API = "https://twitch-api-swagger.surge.sh"
@@ -10,13 +11,14 @@ const api_output_path = "res://addons/twitcher/generated/twitch_rest_api.gd"
 var client: BufferedHTTPClient;
 var definition: Dictionary = {};
 
-func _pressed() -> void:
+func generate_rest_api() -> void:
 	print("start generating REST API")
 	if definition == {}:
 		print("load Twitch definition")
 		definition = await _load_swagger_definition();
 	_generate_repositories();
 	_generate_components();
+	print("REST API regenerated you can find it under: res://addons/twitcher/generated/")
 
 #region Repository
 
@@ -293,13 +295,9 @@ func _get_sub_classes(parent_property_name:String, properties: Dictionary, resul
 		"class_description": class_description,
 		"properties": result_properties
 	};
-	var code = template.parse_template(template_component_class, data);
-	if cls_name == "Tiers":
-		print(code);
-
 	return {
 		"name": cls_name,
-		"code": code
+		"code": template.parse_template(template_component_class, data)
 	}
 
 #endregion

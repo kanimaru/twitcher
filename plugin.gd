@@ -6,6 +6,7 @@ const HTTP_CLIENT_AUTOLOAD_NAME: String = "HttpClientManager"
 
 var settings: TwitchSetting;
 var gif_importer: GifImporter = GifImporter.new();
+var generator: Generator = Generator.new();
 
 func _enter_tree():
 	print("Twitch Plugin loading...")
@@ -25,8 +26,7 @@ func _exit_tree():
 	remove_autoload_singleton(HTTP_CLIENT_AUTOLOAD_NAME);
 
 func add_ui():
-	var scene = preload("res://addons/twitcher/editor/twitch_utilities.tscn").instantiate() as Control;
-	add_control_to_dock(EditorPlugin.DOCK_SLOT_LEFT_BR, scene);
+	add_tool_menu_item("Regenerate Twitch REST Api", generator.generate_rest_api);
 
 func is_magick_available() -> bool:
 	var transformer = MagicImageTransformer.new();

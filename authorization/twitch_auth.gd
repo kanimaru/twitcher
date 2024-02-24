@@ -11,6 +11,9 @@ signal auth_succeed(code: String);
 ## In case the authorization wasn't succesfull
 signal auth_error(error: String, error_description: String);
 
+## The requested devicecode to show to the user for authorization
+signal device_code_requested(device_code: DeviceCodeResponse);
+
 var auth_http_server: HTTPServer;
 var token_handler: TwitchTokenHandler;
 var login_in_process: bool;
@@ -67,6 +70,8 @@ func login() -> void:
 		TwitchSetting.FLOW_IMPLICIT:
 			log.e("Implicit Flow is currently disabled. Implicit flow is not recommended use Authorization Code Flow.")
 		#	await _start_login_process("token");
+		TwitchSetting.FLOW_DEVICE_CODE_GRANT:
+			await _start_device_login_process();
 	login_in_process = false;
 
 func _start_login_process(response_type: String):
@@ -79,7 +84,7 @@ func _start_login_process(response_type: String):
 			TwitchSetting.force_verify
 		].map(func (a : String): return a.uri_encode());
 
-	var url = TwitchSetting.authorization_url;
+	var url = TwitchSetting.authorization_host + TwitchSetting.authorization_path;
 	log.i("Start login process for %s" % TwitchSetting.get_scopes())
 	url += "?response_type=%s&client_id=%s&scope=%s&redirect_uri=%s&force_verify=%s" % query_param;
 	OS.shell_open(url);
@@ -91,6 +96,34 @@ func _start_login_process(response_type: String):
 	elif response_type == "token":
 		await token_handler.token_resolved;
 	auth_http_server.stop();
+
+## Starts the device flow.
+func _start_device_login_process():
+	var scopes = TwitchSetting.get_scopes();
+
+	var device_code_response = await _fetch_device_code_response(scopes);
+
+	# print the information instead of opening the browser so that the developer can decide if
+	# he want to open the browser manually. Also use print not the logger so that the information
+	# is sent always.
+	print("Visit %s and enter the code %s for authorization." % [device_code_response.verification_uri, device_code_response.user_code])
+
+	var token = await token_handler.request_device_token(device_code_response, scopes);
+
+func _fetch_device_code_response(scopes: String) -> DeviceCodeResponse:
+	log.i("Start login process DCF for %s" % scopes)
+	var client = HttpClientManager.get_client(TwitchSetting.authorization_host) as BufferedHTTPClient;
+	var body = "client_id=%s&scopes=%s" % [TwitchSetting.client_id, scopes.uri_encode()];
+	var request = client.request(TwitchSetting.authorization_device_path, HTTPClient.METHOD_POST, {
+		"Content-Type": "application/x-www-form-urlencoded"
+	}, body);
+
+	var initial_response_data = await client.wait_for_request(request);
+	if initial_response_data.response_code != 200:
+		log.e("Couldn't initiate device code flow response code %s" % initial_response_data.response_code)
+	var initial_response_string = initial_response_data.response_data.get_string_from_ascii();
+	var initial_response_dict = JSON.parse_string(initial_response_string) as Dictionary;
+	return DeviceCodeResponse.new(initial_response_dict);
 
 ## Handles the response after Twitch auth endpoint redirects to our server with the response
 func _process_request(server: HTTPServer, client: HTTPServer.Client) -> void:
@@ -133,7 +166,7 @@ func _handle_success(server: HTTPServer, client: HTTPServer.Client, query_params
 	# Handle implicit success
 	if query_params.has("access_token"):
 		var access_token = query_params.get("access_token");
-		token_handler.set_access_token(access_token);
+		token_handler.update_tokens(access_token);
 		pass
 	elif query_params.has("code"):
 		auth_succeed.emit(query_params['code']);
@@ -143,3 +176,18 @@ func _handle_error(server: HTTPServer, client: HTTPServer.Client, query_params :
 	var msg = "Error %s: %s" % [query_params["error"], query_params["error_description"]];
 	log.e(msg);
 	server.send_response(client.peer, "400 BAD REQUEST",  msg.to_utf8_buffer());
+
+## Response of the inital device code request
+class DeviceCodeResponse extends RefCounted:
+	var device_code: String;
+	var expires_in: int;
+	var interval: int;
+	var user_code: String;
+	var verification_uri: String;
+
+	func _init(json: Dictionary):
+		device_code = json["device_code"];
+		expires_in = int(json["expires_in"]);
+		interval = int(json["interval"]);
+		user_code = json["user_code"];
+		verification_uri = json["verification_uri"];
