@@ -3,10 +3,7 @@ extends RefCounted
 
 class_name TwitchImageTransformer
 
-func is_supported() -> bool:
-	return true
-
-func is_supporting_animation():
+func is_supporting_animation() -> bool:
 	return false
 
 func convert_image(path: String, buffer_in: PackedByteArray, output_path: String) -> SpriteFrames:

@@ -58,7 +58,7 @@ func _process_custom_fx(char_fx: CharFXTransform) -> bool:
 	var image_size = node.get_meta("size");
 	var right_bottom = char_fx.transform.get_origin();
 	var image_height: float = image_size.y;
-	var image_width: float = image_size.y;
+	var image_width: float = image_size.x;
 
 	# The offset isn't correctly centering the images...
 	# but we don't get the info about the line height to center it correctly

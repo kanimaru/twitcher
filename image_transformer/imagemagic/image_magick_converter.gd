@@ -27,7 +27,7 @@ func dump_and_convert(path: String, buffer_in: PackedByteArray = [], output = "%
 	var mutex: Mutex;
 	if parallel:
 		mutex = converting.get(path, Mutex.new());
-		converting[output] = mutex;
+		converting[path] = mutex;
 
 	var err = thread.start(_do_work.bind(path, buffer, output, mutex));
 	assert(err == OK, "could not start thread");
@@ -39,7 +39,7 @@ func dump_and_convert(path: String, buffer_in: PackedByteArray = [], output = "%
 	var tex: SpriteFrames = thread.wait_to_finish();
 	if parallel:
 		mutex.unlock();
-		converting.erase(output);
+		converting.erase(path);
 
 	if not output.is_empty():
 		_save_converted_file(tex, output);
