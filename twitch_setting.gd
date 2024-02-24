@@ -219,7 +219,11 @@ static var irc_username: String:
 
 static var _irc_connect_to_channel: Property;
 static var irc_connect_to_channel: Array[StringName]:
-	get: return _irc_connect_to_channel.get_val();
+	get:
+		var channel_names : Array[StringName];
+		for channel in _irc_connect_to_channel.get_val():
+			channel_names.append(channel);
+		return channel_names;
 
 static var _irc_login_message: Property;
 static var irc_login_message: String:
