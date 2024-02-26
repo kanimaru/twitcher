@@ -346,6 +346,11 @@ static func get_image_transformers() -> Array[String]:
 	var twitch = TwitchImageTransformer.new()
 	image_transformers["TwitchImageTransformer"] = twitch;
 	result.append("TwitchImageTransformer");
+
+	var native = NativeImageTransformer.new()
+	image_transformers["NativeImageTransformer"] = native;
+	result.append("NativeImageTransformer");
+
 	return result;
 
 static func get_image_transformer() -> TwitchImageTransformer:

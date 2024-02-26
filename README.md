@@ -44,10 +44,24 @@ In case you have no clue just use `http://localhost:7170` and make sure this is 
 4. Call `TwitchService.setup();` at some point in your application when you want to start the Twitch integration. See also the examples
 
 ## Image Transformer
+
+**TwitchImageTransformer**
+Is the default transformer for all projects. It doesn't support animation at all and returns static images instead.
+Version that always should work.
+
+**MagickImageTransformer**
 Cause Godot doesn't support GIF by default the library provides a possibility for exchangeable converter.
 Not everyone needs the GIF support. At default the library doesn't use GIF's and requests only static Emojis.
 The Converter that is provided by the Lib requires [ImageMagick](https://imagemagick.org)
 an external program to convert the GIFs to Images and then gather them to `SpriteFrames`.
+
+**NativeImageTransformer**
+The native image transformer uses a ported version of [vbousquet/godot-gif-importer](https://github.com/vbousquet/godot-gif-importer)
+I can't guarantee that I ported it correctly from Godot 3 to 4 nor I can guarantee that the original Implementation was correctly.
+This is an alterantive that has to be battle tested. But this one doesn't need any external Program to work (or even not) :D.
+Also have a look at [jegor377/godot-gif-lzw](https://github.com/jegor377/godot-gif-lzw) that is used for the LZW compression.
+The readme has good links for checking this implementation. Couple of parts was broken and I added a "fix"
+I marked them with "Probably Buggy" and "Maybe wrong too" in case someone want to check the implementation or run into problems.
 
 In case you want to use another way to convert the GIFs. You can easily create a class that has to support:
 

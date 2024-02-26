@@ -1,7 +1,7 @@
 @tool
 extends EditorImportPlugin
 
-class_name GifImporter
+class_name GifImporterImagemagick
 
 enum Presets { DEFAULT }
 
