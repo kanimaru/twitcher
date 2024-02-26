@@ -1,8 +1,7 @@
 # [Beta] Twitcher
 .. is a Godot Library for implementing Twitch functionality in Godot.
-The main purpose is to use this library for easier overlay development. The goal for the future is to provide also
-features to use this for interactive Twitch games. The library is target for beginners cause the biggest audience of Godot
-are beginner Devs at all.
+The main purpose is to use this library for easier overlay development.
+The library can also be used to support Twitch game integration.
 
 ## Features
 - Integration of Authorizationsflows (Auth Code, Client Credentials, Device Code, ~~Implicit~~)

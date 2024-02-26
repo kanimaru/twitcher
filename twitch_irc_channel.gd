@@ -1,3 +1,4 @@
+@icon("./assets/chat-icon.svg")
 extends Node
 
 ## Direct access to the chat for one specific channel

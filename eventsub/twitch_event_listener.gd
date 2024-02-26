@@ -1,3 +1,4 @@
+@icon("../assets/event-icon.svg")
 extends Node
 
 ## Listens to an event and publishes it as signal. Expects that the signal was
