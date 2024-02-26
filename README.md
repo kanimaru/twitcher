@@ -121,5 +121,4 @@ Inspired by: [GIFT](https://github.com/issork/gift/)
 
 **Nice to Have**
 - Add continious deployment to Godot AssetLib
-- Implement a native gif parser for godot
 - Implement all eventsub datastructures?
