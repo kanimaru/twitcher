@@ -121,3 +121,6 @@ Inspired by: [GIFT](https://github.com/issork/gift/)
 **Nice to Have**
 - Add continious deployment to Godot AssetLib
 - Implement all eventsub datastructures?
+
+**Need Support**
+Find me on https://www.twitch.tv/kani_dev/
