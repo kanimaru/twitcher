@@ -72,11 +72,12 @@ var eventsub_messages: Dictionary = {};
 var last_keepalive: int;
 var is_conntected: bool;
 
-func _init(twitch_api: TwitchRestAPI) -> void:
+func _init(twitch_api: TwitchRestAPI, autoconnect: bool = true) -> void:
 	api = twitch_api;
 	client.message_received.connect(_data_received);
 	client.connection_state_changed.connect(_on_connection_state_changed)
-	_create_subscriptions_from_config();
+	if autoconnect:
+		_create_subscriptions_from_config();
 
 ## Connects to this url starts the whole eventsub connection.
 func connect_to_eventsub(url: String) -> void:
@@ -134,6 +135,9 @@ func subscribe(data: TwitchCreateEventSubSubscriptionBody):
 func _data_received(data : PackedByteArray) -> void:
 	var message_str : String = data.get_string_from_utf8();
 	var message_json : Dictionary = JSON.parse_string(message_str);
+	if not message_json.has("metadata"):
+		log.e("Twitch send something undocumented: %s" % message_str);
+		return;
 	var metadata : Metadata = Metadata.new(message_json["metadata"]);
 	var id = metadata.message_id;
 	var timestamp_str = metadata.message_timestamp;

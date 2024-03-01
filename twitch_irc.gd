@@ -86,7 +86,7 @@ class ParsedMessage extends RefCounted:
 	var _irc_message_parser_regex = RegEx.create_from_string("(@.*? )?:(.*?)( [A-Z0-9]*)( #?.*?)?( :.*?)?$");
 
 	var tags: String:
-		get: return tags.substr(1);
+		get: return tags.trim_prefix("@");
 
 	## Server / To User (Whisper) / From User (Chat)
 	var server: String;
@@ -96,11 +96,11 @@ class ParsedMessage extends RefCounted:
 
 	## Channel / From User (Whisper)
 	var channel: String:
-		get: return channel.strip_edges().substr(1);
+		get: return channel.strip_edges().trim_prefix("#");
 
 	## Message / Payload
 	var message: String:
-		get: return message.strip_edges().substr(1);
+		get: return message.strip_edges().trim_prefix(":");
 
 	func _init(msg: String) -> void:
 		var matches = _irc_message_parser_regex.search(msg);
@@ -250,7 +250,8 @@ func _send(text : String) -> void:
 
 ## Handles all the messages. Tags can be empty when not requested via capabilities
 func _handle_message(parsed_message : ParsedMessage) -> void:
-	log.i("> [%15s] %s: %s" % [parsed_message.command, parsed_message.server, parsed_message.message]);
+	if parsed_message.command != "WHISPER":
+		log.i("> [%15s] %s: %s" % [parsed_message.command, parsed_message.server, parsed_message.message]);
 
 	match parsed_message.command:
 		"001":
@@ -314,7 +315,7 @@ func _handle_message(parsed_message : ParsedMessage) -> void:
 			var whisper_tags = TwitchTags.Whisper.new(parsed_message.tags);
 			# Example: :<to-user>!<to-user>@<to-user>.tmi.twitch.tv
 			var to_user = parsed_message.server;
-			to_user = to_user.substr(1, to_user.find("!"))
+			to_user = to_user.substr(0, to_user.find("!"))
 			# Special case for whisper
 			var from_user = parsed_message.channel;
 			received_whisper.emit(from_user, to_user, parsed_message.message, whisper_tags);

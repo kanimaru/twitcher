@@ -47,6 +47,8 @@ static var CHANNEL_READ_REDEMPTIONS = Scope.new("channel:read:redemptions", 2097
 static var CHANNEL_READ_STREAM_KEY = Scope.new("channel:read:stream_key", 4194304);
 static var CHANNEL_READ_SUBSCRIPTIONS = Scope.new("channel:read:subscriptions", 8388608);
 static var CHANNEL_READ_VIPS = Scope.new("channel:read:vips", 16777216);
+static var CHANNEL_CHANNEL_BOT = Scope.new("channel:bot", 33554432);
+static var CHANNEL_CHANNEL_MODERATE = Scope.new("channel:moderate", 67108864);
 static var CLIPS_EDIT = Scope.new("clips:edit", 1);
 static var MODERATION_READ = Scope.new("moderation:read", 1);
 static var MODERATOR_MANAGE_ANNOUNCEMENTS = Scope.new("moderator:manage:announcements", 1);
@@ -78,6 +80,11 @@ static var USER_READ_EMAIL = Scope.new("user:read:email", 128);
 static var USER_READ_FOLLOWS = Scope.new("user:read:follows", 256);
 static var USER_READ_MODERATED_CHANNELS = Scope.new("user:read:moderated_channels", 512);
 static var USER_READ_SUBSCRIPTIONS = Scope.new("user:read:subscriptions", 1024);
+static var USER_BOT = Scope.new("user:bot", 2048);
+static var USER_READ_CHAT = Scope.new("user:read:chat", 4096);
+static var USER_WRITE_CHAT = Scope.new("user:write:chat", 8192);
+static var WHISPERS_READ = Scope.new("whispers:read", 1);
+static var WHISPERS_EDIT = Scope.new("whispers:edit", 2);
 
 ## Key as category, value as Array[Scope]
 static func get_grouped_scopes() -> Dictionary:
@@ -124,6 +131,8 @@ static func get_all_scopes() -> Array[Scope]:
 		CHANNEL_READ_STREAM_KEY,
 		CHANNEL_READ_SUBSCRIPTIONS,
 		CHANNEL_READ_VIPS,
+		CHANNEL_CHANNEL_BOT,
+		CHANNEL_CHANNEL_MODERATE,
 		CLIPS_EDIT,
 		MODERATION_READ,
 		MODERATOR_MANAGE_ANNOUNCEMENTS,
@@ -155,4 +164,9 @@ static func get_all_scopes() -> Array[Scope]:
 		USER_READ_FOLLOWS,
 		USER_READ_MODERATED_CHANNELS,
 		USER_READ_SUBSCRIPTIONS,
+		USER_BOT,
+		USER_READ_CHAT,
+		USER_WRITE_CHAT,
+		WHISPERS_READ,
+		WHISPERS_EDIT
 	]

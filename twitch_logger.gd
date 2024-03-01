@@ -8,6 +8,7 @@ class_name TwitchLogger
 var context_name: String;
 var suffix: String;
 var enabled : bool;
+var debug: bool;
 
 func _init(ctx_name: String) -> void:
 	context_name = ctx_name;
@@ -29,3 +30,6 @@ func i(text: String):
 ## log a message on error level
 func e(text: String):
 	if is_enabled(): printerr("[%s%s] %s" % [context_name, suffix, text]);
+
+func d(text: String):
+	if is_enabled() && debug: print("[%s%s] %s" % [context_name, suffix, text]);

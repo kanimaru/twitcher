@@ -116,7 +116,18 @@ Changed the library to use SpriteFrames instead of AnimatedTextures
 
 Inspired by: [GIFT](https://github.com/issork/gift/)
 
+** Release Notes **
+- Fixed problem with HttpBufferedClient not requesting when connection in almost the same moment
+- Added New Chat and PubSubScopes
+- Removed Whisper messages from the log
+- fixed a problem when Twitch sends undocumented websocket messages
+
+** TODO **
+- add an addons folder to put the lib in
+- pull the documentation folder out
+
 **Known Bugs**
+- couple of gifs are not parsing with native GIF
 
 **Nice to Have**
 - Add continious deployment to Godot AssetLib

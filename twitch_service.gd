@@ -26,20 +26,19 @@ func _init() -> void:
 	api = TwitchRestAPI.new(auth);
 	icon_loader = TwitchIconLoader.new(api);
 	eventsub = TwitchEventsub.new(api);
-	eventsub_debug = TwitchEventsub.new(api);
+	eventsub_debug = TwitchEventsub.new(api, false);
 	commands = TwitchCommandHandler.new();
 	irc = TwitchIRC.new(auth);
 
 ## Call this to setup the complete Twitch integration whenever you need.
 ## It boots everything up this Lib supports.
 func setup() -> void:
-	if TwitchSetting.use_test_server:
-		eventsub_debug.connect_to_eventsub(TwitchSetting.eventsub_test_server_url);
-
 	log.i("Start")
 	await auth.ensure_authentication();
 	await _init_chat();
 	_init_eventsub();
+	if TwitchSetting.use_test_server:
+		eventsub_debug.connect_to_eventsub(TwitchSetting.eventsub_test_server_url);
 	_init_cheermotes();
 	log.i("Initialized and ready")
 	is_twitch_ready = true;
@@ -137,9 +136,12 @@ func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnounc
 ## The callback will receive [code]info: TwitchCommandInfo, args: Array[String][/code][br]
 ## Args are optional depending on the configuration.[br]
 ## args_max == -1 => no upper limit for arguments
-func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1) -> void:
+func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1,
+	permission_level : TwitchCommandHandler.PermissionFlag = TwitchCommandHandler.PermissionFlag.EVERYONE,
+	where : TwitchCommandHandler.WhereFlag = TwitchCommandHandler.WhereFlag.CHAT) -> void:
+
 	log.i("Register command %s" % command)
-	commands.add_command(command, callback, args_min, args_max);
+	commands.add_command(command, callback, args_min, args_max, permission_level, where);
 
 ## Removes a command
 func remove_command(command: String) -> void:
