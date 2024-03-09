@@ -232,6 +232,8 @@ func _pack_headers(headers: Dictionary) -> PackedStringArray:
 func _handle_response() -> void:
 	if client.has_response():
 		client.poll();
+		if client.get_status() != HTTPClient.STATUS_BODY:
+			print_debug("Status is %s but want to read body %s" % [client.get_status(), current_request.path])
 		var chunk = client.read_response_body_chunk();
 		if chunk.size() > 0:
 			current_response_data += chunk;
