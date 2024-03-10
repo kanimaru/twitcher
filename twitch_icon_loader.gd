@@ -84,32 +84,35 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 	var requests: Dictionary = {};
 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
-		var emote_path: String = emote_definition.get_cache_path();
-
-		if requests_in_progress.has(emote_path): continue;
-		requests_in_progress.append(emote_path);
+		var cache_path: String = emote_definition.get_cache_path();
+		var spriteframe_path: String = emote_definition.get_cache_path_spriteframe();
 
 		if not TwitchSetting.image_transformer.is_supporting_animation():
 			emote_definition.type_static();
 
-		if ResourceLoader.has_cached(emote_path):
-			response[emote_definition] = ResourceLoader.load(emote_path);
+		if requests_in_progress.has(cache_path): continue;
+		requests_in_progress.append(cache_path);
+
+		if ResourceLoader.has_cached(spriteframe_path):
+			response[emote_definition] = ResourceLoader.load(spriteframe_path);
 		else:
 			var request : BufferedHTTPClient.RequestData = _load_emote(emote_definition);
 			requests[emote_definition] = request;
 
 	for emote_definition: TwitchEmoteDefinition in requests:
-		var emote_path: String = emote_definition.get_cache_path();
+		var cache_path: String = emote_definition.get_cache_path();
+		var spriteframe_path: String = emote_definition.get_cache_path_spriteframe();
 		var request = requests[emote_definition];
-		var sprite_frames = await _convert_response(request, emote_path);
+		var sprite_frames = await _convert_response(request, cache_path, spriteframe_path);
 		response[emote_definition] = sprite_frames;
 		_cached_images.append(sprite_frames);
-		requests_in_progress.erase(emote_path);
+		requests_in_progress.erase(cache_path);
 		emoji_loaded.emit(emote_definition);
 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
 		if not response.has(emote_definition):
-			response[emote_definition] = ResourceLoader.load(emote_definition.get_cache_path());
+			var cache = emote_definition.get_cache_path_spriteframe();
+			response[emote_definition] = ResourceLoader.load(cache);
 
 	return response;
 
@@ -188,8 +191,9 @@ func get_badges(badge_composites : Array[String], channel_id : String = "global"
 		var badge_data: BadgeData = BadgeData.new(badge_composite, scale, channel_id);
 		var request = requests[badge_composite];
 		var id : String = badge_data.get_cache_id();
-		var badge_path : String = TwitchSetting.cache_badge.path_join(id);
-		var sprite_frames = await _convert_response(request, badge_path);
+		var cache_path : String = TwitchSetting.cache_badge.path_join(id);
+		var spriteframe_path : String = TwitchSetting.cache_badge.path_join(id) + ".res";
+		var sprite_frames = await _convert_response(request, cache_path, spriteframe_path);
 		response[badge_composite] = sprite_frames;
 		_cached_images.append(sprite_frames);
 
@@ -236,14 +240,12 @@ func get_cached_badges(channel_id) -> Dictionary:
 
 #region Utilities
 
-func _convert_response(request: BufferedHTTPClient.RequestData, output_path: String) -> SpriteFrames:
+func _convert_response(request: BufferedHTTPClient.RequestData, cache_path: String, spriteframe_path: String) -> SpriteFrames:
 	var client = request.client;
 	var response = await client.wait_for_request(request);
 	var image_transformer = TwitchSetting.image_transformer;
 	var response_data = response.response_data;
-	var cache_path = output_path + ".res"
-	var sprite_frames = await image_transformer.convert_image(output_path, response_data, cache_path) as SpriteFrames;
-	sprite_frames.take_over_path(output_path);
+	var sprite_frames = await image_transformer.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames;
 	return sprite_frames;
 
 #endregion

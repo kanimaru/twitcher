@@ -23,9 +23,14 @@ func type_animated() -> TwitchEmoteDefinition: _type = "animated"; return self;
 func theme_dark() -> TwitchEmoteDefinition: _theme = "dark"; return self;
 func theme_light() -> TwitchEmoteDefinition: _theme = "light"; return self;
 
-## Returns the path where the emoji should be cached
+## Returns the path where the raw emoji should be cached
 func get_cache_path() -> String:
 	var file_name = get_file_name();
+	return TwitchSetting.cache_emote.path_join(file_name);
+
+## Returns the path where the converted spriteframe should be cached
+func get_cache_path_spriteframe() -> String:
+	var file_name = get_file_name() + ".res";
 	return TwitchSetting.cache_emote.path_join(file_name);
 
 ## Returns its unique filename

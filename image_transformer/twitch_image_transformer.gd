@@ -16,6 +16,7 @@ func convert_image(path: String, buffer_in: PackedByteArray, output_path: String
 	if err == OK:
 		texture = ImageTexture.new();
 		texture.set_image(img);
+		ResourceSaver.save(sprite_frames, output_path, ResourceSaver.SaverFlags.FLAG_COMPRESS);
 		sprite_frames.take_over_path(output_path);
 	else:
 		texture = TwitchSetting.fallback_texture2d;
