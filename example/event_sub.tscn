@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/twitcher/example/event_sub.gd" id="1_xhllw"]
 
+
 [node name="EventSub" type="Control"]
 layout_mode = 3
 anchors_preset = 15
