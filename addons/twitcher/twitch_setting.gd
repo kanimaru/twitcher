@@ -57,6 +57,9 @@ class Property:
 	func get_val() -> Variant:
 		return ProjectSettings.get_setting_with_override(key);
 
+	func set_val(val) -> void:
+		ProjectSettings.set(key, val);
+
 	func basic() -> Property:
 		ProjectSettings.set_as_basic(key, true);
 		return self;
@@ -111,37 +114,46 @@ class Property:
 
 static var _broadcaster_id: Property
 static var broadcaster_id: String:
-	get: return _broadcaster_id.get_val()
+	get: return _broadcaster_id.get_val();
+	set(val): _broadcaster_id.set_val(val);
 
 static var _authorization_flow: Property
 static var authorization_flow: String:
-	get: return _authorization_flow.get_val()
+	get: return _authorization_flow.get_val();
+	set(val): _authorization_flow.set_val(val);
 
 static var _client_id: Property
 static var client_id: String:
-	get: return _client_id.get_val()
+	get: return _client_id.get_val();
+	set(val): _client_id.set_val(val);
 
 static var _client_secret: Property
 static var client_secret: String:
-	get: return _client_secret.get_val()
+	get: return _client_secret.get_val();
+	set(val): _client_secret.set_val(val);
 
 static var _redirect_url: Property
 static var redirect_url: String:
-	get: return _redirect_url.get_val()
+	get: return _redirect_url.get_val();
+	set(val): _redirect_url.set_val(val);
+
 static var redirect_port: int:
 	get: return _get_redirect_port();
 
 static var _authorization_host: Property
 static var authorization_host: String:
-	get: return _authorization_host.get_val()
+	get: return _authorization_host.get_val();
+	set(val): _authorization_host.set_val(val);
 
 static var _authorization_path: Property
 static var authorization_path: String:
-	get: return _authorization_path.get_val()
+	get: return _authorization_path.get_val();
+	set(val): _authorization_path.set_val(val);
 
 static var _authorization_device_path: Property
 static var authorization_device_path: String:
-	get: return _authorization_device_path.get_val()
+	get: return _authorization_device_path.get_val();
+	set(val): _authorization_device_path.set_val(val);
 
 static var _scopes: Dictionary = {}
 static var scopes: String:
@@ -149,83 +161,101 @@ static var scopes: String:
 
 static var _force_verify: Property
 static var force_verify: String:
-	get: return _force_verify.get_val()
+	get: return _force_verify.get_val();
+	set(val): _force_verify.set_val(val);
 
 static var _subscriptions: Dictionary = {}
 ## Return the subscribed subscriptions key = TwitchSubscriptions.Subscription, value = Dictionary with conditions (ready to use)
 static var subscriptions: Dictionary:
-	get: return get_subscriptions()
+	get: return get_subscriptions();
 
 static var image_transformers: Dictionary = {};
 static var image_transformer: TwitchImageTransformer:
 	get: return get_image_transformer();
+
 static var _image_tranformer_path: Property
 static var image_tranformer_path: String:
-	get: return _image_tranformer_path.get_val()
+	get: return _image_tranformer_path.get_val();
+	set(val): _image_tranformer_path.set_val(val);
 
 static var _imagemagic_path: Property
 static var imagemagic_path: String:
-	get: return _imagemagic_path.get_val()
+	get: return _imagemagic_path.get_val();
+	set(val): _imagemagic_path.set_val(val);
 
 static var _twitch_image_cdn_host: Property
 static var twitch_image_cdn_host: String:
-	get: return _twitch_image_cdn_host.get_val()
+	get: return _twitch_image_cdn_host.get_val();
+	set(val): _twitch_image_cdn_host.set_val(val);
 
 static var _auth_cache: Property
 static var auth_cache: String:
-	get: return _auth_cache.get_val()
+	get: return _auth_cache.get_val();
+	set(val): _auth_cache.set_val(val);
 
 static var _token_host: Property
 static var token_host: String:
-	get: return _token_host.get_val()
+	get: return _token_host.get_val();
+	set(val): _token_host.set_val(val);
 
 static var _token_endpoint: Property
 static var token_endpoint: String:
-	get: return _token_endpoint.get_val()
+	get: return _token_endpoint.get_val();
+	set(val): _token_endpoint.set_val(val);
 
 static var _fallback_texture: Property
 static var fallback_texture2d: Texture2D:
 	get:
-		var path = _fallback_texture.get_val()
+		var path = _fallback_texture.get_val();
 		return load(path)
+	set(val): _fallback_texture.set_val(val.resource_path);
 
 static var _fallback_profile: Property
 static var fallback_profile: Texture2D:
 	get:
-		var path = _fallback_profile.get_val()
+		var path = _fallback_profile.get_val();
 		return load(path)
+	set(val): _fallback_profile.set_val(val.resource_path);
 
 static var _cache_emote: Property
 static var cache_emote: String:
-	get: return _cache_emote.get_val()
+	get: return _cache_emote.get_val();
+	set(val): _cache_emote.set_val(val);
 
 static var _cache_badge: Property
 static var cache_badge: String:
-	get: return _cache_badge.get_val()
+	get: return _cache_badge.get_val();
+	set(val): _cache_badge.set_val(val);
 
 static var _cache_cheermote: Property
 static var cache_cheermote: String:
-	get: return _cache_cheermote.get_val()
+	get: return _cache_cheermote.get_val();
+	set(val): _cache_cheermote.set_val(val);
 
 static var _use_test_server: Property
 static var use_test_server: bool:
-	get: return _use_test_server.get_val()
+	get: return _use_test_server.get_val();
+	set(val): _use_test_server.set_val(val);
 
 static var _eventsub_test_server_url: Property
 static var eventsub_test_server_url: String:
-	get: return _eventsub_test_server_url.get_val()
+	get: return _eventsub_test_server_url.get_val();
+	set(val): _eventsub_test_server_url.set_val(val);
 
 static var _eventsub_live_server_url: Property
 static var eventsub_live_server_url: String:
-	get: return _eventsub_live_server_url.get_val()
+	get: return _eventsub_live_server_url.get_val();
+	set(val): _eventsub_live_server_url.set_val(val);
 
 static var _irc_server_url: Property
 static var irc_server_url: String:
-	get: return _irc_server_url.get_val()
+	get: return _irc_server_url.get_val();
+	set(val): _irc_server_url.set_val(val);
 
 static var _irc_username: Property
 static var irc_username: String:
 	get: return _irc_username.get_val();
+	set(val): _irc_username.set_val(val);
 
 static var _irc_connect_to_channel: Property;
 static var irc_connect_to_channel: Array[StringName]:
@@ -238,10 +268,12 @@ static var irc_connect_to_channel: Array[StringName]:
 static var _irc_login_message: Property;
 static var irc_login_message: String:
 	get: return _irc_login_message.get_val();
+	set(val): _irc_login_message.set_val(val);
 
 static var _irc_send_message_delay: Property;
 static var irc_send_message_delay: int:
 	get: return _irc_send_message_delay.get_val();
+	set(val): _irc_send_message_delay.set_val(val);
 
 static var _irc_capabilities: Property;
 static var irc_capabilities: Array[String]:
@@ -250,18 +282,22 @@ static var irc_capabilities: Array[String]:
 static var _api_host: Property;
 static var api_host: String:
 	get: return _api_host.get_val();
+	set(val): _api_host.set_val(val);
 
 static var _ignore_message_eventsub_in_seconds: Property;
 static var ignore_message_eventsub_in_seconds: int:
 	get: return _ignore_message_eventsub_in_seconds.get_val();
+	set(val): _ignore_message_eventsub_in_seconds.set_val(val);
 
 static var _http_client_min: Property;
 static var http_client_min: int:
 	get: return _http_client_min.get_val();
+	set(val): _http_client_min.set_val(val);
 
 static var _http_client_max: Property;
 static var http_client_max: int:
 	get: return _http_client_max.get_val();
+	set(val): _http_client_max.set_val(val);
 
 static var _log_enabled: Property;
 static var log_enabled: Array[String]:

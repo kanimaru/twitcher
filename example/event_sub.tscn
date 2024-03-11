@@ -1,7 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://djicbmxnkil7r"]
 
-[ext_resource type="Script" path="res://addons/twitcher/example/event_sub.gd" id="1_xhllw"]
-
+[ext_resource type="Script" path="res://example/event_sub.gd" id="1_xhllw"]
 
 [node name="EventSub" type="Control"]
 layout_mode = 3

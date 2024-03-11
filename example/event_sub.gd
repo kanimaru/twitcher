@@ -1,6 +1,11 @@
 extends Control
 
 func _ready() -> void:
+	# !!! Change following in the project settings that the example works !!!
+	# twitch/auth/broadcaster_id 	< Your broadcaster id you can convert it here https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
+	# twitch/auth/client_id 		< you find while registering the application see readme for howto
+	# twitch/auth/client_secret		< you find while registering the application see readme for howto
+
 	# You can also go directly to Project -> Project Settings -> Twitch -> Eventsub
 	# and setup this one there.
 	var broadcaster_id = TwitchSetting.broadcaster_id;

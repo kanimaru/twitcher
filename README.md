@@ -59,8 +59,7 @@ The native image transformer uses a ported version of [vbousquet/godot-gif-impor
 I can't guarantee that I ported it correctly from Godot 3 to 4 nor I can guarantee that the original Implementation was correctly.
 This is an alterantive that has to be battle tested. But this one doesn't need any external Program to work (or even not) :D.
 Also have a look at [jegor377/godot-gif-lzw](https://github.com/jegor377/godot-gif-lzw) that is used for the LZW compression.
-The readme has good links for checking this implementation. Couple of parts was broken and I added a "fix"
-I marked them with "Probably Buggy" and "Maybe wrong too" in case someone want to check the implementation or run into problems.
+The readme has good links for checking this implementation. Couple of parts was broken and I added a "fix".
 
 In case you want to use another way to convert the GIFs. You can easily create a class that has to support:
 
@@ -107,6 +106,11 @@ Also set the `Image Transformer` to `Magic Image Transformer` afterwards all emo
 	</dd>
 	<dt>Why is the generated folder commited to the repository?</dt>
 	<dd>This Library targets beginners and the API won't change much anyway. One step less for beginners of this library.</dd>
+	<dt>I changed scopes but my token is still invalid.</dt>
+	<dd>
+		The token can't auto refresh after scope changes always. In case it happens it is possible to remove the token manually or wait until the token runs up.
+		You can find the token in `user://auth.conf` it's encrypted. Just delete the file and the application will reauthorize next time.
+	</dd>
 </dl>
 
 ## See also:
@@ -121,13 +125,11 @@ Inspired by: [GIFT](https://github.com/issork/gift/)
 - Added New Chat and PubSubScopes
 - Removed Whisper messages from the log
 - fixed a problem when Twitch sends undocumented websocket messages
-
-** TODO **
-- add an addons folder to put the lib in
-- pull the documentation folder out
+- Changed the folder structure to match assetlibs default stuff
+- Fixed bugs with native gif parser
+- Added more informations to setup everything
 
 **Known Bugs**
-- couple of gifs are not parsing with native GIF
 
 **Nice to Have**
 - Add continious deployment to Godot AssetLib

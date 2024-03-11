@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="Twitcher"
-run/main_scene="res://addons/twitcher/example/chat.tscn"
+run/main_scene="res://example/chat.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
+
+[autoload]
+
+TwitchService="*res://addons/twitcher/twitch_service.gd"
+HttpClientManager="*res://addons/twitcher/communication/http_client_manager.gd"
 
 [editor_plugins]
 

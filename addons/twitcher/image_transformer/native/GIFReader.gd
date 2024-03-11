@@ -40,7 +40,6 @@ func load_gif(data):
 	var sprite_frame = SpriteFrames.new()
 
 	img = Image.create(width, height, false, Image.FORMAT_RGBA8)
-	var animation_duration: float = 0.0;
 	while pos < data.size():
 		if data[pos] == 0x21: # Extension block
 			var ext_type = data[pos + 1]
@@ -99,21 +98,17 @@ func load_gif(data):
 			for y in range(0, img_height):
 				for x in range(0, img_width):
 					var c = decompressed[p]
-					# TODO: Probably Buggy
 					if transparency == 0 or c != frame_transparent_color:
 						img.set_pixel(img_left + x, img_top + y, local_lut[c])
 					p = p + 1
 			var frame = ImageTexture.create_from_image(img);
-			# Maybe wrong too
 			sprite_frame.add_frame(&"default", frame, frame_delay / 100.0);
-			animation_duration += frame_delay / 1000.0;
 			frame_anim_packed_info = -1
 			frame_transparent_color = -1
 			frame_delay = -1
 			frame_number = frame_number + 1
 		elif data[pos] == 0x3B: # Trailer
 			pos = pos + 1
-	# Maybe wrong too
 	sprite_frame.set_animation_speed(&"default", 1);
 	return sprite_frame
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://5lyf04rwo1mf"]
 
-[ext_resource type="Script" path="res://addons/twitcher/example/chat.gd" id="1_rxgbp"]
-[ext_resource type="Script" path="res://addons/twitcher/addons/twitcher/twitch_irc_channel.gd" id="2_2gnd4"]
+[ext_resource type="Script" path="res://example/chat.gd" id="1_rxgbp"]
+[ext_resource type="Script" path="res://addons/twitcher/twitch_irc_channel.gd" id="2_2gnd4"]
 
 [node name="Chat" type="Control"]
 layout_mode = 3
@@ -46,3 +46,4 @@ text = "Send"
 [node name="TwitchIrcChannel" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("2_2gnd4")
+channel_name = "kani_dev"

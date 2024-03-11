@@ -6,16 +6,16 @@ var lsbbitunpacker = preload("./lsbbitunpacker.gd")
 
 class CodeEntry:
 	var sequence: PackedByteArray
-	var raw_array: Array
+	var raw_array: PackedByteArray
 
-	func _init(_sequence):
+	func _init(_sequence : PackedByteArray) -> void:
 		raw_array = _sequence
 		sequence = _sequence
 
-	func add(other):
+	func add(other) -> CodeEntry:
 		return CodeEntry.new(raw_array + other.raw_array)
 
-	func to_string():
+	func to_string() -> String:
 		var result: String = ""
 		for element in sequence:
 			result += str(element) + ", "
@@ -27,19 +27,19 @@ class CodeTable:
 	var counter: int = 0
 	var lookup: Dictionary = {}
 
-	func add(entry) -> int:
+	func add(entry: CodeEntry) -> int:
 		entries[counter] = entry
 		lookup[entry.raw_array] = counter
 		counter += 1
 		return counter
 
-	func find(entry) -> int:
+	func find(entry: CodeEntry) -> int:
 		return lookup.get(entry.raw_array, -1)
 
-	func has_entry(entry) -> bool:
+	func has_entry(entry: CodeEntry) -> bool:
 		return find(entry) != -1
 
-	func get_entry(index) -> CodeEntry:
+	func get_entry(index: int) -> CodeEntry:
 		return entries.get(index, null)
 
 	func to_string() -> String:
@@ -53,12 +53,10 @@ class CodeTable:
 func log2(value: float) -> float:
 	return log(value) / log(2.0)
 
-
 func get_bits_number_for(value: int) -> int:
 	if value == 0:
 		return 1
 	return int(ceil(log2(value + 1)))
-
 
 func initialize_color_code_table(colors: PackedByteArray) -> CodeTable:
 	var result_code_table: CodeTable = CodeTable.new()
@@ -176,6 +174,10 @@ func decompress_lzw(code_stream_data: PackedByteArray, min_code_size: int, color
 			code_table = initialize_color_code_table(colors)
 			current_code_size = min_code_size + 1
 			code = binary_code_stream.read_bits(current_code_size)
+			index_stream.append_array(code_table.get_entry(code).sequence)
+			prevcode = code
+			continue
+			## TODO HOW TO RESET CORRECTLY PREVCODE?!
 		elif code == clear_code_index + 1:  # Stop when detected EOI Code.
 			break
 		# is CODE in the code table?

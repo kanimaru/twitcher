@@ -18,11 +18,7 @@ class LSBLZWBitUnpacker:
 		return value | (1 << index)
 
 	func get_byte():
-		# TODO: Probably Buggy
-		if chunk_stream.size() > byte_index:
-			byte = chunk_stream[byte_index]
-		else:
-			byte = 0;
+		byte = chunk_stream[byte_index]
 		byte_index += 1
 		bit_index = 0
 
@@ -35,6 +31,9 @@ class LSBLZWBitUnpacker:
 				result = set_bit(result, result_bit_index)
 			result_bit_index += 1
 			bit_index += 1
+
+			if chunk_stream.size() == byte_index && result_bit_index == bits_count:
+				return result;
 
 			if bit_index == 8:
 				get_byte()

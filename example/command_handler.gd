@@ -1,6 +1,13 @@
 extends Control
 
 func _ready() -> void:
+	# !!! Change following in the project settings that the example works !!!
+	# twitch/auth/broadcaster_id 	< Your broadcaster id you can convert it here https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
+	# twitch/auth/client_id 		< you find while registering the application see readme for howto
+	# twitch/auth/client_secret		< you find while registering the application see readme for howto
+	# twitch/websocket/irc/username < Your username needed for IRC
+	# twitch/auth/scopes/chat		< Add both Scopes chat_read, chat_edit
+
 	# Setup all of the library, connect to evensub, irc etc.
 	TwitchService.setup();
 	# Register the !hello command
