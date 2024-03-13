@@ -3,7 +3,7 @@ extends RefCounted
 
 ## Please do not touch! Insane code ahead! Last Warning!
 
-class_name Generator
+class_name TwitchAPIGenerator
 
 const SWAGGER_API = "https://twitch-api-swagger.surge.sh"
 const api_output_path = "res://addons/twitcher/generated/twitch_rest_api.gd"

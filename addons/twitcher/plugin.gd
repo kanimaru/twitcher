@@ -7,7 +7,7 @@ const HTTP_CLIENT_MANAGER_AUTOLOAD_NAME: String = "HttpClientManager"
 var settings: TwitchSetting;
 var gif_importer_imagemagick: GifImporterImagemagick = GifImporterImagemagick.new();
 var gif_importer_native: GifImporterNative = GifImporterNative.new();
-var generator: Generator = Generator.new();
+var generator: TwitchAPIGenerator = TwitchAPIGenerator.new();
 
 func _enter_tree():
 	print("Twitch Plugin loading...")

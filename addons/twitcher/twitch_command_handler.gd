@@ -6,7 +6,7 @@ extends RefCounted
 class_name TwitchCommandHandler
 
 ## Send when an invalid command was typed
-signal received_invalid_command(command: String, channel_name: String, username: String, cmd_data: Command, arg_array: PackedStringArray, tag: Variant);
+signal received_invalid_command(command: String, channel_name: String, username: String, cmd_data: TwitchCommand, arg_array: PackedStringArray, tag: Variant);
 
 ## Required permission to execute the command
 enum PermissionFlag {
@@ -33,7 +33,7 @@ var commands : Dictionary = {};
 
 ## Registers a command on an object with a func to call, similar to connect(signal, instance, func).
 func add_command(cmd_name : String, callable : Callable, max_args : int = 0, min_args : int = 0, permission_level : int = PermissionFlag.EVERYONE, where : int = WhereFlag.CHAT) -> void:
-	commands[cmd_name] = Command.new(callable, permission_level, max_args, min_args, where);
+	commands[cmd_name] = TwitchCommand.new(callable, permission_level, max_args, min_args, where);
 
 ## Removes a single command or alias.
 func remove_command(cmd_name : String) -> void:
@@ -61,7 +61,7 @@ func add_aliases(cmd_name : String, aliases : PackedStringArray) -> void:
 	for alias in aliases:
 		add_alias(cmd_name, alias);
 
-func _get_command(message: String) -> Command:
+func _get_command(message: String) -> TwitchCommand:
 	if(not command_prefixes.has(message.left(1))): return
 	# remove the command symbol in front
 	message = message.right(-1);
@@ -86,7 +86,7 @@ func handle_whisper_command(from_user: String, to_user: String, message: String,
 	if(command.where & WhereFlag.WHISPER != WhereFlag.WHISPER): return;
 	_handle_command(command, message, "", from_user, tags);
 
-func _handle_command(command: Command, raw_message: String, channel_name: String, username: String, tags: Variant) -> void:
+func _handle_command(command: TwitchCommand, raw_message: String, channel_name: String, username: String, tags: Variant) -> void:
 	# remove the command symbol in front
 	raw_message = raw_message.right(-1);
 	var cmd_msg = raw_message.split(" ", true, 1);

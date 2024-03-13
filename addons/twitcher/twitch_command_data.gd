@@ -1,7 +1,7 @@
 extends RefCounted
 
 ## The definition of a twitch command.
-class_name Command
+class_name TwitchCommand
 
 var function_reference : Callable
 var permission_level : int
