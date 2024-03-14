@@ -25,6 +25,8 @@ var cached_emotes : Dictionary = {};
 ## Is needed that the garbage collector isn't deleting our cache.
 var _cached_images : Array[SpriteFrames] = [];
 
+var static_image_transformer = TwitchImageTransformer.new();
+
 func _init(twitch_api : TwitchRestAPI) -> void:
 	api = twitch_api;
 
@@ -241,11 +243,15 @@ func get_cached_badges(channel_id) -> Dictionary:
 #region Utilities
 
 func _convert_response(request: BufferedHTTPClient.RequestData, cache_path: String, spriteframe_path: String) -> SpriteFrames:
-	var client = request.client;
+	var client = request.client as BufferedHTTPClient;
 	var response = await client.wait_for_request(request);
 	var image_transformer = TwitchSetting.image_transformer;
-	var response_data = response.response_data;
-	var sprite_frames = await image_transformer.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames;
-	return sprite_frames;
+	var response_data = response.response_data as PackedByteArray;
+	var file_head = response_data.slice(0, 3).get_string_from_utf8();
+	# REMARK: don't use content-type... twitch doesn't check and sends PNGs with GIF content type.
+	if file_head == "GIF":
+		return await image_transformer.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames;
+	else:
+		return await static_image_transformer.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames;
 
 #endregion
