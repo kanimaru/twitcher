@@ -90,8 +90,10 @@ class BaseTags:
 			var property_name = tag_value[0].replace("-", "_");
 			if _has_property(output, property_name):
 				output.set(property_name, tag_value[1]);
-			else:
+			elif tag_value.size() == 2:
 				output._unmapped[property_name] = tag_value[1];
+			else:
+				output._unmapped[property_name] = "";
 
 	func _has_property(obj: Object, property_name: String) -> bool:
 		var properties = obj.get_property_list();
