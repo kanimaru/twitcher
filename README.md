@@ -121,13 +121,8 @@ Changed the library to use SpriteFrames instead of AnimatedTextures
 Inspired by: [GIFT](https://github.com/issork/gift/)
 
 ** Release Notes **
-- Fixed problem with HttpBufferedClient not requesting when connection in almost the same moment
-- Added New Chat and PubSubScopes
-- Removed Whisper messages from the log
-- fixed a problem when Twitch sends undocumented websocket messages
-- Changed the folder structure to match assetlibs default stuff
-- Fixed bugs with native gif parser
-- Added more informations to setup everything
+- Fixed bugs with Twitch returning png as gifs...
+- Changed naming of Command -> TwitchCommand and Generator to TwitchGenerator to fix possible clashes
 
 **Known Bugs**
 
