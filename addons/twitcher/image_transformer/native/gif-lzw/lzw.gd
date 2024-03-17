@@ -156,11 +156,13 @@ func decompress_lzw(code_stream_data: PackedByteArray, min_code_size: int, color
 	# CODE is an index of code table, {CODE} is sequence inside
 	# code table with index CODE. The same goes for PREVCODE.
 
-	# Remove first Clear Code from stream. We don't need it.
-	binary_code_stream.remove_bits(current_code_size)
-
 	# let CODE be the first code in the code stream
 	var code: int = binary_code_stream.read_bits(current_code_size)
+
+	# Remove first Clear Code from stream. We don't need it.
+	if code == clear_code_index:
+		code = binary_code_stream.read_bits(current_code_size);
+
 	# output {CODE} to index stream
 	index_stream.append_array(code_table.get_entry(code).sequence)
 	# set PREVCODE = CODE
@@ -177,7 +179,6 @@ func decompress_lzw(code_stream_data: PackedByteArray, min_code_size: int, color
 			index_stream.append_array(code_table.get_entry(code).sequence)
 			prevcode = code
 			continue
-			## TODO HOW TO RESET CORRECTLY PREVCODE?!
 		elif code == clear_code_index + 1:  # Stop when detected EOI Code.
 			break
 		# is CODE in the code table?

@@ -22,3 +22,7 @@ HttpClientManager="*res://addons/twitcher/communication/http_client_manager.gd"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/twitcher/plugin.cfg")
+
+[twitch]
+
+general/images/image_transformer="NativeImageTransformer"
