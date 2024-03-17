@@ -3,6 +3,8 @@ extends RefCounted
 
 class_name TwitchImageTransformer
 
+var l: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_IMAGE_LOADER);
+
 func is_supporting_animation() -> bool:
 	return false
 
@@ -20,6 +22,7 @@ func convert_image(path: String, buffer_in: PackedByteArray, output_path: String
 		sprite_frames.take_over_path(output_path);
 	else:
 		texture = TwitchSetting.fallback_texture2d;
+		l.e("Can't load %s use fallback" % path)
 
 	sprite_frames.add_frame(&"default", texture);
 	return sprite_frames;

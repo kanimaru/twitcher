@@ -32,8 +32,8 @@ var command_prefixes : Array[String] = ["!"];
 var commands : Dictionary = {};
 
 ## Registers a command on an object with a func to call, similar to connect(signal, instance, func).
-func add_command(cmd_name : String, callable : Callable, max_args : int = 0, min_args : int = 0, permission_level : int = PermissionFlag.EVERYONE, where : int = WhereFlag.CHAT) -> void:
-	commands[cmd_name] = TwitchCommand.new(callable, permission_level, max_args, min_args, where);
+func add_command(cmd_name : String, callable : Callable, min_args : int = 0, max_args : int = 0, permission_level : int = PermissionFlag.EVERYONE, where : int = WhereFlag.CHAT) -> void:
+	commands[cmd_name] = TwitchCommand.new(callable, permission_level, min_args, max_args, where);
 
 ## Removes a single command or alias.
 func remove_command(cmd_name : String) -> void:
@@ -111,7 +111,11 @@ func _handle_command(command: TwitchCommand, raw_message: String, channel_name: 
 		if (command.min_arguments > 0):
 			received_invalid_command.emit(command_name, channel_name, username, commands, arg_array, tags);
 			return
-		command.function_reference.call(TwitchCommandInfo.new(command_name, command, message, channel_name, username, tags))
+		var info = TwitchCommandInfo.new(command_name, command, message, channel_name, username, tags);
+		if (command.max_arguments > 0):
+			command.function_reference.call(info, [] as Array[String])
+		else:
+			command.function_reference.call(info)
 	else:
 		command.function_reference.call(TwitchCommandInfo.new(command_name, command, message, channel_name, username, tags), arg_array)
 

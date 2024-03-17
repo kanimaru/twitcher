@@ -46,4 +46,8 @@ func _import(source_file: String, save_path: String, options: Dictionary, platfo
 	if tex == null:
 		return FAILED
 	var filename = save_path + "." + _get_save_extension()
-	return ResourceSaver.save(tex, filename)
+	return ResourceSaver.save(
+		tex,
+		"%s.%s" % [save_path, _get_save_extension()],
+		ResourceSaver.SaverFlags.FLAG_COMPRESS
+	)

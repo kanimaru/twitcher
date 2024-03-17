@@ -6,11 +6,15 @@ extends Node
 
 ## This one get send when the http client gets closed to cleanup stuff
 signal client_closed(http_client: BufferedHTTPClient);
+## Got send when a new client got added
+signal client_added(http_client: BufferedHTTPClient);
 
 ## Time between the checks to cleanup unused http clients
 const CLEANUP_TIME_IN_SEC = 1;
 
-## Key is the host_key and value is an array of BufferedHTTPClient
+var l: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_HTTP_CLIENT);
+
+## Key: url | value: array of BufferedHTTPClient
 var http_client_map: Dictionary;
 
 func _ready() -> void:
@@ -31,6 +35,8 @@ func _get_or_create_client(host: String, port: int = -1) -> BufferedHTTPClient:
 			return clients.pick_random();
 		var client: BufferedHTTPClient = BufferedHTTPClient.new(host, port);
 		clients.append(client);
+		client_added.emit(client);
+		l.i("Client for %s got added" % host)
 		return client;
 	else:
 		var typed_array: Array[BufferedHTTPClient] = []
@@ -38,6 +44,8 @@ func _get_or_create_client(host: String, port: int = -1) -> BufferedHTTPClient:
 		for i in range(TwitchSetting.http_client_min):
 			var client: BufferedHTTPClient = BufferedHTTPClient.new(host, port);
 			typed_array.append(client);
+			client_added.emit(client);
+			l.i("Client for %s got added" % host)
 		return typed_array[0];
 
 ## Returns an free client, creates one when not available or picks random when the
@@ -59,7 +67,7 @@ func _cleanup() -> void:
 		_cleanup_host(clients);
 
 func _cleanup_host(clients: Array) -> void:
-	var free_clients: Array = clients.filter(func(c): return c.is_free());
+	var free_clients: Array = clients.filter(func(c): return c.queued_request_size() == 0);
 	if free_clients.size() == 0: return;
 	if clients.size() > TwitchSetting.http_client_min:
 		var to_teardown = min(clients.size() - TwitchSetting.http_client_min, free_clients.size());

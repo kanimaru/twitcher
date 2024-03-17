@@ -8,6 +8,12 @@ static var index = 0;
 
 var l: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_HTTP_CLIENT)
 
+## Will be send when a new request was added to queue
+signal request_added(request: RequestData)
+
+## Request is now started and handled.
+signal request_started(request: RequestData);
+
 ## Will be send when a request is done.
 signal request_done(response: ResponseData)
 
@@ -93,6 +99,7 @@ func request(path: String, method: int, headers: Dictionary, body: String) -> Re
 	req.headers = headers;
 	req.client = self;
 	requests.append(req);
+	request_added.emit(req);
 	return req;
 
 ## When the response is available return it otherwise wait for the response
@@ -113,6 +120,10 @@ func wait_for_request(request_data: RequestData) -> ResponseData:
 ## Checks if the client can accept more requests
 func is_free() -> bool:
 	return requests.size() < FREE_THRESHOLD;
+
+## The amount of requests that are pending
+func queued_request_size() -> int:
+	return requests.size();
 
 func _wait_error_duration():
 	var duration = pow(2, error_count);
@@ -221,6 +232,7 @@ func _start_request() -> void:
 	var headers = HEADERS if current_request.headers == null else current_request.headers;
 	var packed_headers = _pack_headers(headers);
 	client.request(current_request.method, current_request.path, packed_headers, current_request.body);
+	request_started.emit(current_request);
 
 func _pack_headers(headers: Dictionary) -> PackedStringArray:
 	var result: PackedStringArray = [];
