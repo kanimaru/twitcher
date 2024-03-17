@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://bbinir2satnam"]
+
+[ext_resource type="Script" path="res://test.gd" id="1_8kwmh"]
+
+[node name="Test" type="Node2D"]
+script = ExtResource("1_8kwmh")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(153, 100)
