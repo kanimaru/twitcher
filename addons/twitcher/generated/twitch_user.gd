@@ -13,7 +13,7 @@ var login: String;
 var display_name: String;
 ## The type of user. Possible values are:      * admin — Twitch administrator * global\_mod * staff — Twitch staff * "" — Normal user
 var type: String;
-## The type of broadcaster. Possible values are:      * affiliate — An [affiliate broadcaster](https://help.twitch.tv/s/article/joining-the-affiliate-program target=) * partner — A [partner broadcaster](https://help.twitch.tv/s/article/partner-program-overview) * "" — A normal broadcaster
+## The type of broadcaster. Possible values are:      * affiliate — An [affiliate broadcaster](https://help.twitch.tv/s/article/joining-the-affiliate-program) * partner — A [partner broadcaster](https://help.twitch.tv/s/article/partner-program-overview) * "" — A normal broadcaster
 var broadcaster_type: String;
 ## The user's description of their channel.
 var description: String;

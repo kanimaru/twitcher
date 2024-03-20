@@ -35,7 +35,8 @@ class Session extends RefCounted:
 	func _init(d: Dictionary):
 		id = d["id"];
 		status = d["status"];
-		keepalive_timeout_seconds = d.get("keepalive_timeout_seconds", 30);
+		var timeout = d["keepalive_timeout_seconds"];
+		keepalive_timeout_seconds = timeout if timeout != null else 30;
 		if d["reconnect_url"] != null:
 			reconnect_url = d["reconnect_url"];
 		connected_at = d["connected_at"];

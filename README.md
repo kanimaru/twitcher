@@ -111,6 +111,15 @@ Also set the `Image Transformer` to `Magic Image Transformer` afterwards all emo
 		The token can't auto refresh after scope changes always. In case it happens it is possible to remove the token manually or wait until the token runs up.
 		You can find the token in `user://auth.conf` it's encrypted. Just delete the file and the application will reauthorize next time.
 	</dd>
+	<dt>I want to subscribe to the event when the ads starts</dt>
+	<dd>
+		<ol>
+			<li>Check the `twitch/auth/scopes/channel` scope called `channel_read_ads`</li>
+			<li>Fille the information in `twitch/eventsub/channel_ad_break_begin/subscribed`</li>
+			<li>Then subscribe via TwitchEventListener or directly via TwitchService.</li>
+			<li>Happy event receiving</li>
+		</ol>
+	</dd>
 </dl>
 
 ## See also:
@@ -123,6 +132,9 @@ Inspired by: [GIFT](https://github.com/issork/gift/)
 ** Release Notes **
 - Fixed bugs with Twitch returning png as gifs...
 - Changed naming of Command -> TwitchCommand and Generator to TwitchGenerator to fix possible clashes
+- Adding optional variant of rest methods
+- Adding response headers into response object
+- Fixed bug where twitch is not sending a keepalive_timeout_second parameter for websocket sessions
 
 **Known Bugs**
 

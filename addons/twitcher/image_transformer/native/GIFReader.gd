@@ -9,7 +9,6 @@ var lzw = lzw_module.new()
 func read(source_file) -> SpriteFrames:
 	var file = FileAccess.open(source_file, FileAccess.READ)
 	if file == null:
-		printerr("Can not import file cause of: ", FileAccess.get_open_error())
 		return null
 	var data = file.get_buffer(file.get_length())
 	file.close()

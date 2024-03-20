@@ -45,6 +45,7 @@ class ResponseData extends RefCounted:
 	var response_code: int;
 	var request_data: RequestData;
 	var response_data: PackedByteArray;
+	var response_header: Dictionary;
 	var error: bool;
 
 var client: HTTPClient = HTTPClient.new();
@@ -137,6 +138,7 @@ func _create_response() -> ResponseData:
 	response_data.request_data = current_request;
 	response_data.response_data = current_response_data.duplicate();
 	response_data.response_code = client.get_response_code();
+	response_data.response_header = client.get_response_headers_as_dictionary();
 	return response_data;
 
 func empty_response(request_data: RequestData) -> ResponseData:

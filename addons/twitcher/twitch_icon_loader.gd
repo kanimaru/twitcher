@@ -102,6 +102,7 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 			requests[emote_definition] = request;
 
 	for emote_definition: TwitchEmoteDefinition in requests:
+
 		var cache_path: String = emote_definition.get_cache_path();
 		var spriteframe_path: String = emote_definition.get_cache_path_spriteframe();
 		var request = requests[emote_definition];

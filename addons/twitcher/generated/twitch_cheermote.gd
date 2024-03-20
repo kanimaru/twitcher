@@ -51,7 +51,7 @@ func to_dict() -> Dictionary:
 func to_json() -> String:
 	return JSON.stringify(to_dict());
 
-##
+## 
 class Tiers extends RefCounted:
 	## The minimum number of Bits that you must cheer at this tier level. The maximum number of Bits that you can cheer at this level is determined by the required minimum Bits of the next tier level minus 1\. For example, if `min_bits` is 1 and `min_bits` for the next tier is 100, the Bits range for this tier level is 1 through 99\. The minimum Bits value of the last tier is the maximum number of Bits you can cheer using this Cheermote. For example, 10000.
 	var min_bits: int;

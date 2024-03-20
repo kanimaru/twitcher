@@ -11,7 +11,7 @@ var title: String;
 var prompt: String;
 ## The cost of the reward, in channel points. The minimum is 1 point.
 var cost: int;
-## The background color to use for the reward. Specify the color using Hex format (for example, #00E5CB).
+## The background color to use for the reward. Specify the color using Hex format (for example, \\#00E5CB).
 var background_color: String;
 ## A Boolean value that indicates whether the reward is enabled. Set to **true** to enable the reward. Viewers see only enabled rewards.
 var is_enabled: bool;

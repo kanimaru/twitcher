@@ -49,7 +49,6 @@ func _generate_repositories():
 			var description = method_spec.get("description", "No description provided.")
 			var url = method_spec.get("externalDocs", {}).get("url", "No link provided")
 			var parameters = _parse_parameters(method_spec)
-			var parameters_code = parameters["parameters_code"];
 			var has_body = parameters["has_body"];
 			var header_code = "{}"
 			var responses = method_spec.get("responses", {})
@@ -90,7 +89,9 @@ func _generate_repositories():
 				"description": description,
 				"url": url,
 				"name": method_name,
-				"parameters": parameters_code,
+				"parameters": parameters["parameters"],
+				"all_parameters": parameters["all_parameters"],
+				"has_optional": parameters["has_optional"],
 				"result_type": result_type,
 				"content_type": content_type,
 				"request_path": "/helix" + path + "?",
@@ -100,35 +101,53 @@ func _generate_repositories():
 				"has_return_value": result_type != "BufferedHTTPClient.ResponseData",
 				"time_parameters": parameters["time_parameters"],
 				"array_parameters": parameters["array_parameters"],
-				"query_parameters": parameters["query_params"]
+				"query_parameters": parameters["query_params"],
+				"time_parameters_opt": parameters["time_parameters_opt"],
+				"array_parameters_opt": parameters["array_parameters_opt"],
+				"query_parameters_opt": parameters["query_params_opt"]
 			};
 			var method_code = template.parse_template(template_method, method_data)
 			data.append(method_code)
 	template.process_template("res://addons/twitcher/editor/template_api.txt", {"methods": data}, api_output_path)
-	print("Twitch API got generated succesfullt into ", api_output_path);
+	print("Twitch API got generated succesfully into ", api_output_path);
 
 func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 	var query_params: Array[String] = [];
+	var time_parameters = [];
+	var array_parameters = [];
+	var query_params_opt: Array[String] = [];
+	var time_parameters_opt = [];
+	var array_parameters_opt = [];
 	var parameters_code = ""
+	var all_parameters_code = ""
 	var parameters = method_spec.get("parameters", [])
 	var append_broadcaster = false
 	var has_body = false
-	var time_parameters = []
-	var array_parameters = []
 	for param in parameters:
 		if param.name == "broadcaster_id":
 			query_params.append(param.name)
 			append_broadcaster = true
 		elif param.in == "query":
 			var type = _get_param_type(param["schema"]);
-			parameters_code += "%s: %s, " % [param.name, type]
+			all_parameters_code += "%s: %s, " % [param.name, type]
+			if param.get("required", false):
+				parameters_code += "%s: %s, " % [param.name, type]
 			var schema = param["schema"];
 			if schema.get("format", "") == "date-time":
-				time_parameters.append(param.name)
+				if param.get("required", false):
+					time_parameters.append(param.name)
+				else:
+					time_parameters_opt.append(param.name)
 			if schema.get("type", "") == "array":
-				array_parameters.append(param.name)
+				if param.get("required", false):
+					array_parameters.append(param.name)
+				else:
+					array_parameters_opt.append(param.name)
 			else:
-				query_params.append(param.name)
+				if param.get("required", false):
+					query_params.append(param.name)
+				else:
+					query_params_opt.append(param.name)
 
 	if method_spec.has("requestBody"):
 		var type = "Dictionary";
@@ -136,18 +155,30 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 		if ref != "":
 			type = _resolve_ref(ref);
 		parameters_code += "body: %s, " % type
+		all_parameters_code += "body: %s, " % type
 		has_body = true
+
+	var has_optional: bool = false;
+	if not query_params_opt.is_empty() || not time_parameters_opt.is_empty() || not array_parameters_opt.is_empty():
+		parameters_code += "optional: Dictionary, ";
+		has_optional = true;
 
 	# Has to be last or atleast within the default parameters at the end
 	if append_broadcaster:
 		parameters_code += "broadcaster_id: String = TwitchSetting.broadcaster_id, "
+		all_parameters_code += "broadcaster_id: String = TwitchSetting.broadcaster_id, "
 
 	return {
-		"parameters_code": parameters_code.rstrip(", "),
+		"parameters": parameters_code.rstrip(", "),
+		"all_parameters": all_parameters_code.rstrip(", "),
+		"has_optional": has_optional,
 		"has_body": has_body,
 		"query_params": query_params,
 		"time_parameters": time_parameters,
-		"array_parameters": array_parameters
+		"array_parameters": array_parameters,
+		"query_params_opt": query_params_opt,
+		"time_parameters_opt": time_parameters_opt,
+		"array_parameters_opt": array_parameters_opt
 	}
 
 #endregion

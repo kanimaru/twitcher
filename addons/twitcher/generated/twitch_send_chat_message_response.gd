@@ -5,7 +5,7 @@ extends RefCounted
 
 class_name TwitchSendChatMessageResponse
 
-##
+## 
 var data: Array[Data];
 
 static func from_json(d: Dictionary) -> TwitchSendChatMessageResponse:
@@ -26,7 +26,7 @@ func to_dict() -> Dictionary:
 func to_json() -> String:
 	return JSON.stringify(to_dict());
 
-##
+## 
 class DropReason extends RefCounted:
 	## Code for why the message was dropped.
 	var code: String;
@@ -52,7 +52,7 @@ class DropReason extends RefCounted:
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
 
-##
+## 
 class Data extends RefCounted:
 	## The message id for the message that was sent.
 	var message_id: String;
