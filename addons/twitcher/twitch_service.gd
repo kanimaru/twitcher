@@ -79,7 +79,7 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 	var response = response_data.response_data;
 	if !response.is_empty():
 		var img := Image.new();
-		var content_type = HttpUtil.get_header(response_data.client.get_response_headers(), "Content-Type")
+		var content_type = response_data.response_header["Content-Type"];
 
 		match content_type:
 			"image/png": img.load_png_from_buffer(response);

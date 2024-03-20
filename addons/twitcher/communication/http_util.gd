@@ -18,9 +18,3 @@ static func parse_query(query: String) -> Dictionary:
 			var decoded_value = value.uri_decode()
 			parameters[decoded_key] = decoded_value
 	return parameters
-
-static func get_header(headers: PackedStringArray, header_name: String) -> String:
-	for header in headers:
-		if header.to_lower().begins_with(header_name.to_lower()):
-			return header.trim_prefix(header_name + ":").strip_edges()
-	return "";
