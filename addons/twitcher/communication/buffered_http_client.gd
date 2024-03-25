@@ -124,7 +124,10 @@ func is_free() -> bool:
 
 ## The amount of requests that are pending
 func queued_request_size() -> int:
-	return requests.size();
+	var requests_size = requests.size();
+	if current_request != null:
+		requests_size += 1;
+	return requests_size;
 
 func _wait_error_duration():
 	var duration = pow(2, error_count);
