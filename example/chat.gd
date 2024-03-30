@@ -71,9 +71,9 @@ func _on_chat_message(from_user: String, message: String, tags: TwitchTags.Messa
 		start = emote.end + 1;
 
 	# get the text between the last emoji and the end
-	var part := message.substr(start, message.length() - start);
+	var text_part := message.substr(start, message.length() - start);
 	# adds it to the message
-	result_message += part;
+	result_message += text_part;
 	# adds all the emojis to the richtext and registers them to be processed
 	result_message = sprite_effect.prepare_message(result_message, chat_message);
 	# Add the whole message to the richtext
