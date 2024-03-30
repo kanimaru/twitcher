@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cjbs70ori3ian"]
 
-[ext_resource type="Script" path="res://addons/twitcher/addons/twitcher/tests/communication/TestReconnect.gd" id="1_qpdw5"]
+[ext_resource type="Script" path="res://addons/twitcher/tests/communication/TestReconnect.gd" id="1_qpdw5"]
 
 
 [node name="TestReconnect" type="VBoxContainer"]
