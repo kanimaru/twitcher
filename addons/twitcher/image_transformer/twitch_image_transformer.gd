@@ -18,11 +18,12 @@ func convert_image(path: String, buffer_in: PackedByteArray, output_path: String
 	if err == OK:
 		texture = ImageTexture.new();
 		texture.set_image(img);
+		sprite_frames.add_frame(&"default", texture);
 		ResourceSaver.save(sprite_frames, output_path, ResourceSaver.SaverFlags.FLAG_COMPRESS);
 		sprite_frames.take_over_path(output_path);
 	else:
 		texture = TwitchSetting.fallback_texture2d;
+		sprite_frames.add_frame(&"default", texture);
 		l.e("Can't load %s use fallback" % path)
 
-	sprite_frames.add_frame(&"default", texture);
 	return sprite_frames;
