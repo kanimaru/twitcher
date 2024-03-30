@@ -241,6 +241,7 @@ func _send_message_to_channel(channel_name: String, message: String) -> void:
 		var username = channel.user_state.display_name;
 		# Convert the tags in a dirty way
 		var tag = TwitchTags.PrivMsg.new(channel.user_state._raw);
+		tag.room_id = channel.room_state.room_id;
 		received_privmsg.emit(channel_name, username, message, tag);
 
 ## Sends a string message to Twitch.

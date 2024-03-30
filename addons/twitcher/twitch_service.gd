@@ -65,6 +65,9 @@ func get_user_by_id(user_id: String) -> TwitchUser:
 ## Get data about a user by USERNAME see get_user_by_id for by user_id
 func get_user(username: String) -> TwitchUser:
 	var user_data : TwitchGetUsersResponse = await api.get_users([], [username]);
+	if user_data.data.is_empty():
+		printerr("Username was not found: %s" % username);
+		return null;
 	return user_data.data[0];
 
 ## Get the image of an user
