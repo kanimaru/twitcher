@@ -88,21 +88,19 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
 		var cache_path: String = emote_definition.get_cache_path();
 		var spriteframe_path: String = emote_definition.get_cache_path_spriteframe();
+		if ResourceLoader.has_cached(spriteframe_path):
+			response[emote_definition] = ResourceLoader.load(spriteframe_path);
+			continue;
 
 		if not TwitchSetting.image_transformer.is_supporting_animation():
 			emote_definition.type_static();
 
 		if requests_in_progress.has(cache_path): continue;
 		requests_in_progress.append(cache_path);
-
-		if ResourceLoader.has_cached(spriteframe_path):
-			response[emote_definition] = ResourceLoader.load(spriteframe_path);
-		else:
-			var request : BufferedHTTPClient.RequestData = _load_emote(emote_definition);
-			requests[emote_definition] = request;
+		var request : BufferedHTTPClient.RequestData = _load_emote(emote_definition);
+		requests[emote_definition] = request;
 
 	for emote_definition: TwitchEmoteDefinition in requests:
-
 		var cache_path: String = emote_definition.get_cache_path();
 		var spriteframe_path: String = emote_definition.get_cache_path_spriteframe();
 		var request = requests[emote_definition];
