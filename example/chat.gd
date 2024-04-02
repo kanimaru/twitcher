@@ -18,11 +18,14 @@ func _ready() -> void:
 	# twitch/auth/scopes/chat		< Add both Scopes chat_read, chat_edit
 
 	# Setup all of the library, connect to evensub, irc etc.
-	TwitchService.setup();
+	await TwitchService.setup();
 	# Listen to the message received of the chat
 	channel.message_received.connect(_on_chat_message);
 	# When the send button is pressed send the message
 	send.pressed.connect(_send_message);
+
+	var blub = await TwitchService.api.search_categories_opt("League", {});
+	print(blub);
 
 func _on_chat_message(from_user: String, message: String, tags: TwitchTags.Message):
 	# Get all badges from the user that sends the message

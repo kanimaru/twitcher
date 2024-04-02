@@ -37,6 +37,8 @@ func _load_swagger_definition() -> Dictionary:
 func _generate_repositories():
 	var template = SimpleTemplate.new();
 	var template_method = template.read_template_file("res://addons/twitcher/editor/template_method.txt");
+	var template_parameter_optional = template.read_template_file("res://addons/twitcher/editor/template_method_parameters_optional.txt");
+	var template_body_optional = template.read_template_file("res://addons/twitcher/editor/template_method_body_optional.txt");
 	var gdscript_code := ""
 	var paths = definition.get("paths", {})
 	var data = [];
@@ -65,24 +67,17 @@ func _generate_repositories():
 				if content.has("text/calendar"):
 					result_type = "BufferedHTTPClient.ResponseData"
 
-				content_type = content.keys()[0];
-
 				# Try to resolve the component references
 				var ref = content.get("application/json", {}).get("schema", {}).get("$ref", "")
 				if ref != "":
 					result_type = _resolve_ref(ref);
-			elif responses.has("202"):
-				# Used for subscription for example that don't have a response but still have content-type parameters
-				var content =  responses["202"].get("content", {});
-				content_type = content.keys()[0];
-			elif responses.has("204"):
-				# Announcments for example need to have a content type try to get them with this case
-				if http_method == "POST":
-					if has_body:
-						# When it has a body, it uses JSON to send the body
-						content_type = "application/json"
-					else:
-						content_type = "application/x-www-form-urlencoded"
+
+			if method_spec.has("requestBody"):
+				var requestBody = method_spec.get("requestBody");
+				var content = requestBody.get("content");
+				content_type = content.keys()[0]
+			elif http_method == "POST":
+				content_type = "application/x-www-form-urlencoded"
 
 			var method_data = {
 				"summary": summary,
@@ -91,7 +86,7 @@ func _generate_repositories():
 				"name": method_name,
 				"parameters": parameters["parameters"],
 				"all_parameters": parameters["all_parameters"],
-				"has_optional": parameters["has_optional"],
+				"optional_body_parameters_code": parameters["optional_body_parameters_code"],
 				"result_type": result_type,
 				"content_type": content_type,
 				"request_path": "/helix" + path + "?",
@@ -99,6 +94,7 @@ func _generate_repositories():
 				"header": header_code,
 				"body": "body" if has_body else "\"\"",
 				"has_return_value": result_type != "BufferedHTTPClient.ResponseData",
+				"has_optional": parameters["has_optional"],
 				"time_parameters": parameters["time_parameters"],
 				"array_parameters": parameters["array_parameters"],
 				"query_parameters": parameters["query_params"],
@@ -106,8 +102,12 @@ func _generate_repositories():
 				"array_parameters_opt": parameters["array_parameters_opt"],
 				"query_parameters_opt": parameters["query_params_opt"]
 			};
-			var method_code = template.parse_template(template_method, method_data)
-			data.append(method_code)
+			data.append(template.parse_template(template_method, method_data));
+			if parameters["has_optional"]:
+				data.append(template.parse_template(template_parameter_optional, method_data));
+			if parameters["has_optional_body"]:
+				data.append(template.parse_template(template_body_optional, method_data));
+
 	template.process_template("res://addons/twitcher/editor/template_api.txt", {"methods": data}, api_output_path)
 	print("Twitch API got generated succesfully into ", api_output_path);
 
@@ -120,6 +120,7 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 	var array_parameters_opt = [];
 	var parameters_code = ""
 	var all_parameters_code = ""
+	var optional_body_parameters_code = ""
 	var parameters = method_spec.get("parameters", [])
 	var append_broadcaster = false
 	var has_body = false
@@ -149,6 +150,7 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 				else:
 					query_params_opt.append(param.name)
 
+	optional_body_parameters_code = parameters_code;
 	if method_spec.has("requestBody"):
 		var type = "Dictionary";
 		var ref = method_spec.get("requestBody").get("content", {}).get("application/json", {}).get("schema", {}).get("$ref", "")
@@ -156,23 +158,29 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 			type = _resolve_ref(ref);
 		parameters_code += "body: %s, " % type
 		all_parameters_code += "body: %s, " % type
+		optional_body_parameters_code += "body: Dictionary, "
 		has_body = true
+
 
 	var has_optional: bool = false;
 	if not query_params_opt.is_empty() || not time_parameters_opt.is_empty() || not array_parameters_opt.is_empty():
 		parameters_code += "optional: Dictionary, ";
+		optional_body_parameters_code += "optional: Dictionary, ";
 		has_optional = true;
 
 	# Has to be last or atleast within the default parameters at the end
 	if append_broadcaster:
 		parameters_code += "broadcaster_id: String = TwitchSetting.broadcaster_id, "
 		all_parameters_code += "broadcaster_id: String = TwitchSetting.broadcaster_id, "
+		optional_body_parameters_code += "broadcaster_id: String = TwitchSetting.broadcaster_id, "
 
 	return {
 		"parameters": parameters_code.rstrip(", "),
 		"all_parameters": all_parameters_code.rstrip(", "),
+		"optional_body_parameters_code": optional_body_parameters_code.rstrip(", "),
 		"has_optional": has_optional,
 		"has_body": has_body,
+		"has_optional_body": has_body,
 		"query_params": query_params,
 		"time_parameters": time_parameters,
 		"array_parameters": array_parameters,

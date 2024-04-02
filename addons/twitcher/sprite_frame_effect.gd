@@ -8,7 +8,6 @@ const TRANSPARENT = preload("res://addons/twitcher/assets/transparent.tres");
 
 static var regex: RegEx = RegEx.create_from_string("\\[sprite id=(?<id>.*?)\\](?<path>.*?)\\[/sprite\\]")
 
-var node: AnimatedSprite2D;
 ## Custom BB Code to use
 var bbcode = "sprite";
 ## To track the emojis
@@ -40,7 +39,7 @@ func prepare_message(message: String, parent: RichTextLabel) -> String:
 	return message;
 
 func _create_emoji(resource: SpriteFrames):
-	node = AnimatedSprite2D.new();
+	var node = AnimatedSprite2D.new();
 	node.sprite_frames = resource;
 	node.play();
 	return node;

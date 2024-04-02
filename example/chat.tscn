@@ -46,4 +46,4 @@ text = "Send"
 [node name="TwitchIrcChannel" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("2_2gnd4")
-channel_name = "kani_dev"
+channel_name = "iraddev"

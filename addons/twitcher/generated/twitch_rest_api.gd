@@ -55,6 +55,17 @@ func start_commercial(body: TwitchStartCommercialBody) -> TwitchStartCommercialR
 	return TwitchStartCommercialResponse.from_json(result);
 
 
+## Optional Variant of start_commercial
+## Starts a commercial on the specified channel.
+##
+## https://dev.twitch.tv/docs/api/reference#start-commercial
+func start_commercial_bopt(body: Dictionary) -> TwitchStartCommercialResponse:
+	var path = "/helix/channels/commercial?"
+
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchStartCommercialResponse.from_json(result);
+
 
 ## Returns ad schedule related information.
 ##
@@ -62,10 +73,9 @@ func start_commercial(body: TwitchStartCommercialBody) -> TwitchStartCommercialR
 func get_ad_schedule(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetAdScheduleResponse:
 	var path = "/helix/channels/ads?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetAdScheduleResponse.from_json(result);
-
 
 
 ## Pushes back the timestamp of the upcoming automatic mid-roll ad by 5 minutes.
@@ -74,10 +84,9 @@ func get_ad_schedule(broadcaster_id: String = TwitchSetting.broadcaster_id) -> T
 func snooze_next_ad(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchSnoozeNextAdResponse:
 	var path = "/helix/channels/ads/schedule/snooze?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_POST, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchSnoozeNextAdResponse.from_json(result);
-
 
 
 ## Gets an analytics report for one or more extensions.
@@ -93,9 +102,10 @@ func get_extension_analytics(extension_id: String, type: String, started_at: Var
 	path += "ended_at=" + str(ended_at) + "&"
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionAnalyticsResponse.from_json(result);
+
 
 ## Optional Variant of get_extension_analytics
 ## Gets an analytics report for one or more extensions.
@@ -124,7 +134,7 @@ func get_extension_analytics_opt(optional: Dictionary) -> TwitchGetExtensionAnal
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionAnalyticsResponse.from_json(result);
 
@@ -142,9 +152,10 @@ func get_game_analytics(game_id: String, type: String, started_at: Variant, ende
 	path += "ended_at=" + str(ended_at) + "&"
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetGameAnalyticsResponse.from_json(result);
+
 
 ## Optional Variant of get_game_analytics
 ## Gets an analytics report for one or more games.
@@ -173,7 +184,7 @@ func get_game_analytics_opt(optional: Dictionary) -> TwitchGetGameAnalyticsRespo
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetGameAnalyticsResponse.from_json(result);
 
@@ -188,9 +199,10 @@ func get_bits_leaderboard(count: int, period: String, started_at: Variant, user_
 	path += "period=" + str(period) + "&"
 	path += "started_at=" + str(started_at) + "&"
 	path += "user_id=" + str(user_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetBitsLeaderboardResponse.from_json(result);
+
 
 ## Optional Variant of get_bits_leaderboard
 ## Gets the Bits leaderboard for the authenticated broadcaster.
@@ -213,7 +225,7 @@ func get_bits_leaderboard_opt(optional: Dictionary) -> TwitchGetBitsLeaderboardR
 		if key == "user_id":
 			opt_args.append("user_id=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetBitsLeaderboardResponse.from_json(result);
 
@@ -224,10 +236,9 @@ func get_bits_leaderboard_opt(optional: Dictionary) -> TwitchGetBitsLeaderboardR
 func get_cheermotes(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetCheermotesResponse:
 	var path = "/helix/bits/cheermotes?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetCheermotesResponse.from_json(result);
-
 
 
 ## Gets an extension’s list of transactions.
@@ -240,9 +251,10 @@ func get_extension_transactions(extension_id: String, id: Array[String], first: 
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "extension_id=" + str(extension_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionTransactionsResponse.from_json(result);
+
 
 ## Optional Variant of get_extension_transactions
 ## Gets an extension’s list of transactions.
@@ -263,7 +275,7 @@ func get_extension_transactions_opt(extension_id: String, optional: Dictionary) 
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionTransactionsResponse.from_json(result);
 
@@ -274,10 +286,9 @@ func get_extension_transactions_opt(extension_id: String, optional: Dictionary) 
 func get_channel_information(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetChannelInformationResponse:
 	var path = "/helix/channels?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelInformationResponse.from_json(result);
-
 
 
 ## Updates a channel’s properties.
@@ -286,9 +297,19 @@ func get_channel_information(broadcaster_id: String = TwitchSetting.broadcaster_
 func modify_channel_information(body: TwitchModifyChannelInformationBody, broadcaster_id: String = TwitchSetting.broadcaster_id) -> BufferedHTTPClient.ResponseData:
 	var path = "/helix/channels?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_PATCH, body, "");
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
 	return response;
 
+## Optional Variant of modify_channel_information
+## Updates a channel’s properties.
+##
+## https://dev.twitch.tv/docs/api/reference#modify-channel-information
+func modify_channel_information_bopt(body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/channels?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	return response;
 
 ## Gets the broadcaster’s list editors.
 ##
@@ -296,10 +317,9 @@ func modify_channel_information(body: TwitchModifyChannelInformationBody, broadc
 func get_channel_editors(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetChannelEditorsResponse:
 	var path = "/helix/channels/editors?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelEditorsResponse.from_json(result);
-
 
 
 ## Gets a list of broadcasters that the specified user follows. You can also use this endpoint to see whether a user follows a specific broadcaster.
@@ -311,9 +331,10 @@ func get_followed_channels(user_id: String, first: int, after: String, broadcast
 	path += "after=" + str(after) + "&"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetFollowedChannelsResponse.from_json(result);
+
 
 ## Optional Variant of get_followed_channels
 ## Gets a list of broadcasters that the specified user follows. You can also use this endpoint to see whether a user follows a specific broadcaster.
@@ -332,7 +353,7 @@ func get_followed_channels_opt(user_id: String, optional: Dictionary, broadcaste
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetFollowedChannelsResponse.from_json(result);
 
@@ -346,9 +367,10 @@ func get_channel_followers(user_id: String, first: int, after: String, broadcast
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelFollowersResponse.from_json(result);
+
 
 ## Optional Variant of get_channel_followers
 ## Gets a list of users that follow the specified broadcaster. You can also use this endpoint to see whether a specific user follows the broadcaster.
@@ -368,7 +390,7 @@ func get_channel_followers_opt(optional: Dictionary, broadcaster_id: String = Tw
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelFollowersResponse.from_json(result);
 
@@ -384,6 +406,18 @@ func create_custom_rewards(body: TwitchCreateCustomRewardsBody, broadcaster_id: 
 	return TwitchCreateCustomRewardsResponse.from_json(result);
 
 
+## Optional Variant of create_custom_rewards
+## Creates a Custom Reward in the broadcaster’s channel.
+##
+## https://dev.twitch.tv/docs/api/reference#create-custom-rewards
+func create_custom_rewards_bopt(body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchCreateCustomRewardsResponse:
+	var path = "/helix/channel_points/custom_rewards?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchCreateCustomRewardsResponse.from_json(result);
+
 
 ## Deletes a custom reward that the broadcaster created.
 ##
@@ -395,7 +429,6 @@ func delete_custom_reward(id: String, broadcaster_id: String = TwitchSetting.bro
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
 
-
 ## Gets a list of custom rewards that the specified broadcaster created.
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-custom-reward
@@ -405,9 +438,10 @@ func get_custom_reward(id: Array[String], only_manageable_rewards: bool, broadca
 		path += "id=" + str(param) + "&"
 	path += "only_manageable_rewards=" + str(only_manageable_rewards) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetCustomRewardResponse.from_json(result);
+
 
 ## Optional Variant of get_custom_reward
 ## Gets a list of custom rewards that the specified broadcaster created.
@@ -426,7 +460,7 @@ func get_custom_reward_opt(optional: Dictionary, broadcaster_id: String = Twitch
 		if key == "only_manageable_rewards":
 			opt_args.append("only_manageable_rewards=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetCustomRewardResponse.from_json(result);
 
@@ -443,6 +477,19 @@ func update_custom_reward(id: String, body: TwitchUpdateCustomRewardBody, broadc
 	return TwitchUpdateCustomRewardResponse.from_json(result);
 
 
+## Optional Variant of update_custom_reward
+## Updates a custom reward.
+##
+## https://dev.twitch.tv/docs/api/reference#update-custom-reward
+func update_custom_reward_bopt(id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchUpdateCustomRewardResponse:
+	var path = "/helix/channel_points/custom_rewards?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "id=" + str(id) + "&"
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateCustomRewardResponse.from_json(result);
+
 
 ## Gets a list of redemptions for a custom reward.
 ##
@@ -457,9 +504,10 @@ func get_custom_reward_redemption(reward_id: String, status: String, id: Array[S
 	path += "first=" + str(first) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "reward_id=" + str(reward_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetCustomRewardRedemptionResponse.from_json(result);
+
 
 ## Optional Variant of get_custom_reward_redemption
 ## Gets a list of redemptions for a custom reward.
@@ -485,7 +533,7 @@ func get_custom_reward_redemption_opt(reward_id: String, optional: Dictionary, b
 		if key == "first":
 			opt_args.append("first=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetCustomRewardRedemptionResponse.from_json(result);
 
@@ -504,6 +552,21 @@ func update_redemption_status(id: Array[String], reward_id: String, body: Twitch
 	return TwitchUpdateRedemptionStatusResponse.from_json(result);
 
 
+## Optional Variant of update_redemption_status
+## Updates a redemption’s status.
+##
+## https://dev.twitch.tv/docs/api/reference#update-redemption-status
+func update_redemption_status_bopt(id: Array[String], reward_id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchUpdateRedemptionStatusResponse:
+	var path = "/helix/channel_points/custom_rewards/redemptions?"
+
+	for param in id:
+		path += "id=" + str(param) + "&"
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "reward_id=" + str(reward_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateRedemptionStatusResponse.from_json(result);
+
 
 ## Gets information about the broadcaster’s active charity campaign.
 ##
@@ -511,10 +574,9 @@ func update_redemption_status(id: Array[String], reward_id: String, body: Twitch
 func get_charity_campaign(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetCharityCampaignResponse:
 	var path = "/helix/charity/campaigns?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetCharityCampaignResponse.from_json(result);
-
 
 
 ## Gets the list of donations that users have made to the broadcaster’s active charity campaign.
@@ -525,9 +587,10 @@ func get_charity_campaign_donations(first: int, after: String, broadcaster_id: S
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetCharityCampaignDonationsResponse.from_json(result);
+
 
 ## Optional Variant of get_charity_campaign_donations
 ## Gets the list of donations that users have made to the broadcaster’s active charity campaign.
@@ -545,7 +608,7 @@ func get_charity_campaign_donations_opt(optional: Dictionary, broadcaster_id: St
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetCharityCampaignDonationsResponse.from_json(result);
 
@@ -559,9 +622,10 @@ func get_chatters(moderator_id: String, first: int, after: String, broadcaster_i
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChattersResponse.from_json(result);
+
 
 ## Optional Variant of get_chatters
 ## Gets the list of users that are connected to the broadcaster’s chat session.
@@ -580,7 +644,7 @@ func get_chatters_opt(moderator_id: String, optional: Dictionary, broadcaster_id
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChattersResponse.from_json(result);
 
@@ -591,10 +655,9 @@ func get_chatters_opt(moderator_id: String, optional: Dictionary, broadcaster_id
 func get_channel_emotes(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetChannelEmotesResponse:
 	var path = "/helix/chat/emotes?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelEmotesResponse.from_json(result);
-
 
 
 ## Gets all global emotes.
@@ -602,10 +665,9 @@ func get_channel_emotes(broadcaster_id: String = TwitchSetting.broadcaster_id) -
 ## https://dev.twitch.tv/docs/api/reference#get-global-emotes
 func get_global_emotes() -> TwitchGetGlobalEmotesResponse:
 	var path = "/helix/chat/emotes/global?"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetGlobalEmotesResponse.from_json(result);
-
 
 
 ## Gets emotes for one or more specified emote sets.
@@ -615,10 +677,9 @@ func get_emote_sets(emote_set_id: Array[String]) -> TwitchGetEmoteSetsResponse:
 	var path = "/helix/chat/emotes/set?"
 	for param in emote_set_id:
 		path += "emote_set_id=" + str(param) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetEmoteSetsResponse.from_json(result);
-
 
 
 ## Gets the broadcaster’s list of custom chat badges.
@@ -627,10 +688,9 @@ func get_emote_sets(emote_set_id: Array[String]) -> TwitchGetEmoteSetsResponse:
 func get_channel_chat_badges(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetChannelChatBadgesResponse:
 	var path = "/helix/chat/badges?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelChatBadgesResponse.from_json(result);
-
 
 
 ## Gets Twitch’s list of chat badges.
@@ -638,10 +698,9 @@ func get_channel_chat_badges(broadcaster_id: String = TwitchSetting.broadcaster_
 ## https://dev.twitch.tv/docs/api/reference#get-global-chat-badges
 func get_global_chat_badges() -> TwitchGetGlobalChatBadgesResponse:
 	var path = "/helix/chat/badges/global?"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetGlobalChatBadgesResponse.from_json(result);
-
 
 
 ## Gets the broadcaster’s chat settings.
@@ -651,9 +710,10 @@ func get_chat_settings(moderator_id: String, broadcaster_id: String = TwitchSett
 	var path = "/helix/chat/settings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChatSettingsResponse.from_json(result);
+
 
 ## Optional Variant of get_chat_settings
 ## Gets the broadcaster’s chat settings.
@@ -669,7 +729,7 @@ func get_chat_settings_opt(optional: Dictionary, broadcaster_id: String = Twitch
 		if key == "moderator_id":
 			opt_args.append("moderator_id=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChatSettingsResponse.from_json(result);
 
@@ -686,6 +746,19 @@ func update_chat_settings(moderator_id: String, body: TwitchUpdateChatSettingsBo
 	return TwitchUpdateChatSettingsResponse.from_json(result);
 
 
+## Optional Variant of update_chat_settings
+## Updates the broadcaster’s chat settings.
+##
+## https://dev.twitch.tv/docs/api/reference#update-chat-settings
+func update_chat_settings_bopt(moderator_id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchUpdateChatSettingsResponse:
+	var path = "/helix/chat/settings?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateChatSettingsResponse.from_json(result);
+
 
 ## NEW Retrieves emotes available to the user across all channels.
 ##
@@ -695,9 +768,10 @@ func get_user_emotes(user_id: String, after: String, broadcaster_id: String = Tw
 	path += "after=" + str(after) + "&"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUserEmotesResponse.from_json(result);
+
 
 ## Optional Variant of get_user_emotes
 ## NEW Retrieves emotes available to the user across all channels.
@@ -714,7 +788,7 @@ func get_user_emotes_opt(user_id: String, optional: Dictionary, broadcaster_id: 
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUserEmotesResponse.from_json(result);
 
@@ -729,6 +803,17 @@ func send_chat_announcement(moderator_id: String, body: TwitchSendChatAnnounceme
 	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
 	return response;
 
+## Optional Variant of send_chat_announcement
+## Sends an announcement to the broadcaster’s chat room.
+##
+## https://dev.twitch.tv/docs/api/reference#send-chat-announcement
+func send_chat_announcement_bopt(moderator_id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/chat/announcements?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	return response;
 
 ## Sends a Shoutout to the specified broadcaster.
 ##
@@ -741,7 +826,6 @@ func send_a_shoutout(from_broadcaster_id: String, to_broadcaster_id: String, mod
 	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	return response;
 
-
 ## NEW Sends a message to the broadcaster’s chat room.
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-chat-message
@@ -752,6 +836,17 @@ func send_chat_message(body: TwitchSendChatMessageBody) -> TwitchSendChatMessage
 	return TwitchSendChatMessageResponse.from_json(result);
 
 
+## Optional Variant of send_chat_message
+## NEW Sends a message to the broadcaster’s chat room.
+##
+## https://dev.twitch.tv/docs/api/reference#send-chat-message
+func send_chat_message_bopt(body: Dictionary) -> TwitchSendChatMessageResponse:
+	var path = "/helix/chat/messages?"
+
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchSendChatMessageResponse.from_json(result);
+
 
 ## Gets the color used for the user’s name in chat.
 ##
@@ -760,10 +855,9 @@ func get_user_chat_color(user_id: Array[String]) -> TwitchGetUserChatColorRespon
 	var path = "/helix/chat/color?"
 	for param in user_id:
 		path += "user_id=" + str(param) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUserChatColorResponse.from_json(result);
-
 
 
 ## Updates the color used for the user’s name in chat.
@@ -776,7 +870,6 @@ func update_user_chat_color(user_id: String, color: String) -> BufferedHTTPClien
 	var response = await request(path, HTTPClient.METHOD_PUT, "", "");
 	return response;
 
-
 ## Creates a clip from the broadcaster’s stream.
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-clip
@@ -784,8 +877,9 @@ func create_clip(has_delay: bool, broadcaster_id: String = TwitchSetting.broadca
 	var path = "/helix/clips?"
 	path += "has_delay=" + str(has_delay) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_POST, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	return response;
+
 ## Optional Variant of create_clip
 ## Creates a clip from the broadcaster’s stream.
 ##
@@ -800,7 +894,7 @@ func create_clip_opt(optional: Dictionary, broadcaster_id: String = TwitchSettin
 		if key == "has_delay":
 			opt_args.append("has_delay=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_POST, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	return response;
 
 ## Gets one or more video clips.
@@ -820,9 +914,10 @@ func get_clips(game_id: String, id: Array[String], started_at: Variant, ended_at
 	path += "after=" + str(after) + "&"
 	path += "is_featured=" + str(is_featured) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetClipsResponse.from_json(result);
+
 
 ## Optional Variant of get_clips
 ## Gets one or more video clips.
@@ -857,7 +952,7 @@ func get_clips_opt(optional: Dictionary, broadcaster_id: String = TwitchSetting.
 		if key == "is_featured":
 			opt_args.append("is_featured=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetClipsResponse.from_json(result);
 
@@ -867,10 +962,9 @@ func get_clips_opt(optional: Dictionary, broadcaster_id: String = TwitchSetting.
 ## https://dev.twitch.tv/docs/api/reference#get-conduits
 func get_conduits() -> TwitchGetConduitsResponse:
 	var path = "/helix/eventsub/conduits?"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetConduitsResponse.from_json(result);
-
 
 
 ## NEW Creates a new conduit.
@@ -883,6 +977,17 @@ func create_conduits(body: TwitchCreateConduitsBody) -> TwitchCreateConduitsResp
 	return TwitchCreateConduitsResponse.from_json(result);
 
 
+## Optional Variant of create_conduits
+## NEW Creates a new conduit.
+##
+## https://dev.twitch.tv/docs/api/reference#create-conduits
+func create_conduits_bopt(body: Dictionary) -> TwitchCreateConduitsResponse:
+	var path = "/helix/eventsub/conduits?"
+
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchCreateConduitsResponse.from_json(result);
+
 
 ## NEW Updates a conduit’s shard count.
 ##
@@ -894,6 +999,17 @@ func update_conduits(body: TwitchUpdateConduitsBody) -> TwitchUpdateConduitsResp
 	return TwitchUpdateConduitsResponse.from_json(result);
 
 
+## Optional Variant of update_conduits
+## NEW Updates a conduit’s shard count.
+##
+## https://dev.twitch.tv/docs/api/reference#update-conduits
+func update_conduits_bopt(body: Dictionary) -> TwitchUpdateConduitsResponse:
+	var path = "/helix/eventsub/conduits?"
+
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateConduitsResponse.from_json(result);
+
 
 ## NEW Deletes a specified conduit.
 ##
@@ -904,7 +1020,6 @@ func delete_conduit(id: String) -> BufferedHTTPClient.ResponseData:
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
 
-
 ## NEW Gets a lists of all shards for a conduit.
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-conduit-shards
@@ -913,9 +1028,10 @@ func get_conduit_shards(conduit_id: String, status: String, after: String) -> Tw
 	path += "status=" + str(status) + "&"
 	path += "after=" + str(after) + "&"
 	path += "conduit_id=" + str(conduit_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetConduitShardsResponse.from_json(result);
+
 
 ## Optional Variant of get_conduit_shards
 ## NEW Gets a lists of all shards for a conduit.
@@ -933,7 +1049,7 @@ func get_conduit_shards_opt(conduit_id: String, optional: Dictionary) -> TwitchG
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetConduitShardsResponse.from_json(result);
 
@@ -946,6 +1062,15 @@ func update_conduit_shards(body: TwitchUpdateConduitShardsBody) -> BufferedHTTPC
 	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
 	return response;
 
+## Optional Variant of update_conduit_shards
+## NEW Updates shard(s) for a conduit.
+##
+## https://dev.twitch.tv/docs/api/reference#update-conduit-shards
+func update_conduit_shards_bopt(body: Dictionary) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/eventsub/conduits/shards?"
+
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	return response;
 
 ## Gets information about Twitch content classification labels.
 ##
@@ -953,9 +1078,10 @@ func update_conduit_shards(body: TwitchUpdateConduitShardsBody) -> BufferedHTTPC
 func get_content_classification_labels(locale: String) -> TwitchGetContentClassificationLabelsResponse:
 	var path = "/helix/content_classification_labels?"
 	path += "locale=" + str(locale) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetContentClassificationLabelsResponse.from_json(result);
+
 
 ## Optional Variant of get_content_classification_labels
 ## Gets information about Twitch content classification labels.
@@ -970,7 +1096,7 @@ func get_content_classification_labels_opt(optional: Dictionary) -> TwitchGetCon
 		if key == "locale":
 			opt_args.append("locale=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetContentClassificationLabelsResponse.from_json(result);
 
@@ -987,9 +1113,10 @@ func get_drops_entitlements(id: Array[String], user_id: String, game_id: String,
 	path += "fulfillment_status=" + str(fulfillment_status) + "&"
 	path += "after=" + str(after) + "&"
 	path += "first=" + str(first) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetDropsEntitlementsResponse.from_json(result);
+
 
 ## Optional Variant of get_drops_entitlements
 ## Gets an organization’s list of entitlements that have been granted to a game, a user, or both.
@@ -1015,7 +1142,7 @@ func get_drops_entitlements_opt(optional: Dictionary) -> TwitchGetDropsEntitleme
 		if key == "first":
 			opt_args.append("first=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetDropsEntitlementsResponse.from_json(result);
 
@@ -1030,6 +1157,17 @@ func update_drops_entitlements(body: TwitchUpdateDropsEntitlementsBody) -> Twitc
 	return TwitchUpdateDropsEntitlementsResponse.from_json(result);
 
 
+## Optional Variant of update_drops_entitlements
+## Updates the Drop entitlement’s fulfillment status.
+##
+## https://dev.twitch.tv/docs/api/reference#update-drops-entitlements
+func update_drops_entitlements_bopt(body: Dictionary) -> TwitchUpdateDropsEntitlementsResponse:
+	var path = "/helix/entitlements/drops?"
+
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateDropsEntitlementsResponse.from_json(result);
+
 
 ## Gets the specified configuration segment from the specified extension.
 ##
@@ -1039,10 +1177,9 @@ func get_extension_configuration_segment(extension_id: String, segment: String, 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "extension_id=" + str(extension_id) + "&"
 	path += "segment=" + str(segment) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionConfigurationSegmentResponse.from_json(result);
-
 
 
 ## Updates a configuration segment.
@@ -1050,9 +1187,18 @@ func get_extension_configuration_segment(extension_id: String, segment: String, 
 ## https://dev.twitch.tv/docs/api/reference#set-extension-configuration-segment
 func set_extension_configuration_segment(body: TwitchSetExtensionConfigurationSegmentBody) -> BufferedHTTPClient.ResponseData:
 	var path = "/helix/extensions/configurations?"
-	var response = await request(path, HTTPClient.METHOD_PUT, body, "");
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
 	return response;
 
+## Optional Variant of set_extension_configuration_segment
+## Updates a configuration segment.
+##
+## https://dev.twitch.tv/docs/api/reference#set-extension-configuration-segment
+func set_extension_configuration_segment_bopt(body: Dictionary) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/extensions/configurations?"
+
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
+	return response;
 
 ## Updates the extension’s required_configuration string.
 ##
@@ -1060,9 +1206,19 @@ func set_extension_configuration_segment(body: TwitchSetExtensionConfigurationSe
 func set_extension_required_configuration(body: TwitchSetExtensionRequiredConfigurationBody, broadcaster_id: String = TwitchSetting.broadcaster_id) -> BufferedHTTPClient.ResponseData:
 	var path = "/helix/extensions/required_configuration?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_PUT, body, "");
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
 	return response;
 
+## Optional Variant of set_extension_required_configuration
+## Updates the extension’s required_configuration string.
+##
+## https://dev.twitch.tv/docs/api/reference#set-extension-required-configuration
+func set_extension_required_configuration_bopt(body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/extensions/required_configuration?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
+	return response;
 
 ## Sends a message to one or more viewers.
 ##
@@ -1072,6 +1228,15 @@ func send_extension_pubsub_message(body: TwitchSendExtensionPubSubMessageBody) -
 	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
 	return response;
 
+## Optional Variant of send_extension_pubsub_message
+## Sends a message to one or more viewers.
+##
+## https://dev.twitch.tv/docs/api/reference#send-extension-pubsub-message
+func send_extension_pubsub_message_bopt(body: Dictionary) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/extensions/pubsub?"
+
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	return response;
 
 ## Gets a list of broadcasters that are streaming live and have installed or activated the extension.
 ##
@@ -1081,9 +1246,10 @@ func get_extension_live_channels(extension_id: String, first: int, after: String
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "extension_id=" + str(extension_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionLiveChannelsResponse.from_json(result);
+
 
 ## Optional Variant of get_extension_live_channels
 ## Gets a list of broadcasters that are streaming live and have installed or activated the extension.
@@ -1101,7 +1267,7 @@ func get_extension_live_channels_opt(extension_id: String, optional: Dictionary)
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionLiveChannelsResponse.from_json(result);
 
@@ -1111,10 +1277,9 @@ func get_extension_live_channels_opt(extension_id: String, optional: Dictionary)
 ## https://dev.twitch.tv/docs/api/reference#get-extension-secrets
 func get_extension_secrets() -> TwitchGetExtensionSecretsResponse:
 	var path = "/helix/extensions/jwt/secrets?"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionSecretsResponse.from_json(result);
-
 
 
 ## Creates a shared secret used to sign and verify JWT tokens.
@@ -1124,9 +1289,10 @@ func create_extension_secret(extension_id: String, delay: int) -> TwitchCreateEx
 	var path = "/helix/extensions/jwt/secrets?"
 	path += "delay=" + str(delay) + "&"
 	path += "extension_id=" + str(extension_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_POST, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchCreateExtensionSecretResponse.from_json(result);
+
 
 ## Optional Variant of create_extension_secret
 ## Creates a shared secret used to sign and verify JWT tokens.
@@ -1142,7 +1308,7 @@ func create_extension_secret_opt(extension_id: String, optional: Dictionary) -> 
 		if key == "delay":
 			opt_args.append("delay=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_POST, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchCreateExtensionSecretResponse.from_json(result);
 
@@ -1156,6 +1322,16 @@ func send_extension_chat_message(body: TwitchSendExtensionChatMessageBody, broad
 	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
 	return response;
 
+## Optional Variant of send_extension_chat_message
+## Sends a message to the specified broadcaster’s chat room.
+##
+## https://dev.twitch.tv/docs/api/reference#send-extension-chat-message
+func send_extension_chat_message_bopt(body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/extensions/chat?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	return response;
 
 ## Gets information about an extension.
 ##
@@ -1164,9 +1340,10 @@ func get_extensions(extension_id: String, extension_version: String) -> TwitchGe
 	var path = "/helix/extensions?"
 	path += "extension_version=" + str(extension_version) + "&"
 	path += "extension_id=" + str(extension_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionsResponse.from_json(result);
+
 
 ## Optional Variant of get_extensions
 ## Gets information about an extension.
@@ -1182,7 +1359,7 @@ func get_extensions_opt(extension_id: String, optional: Dictionary) -> TwitchGet
 		if key == "extension_version":
 			opt_args.append("extension_version=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionsResponse.from_json(result);
 
@@ -1194,9 +1371,10 @@ func get_released_extensions(extension_id: String, extension_version: String) ->
 	var path = "/helix/extensions/released?"
 	path += "extension_version=" + str(extension_version) + "&"
 	path += "extension_id=" + str(extension_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetReleasedExtensionsResponse.from_json(result);
+
 
 ## Optional Variant of get_released_extensions
 ## Gets information about a released extension.
@@ -1212,7 +1390,7 @@ func get_released_extensions_opt(extension_id: String, optional: Dictionary) -> 
 		if key == "extension_version":
 			opt_args.append("extension_version=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetReleasedExtensionsResponse.from_json(result);
 
@@ -1223,9 +1401,10 @@ func get_released_extensions_opt(extension_id: String, optional: Dictionary) -> 
 func get_extension_bits_products(should_include_all: bool) -> TwitchGetExtensionBitsProductsResponse:
 	var path = "/helix/bits/extensions?"
 	path += "should_include_all=" + str(should_include_all) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionBitsProductsResponse.from_json(result);
+
 
 ## Optional Variant of get_extension_bits_products
 ## Gets the list of Bits products that belongs to the extension.
@@ -1240,7 +1419,7 @@ func get_extension_bits_products_opt(optional: Dictionary) -> TwitchGetExtension
 		if key == "should_include_all":
 			opt_args.append("should_include_all=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetExtensionBitsProductsResponse.from_json(result);
 
@@ -1255,6 +1434,17 @@ func update_extension_bits_product(body: TwitchUpdateExtensionBitsProductBody) -
 	return TwitchUpdateExtensionBitsProductResponse.from_json(result);
 
 
+## Optional Variant of update_extension_bits_product
+## Adds or updates a Bits product that the extension created.
+##
+## https://dev.twitch.tv/docs/api/reference#update-extension-bits-product
+func update_extension_bits_product_bopt(body: Dictionary) -> TwitchUpdateExtensionBitsProductResponse:
+	var path = "/helix/bits/extensions?"
+
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateExtensionBitsProductResponse.from_json(result);
+
 
 ## Creates an EventSub subscription.
 ##
@@ -1264,6 +1454,15 @@ func create_eventsub_subscription(body: TwitchCreateEventSubSubscriptionBody) ->
 	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
 	return response;
 
+## Optional Variant of create_eventsub_subscription
+## Creates an EventSub subscription.
+##
+## https://dev.twitch.tv/docs/api/reference#create-eventsub-subscription
+func create_eventsub_subscription_bopt(body: Dictionary) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/eventsub/subscriptions?"
+
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	return response;
 
 ## Deletes an EventSub subscription.
 ##
@@ -1274,7 +1473,6 @@ func delete_eventsub_subscription(id: String) -> BufferedHTTPClient.ResponseData
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
 
-
 ## Gets a list of EventSub subscriptions that the client in the access token created.
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-eventsub-subscriptions
@@ -1284,9 +1482,10 @@ func get_eventsub_subscriptions(status: String, type: String, user_id: String, a
 	path += "type=" + str(type) + "&"
 	path += "user_id=" + str(user_id) + "&"
 	path += "after=" + str(after) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetEventSubSubscriptionsResponse.from_json(result);
+
 
 ## Optional Variant of get_eventsub_subscriptions
 ## Gets a list of EventSub subscriptions that the client in the access token created.
@@ -1307,7 +1506,7 @@ func get_eventsub_subscriptions_opt(optional: Dictionary) -> TwitchGetEventSubSu
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetEventSubSubscriptionsResponse.from_json(result);
 
@@ -1320,9 +1519,10 @@ func get_top_games(first: int, after: String, before: String) -> TwitchGetTopGam
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "before=" + str(before) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetTopGamesResponse.from_json(result);
+
 
 ## Optional Variant of get_top_games
 ## Gets information about all broadcasts on Twitch.
@@ -1341,7 +1541,7 @@ func get_top_games_opt(optional: Dictionary) -> TwitchGetTopGamesResponse:
 		if key == "before":
 			opt_args.append("before=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetTopGamesResponse.from_json(result);
 
@@ -1357,9 +1557,10 @@ func get_games(id: Array[String], name: Array[String], igdb_id: Array[String]) -
 		path += "name=" + str(param) + "&"
 	for param in igdb_id:
 		path += "igdb_id=" + str(param) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetGamesResponse.from_json(result);
+
 
 ## Optional Variant of get_games
 ## Gets information about specified games.
@@ -1381,7 +1582,7 @@ func get_games_opt(optional: Dictionary) -> TwitchGetGamesResponse:
 			for param in value:
 				opt_args.append("igdb_id=" + str(param));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetGamesResponse.from_json(result);
 
@@ -1392,10 +1593,9 @@ func get_games_opt(optional: Dictionary) -> TwitchGetGamesResponse:
 func get_creator_goals(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetCreatorGoalsResponse:
 	var path = "/helix/goals?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetCreatorGoalsResponse.from_json(result);
-
 
 
 ## BETA Gets the channel settings for configuration of the Guest Star feature for a particular host.
@@ -1405,10 +1605,9 @@ func get_channel_guest_star_settings(moderator_id: String, broadcaster_id: Strin
 	var path = "/helix/guest_star/channel_settings?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelGuestStarSettingsResponse.from_json(result);
-
 
 
 ## BETA Mutates the channel settings for configuration of the Guest Star feature for a particular host.
@@ -1417,9 +1616,19 @@ func get_channel_guest_star_settings(moderator_id: String, broadcaster_id: Strin
 func update_channel_guest_star_settings(body: TwitchUpdateChannelGuestStarSettingsBody, broadcaster_id: String = TwitchSetting.broadcaster_id) -> BufferedHTTPClient.ResponseData:
 	var path = "/helix/guest_star/channel_settings?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_PUT, body, "");
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
 	return response;
 
+## Optional Variant of update_channel_guest_star_settings
+## BETA Mutates the channel settings for configuration of the Guest Star feature for a particular host.
+##
+## https://dev.twitch.tv/docs/api/reference#update-channel-guest-star-settings
+func update_channel_guest_star_settings_bopt(body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/guest_star/channel_settings?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
+	return response;
 
 ## BETA Gets information about an ongoing Guest Star session for a particular channel.
 ##
@@ -1428,10 +1637,9 @@ func get_guest_star_session(moderator_id: String, broadcaster_id: String = Twitc
 	var path = "/helix/guest_star/session?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetGuestStarSessionResponse.from_json(result);
-
 
 
 ## BETA Programmatically creates a Guest Star session on behalf of the broadcaster.
@@ -1440,10 +1648,9 @@ func get_guest_star_session(moderator_id: String, broadcaster_id: String = Twitc
 func create_guest_star_session(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchCreateGuestStarSessionResponse:
 	var path = "/helix/guest_star/session?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_POST, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchCreateGuestStarSessionResponse.from_json(result);
-
 
 
 ## BETA Programmatically ends a Guest Star session on behalf of the broadcaster.
@@ -1456,7 +1663,6 @@ func end_guest_star_session(session_id: String, broadcaster_id: String = TwitchS
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
 
-
 ## BETA Provides the caller with a list of pending invites to a Guest Star session.
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-guest-star-invites
@@ -1465,10 +1671,9 @@ func get_guest_star_invites(moderator_id: String, session_id: String, broadcaste
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetGuestStarInvitesResponse.from_json(result);
-
 
 
 ## BETA Sends an invite to a specified guest on behalf of the broadcaster for a Guest Star session in progress.
@@ -1483,7 +1688,6 @@ func send_guest_star_invite(moderator_id: String, session_id: String, guest_id: 
 	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	return response;
 
-
 ## BETA Revokes a previously sent invite for a Guest Star session.
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-guest-star-invite
@@ -1495,7 +1699,6 @@ func delete_guest_star_invite(moderator_id: String, session_id: String, guest_id
 	path += "guest_id=" + str(guest_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
-
 
 ## BETA Allows a previously invited user to be assigned a slot within the active Guest Star session.
 ##
@@ -1510,7 +1713,6 @@ func assign_guest_star_slot(moderator_id: String, session_id: String, guest_id: 
 	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	return response;
 
-
 ## BETA Allows a user to update the assigned slot for a particular user within the active Guest Star session.
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-guest-star-slot
@@ -1523,6 +1725,7 @@ func update_guest_star_slot(moderator_id: String, session_id: String, source_slo
 	path += "source_slot_id=" + str(source_slot_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_PATCH, "", "");
 	return response;
+
 ## Optional Variant of update_guest_star_slot
 ## BETA Allows a user to update the assigned slot for a particular user within the active Guest Star session.
 ##
@@ -1556,6 +1759,7 @@ func delete_guest_star_slot(moderator_id: String, session_id: String, guest_id: 
 	path += "slot_id=" + str(slot_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
+
 ## Optional Variant of delete_guest_star_slot
 ## BETA Allows a caller to remove a slot assignment from a user participating in an active Guest Star session.
 ##
@@ -1592,6 +1796,7 @@ func update_guest_star_slot_settings(moderator_id: String, session_id: String, s
 	path += "slot_id=" + str(slot_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_PATCH, "", "");
 	return response;
+
 ## Optional Variant of update_guest_star_slot_settings
 ## BETA Allows a user to update slot settings for a particular guest within a Guest Star session.
 ##
@@ -1626,9 +1831,10 @@ func get_hype_train_events(first: int, after: String, broadcaster_id: String = T
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetHypeTrainEventsResponse.from_json(result);
+
 
 ## Optional Variant of get_hype_train_events
 ## Gets information about the broadcaster’s current or most recent Hype Train event.
@@ -1646,7 +1852,7 @@ func get_hype_train_events_opt(optional: Dictionary, broadcaster_id: String = Tw
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetHypeTrainEventsResponse.from_json(result);
 
@@ -1662,6 +1868,18 @@ func check_automod_status(body: TwitchCheckAutoModStatusBody, broadcaster_id: St
 	return TwitchCheckAutoModStatusResponse.from_json(result);
 
 
+## Optional Variant of check_automod_status
+## Checks whether AutoMod would flag the specified message for review.
+##
+## https://dev.twitch.tv/docs/api/reference#check-automod-status
+func check_automod_status_bopt(body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchCheckAutoModStatusResponse:
+	var path = "/helix/moderation/enforcements/status?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchCheckAutoModStatusResponse.from_json(result);
+
 
 ## Allow or deny the message that AutoMod flagged for review.
 ##
@@ -1671,6 +1889,15 @@ func manage_held_automod_messages(body: TwitchManageHeldAutoModMessagesBody) -> 
 	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
 	return response;
 
+## Optional Variant of manage_held_automod_messages
+## Allow or deny the message that AutoMod flagged for review.
+##
+## https://dev.twitch.tv/docs/api/reference#manage-held-automod-messages
+func manage_held_automod_messages_bopt(body: Dictionary) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/moderation/automod/message?"
+
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	return response;
 
 ## Gets the broadcaster’s AutoMod settings.
 ##
@@ -1679,10 +1906,9 @@ func get_automod_settings(moderator_id: String, broadcaster_id: String = TwitchS
 	var path = "/helix/moderation/automod/settings?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetAutoModSettingsResponse.from_json(result);
-
 
 
 ## Updates the broadcaster’s AutoMod settings.
@@ -1697,6 +1923,19 @@ func update_automod_settings(moderator_id: String, body: TwitchUpdateAutoModSett
 	return TwitchUpdateAutoModSettingsResponse.from_json(result);
 
 
+## Optional Variant of update_automod_settings
+## Updates the broadcaster’s AutoMod settings.
+##
+## https://dev.twitch.tv/docs/api/reference#update-automod-settings
+func update_automod_settings_bopt(moderator_id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchUpdateAutoModSettingsResponse:
+	var path = "/helix/moderation/automod/settings?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateAutoModSettingsResponse.from_json(result);
+
 
 ## Gets all users that the broadcaster banned or put in a timeout.
 ##
@@ -1709,9 +1948,10 @@ func get_banned_users(user_id: Array[String], first: int, after: String, before:
 	path += "after=" + str(after) + "&"
 	path += "before=" + str(before) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetBannedUsersResponse.from_json(result);
+
 
 ## Optional Variant of get_banned_users
 ## Gets all users that the broadcaster banned or put in a timeout.
@@ -1734,7 +1974,7 @@ func get_banned_users_opt(optional: Dictionary, broadcaster_id: String = TwitchS
 		if key == "before":
 			opt_args.append("before=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetBannedUsersResponse.from_json(result);
 
@@ -1751,6 +1991,19 @@ func ban_user(moderator_id: String, body: TwitchBanUserBody, broadcaster_id: Str
 	return TwitchBanUserResponse.from_json(result);
 
 
+## Optional Variant of ban_user
+## Bans a user from participating in a broadcaster’s chat room or puts them in a timeout.
+##
+## https://dev.twitch.tv/docs/api/reference#ban-user
+func ban_user_bopt(moderator_id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchBanUserResponse:
+	var path = "/helix/moderation/bans?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchBanUserResponse.from_json(result);
+
 
 ## Removes the ban or timeout that was placed on the specified user.
 ##
@@ -1763,7 +2016,6 @@ func unban_user(moderator_id: String, user_id: String, broadcaster_id: String = 
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
 
-
 ## NEW Gets a list of unban requests for a broadcaster’s channel.
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-unban-requests
@@ -1775,9 +2027,10 @@ func get_unban_requests(moderator_id: String, status: String, user_id: String, a
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "status=" + str(status) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUnbanRequestsResponse.from_json(result);
+
 
 ## Optional Variant of get_unban_requests
 ## NEW Gets a list of unban requests for a broadcaster’s channel.
@@ -1799,7 +2052,7 @@ func get_unban_requests_opt(moderator_id: String, status: String, optional: Dict
 		if key == "first":
 			opt_args.append("first=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUnbanRequestsResponse.from_json(result);
 
@@ -1814,9 +2067,10 @@ func resolve_unban_requests(moderator_id: String, unban_request_id: String, stat
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "unban_request_id=" + str(unban_request_id) + "&"
 	path += "status=" + str(status) + "&"
-	var response = await request(path, HTTPClient.METHOD_PATCH, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_PATCH, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchResolveUnbanRequestsResponse.from_json(result);
+
 
 ## Optional Variant of resolve_unban_requests
 ## NEW Resolves an unban request by approving or denying it.
@@ -1835,7 +2089,7 @@ func resolve_unban_requests_opt(moderator_id: String, unban_request_id: String, 
 		if key == "resolution_text":
 			opt_args.append("resolution_text=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_PATCH, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_PATCH, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchResolveUnbanRequestsResponse.from_json(result);
 
@@ -1849,9 +2103,10 @@ func get_blocked_terms(moderator_id: String, first: int, after: String, broadcas
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetBlockedTermsResponse.from_json(result);
+
 
 ## Optional Variant of get_blocked_terms
 ## Gets the broadcaster’s list of non-private, blocked words or phrases.
@@ -1870,7 +2125,7 @@ func get_blocked_terms_opt(moderator_id: String, optional: Dictionary, broadcast
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetBlockedTermsResponse.from_json(result);
 
@@ -1887,6 +2142,19 @@ func add_blocked_term(moderator_id: String, body: TwitchAddBlockedTermBody, broa
 	return TwitchAddBlockedTermResponse.from_json(result);
 
 
+## Optional Variant of add_blocked_term
+## Adds a word or phrase to the broadcaster’s list of blocked terms.
+##
+## https://dev.twitch.tv/docs/api/reference#add-blocked-term
+func add_blocked_term_bopt(moderator_id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchAddBlockedTermResponse:
+	var path = "/helix/moderation/blocked_terms?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchAddBlockedTermResponse.from_json(result);
+
 
 ## Removes the word or phrase from the broadcaster’s list of blocked terms.
 ##
@@ -1899,7 +2167,6 @@ func remove_blocked_term(moderator_id: String, id: String, broadcaster_id: Strin
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
 
-
 ## Removes a single chat message or all chat messages from the broadcaster’s chat room.
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-chat-messages
@@ -1910,6 +2177,7 @@ func delete_chat_messages(moderator_id: String, message_id: String, broadcaster_
 	path += "moderator_id=" + str(moderator_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
+
 ## Optional Variant of delete_chat_messages
 ## Removes a single chat message or all chat messages from the broadcaster’s chat room.
 ##
@@ -1936,9 +2204,10 @@ func get_moderated_channels(user_id: String, after: String, first: int) -> Twitc
 	path += "after=" + str(after) + "&"
 	path += "first=" + str(first) + "&"
 	path += "user_id=" + str(user_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetModeratedChannelsResponse.from_json(result);
+
 
 ## Optional Variant of get_moderated_channels
 ## Gets a list of channels that the specified user has moderator privileges in.
@@ -1956,7 +2225,7 @@ func get_moderated_channels_opt(user_id: String, optional: Dictionary) -> Twitch
 		if key == "first":
 			opt_args.append("first=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetModeratedChannelsResponse.from_json(result);
 
@@ -1971,9 +2240,10 @@ func get_moderators(user_id: Array[String], first: String, after: String, broadc
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetModeratorsResponse.from_json(result);
+
 
 ## Optional Variant of get_moderators
 ## Gets all users allowed to moderate the broadcaster’s chat room.
@@ -1994,7 +2264,7 @@ func get_moderators_opt(optional: Dictionary, broadcaster_id: String = TwitchSet
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetModeratorsResponse.from_json(result);
 
@@ -2009,7 +2279,6 @@ func add_channel_moderator(user_id: String, broadcaster_id: String = TwitchSetti
 	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	return response;
 
-
 ## Removes a moderator from the broadcaster’s chat room.
 ##
 ## https://dev.twitch.tv/docs/api/reference#remove-channel-moderator
@@ -2019,7 +2288,6 @@ func remove_channel_moderator(user_id: String, broadcaster_id: String = TwitchSe
 	path += "user_id=" + str(user_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
-
 
 ## Gets a list of the broadcaster’s VIPs.
 ##
@@ -2031,9 +2299,10 @@ func get_vips(user_id: Array[String], first: int, after: String, broadcaster_id:
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetVIPsResponse.from_json(result);
+
 
 ## Optional Variant of get_vips
 ## Gets a list of the broadcaster’s VIPs.
@@ -2054,7 +2323,7 @@ func get_vips_opt(optional: Dictionary, broadcaster_id: String = TwitchSetting.b
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetVIPsResponse.from_json(result);
 
@@ -2069,7 +2338,6 @@ func add_channel_vip(user_id: String, broadcaster_id: String = TwitchSetting.bro
 	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	return response;
 
-
 ## Removes the specified user as a VIP in the broadcaster’s channel.
 ##
 ## https://dev.twitch.tv/docs/api/reference#remove-channel-vip
@@ -2079,7 +2347,6 @@ func remove_channel_vip(user_id: String, broadcaster_id: String = TwitchSetting.
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
-
 
 ## Activates or deactivates the broadcaster’s Shield Mode.
 ##
@@ -2093,6 +2360,19 @@ func update_shield_mode_status(moderator_id: String, body: TwitchUpdateShieldMod
 	return TwitchUpdateShieldModeStatusResponse.from_json(result);
 
 
+## Optional Variant of update_shield_mode_status
+## Activates or deactivates the broadcaster’s Shield Mode.
+##
+## https://dev.twitch.tv/docs/api/reference#update-shield-mode-status
+func update_shield_mode_status_bopt(moderator_id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchUpdateShieldModeStatusResponse:
+	var path = "/helix/moderation/shield_mode?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateShieldModeStatusResponse.from_json(result);
+
 
 ## Gets the broadcaster’s Shield Mode activation status.
 ##
@@ -2101,10 +2381,9 @@ func get_shield_mode_status(moderator_id: String, broadcaster_id: String = Twitc
 	var path = "/helix/moderation/shield_mode?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetShieldModeStatusResponse.from_json(result);
-
 
 
 ## Gets a list of polls that the broadcaster created.
@@ -2117,9 +2396,10 @@ func get_polls(id: Array[String], first: String, after: String, broadcaster_id: 
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetPollsResponse.from_json(result);
+
 
 ## Optional Variant of get_polls
 ## Gets a list of polls that the broadcaster created.
@@ -2140,7 +2420,7 @@ func get_polls_opt(optional: Dictionary, broadcaster_id: String = TwitchSetting.
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetPollsResponse.from_json(result);
 
@@ -2155,6 +2435,17 @@ func create_poll(body: TwitchCreatePollBody) -> TwitchCreatePollResponse:
 	return TwitchCreatePollResponse.from_json(result);
 
 
+## Optional Variant of create_poll
+## Creates a poll that viewers in the broadcaster’s channel can vote on.
+##
+## https://dev.twitch.tv/docs/api/reference#create-poll
+func create_poll_bopt(body: Dictionary) -> TwitchCreatePollResponse:
+	var path = "/helix/polls?"
+
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchCreatePollResponse.from_json(result);
+
 
 ## End an active poll.
 ##
@@ -2165,6 +2456,17 @@ func end_poll(body: TwitchEndPollBody) -> TwitchEndPollResponse:
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchEndPollResponse.from_json(result);
 
+
+## Optional Variant of end_poll
+## End an active poll.
+##
+## https://dev.twitch.tv/docs/api/reference#end-poll
+func end_poll_bopt(body: Dictionary) -> TwitchEndPollResponse:
+	var path = "/helix/polls?"
+
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchEndPollResponse.from_json(result);
 
 
 ## Gets a list of Channel Points Predictions that the broadcaster created.
@@ -2177,9 +2479,10 @@ func get_predictions(id: Array[String], first: String, after: String, broadcaste
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetPredictionsResponse.from_json(result);
+
 
 ## Optional Variant of get_predictions
 ## Gets a list of Channel Points Predictions that the broadcaster created.
@@ -2200,7 +2503,7 @@ func get_predictions_opt(optional: Dictionary, broadcaster_id: String = TwitchSe
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetPredictionsResponse.from_json(result);
 
@@ -2215,6 +2518,17 @@ func create_prediction(body: TwitchCreatePredictionBody) -> TwitchCreatePredicti
 	return TwitchCreatePredictionResponse.from_json(result);
 
 
+## Optional Variant of create_prediction
+## Create a Channel Points Prediction.
+##
+## https://dev.twitch.tv/docs/api/reference#create-prediction
+func create_prediction_bopt(body: Dictionary) -> TwitchCreatePredictionResponse:
+	var path = "/helix/predictions?"
+
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchCreatePredictionResponse.from_json(result);
+
 
 ## Locks, resolves, or cancels a Channel Points Prediction.
 ##
@@ -2226,6 +2540,17 @@ func end_prediction(body: TwitchEndPredictionBody) -> TwitchEndPredictionRespons
 	return TwitchEndPredictionResponse.from_json(result);
 
 
+## Optional Variant of end_prediction
+## Locks, resolves, or cancels a Channel Points Prediction.
+##
+## https://dev.twitch.tv/docs/api/reference#end-prediction
+func end_prediction_bopt(body: Dictionary) -> TwitchEndPredictionResponse:
+	var path = "/helix/predictions?"
+
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchEndPredictionResponse.from_json(result);
+
 
 ## Raid another channel by sending the broadcaster’s viewers to the targeted channel.
 ##
@@ -2234,9 +2559,10 @@ func start_a_raid(from_broadcaster_id: String, to_broadcaster_id: String) -> Twi
 	var path = "/helix/raids?"
 	path += "from_broadcaster_id=" + str(from_broadcaster_id) + "&"
 	path += "to_broadcaster_id=" + str(to_broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_POST, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchStartRaidResponse.from_json(result);
+
 
 ## Optional Variant of start_a_raid
 ## Raid another channel by sending the broadcaster’s viewers to the targeted channel.
@@ -2253,7 +2579,7 @@ func start_a_raid_opt(optional: Dictionary) -> TwitchStartRaidResponse:
 		if key == "to_broadcaster_id":
 			opt_args.append("to_broadcaster_id=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_POST, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_POST, "", "application/x-www-form-urlencoded");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchStartRaidResponse.from_json(result);
 
@@ -2266,7 +2592,6 @@ func cancel_a_raid(broadcaster_id: String = TwitchSetting.broadcaster_id) -> Buf
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
-
 
 ## Gets the broadcaster’s streaming schedule.
 ##
@@ -2281,9 +2606,10 @@ func get_channel_stream_schedule(id: Array[String], start_time: Variant, utc_off
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelStreamScheduleResponse.from_json(result);
+
 
 ## Optional Variant of get_channel_stream_schedule
 ## Gets the broadcaster’s streaming schedule.
@@ -2310,7 +2636,7 @@ func get_channel_stream_schedule_opt(optional: Dictionary, broadcaster_id: Strin
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelStreamScheduleResponse.from_json(result);
 
@@ -2321,9 +2647,8 @@ func get_channel_stream_schedule_opt(optional: Dictionary, broadcaster_id: Strin
 func get_channel_icalendar(broadcaster_id: String = TwitchSetting.broadcaster_id) -> BufferedHTTPClient.ResponseData:
 	var path = "/helix/schedule/icalendar?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "text/calendar");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	return response;
-
 
 ## Updates the broadcaster’s schedule settings, such as scheduling a vacation.
 ##
@@ -2339,6 +2664,7 @@ func update_channel_stream_schedule(is_vacation_enabled: bool, vacation_start_ti
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_PATCH, "", "");
 	return response;
+
 ## Optional Variant of update_channel_stream_schedule
 ## Updates the broadcaster’s schedule settings, such as scheduling a vacation.
 ##
@@ -2377,6 +2703,18 @@ func create_channel_stream_schedule_segment(body: TwitchCreateChannelStreamSched
 	return TwitchCreateChannelStreamScheduleSegmentResponse.from_json(result);
 
 
+## Optional Variant of create_channel_stream_schedule_segment
+## Adds a single or recurring broadcast to the broadcaster’s streaming schedule.
+##
+## https://dev.twitch.tv/docs/api/reference#create-channel-stream-schedule-segment
+func create_channel_stream_schedule_segment_bopt(body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchCreateChannelStreamScheduleSegmentResponse:
+	var path = "/helix/schedule/segment?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchCreateChannelStreamScheduleSegmentResponse.from_json(result);
+
 
 ## Updates a scheduled broadcast segment.
 ##
@@ -2390,6 +2728,19 @@ func update_channel_stream_schedule_segment(id: String, body: TwitchUpdateChanne
 	return TwitchUpdateChannelStreamScheduleSegmentResponse.from_json(result);
 
 
+## Optional Variant of update_channel_stream_schedule_segment
+## Updates a scheduled broadcast segment.
+##
+## https://dev.twitch.tv/docs/api/reference#update-channel-stream-schedule-segment
+func update_channel_stream_schedule_segment_bopt(id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchUpdateChannelStreamScheduleSegmentResponse:
+	var path = "/helix/schedule/segment?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "id=" + str(id) + "&"
+	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateChannelStreamScheduleSegmentResponse.from_json(result);
+
 
 ## Deletes a broadcast from the broadcaster’s streaming schedule.
 ##
@@ -2401,7 +2752,6 @@ func delete_channel_stream_schedule_segment(id: String, broadcaster_id: String =
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
 
-
 ## Gets the games or categories that match the specified query.
 ##
 ## https://dev.twitch.tv/docs/api/reference#search-categories
@@ -2410,9 +2760,10 @@ func search_categories(query: String, first: int, after: String) -> TwitchSearch
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "query=" + str(query) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchSearchCategoriesResponse.from_json(result);
+
 
 ## Optional Variant of search_categories
 ## Gets the games or categories that match the specified query.
@@ -2430,7 +2781,7 @@ func search_categories_opt(query: String, optional: Dictionary) -> TwitchSearchC
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchSearchCategoriesResponse.from_json(result);
 
@@ -2444,9 +2795,10 @@ func search_channels(query: String, live_only: bool, first: int, after: String) 
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "query=" + str(query) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchSearchChannelsResponse.from_json(result);
+
 
 ## Optional Variant of search_channels
 ## Gets the channels that match the specified query and have streamed content within the past 6 months.
@@ -2466,7 +2818,7 @@ func search_channels_opt(query: String, optional: Dictionary) -> TwitchSearchCha
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchSearchChannelsResponse.from_json(result);
 
@@ -2477,10 +2829,9 @@ func search_channels_opt(query: String, optional: Dictionary) -> TwitchSearchCha
 func get_stream_key(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetStreamKeyResponse:
 	var path = "/helix/streams/key?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetStreamKeyResponse.from_json(result);
-
 
 
 ## Gets a list of all streams.
@@ -2500,9 +2851,10 @@ func get_streams(user_id: Array[String], user_login: Array[String], game_id: Arr
 	path += "first=" + str(first) + "&"
 	path += "before=" + str(before) + "&"
 	path += "after=" + str(after) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetStreamsResponse.from_json(result);
+
 
 ## Optional Variant of get_streams
 ## Gets a list of all streams.
@@ -2535,7 +2887,7 @@ func get_streams_opt(optional: Dictionary) -> TwitchGetStreamsResponse:
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetStreamsResponse.from_json(result);
 
@@ -2548,9 +2900,10 @@ func get_followed_streams(user_id: String, first: int, after: String) -> TwitchG
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "user_id=" + str(user_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetFollowedStreamsResponse.from_json(result);
+
 
 ## Optional Variant of get_followed_streams
 ## Gets the list of broadcasters that the user follows and that are streaming live.
@@ -2568,7 +2921,7 @@ func get_followed_streams_opt(user_id: String, optional: Dictionary) -> TwitchGe
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetFollowedStreamsResponse.from_json(result);
 
@@ -2583,6 +2936,17 @@ func create_stream_marker(body: TwitchCreateStreamMarkerBody) -> TwitchCreateStr
 	return TwitchCreateStreamMarkerResponse.from_json(result);
 
 
+## Optional Variant of create_stream_marker
+## Adds a marker to a live stream.
+##
+## https://dev.twitch.tv/docs/api/reference#create-stream-marker
+func create_stream_marker_bopt(body: Dictionary) -> TwitchCreateStreamMarkerResponse:
+	var path = "/helix/streams/markers?"
+
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchCreateStreamMarkerResponse.from_json(result);
+
 
 ## Gets a list of markers from the user’s most recent stream or from the specified VOD/video.
 ##
@@ -2594,9 +2958,10 @@ func get_stream_markers(user_id: String, video_id: String, first: String, before
 	path += "first=" + str(first) + "&"
 	path += "before=" + str(before) + "&"
 	path += "after=" + str(after) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetStreamMarkersResponse.from_json(result);
+
 
 ## Optional Variant of get_stream_markers
 ## Gets a list of markers from the user’s most recent stream or from the specified VOD/video.
@@ -2619,7 +2984,7 @@ func get_stream_markers_opt(optional: Dictionary) -> TwitchGetStreamMarkersRespo
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetStreamMarkersResponse.from_json(result);
 
@@ -2635,9 +3000,10 @@ func get_broadcaster_subscriptions(user_id: Array[String], first: String, after:
 	path += "after=" + str(after) + "&"
 	path += "before=" + str(before) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetBroadcasterSubscriptionsResponse.from_json(result);
+
 
 ## Optional Variant of get_broadcaster_subscriptions
 ## Gets a list of users that subscribe to the specified broadcaster.
@@ -2660,7 +3026,7 @@ func get_broadcaster_subscriptions_opt(optional: Dictionary, broadcaster_id: Str
 		if key == "before":
 			opt_args.append("before=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetBroadcasterSubscriptionsResponse.from_json(result);
 
@@ -2672,10 +3038,9 @@ func check_user_subscription(user_id: String, broadcaster_id: String = TwitchSet
 	var path = "/helix/subscriptions/user?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	path += "user_id=" + str(user_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchCheckUserSubscriptionResponse.from_json(result);
-
 
 
 ## Gets the list of all stream tags that Twitch defines. You can also filter the list by one or more tag IDs.
@@ -2687,9 +3052,10 @@ func get_all_stream_tags(tag_id: Array[String], first: int, after: String) -> Tw
 		path += "tag_id=" + str(param) + "&"
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetAllStreamTagsResponse.from_json(result);
+
 
 ## Optional Variant of get_all_stream_tags
 ## Gets the list of all stream tags that Twitch defines. You can also filter the list by one or more tag IDs.
@@ -2709,7 +3075,7 @@ func get_all_stream_tags_opt(optional: Dictionary) -> TwitchGetAllStreamTagsResp
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetAllStreamTagsResponse.from_json(result);
 
@@ -2720,10 +3086,9 @@ func get_all_stream_tags_opt(optional: Dictionary) -> TwitchGetAllStreamTagsResp
 func get_stream_tags(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetStreamTagsResponse:
 	var path = "/helix/streams/tags?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetStreamTagsResponse.from_json(result);
-
 
 
 ## Gets the list of Twitch teams that the broadcaster is a member of.
@@ -2732,10 +3097,9 @@ func get_stream_tags(broadcaster_id: String = TwitchSetting.broadcaster_id) -> T
 func get_channel_teams(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetChannelTeamsResponse:
 	var path = "/helix/teams/channel?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetChannelTeamsResponse.from_json(result);
-
 
 
 ## Gets information about the specified Twitch team.
@@ -2745,9 +3109,10 @@ func get_teams(name: String, id: String) -> TwitchGetTeamsResponse:
 	var path = "/helix/teams?"
 	path += "name=" + str(name) + "&"
 	path += "id=" + str(id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetTeamsResponse.from_json(result);
+
 
 ## Optional Variant of get_teams
 ## Gets information about the specified Twitch team.
@@ -2764,7 +3129,7 @@ func get_teams_opt(optional: Dictionary) -> TwitchGetTeamsResponse:
 		if key == "id":
 			opt_args.append("id=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetTeamsResponse.from_json(result);
 
@@ -2778,9 +3143,10 @@ func get_users(id: Array[String], login: Array[String]) -> TwitchGetUsersRespons
 		path += "id=" + str(param) + "&"
 	for param in login:
 		path += "login=" + str(param) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUsersResponse.from_json(result);
+
 
 ## Optional Variant of get_users
 ## Gets information about one or more users.
@@ -2799,7 +3165,7 @@ func get_users_opt(optional: Dictionary) -> TwitchGetUsersResponse:
 			for param in value:
 				opt_args.append("login=" + str(param));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUsersResponse.from_json(result);
 
@@ -2810,9 +3176,10 @@ func get_users_opt(optional: Dictionary) -> TwitchGetUsersResponse:
 func update_user(description: String) -> TwitchUpdateUserResponse:
 	var path = "/helix/users?"
 	path += "description=" + str(description) + "&"
-	var response = await request(path, HTTPClient.METHOD_PUT, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_PUT, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchUpdateUserResponse.from_json(result);
+
 
 ## Optional Variant of update_user
 ## Updates the user’s information.
@@ -2827,7 +3194,7 @@ func update_user_opt(optional: Dictionary) -> TwitchUpdateUserResponse:
 		if key == "description":
 			opt_args.append("description=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_PUT, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_PUT, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchUpdateUserResponse.from_json(result);
 
@@ -2840,9 +3207,10 @@ func get_user_block_list(first: int, after: String, broadcaster_id: String = Twi
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUserBlockListResponse.from_json(result);
+
 
 ## Optional Variant of get_user_block_list
 ## Gets the list of users that the broadcaster has blocked.
@@ -2860,7 +3228,7 @@ func get_user_block_list_opt(optional: Dictionary, broadcaster_id: String = Twit
 		if key == "after":
 			opt_args.append("after=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUserBlockListResponse.from_json(result);
 
@@ -2875,6 +3243,7 @@ func block_user(target_user_id: String, source_context: String, reason: String) 
 	path += "target_user_id=" + str(target_user_id) + "&"
 	var response = await request(path, HTTPClient.METHOD_PUT, "", "");
 	return response;
+
 ## Optional Variant of block_user
 ## Blocks the specified user from interacting with or having contact with the broadcaster.
 ##
@@ -2903,16 +3272,14 @@ func unblock_user(target_user_id: String) -> BufferedHTTPClient.ResponseData:
 	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	return response;
 
-
 ## Gets a list of all extensions (both active and inactive) that the broadcaster has installed.
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-extensions
 func get_user_extensions() -> TwitchGetUserExtensionsResponse:
 	var path = "/helix/users/extensions/list?"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUserExtensionsResponse.from_json(result);
-
 
 
 ## Gets the active extensions that the broadcaster has installed for each configuration.
@@ -2921,9 +3288,10 @@ func get_user_extensions() -> TwitchGetUserExtensionsResponse:
 func get_user_active_extensions(user_id: String) -> TwitchGetUserActiveExtensionsResponse:
 	var path = "/helix/users/extensions?"
 	path += "user_id=" + str(user_id) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUserActiveExtensionsResponse.from_json(result);
+
 
 ## Optional Variant of get_user_active_extensions
 ## Gets the active extensions that the broadcaster has installed for each configuration.
@@ -2938,7 +3306,7 @@ func get_user_active_extensions_opt(optional: Dictionary) -> TwitchGetUserActive
 		if key == "user_id":
 			opt_args.append("user_id=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetUserActiveExtensionsResponse.from_json(result);
 
@@ -2952,6 +3320,17 @@ func update_user_extensions(body: TwitchUpdateUserExtensionsBody) -> TwitchUpdat
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchUpdateUserExtensionsResponse.from_json(result);
 
+
+## Optional Variant of update_user_extensions
+## Updates an installed extension’s information.
+##
+## https://dev.twitch.tv/docs/api/reference#update-user-extensions
+func update_user_extensions_bopt(body: Dictionary) -> TwitchUpdateUserExtensionsResponse:
+	var path = "/helix/users/extensions?"
+
+	var response = await request(path, HTTPClient.METHOD_PUT, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchUpdateUserExtensionsResponse.from_json(result);
 
 
 ## Gets information about one or more published videos.
@@ -2970,9 +3349,10 @@ func get_videos(id: Array[String], user_id: String, game_id: String, language: S
 	path += "first=" + str(first) + "&"
 	path += "after=" + str(after) + "&"
 	path += "before=" + str(before) + "&"
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetVideosResponse.from_json(result);
+
 
 ## Optional Variant of get_videos
 ## Gets information about one or more published videos.
@@ -3006,7 +3386,7 @@ func get_videos_opt(optional: Dictionary) -> TwitchGetVideosResponse:
 		if key == "before":
 			opt_args.append("before=" + str(value));
 	path += "&".join(opt_args);
-	var response = await request(path, HTTPClient.METHOD_GET, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchGetVideosResponse.from_json(result);
 
@@ -3018,10 +3398,9 @@ func delete_videos(id: Array[String]) -> TwitchDeleteVideosResponse:
 	var path = "/helix/videos?"
 	for param in id:
 		path += "id=" + str(param) + "&"
-	var response = await request(path, HTTPClient.METHOD_DELETE, "", "application/json");
+	var response = await request(path, HTTPClient.METHOD_DELETE, "", "");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchDeleteVideosResponse.from_json(result);
-
 
 
 ## Sends a whisper message to the specified user.
@@ -3034,6 +3413,17 @@ func send_whisper(from_user_id: String, to_user_id: String, body: TwitchSendWhis
 	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
 	return response;
 
+## Optional Variant of send_whisper
+## Sends a whisper message to the specified user.
+##
+## https://dev.twitch.tv/docs/api/reference#send-whisper
+func send_whisper_bopt(from_user_id: String, to_user_id: String, body: Dictionary) -> BufferedHTTPClient.ResponseData:
+	var path = "/helix/whispers?"
+
+	path += "from_user_id=" + str(from_user_id) + "&"
+	path += "to_user_id=" + str(to_user_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	return response;
 
 
 ## Converts unix timestamp to RFC 3339 (example: 2021-10-27T00:00:00Z) when passed a string uses as is
