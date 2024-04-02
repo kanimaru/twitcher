@@ -24,9 +24,6 @@ func _ready() -> void:
 	# When the send button is pressed send the message
 	send.pressed.connect(_send_message);
 
-	var blub = await TwitchService.api.search_categories_opt("League", {});
-	print(blub);
-
 func _on_chat_message(from_user: String, message: String, tags: TwitchTags.Message):
 	# Get all badges from the user that sends the message
 	var badges = await tags.get_badges() as Array[SpriteFrames];
