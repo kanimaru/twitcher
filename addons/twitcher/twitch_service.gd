@@ -1,28 +1,28 @@
-extends Node
+extends RefCounted
 ## Access to the Twitch API. Combines all the stuff the library provides.
 ## Makes some actions easier to use.
+
+class_name TwitchService
 
 ## Send when the Twitch API was succesfully initialized
 signal twitch_ready;
 
-var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_SERVICE)
+static var log: TwitchLogger;
+static var auth: TwitchAuth;
+static var icon_loader: TwitchIconLoader;
+static var irc: TwitchIRC;
+static var eventsub: TwitchEventsub;
+static var eventsub_debug: TwitchEventsub;
+static var commands: TwitchCommandHandler;
+static var cheer_repository: TwitchCheerRepository;
+static var api: TwitchRestAPI
 
-var auth: TwitchAuth;
-var icon_loader: TwitchIconLoader;
-var irc: TwitchIRC;
-var eventsub: TwitchEventsub;
-var eventsub_debug: TwitchEventsub;
-var commands: TwitchCommandHandler;
-var cheer_repository: TwitchCheerRepository;
-var api: TwitchRestAPI
-
-var is_twitch_ready: bool;
-
-func _init() -> void:
+static func _static_init() -> void:
 	# Setup Twitch setting before it is needed
-	log.i("Setup")
 	TwitchSetting.setup();
-	auth = TwitchAuth.new();
+	log = TwitchLogger.new(TwitchSetting.LOGGER_NAME_SERVICE);
+	log.i("Setup")
+	auth = await TwitchAuth.new();
 	api = TwitchRestAPI.new(auth);
 	icon_loader = TwitchIconLoader.new(api);
 	eventsub = TwitchEventsub.new(api);
@@ -32,7 +32,7 @@ func _init() -> void:
 
 ## Call this to setup the complete Twitch integration whenever you need.
 ## It boots everything up this Lib supports.
-func setup() -> void:
+static func setup() -> void:
 	log.i("Start")
 	await auth.ensure_authentication();
 	await _init_chat();
@@ -41,13 +41,6 @@ func setup() -> void:
 		eventsub_debug.connect_to_eventsub(TwitchSetting.eventsub_test_server_url);
 	_init_cheermotes();
 	log.i("Initialized and ready")
-	is_twitch_ready = true;
-	twitch_ready.emit();
-
-## Checks if the Twitch API is ready.
-## Await for this before you access TwitchService when you not know that it's already completely initialized.
-func is_ready() -> void:
-	if !is_twitch_ready: await twitch_ready;
 
 #
 # Convinient Methods
@@ -56,14 +49,14 @@ func is_ready() -> void:
 #region User
 
 ## Get data about a user by USER_ID see get_user for by username
-func get_user_by_id(user_id: String) -> TwitchUser:
+static func get_user_by_id(user_id: String) -> TwitchUser:
 	if user_id == null || user_id == "": return null;
 	var user_data : TwitchGetUsersResponse = await api.get_users([user_id], []);
 	if user_data.data.is_empty(): return null;
 	return user_data.data[0];
 
 ## Get data about a user by USERNAME see get_user_by_id for by user_id
-func get_user(username: String) -> TwitchUser:
+static func get_user(username: String) -> TwitchUser:
 	var user_data : TwitchGetUsersResponse = await api.get_users([], [username]);
 	if user_data.data.is_empty():
 		printerr("Username was not found: %s" % username);
@@ -71,7 +64,7 @@ func get_user(username: String) -> TwitchUser:
 	return user_data.data[0];
 
 ## Get the image of an user
-func load_profile_image(user: TwitchUser) -> ImageTexture:
+static func load_profile_image(user: TwitchUser) -> ImageTexture:
 	if user == null: return TwitchSetting.fallback_profile;
 	if(ResourceLoader.has_cached(user.profile_image_url)):
 		return ResourceLoader.load(user.profile_image_url);
@@ -99,16 +92,16 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 #endregion
 #region EventSub
 
-func _init_eventsub() -> void:
+static func _init_eventsub() -> void:
 	eventsub.connect_to_eventsub(TwitchSetting.eventsub_live_server_url);
 
 ## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/ for details on
 ## which API versions are available and which conditions are required.
-func subscribe_event(event_name : String, version : String, conditions : Dictionary, session_id: String):
+static func subscribe_event(event_name : String, version : String, conditions : Dictionary, session_id: String):
 	eventsub.subscribe_event(event_name, version, conditions, session_id)
 
 ## Waits for connection to eventsub. Eventsub is ready to subscribe events.
-func wait_for_connection() -> void:
+static func wait_for_connection() -> void:
 	await eventsub.wait_for_connection();
 
 #endregion
@@ -116,7 +109,7 @@ func wait_for_connection() -> void:
 #region Chat
 
 ## Initializes the chat connects to IRC and preloads everything
-func _init_chat() -> void:
+static func _init_chat() -> void:
 	irc.received_privmsg.connect(commands.handle_chat_command);
 	irc.received_whisper.connect(commands.handle_whisper_command);
 	irc.connect_to_irc();
@@ -124,11 +117,11 @@ func _init_chat() -> void:
 	await icon_loader.preload_done;
 
 ## Sends out a shoutout to a specific user
-func shoutout(user: TwitchUser) -> void:
+static func shoutout(user: TwitchUser) -> void:
 	api.send_a_shoutout(TwitchSetting.broadcaster_id, user.id, TwitchSetting.broadcaster_id)
 
 ## Sends a announcement message to the chat
-func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY):
+static func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY):
 	var broadcaster_id = TwitchSetting.broadcaster_id;
 	var body = TwitchSendChatAnnouncementBody.new();
 	body.message = message;
@@ -139,7 +132,7 @@ func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnounc
 ## The callback will receive [code]info: TwitchCommandInfo, args: Array[String][/code][br]
 ## Args are optional depending on the configuration.[br]
 ## args_max == -1 => no upper limit for arguments
-func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1,
+static func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1,
 	permission_level : TwitchCommandHandler.PermissionFlag = TwitchCommandHandler.PermissionFlag.EVERYONE,
 	where : TwitchCommandHandler.WhereFlag = TwitchCommandHandler.WhereFlag.CHAT) -> void:
 
@@ -147,72 +140,72 @@ func add_command(command: String, callback: Callable, args_min: int = 0, args_ma
 	commands.add_command(command, callback, args_min, args_max, permission_level, where);
 
 ## Removes a command
-func remove_command(command: String) -> void:
+static func remove_command(command: String) -> void:
 	log.i("Remove command %s" % command)
 	commands.remove_command(command);
 
 ## Sends a chat to the only connected channel or in case of multiple channels doesn't do anything see
 ## join_channel to get a specific channel to send to it.
-func chat(message: String, channel_name: String = "") -> void:
+static func chat(message: String, channel_name: String = "") -> void:
 	irc.chat(message, channel_name);
 
 ## Whispers to another user.
 ## @deprecated not supported by twitch anymore
-func whisper(message: String, username: String) -> void:
+static func whisper(message: String, username: String) -> void:
 	log.e("Whipser from bots aren't supported by Twitch anymore. See https://dev.twitch.tv/docs/irc/chat-commands/ at /w")
 
 ## Returns the definition of emotes for given channel or for the global emotes.
 ## Key: EmoteID as String ; Value: TwitchGlobalEmote | TwitchChannelEmote
-func get_emotes_data(channel_id: String = "global") -> Dictionary:
+static func get_emotes_data(channel_id: String = "global") -> Dictionary:
 	return await icon_loader.get_cached_emotes(channel_id);
 
 ## Returns the definition of badges for given channel or for the global bages.
 ## Key: category / versions / badge_id ; Value: TwitchChatBadge
-func get_badges_data(channel_id: String = "global") -> Dictionary:
+static func get_badges_data(channel_id: String = "global") -> Dictionary:
 	return await icon_loader.get_cached_badges(channel_id);
 
 ## Gets the requested emotes.
 ## Key: EmoteID as String ; Value: SpriteFrame
-func get_emotes(ids: Array[String]) -> Dictionary:
+static func get_emotes(ids: Array[String]) -> Dictionary:
 	return await icon_loader.get_emotes(ids);
 
 ## Gets the requested emotes in the specified theme, scale and type.
 ## Loads from cache if possible otherwise downloads and transforms them.
 ## Key: TwitchEmoteDefinition ; Value SpriteFrames
-func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionary:
+static func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionary:
 	return await icon_loader.get_emotes_by_definition(emotes);
 
 ## Get the requested badges. (valid scale values are 1,2,3)
 ## Loads from cache if possible otherwise downloads and transforms them.
 ## Key: Badge Composite ; Value: SpriteFrames
-func get_badges(badge: Array[String], channel_id: String = "global", scale: int = 1) -> Dictionary:
+static func get_badges(badge: Array[String], channel_id: String = "global", scale: int = 1) -> Dictionary:
 	return await icon_loader.get_badges(badge, channel_id);
 
 #endregion
 #region Cheermotes
 
-func _init_cheermotes() -> void:
+static func _init_cheermotes() -> void:
 	cheer_repository = await TwitchCheerRepository.new(api);
 
 ## Returns the complete parsed data out of a cheer word.
-func get_cheer_tier(cheer_word: String,
+static func get_cheer_tier(cheer_word: String,
 	theme: TwitchCheerRepository.Themes = TwitchCheerRepository.Themes.DARK,
 	type: TwitchCheerRepository.Types = TwitchCheerRepository.Types.ANIMATED,
 	scale: TwitchCheerRepository.Scales = TwitchCheerRepository.Scales._1) -> TwitchCheerRepository.CheerResult:
 	return await cheer_repository.get_cheer_tier(cheer_word, theme, type, scale);
 
 ## Returns the data of the Cheermotes.
-func get_cheermote_data() -> Array[TwitchCheermote]:
+static func get_cheermote_data() -> Array[TwitchCheermote]:
 	await cheer_repository.wait_is_ready();
 	return cheer_repository.data;
 
 ## Checks if a prefix is existing.
-func is_cheermote_prefix_existing(prefix: String) -> bool:
+static func is_cheermote_prefix_existing(prefix: String) -> bool:
 	return cheer_repository.is_cheermote_prefix_existing(prefix);
 
 ## Returns all cheertiers in form of:
 ## Key: TwitchCheermote.Tiers ; Value: SpriteFrames
-func get_cheermotes(cheermote: TwitchCheermote,
+static func get_cheermotes(cheermote: TwitchCheermote,
 	theme: TwitchCheerRepository.Themes = TwitchCheerRepository.Themes.DARK,
 	type: TwitchCheerRepository.Types = TwitchCheerRepository.Types.ANIMATED,
 	scale: TwitchCheerRepository.Scales = TwitchCheerRepository.Scales._1) -> Dictionary:

@@ -17,14 +17,16 @@ func _init(twitch_auth: TwitchAuth) -> void:
 
 func request(path: String, method: int, body: Variant = "", content_type: String = "", error_count: int = 0) -> BufferedHTTPClient.ResponseData:
 	var header : Dictionary = {
-		"Authorization": "Bearer %s" % [await auth.get_token()],
+		"Authorization": "Bearer %s" % [await auth.get_access_token()],
 		"Client-ID": TwitchSetting.client_id
 	};
 	if content_type != "":
 		header["Content-Type"] = content_type;
 
 	var request_body: String = "";
-	if body is Object && body.has_method("to_json"):
+	if body == null || (body is String && body == ""):
+		request_body = "";
+	elif body is Object && body.has_method("to_json"):
 		request_body = body.to_json()
 	else:
 		request_body = JSON.stringify(body);

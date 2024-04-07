@@ -152,7 +152,7 @@ func _on_connection_state_changed(state: WebSocketPeer.State):
 
 ## Sends the login message for authorization pupose and sets an username
 func _login() -> void:
-	client.send_text("PASS oauth:%s" % await auth.get_token());
+	client.send_text("PASS oauth:%s" % await auth.get_access_token());
 	_send("NICK " + TwitchSetting.irc_username);
 
 ## Callback after a login try was made with the result value as parameter
@@ -344,7 +344,7 @@ func _create_channel(channel_name: String) -> TwitchIrcChannel:
 	var channel = TwitchIrcChannel.new();
 	channel.channel_name = channel_name;
 	channel_maps[channel_name] = channel;
-	TwitchService.add_child(channel);
+	Engine.get_main_loop().root.add_child(channel);
 	return channel;
 
 ## Tracks the channel.
@@ -372,7 +372,7 @@ func _handle_cmd_notice(info: String) -> bool:
 	elif info == "You don't have permission to perform that action":
 		log.i("No permission. Attempting to obtain new token.");
 		await auth.refresh_token();
-		if auth.is_authenticated():
+		if await auth.is_authenticated():
 			_login();
 			return true;
 		else:

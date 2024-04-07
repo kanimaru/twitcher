@@ -18,7 +18,7 @@ func _enter_tree():
 	if is_magick_available():
 		add_import_plugin(gif_importer_imagemagick)
 
-	add_autoload_singleton(TWITCH_SERVICE_AUTOLOAD_NAME, "res://addons/twitcher/twitch_service.gd");
+	#add_autoload_singleton(TWITCH_SERVICE_AUTOLOAD_NAME, "res://addons/twitcher/twitch_service.gd");
 	add_autoload_singleton(HTTP_CLIENT_MANAGER_AUTOLOAD_NAME, "res://addons/twitcher/communication/http_client_manager.gd");
 	print("Twitch Plugin loading ended")
 
@@ -26,7 +26,7 @@ func _exit_tree():
 	remove_import_plugin(gif_importer_native)
 	if is_magick_available():
 		remove_import_plugin(gif_importer_imagemagick)
-	remove_autoload_singleton(TWITCH_SERVICE_AUTOLOAD_NAME);
+	#remove_autoload_singleton(TWITCH_SERVICE_AUTOLOAD_NAME);
 	remove_autoload_singleton(HTTP_CLIENT_MANAGER_AUTOLOAD_NAME);
 
 func add_ui():

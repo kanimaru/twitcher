@@ -18,7 +18,7 @@ func _ready() -> void:
 	# twitch/auth/scopes/chat		< Add both Scopes chat_read, chat_edit
 
 	# Setup all of the library, connect to evensub, irc etc.
-	TwitchService.setup();
+	await TwitchService.setup();
 	# Listen to the message received of the chat
 	channel.message_received.connect(_on_chat_message);
 	# When the send button is pressed send the message
