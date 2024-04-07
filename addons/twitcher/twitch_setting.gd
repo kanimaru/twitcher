@@ -5,7 +5,7 @@ class_name TwitchSetting
 
 
 ## Uses the implicit auth flow see also: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow
-## @deprecated use AuthorizationCodeGrantFlow... Implicit is almost completly implemented just deactivated
+## @deprecated use AuthorizationCodeGrantFlow...
 const FLOW_IMPLICIT = "ImplicitGrantFlow";
 ## Uses the client credentials auth flow see also: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#client-credentials-grant-flow
 const FLOW_CLIENT_CREDENTIALS = "ClientCredentialsGrantFlow";
@@ -139,21 +139,6 @@ static var redirect_url: String:
 
 static var redirect_port: int:
 	get: return _get_redirect_port();
-
-static var _authorization_host: Property
-static var authorization_host: String:
-	get: return _authorization_host.get_val();
-	set(val): _authorization_host.set_val(val);
-
-static var _authorization_path: Property
-static var authorization_path: String:
-	get: return _authorization_path.get_val();
-	set(val): _authorization_path.set_val(val);
-
-static var _authorization_device_path: Property
-static var authorization_device_path: String:
-	get: return _authorization_device_path.get_val();
-	set(val): _authorization_device_path.set_val(val);
 
 static var _scopes: Dictionary = {}
 static var scopes: String:
@@ -309,9 +294,6 @@ static func setup() -> void:
 	_authorization_flow = Property.new("twitch/auth/authorization_flow", "AuthorizationCodeGrantFlow").as_select([FLOW_IMPLICIT, FLOW_CLIENT_CREDENTIALS, FLOW_AUTHORIZATION_CODE, FLOW_DEVICE_CODE_GRANT], false);
 	_client_id = Property.new("twitch/auth/client_id").as_str("Client ID you can find it in https://api.twitch.tv/").basic();
 	_client_secret = Property.new("twitch/auth/client_secret").as_password("Client Secret you can find it in https://api.twitch.tv/").basic();
-	_authorization_host = Property.new("twitch/auth/oauth2_authorize_host", "https://id.twitch.tv").as_str("OAuth authorization host");
-	_authorization_path = Property.new("twitch/auth/oauth2_authorize_path", "/oauth2/authorize").as_str("OAuth authorization URL to get codes and bearer's");
-	_authorization_device_path = Property.new("twitch/auth/oauth2_authorize_device_path", "/oauth2/device").as_str("Path to the device grant flow");
 	_redirect_url = Property.new("twitch/auth/redirect_url", "http://localhost:7170").as_str("Redirect URL that Twitch calls after a successful login").basic();
 	_force_verify = Property.new("twitch/auth/force_verify", "false").as_bool("Set to true to force the user to re-authorize your app’s access to their resources. The default is false.");
 	_setup_scopes();

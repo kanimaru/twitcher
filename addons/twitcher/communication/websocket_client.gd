@@ -31,7 +31,7 @@ func establish_connection() -> void:
 	if connecting: return;
 	connecting = true;
 	var wait_time = pow(2, tries);
-	log.i("Wait %s before connecting" % [wait_time]);
+	log.d("Wait %s before connecting" % [wait_time]);
 	await Engine.get_main_loop().create_timer(wait_time).timeout;
 	log.i("Connecting to %s" % connection_url);
 	var err = peer.connect_to_url(connection_url);
