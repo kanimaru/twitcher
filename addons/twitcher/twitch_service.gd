@@ -18,7 +18,6 @@ static var cheer_repository: TwitchCheerRepository;
 static var api: TwitchRestAPI
 
 static func _static_init() -> void:
-	if log != null: return;
 	# Setup Twitch setting before it is needed
 	TwitchSetting.setup();
 	log = TwitchLogger.new(TwitchSetting.LOGGER_NAME_SERVICE);
