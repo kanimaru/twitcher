@@ -4,9 +4,6 @@ extends RefCounted
 
 class_name TwitchService
 
-## Send when the Twitch API was succesfully initialized
-signal twitch_ready;
-
 static var log: TwitchLogger;
 static var auth: TwitchAuth;
 static var icon_loader: TwitchIconLoader;
