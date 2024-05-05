@@ -17,7 +17,6 @@ config/icon="res://documentation/icon.png"
 
 [autoload]
 
-TwitchService="*res://addons/twitcher/twitch_service.gd"
 HttpClientManager="*res://addons/twitcher/communication/http_client_manager.gd"
 
 [editor_plugins]
