@@ -23,7 +23,7 @@ func _get_resource_type() -> String:
 	return "SpriteFrames"
 
 func _get_priority() -> float:
-	return 0.0;
+	return 90.0;
 
 func _get_preset_count() -> int:
 	return Presets.size()
