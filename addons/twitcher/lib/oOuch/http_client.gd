@@ -75,7 +75,6 @@ func connect_to_host() -> void:
 func shutdown() -> void:
 	client.close();
 	Engine.get_main_loop().process_frame.disconnect(_poll);
-	free();
 
 ## Starts a request that will be handled as soon as the client gets free.
 ## Use HTTPClient.METHOD_* for the method.
