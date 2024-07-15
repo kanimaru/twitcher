@@ -202,6 +202,10 @@ func _send_messages() -> void:
 
 ## Sends join channel message
 func join_channel(channel_name : String) -> ChannelData:
+	if channel_name == "":
+		log.e("No channel is specified to join. The channel name can be set on the TwitchIrcChannel node.");
+		return;
+
 	var lower_channel = channel_name.to_lower();
 	if not channel_maps.has(channel_name) || not channel_maps[channel_name].joined:
 		chat_queue.append("JOIN #" + lower_channel);
