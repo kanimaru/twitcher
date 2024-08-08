@@ -41,7 +41,9 @@ func _load_tokens():
 
 func get_refresh_token() -> String: return _refresh_token;
 func get_access_token() -> String: return _access_token;
-func invalidate() -> void: _expire_date = 0;
+func invalidate() -> void: 
+	_expire_date = 0;
+	_refresh_token = "";
 func has_refresh_token() -> bool:
 	return _refresh_token != "";
 

@@ -24,7 +24,7 @@ signal token_changed(access_token: String);
 var auth_http_server: OAuthHTTPServer;
 var token_handler: OAuthTokenHandler;
 var login_in_process: bool;
-var _setting: Setting
+var _setting: OAuthSetting
 
 enum AuthorizationFlow {
 	AUTHORIZATION_CODE_FLOW,
@@ -34,86 +34,7 @@ enum AuthorizationFlow {
 	PASSWORD_FLOW
 }
 
-
-class Setting extends RefCounted:
-	## What is the redirect port
-	var redirect_url: String = "http://localhost:7170";
-	## Path where tokens can be get
-	var token_url: String;
-	## Path to the authorization endpoint
-	var authorization_url: String;
-	## Path to the device code flow URL.
-	var device_authorization_url: String
-	## Where should the tokens be cached
-	var cache_file: String = "res://auth.key";
-	## Key to encrypt the token cache
-	var encryption_secret: String;
-	## Client ID to authorize
-	var client_id: String;
-	## Client Secret to authorize (optional depending on flow)
-	var client_secret: String;
-	## Defines the authorization flow.
-	var authorization_flow: AuthorizationFlow;
-	## All requested scopes (either Array[String] or space separated string)
-	var scopes: Variant;
-	var well_known_setting: Dictionary;
-
-	var url_regex = RegEx.create_from_string("((https?://)?([^:/]+))(:([0-9]+))?(/.*)?");
-
-	func load_from_wellknown(wellknow_url: String) -> void:
-		var matches = url_regex.search(wellknow_url);
-		var url = matches.get_string(1);
-		var port = matches.get_string(5);
-		if port == "": port = -1
-		var path = matches.get_string(6);
-		var http_client = OAuthHTTPClient.new(url, port);
-		var request = http_client.request(path, HTTPClient.METHOD_GET, OAuthHTTPClient.HEADERS, "");
-		var response = await http_client.wait_for_request(request) as OAuthHTTPClient.ResponseData;
-		var json = JSON.parse_string(response.response_data.get_string_from_utf8());
-		token_url = json["token_endpoint"];
-		authorization_url = json["authorization_endpoint"];
-		device_authorization_url = json.get("device_authorization_endpoint", "");
-		well_known_setting = json;
-	func get_token_host() -> String:
-		var matches = url_regex.search(token_url);
-		if matches == null: return "";
-		return matches.get_string(1);
-	func get_token_path() -> String:
-		var matches = url_regex.search(token_url);
-		if matches == null: return "";
-		return matches.get_string(6);
-	func get_authorization_host() -> String:
-		var matches = url_regex.search(authorization_url);
-		if matches == null: return "";
-		return matches.get_string(1);
-	func get_authorization_path() -> String:
-		var matches = url_regex.search(authorization_url);
-		if matches == null: return "";
-		return matches.get_string(6);
-	func get_device_authorization_host() -> String:
-		var matches = url_regex.search(device_authorization_url);
-		if matches == null: return "";
-		return matches.get_string(1);
-	func get_device_authorization_path() -> String:
-		var matches = url_regex.search(device_authorization_url);
-		if matches == null: return "";
-		return matches.get_string(6);
-	func get_redirect_path() -> String:
-		var matches = url_regex.search(redirect_url);
-		if matches == null: return "";
-		var path = matches.get_string(6);
-		return path if path != "" else "/";
-	func get_redirect_port() -> int:
-		var matches = url_regex.search(redirect_url);
-		if matches == null: return 7170;
-		var port = matches.get_string(5);
-		if port == "": return 7170; # Default cause nothing was defined
-		return int(port);
-	func get_scopes():
-		if scopes is String: return scopes;
-		else: return " ".join(scopes);
-
-func _init(setting: Setting) -> void:
+func _init(setting: OAuthSetting) -> void:
 	_setting = setting;
 	auth_http_server = OAuthHTTPServer.new(setting.get_redirect_port());
 	token_handler = OAuthTokenHandler.new(setting);

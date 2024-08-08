@@ -27,9 +27,9 @@ var _http_client : OAuthHTTPClient;
 ## Is currently requesting tokens
 var _requesting_token: bool = false;
 
-var _setting: OAuth.Setting;
+var _setting: OAuthSetting;
 
-func _init(setting: OAuth.Setting) -> void:
+func _init(setting: OAuthSetting) -> void:
 	_setting = setting;
 	_tokens = OAuthToken.new(setting.cache_file, setting.encryption_secret)
 	_http_client = OAuthHTTPClient.new(setting.get_token_host());
