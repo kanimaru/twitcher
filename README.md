@@ -12,6 +12,7 @@ The library can also be used to support Twitch game integration.
   - ...
 - Easy integration of chat support via Node `TwitchIrcChannel`
 - Easy integration of event sub via Node `TwitchEventListener`
+- Easy integration of IRC commands via Node `TwitchCommand`
 - Complete REST Api (provided by [https://twitch-api-swagger.surge.sh/](https://twitch-api-swagger.surge.sh/)) with data classes for type safety
 - Cheer Emote parsing
 - Command Handler for easy implementing custom commands
@@ -128,13 +129,6 @@ but has the same limitations.
 Changed the library to use SpriteFrames instead of AnimatedTextures
 
 Inspired by: [GIFT](https://github.com/issork/gift/)
-
-** Release Notes **
-- Fixed bugs with Twitch returning png as gifs...
-- Changed naming of Command -> TwitchCommand and Generator to TwitchGenerator to fix possible clashes
-- Adding optional variant of rest methods
-- Adding response headers into response object
-- Fixed bug where twitch is not sending a keepalive_timeout_second parameter for websocket sessions
 
 **Known Bugs**
 

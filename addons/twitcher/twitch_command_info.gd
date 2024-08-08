@@ -4,14 +4,14 @@ extends RefCounted
 class_name TwitchCommandInfo
 
 var command_name : String
-var command : TwitchCommand
+var command : TwitchCommandData
 var message : String
 var channel_name : String
 var username : String
 var tags : Variant
 
 func _init(cmd_name: String,
-	cmd: TwitchCommand,
+	cmd: TwitchCommandData,
 	msg: String,
 	channel: String,
 	user: String,
@@ -21,4 +21,3 @@ func _init(cmd_name: String,
 	channel_name = channel;
 	username = user;
 	tags = tag;
-
