@@ -42,8 +42,8 @@ func refresh_token() -> void:
 	await _is_initialized();
 	auth.refresh_token();
 
-func _get_setting() -> OAuth.Setting:
-	var setting = OAuth.Setting.new();
+func _get_setting() -> OAuthSetting:
+	var setting = OAuthSetting.new();
 	await setting.load_from_wellknown("https://id.twitch.tv/oauth2/.well-known/openid-configuration")
 	setting.device_authorization_url = "https://id.twitch.tv/oauth2/device";
 	setting.authorization_flow = _get_flow();

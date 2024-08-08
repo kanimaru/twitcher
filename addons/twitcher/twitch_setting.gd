@@ -127,10 +127,16 @@ static var client_id: String:
 	get: return _client_id.get_val();
 	set(val): _client_id.set_val(val);
 
-static var _client_secret: Property
 static var client_secret: String:
-	get: return _client_secret.get_val();
-	set(val): _client_secret.set_val(val);
+	get:
+		var secret_file = ConfigFile.new()
+		secret_file.load_encrypted_pass(secret_storage, client_id)
+		return secret_file.get_value("auth", "secret")
+	set(val):
+		var secret_file = ConfigFile.new()
+		secret_file.load_encrypted_pass(secret_storage, client_id)
+		secret_file.set_value("auth", "secret", val)
+		secret_file.save_encrypted_pass(secret_storage, client_id)
 
 static var _redirect_url: Property
 static var redirect_url: String:
@@ -141,7 +147,7 @@ static var redirect_port: int:
 	get: return _get_redirect_port();
 
 static var _scopes: Dictionary = {}
-static var scopes: String:
+static var scopes: Array[String]:
 	get: return get_scopes()
 
 static var _force_verify: Property
@@ -177,6 +183,17 @@ static var _auth_cache: Property
 static var auth_cache: String:
 	get: return _auth_cache.get_val();
 	set(val): _auth_cache.set_val(val);
+
+static var _secret_storage: Property
+static var secret_storage: String:
+	get: return _secret_storage.get_val();
+	set(val):
+		if FileAccess.file_exists(secret_storage):
+			var content = FileAccess.get_file_as_bytes(secret_storage)
+			var file = FileAccess.open(val, FileAccess.WRITE)
+			file.store_string(content)
+			DirAccess.remove_absolute(secret_storage)
+		_secret_storage.set_val(val);
 
 static var _token_host: Property
 static var token_host: String:
@@ -288,18 +305,28 @@ static var _log_enabled: Property;
 static var log_enabled: Array[String]:
 	get: return get_log_enabled()
 
+static func _migrate_settings() -> void:
+	if ProjectSettings.has_setting("twitch/auth/client_secret"):
+		# Read the old secret and use the setter to write to the new file within user:// or specified folder see twitch/auth/api/secret_file_storage
+		var secret = ProjectSettings.get_setting("twitch/auth/client_secret");
+		client_secret = secret
+		ProjectSettings.set_setting("twitch/auth/client_secret", null)
+
 static func setup() -> void:
+	_migrate_settings()
+
 	# Auth
 	_broadcaster_id = Property.new("twitch/auth/broadcaster_id").as_str("Broadcaster ID of youself").basic();
 	_authorization_flow = Property.new("twitch/auth/authorization_flow", "AuthorizationCodeGrantFlow").as_select([FLOW_IMPLICIT, FLOW_CLIENT_CREDENTIALS, FLOW_AUTHORIZATION_CODE, FLOW_DEVICE_CODE_GRANT], false);
 	_client_id = Property.new("twitch/auth/client_id").as_str("Client ID you can find it in https://api.twitch.tv/").basic();
-	_client_secret = Property.new("twitch/auth/client_secret").as_password("Client Secret you can find it in https://api.twitch.tv/").basic();
+	Property.new("twitch/auth/client_secret_deprecated", "Setting moved to its own tab for security reasons").basic();
 	_redirect_url = Property.new("twitch/auth/redirect_url", "http://localhost:7170").as_str("Redirect URL that Twitch calls after a successful login").basic();
 	_force_verify = Property.new("twitch/auth/force_verify", "false").as_bool("Set to true to force the user to re-authorize your app’s access to their resources. The default is false.");
 	_setup_scopes();
 	_setup_subscriptions();
 
 	_auth_cache = Property.new("twitch/auth/api/auth_file_cache", "user://auth.conf").as_global_save();
+	_secret_storage = Property.new("twitch/auth/api/secret_file_storage", "user://secrets.conf").as_global_save();
 	_token_host = Property.new("twitch/auth/api/token_host", "https://id.twitch.tv").as_str();
 	_token_endpoint = Property.new("twitch/auth/api/token_endpoint", "/oauth2/token").as_str();
 
@@ -378,9 +405,9 @@ static func get_image_transformer() -> TwitchImageTransformer:
 	return transformer;
 
 ## Converts the categoriezed bitset back to the strings
-static func get_scopes() -> String:
+static func get_scopes() -> Array[String]:
 	var grouped_scopes = TwitchScopes.get_grouped_scopes();
-	var result = [];
+	var result: Array[String] = [];
 	for category_name: String in grouped_scopes:
 		var scope_property: Property = _scopes[category_name];
 		var bitset = scope_property.get_val();
@@ -389,7 +416,7 @@ static func get_scopes() -> String:
 		for scope: TwitchScopes.Scope in scopes:
 			if bitset & scope.bit_value == scope.bit_value:
 				result.append(scope.value)
-	return " ".join(result);
+	return result
 
 static func _setup_scopes():
 	var grouped_scopes: Dictionary = TwitchScopes.get_grouped_scopes();

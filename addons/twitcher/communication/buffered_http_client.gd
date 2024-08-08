@@ -256,4 +256,3 @@ func _handle_response() -> void:
 			current_response_data += chunk;
 	else:
 		l.e("No Response? Shouldn't happen.");
-

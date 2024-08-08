@@ -4,6 +4,7 @@ extends RefCounted
 
 class_name TwitchService
 
+static var initialized: bool;
 static var log: TwitchLogger;
 static var auth: TwitchAuth;
 static var icon_loader: TwitchIconLoader;
@@ -30,6 +31,8 @@ static func _static_init() -> void:
 ## Call this to setup the complete Twitch integration whenever you need.
 ## It boots everything up this Lib supports.
 static func setup() -> void:
+	if initialized: return
+	initialized = true;
 	log.i("Start")
 	await auth.ensure_authentication();
 	await _init_chat();
@@ -38,6 +41,7 @@ static func setup() -> void:
 		eventsub_debug.connect_to_eventsub(TwitchSetting.eventsub_test_server_url);
 	_init_cheermotes();
 	log.i("Initialized and ready")
+
 
 #
 # Convinient Methods

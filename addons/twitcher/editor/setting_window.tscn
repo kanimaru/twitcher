@@ -1,0 +1,63 @@
+[gd_scene load_steps=3 format=3 uid="uid://clgpjiy6dtub8"]
+
+[ext_resource type="Script" path="res://addons/twitcher/editor/setting_window.gd" id="1_b361f"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_71vpn"]
+font_size = 24
+
+[node name="Twitcher Settings" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_b361f")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="AuthTitle" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Authorization"
+label_settings = SubResource("LabelSettings_71vpn")
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="ClientIdTitle" type="Label" parent="VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Client ID: "
+
+[node name="ClientIdInput" type="LineEdit" parent="VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ClientSecretTitle" type="Label" parent="VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Client Secret: "
+
+[node name="ClientSecretInput" type="LineEdit" parent="VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+secret = true
+
+[node name="FlowTitle" type="Label" parent="VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Auth Flow:"
+
+[node name="FlowInput" type="OptionButton" parent="VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 4
+popup/item_0/text = "Overlay (Auth Code Flow)"
+popup/item_1/text = "Game (Device Code)"
+popup/item_1/id = 1
+popup/item_2/text = "Game (Implicit Flow / not recommended)"
+popup/item_2/id = 2
+popup/item_3/text = "Userless Authentication (Client Credentials)"
+popup/item_3/id = 3
