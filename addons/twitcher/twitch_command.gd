@@ -1,3 +1,4 @@
+@icon("./assets/command-icon.svg")
 extends Node
 
 class_name TwitchCommand

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   viewBox="0 0 16 16"
+   id="svg4"
+   sodipodi:docname="command-icon.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="36.3125"
+     inkscape:cx="7.1325301"
+     inkscape:cy="14.196213"
+     inkscape:window-width="3440"
+     inkscape:window-height="1369"
+     inkscape:window-x="-8"
+     inkscape:window-y="1432"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     d="M 8,1.6328689 10,4.1855422 8,10.374005 6,4.1855422 Z"
+     fill="none"
+     stroke="#e0e0e0"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-miterlimit="10"
+     stroke-width="1.5"
+     id="path1"
+     sodipodi:nodetypes="ccccc"
+     style="fill:#e0e0e0;fill-opacity:1" />
+  <circle
+     style="fill:#e0e0e0;fill-opacity:1"
+     id="path2"
+     cx="8"
+     cy="13.493976"
+     r="1.5697074" />
+</svg>
