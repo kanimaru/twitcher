@@ -130,7 +130,8 @@ static var client_id: String:
 static var client_secret: String:
 	get:
 		var secret_file = ConfigFile.new()
-		secret_file.load_encrypted_pass(secret_storage, client_id)
+		if secret_file.load_encrypted_pass(secret_storage, client_id) != OK:
+			return ""
 		return secret_file.get_value("auth", "secret")
 	set(val):
 		var secret_file = ConfigFile.new()
