@@ -1,9 +1,16 @@
 @tool
 extends Control
 
+const Token = preload("res://addons/twitcher/lib/oOuch/token.gd")
+
 @onready var client_id_input: LineEdit = %ClientIdInput
 @onready var client_secret_input: LineEdit = %ClientSecretInput
 @onready var flow_input: OptionButton = %FlowInput
+@onready var token_valid_value: Label = %TokenValidValue
+@onready var refresh_token_value: CheckBox = %RefreshTokenValue
+@onready var token_scope_value: TextEdit = %TokenScopeValue
+@onready var reload_token: Button = %ReloadToken
+@onready var remove_token: Button = %RemoveToken
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -15,6 +22,35 @@ func _ready() -> void:
 	client_id_input.text = TwitchSetting.client_id
 	client_secret_input.text = TwitchSetting.client_secret
 	_select_flow(TwitchSetting.authorization_flow)
+	_on_reload_token()
+	reload_token.pressed.connect(_on_reload_token)
+	remove_token.pressed.connect(_on_remove_token)
+
+func _on_reload_token() -> void:
+	# Possiblity wrong when someone changes the auth settings locally
+	var token = Token.new(TwitchSetting.auth_cache, TwitchSetting.client_secret)
+	_show_token_info(token)
+
+func _on_remove_token() -> void:
+	DirAccess.remove_absolute(TwitchSetting.auth_cache)
+	OS.alert("The token at (%s) was removed on the next start the token has to be fetched again." % TwitchSetting.auth_cache, "Succesfully removed token")
+	_on_reload_token()
+
+func _show_token_info(token: Token) -> void:
+	token_valid_value.text = token.get_expiration()
+	if token.is_token_valid():
+		token_valid_value.add_theme_color_override(&"text", Color.GREEN)
+	else:
+		token_valid_value.add_theme_color_override(&"text", Color.RED)
+
+	if token.has_refresh_token():
+		refresh_token_value.text = "Available"
+		refresh_token_value.button_pressed = true
+	else:
+		refresh_token_value.text = "Not Available"
+		refresh_token_value.button_pressed = false
+
+	token_scope_value.text = ",\n".join(token.get_scopes())
 
 func _on_client_id_changed(new_text: String) -> void:
 	TwitchSetting.client_id = new_text

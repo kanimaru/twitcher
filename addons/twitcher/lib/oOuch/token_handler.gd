@@ -131,21 +131,35 @@ func _handle_token_request(request: OAuthHTTPClient.RequestData) -> bool:
 	return false;
 
 func _update_tokens_from_response(result: Dictionary):
-	update_tokens(result["access_token"], result.get("refresh_token", ""), result.get("expires_in", -1));
+	var scopes: Array[String] = []
+	for scope in result.get("scope", []): scopes.append(scope)
+
+	update_tokens(result["access_token"], \
+		result.get("refresh_token", ""), \
+		result.get("expires_in", -1), \
+		scopes);
 
 ## Updates the token. Result is the response data of an token request.
-func update_tokens(access_token: String, refresh_token: String = "", expires_in: int = -1):
-	_tokens.update_values(access_token, refresh_token, expires_in);
+func update_tokens(access_token: String, refresh_token: String = "", expires_in: int = -1, scopes: Array[String] = []):
+	_tokens.update_values(access_token, refresh_token, expires_in, scopes);
 	token_resolved.emit(_tokens);
 	logInfo("Token received");
+
+func get_token_expiration() -> String:
+	return Time.get_datetime_string_from_unix_time(_tokens._expire_date)
 
 ## Checks if the token are valud
 func is_token_valid() -> bool:
 	var current_time = Time.get_datetime_string_from_system(true);
-	var expire_data = Time.get_datetime_string_from_unix_time(_tokens._expire_date);
+	var expire_data = get_token_expiration();
 	logDebug("Check expiration: " + current_time + " < " + expire_data)
 	return _tokens.is_token_valid();
+
 func get_access_token() -> String: return _tokens.get_access_token();
+
+func has_refresh_token() -> bool: return _tokens.has_refresh_token();
+
+func get_scopes() -> PackedStringArray: return _tokens.get_scopes()
 
 # === LOGGER ===
 static var logger: Dictionary = {};
