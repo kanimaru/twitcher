@@ -15,7 +15,8 @@ var is_initialzied: bool;
 
 func _init() -> void:
 	OAuth.set_logger(log.e, log.i, log.d);
-	auth = OAuth.new(await _get_setting());
+	var settings = await _get_setting()
+	auth = OAuth.new(settings, TwitchTokenHandler.new(settings));
 	is_initialzied = true;
 	initialized.emit();
 

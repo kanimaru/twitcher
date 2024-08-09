@@ -38,6 +38,7 @@ func _init(setting: OAuthSetting) -> void:
 ## Checks if tokens runs up and starts refreshing it. (called often hold footprint small)
 func _check_token_refresh() -> void:
 	if _requesting_token: return;
+
 	if !_tokens.is_token_valid() && _tokens.has_refresh_token():
 		logInfo("Token needs refresh");
 		refresh_tokens();
@@ -108,10 +109,13 @@ func refresh_tokens() -> void:
 	if _requesting_token: return;
 	_requesting_token = true;
 	logInfo("Refresh token")
-	var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [_setting.client_id, _setting.client_secret, _tokens.get_refresh_token()];
-	var request = _http_client.request(_setting.get_token_path(), HTTPClient.METHOD_POST, HEADERS, request_body);
-	if await _handle_token_request(request):
-		logInfo("Token got refreshed")
+	if _tokens.has_refresh_token():
+		var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [_setting.client_id, _setting.client_secret, _tokens.get_refresh_token()];
+		var request = _http_client.request(_setting.get_token_path(), HTTPClient.METHOD_POST, HEADERS, request_body);
+		if await _handle_token_request(request):
+			logInfo("Token got refreshed")
+		else:
+			unauthenticated.emit();
 	else:
 		unauthenticated.emit();
 	_requesting_token = false;

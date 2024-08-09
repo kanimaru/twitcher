@@ -22,9 +22,10 @@ signal device_code_requested(device_code: OAuthDeviceCodeResponse);
 signal token_changed(access_token: String);
 
 var auth_http_server: OAuthHTTPServer;
-var token_handler: OAuthTokenHandler;
+var _token_handler: OAuthTokenHandler;
 var login_in_process: bool;
-var _setting: OAuthSetting
+var _setting: OAuthSetting;
+var _last_login_attempt: int;
 
 enum AuthorizationFlow {
 	AUTHORIZATION_CODE_FLOW,
@@ -34,45 +35,50 @@ enum AuthorizationFlow {
 	PASSWORD_FLOW
 }
 
-func _init(setting: OAuthSetting) -> void:
+func _init(setting: OAuthSetting, token_handler: OAuthTokenHandler) -> void:
 	_setting = setting;
 	auth_http_server = OAuthHTTPServer.new(setting.get_redirect_port());
-	token_handler = OAuthTokenHandler.new(setting);
-	token_handler.unauthenticated.connect(login);
-	token_handler.token_resolved.connect(_on_token_resolved);
+	_token_handler = token_handler
+	_token_handler.unauthenticated.connect(login);
+	_token_handler.token_resolved.connect(_on_token_resolved);
 
 func _on_token_resolved(token: OAuthTokenHandler.OAuthToken) -> void:
 	token_changed.emit(token.get_access_token());
 
 ## Checks if the authentication is valid.
 func is_authenticated() -> bool:
-	return token_handler.is_token_valid();
+	return _token_handler.is_token_valid();
 
 ## Starts the token refresh process to rotate the tokens
 func refresh_token() -> void:
-	await token_handler.refresh_tokens();
+	await _token_handler.refresh_tokens();
 
 ## Checks if the authentication is done or requests a new authentication.
 ## Use this to ensure that the OAuth is initialized
 func ensure_authentication() -> void:
-	if not token_handler.is_token_valid():
+	if not _token_handler.is_token_valid():
 		logInfo("Token is invalid.")
 		await login();
 	logDebug("Login is done.")
 
 ## Gets the current token as soon as it is available
 func get_token() -> String:
-	if token_handler.get_access_token() == "":
-		await token_handler.token_resolved;
-	return token_handler.get_access_token();
+	if _token_handler.get_access_token() == "":
+		await _token_handler.token_resolved;
+	return _token_handler.get_access_token();
 
 ## Depending on the authorization_flow it gets resolves the token via the different
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
 func login() -> void:
+	if Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
+		print("[Twitcher OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
+		await Engine.get_main_loop().create_timer(60).timeout
+
+	_last_login_attempt = Time.get_ticks_msec()
 	if login_in_process:
 		logDebug("Another process tries already to login. Abort");
-		await token_handler.token_resolved;
+		await _token_handler.token_resolved;
 		return;
 
 	login_in_process = true;
@@ -81,7 +87,7 @@ func login() -> void:
 		AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
 			await _start_login_process("code");
 		AuthorizationFlow.CLIENT_CREDENTIALS:
-			await token_handler.request_token("client_credentials");
+			await _token_handler.request_token("client_credentials");
 		AuthorizationFlow.IMPLICIT_FLOW:
 			await _start_login_process("token");
 		AuthorizationFlow.DEVICE_CODE_FLOW:
@@ -110,11 +116,11 @@ func _start_login_process(response_type: String):
 	logDebug("Waiting for user to login.")
 	if response_type == "code":
 		var auth_code = await _auth_succeed;
-		token_handler.request_token("authorization_code", auth_code);
-		await token_handler.token_resolved;
+		_token_handler.request_token("authorization_code", auth_code);
+		await _token_handler.token_resolved;
 		auth_http_server.request_received.disconnect(_process_code_request.bind(auth_http_server));
 	elif response_type == "token":
-		await token_handler.token_resolved;
+		await _token_handler.token_resolved;
 		auth_http_server.request_received.disconnect(_process_implicit_request.bind(auth_http_server));
 	logInfo("Request is done stop")
 	auth_http_server.stop();
@@ -131,7 +137,7 @@ func _start_device_login_process():
 	# he want to open the browser manually. Also use print not the logger so that the information
 	# is sent always.
 	print("Visit %s and enter the code %s for authorization." % [device_code_response.verification_uri, device_code_response.user_code])
-	await token_handler.request_device_token(device_code_response, scopes);
+	await _token_handler.request_device_token(device_code_response, scopes);
 
 func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 	logInfo("Start device code flow")
@@ -187,7 +193,7 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 			return  # Not a valid request
 		var json_body = parts[1];
 		var token_request = JSON.parse_string(json_body);
-		token_handler.update_tokens(token_request["access_token"]);
+		_token_handler.update_tokens(token_request["access_token"]);
 		logInfo("Received Access Token update it")
 		server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success!</body></html>".to_utf8_buffer());
 
@@ -236,7 +242,7 @@ func _handle_error(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, quer
 #endregion
 
 func get_all_token() -> OAuthTokenHandler.OAuthToken:
-	return token_handler._tokens;
+	return _token_handler._tokens;
 
 ## Parses a query string and returns a dictionary with the parameters.
 static func parse_query(query: String) -> Dictionary:
