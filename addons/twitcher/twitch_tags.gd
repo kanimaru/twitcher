@@ -86,6 +86,7 @@ class BaseTags:
 
 		var tags = tag_string.split(";");
 		for tag in tags:
+			if tag == "": continue
 			var tag_value = tag.split("=");
 			var property_name = tag_value[0].replace("-", "_");
 			if _has_property(output, property_name):
