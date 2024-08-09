@@ -11,6 +11,8 @@ const Token = preload("res://addons/twitcher/lib/oOuch/token.gd")
 @onready var token_scope_value: TextEdit = %TokenScopeValue
 @onready var reload_token: Button = %ReloadToken
 @onready var remove_token: Button = %RemoveToken
+@onready var clear_emotes: Button = %ClearEmotes
+@onready var clear_badges: Button = %ClearBadges
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -25,6 +27,8 @@ func _ready() -> void:
 	_on_reload_token()
 	reload_token.pressed.connect(_on_reload_token)
 	remove_token.pressed.connect(_on_remove_token)
+	clear_badges.pressed.connect(_on_clear_badges)
+	clear_emotes.pressed.connect(_on_clear_emotes)
 
 func _on_reload_token() -> void:
 	# Possiblity wrong when someone changes the auth settings locally
@@ -71,3 +75,15 @@ func _select_flow(selected_flow: String) -> void:
 		TwitchSetting.FLOW_DEVICE_CODE_GRANT: flow_input.select(1)
 		TwitchSetting.FLOW_IMPLICIT: flow_input.select(2)
 		TwitchSetting.FLOW_CLIENT_CREDENTIALS: flow_input.select(3)
+
+func _on_clear_badges() -> void:
+	var badge_dir = DirAccess.open(TwitchSetting.cache_badge);
+	for file in badge_dir.get_files():
+		if file.ends_with(".res"):
+			badge_dir.remove(file);
+
+func _on_clear_emotes() -> void:
+	var emote_dir = DirAccess.open(TwitchSetting.cache_emote);
+	for file in emote_dir.get_files():
+		if file.ends_with(".res"):
+			emote_dir.remove(file);

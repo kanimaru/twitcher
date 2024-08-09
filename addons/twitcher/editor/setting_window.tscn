@@ -110,3 +110,19 @@ text = "Reload Token"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Remove Token"
+
+[node name="CacheTitle" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Cache"
+label_settings = SubResource("LabelSettings_71vpn")
+horizontal_alignment = 1
+
+[node name="ClearEmotes" type="Button" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Clear Emotes (deletes the content of the cache folder)"
+
+[node name="ClearBadges" type="Button" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Clear Badges (deletes the content of the cache folder)"
