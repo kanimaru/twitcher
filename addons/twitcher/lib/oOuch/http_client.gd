@@ -82,7 +82,7 @@ func request(path: String, method: int, headers: Dictionary, body: String) -> Re
 	req.method = method;
 	req.body = body;
 	req.headers = headers;
-	req.client = self;
+	req.client = client;
 	requests.append(req);
 	request_added.emit(req);
 	return req;
