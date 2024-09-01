@@ -7,7 +7,6 @@ const OAuthHTTPServer = preload("./http_server.gd");
 const OAuthHTTPClient = preload("./http_client.gd");
 const OAuthTokenHandler = preload("./token_handler.gd");
 const OAuthDeviceCodeResponse = preload("./device_code_response.gd");
-var query_parser = RegEx.create_from_string("GET (.*?/?)\\??(.*?)? HTTP/1\\.1.*?")
 
 ## Called when the authorization for AuthCodeFlow is complete to handle the auth code
 signal _auth_succeed(code: String);
@@ -21,9 +20,11 @@ signal device_code_requested(device_code: OAuthDeviceCodeResponse);
 ## Called when the token has changed
 signal token_changed(access_token: String);
 
-var auth_http_server: OAuthHTTPServer;
-var _token_handler: OAuthTokenHandler;
 var login_in_process: bool;
+
+var _query_parser = RegEx.create_from_string("GET (.*?/?)\\??(.*?)? HTTP/1\\.1.*?")
+var _auth_http_server: OAuthHTTPServer;
+var _token_handler: OAuthTokenHandler;
 var _setting: OAuthSetting;
 var _last_login_attempt: int;
 
@@ -37,10 +38,13 @@ enum AuthorizationFlow {
 
 func _init(setting: OAuthSetting, token_handler: OAuthTokenHandler) -> void:
 	_setting = setting;
-	auth_http_server = OAuthHTTPServer.new(setting.get_redirect_port());
-	_token_handler = token_handler
-	_token_handler.unauthenticated.connect(login);
+	_auth_http_server = OAuthHTTPServer.new(setting.get_redirect_port());
+	_token_handler = token_handler;
+	_token_handler.unauthenticated.connect(_on_unauthenticated);
 	_token_handler.token_resolved.connect(_on_token_resolved);
+
+func _on_unauthenticated() -> void:
+	login()
 
 func _on_token_resolved(token: OAuthTokenHandler.OAuthToken) -> void:
 	token_changed.emit(token.get_access_token());
@@ -57,9 +61,9 @@ func refresh_token() -> void:
 ## Use this to ensure that the OAuth is initialized
 func ensure_authentication() -> void:
 	if not _token_handler.is_token_valid():
-		logInfo("Token is invalid.")
+		logInfo("Token is invalid.");
 		await login();
-	logDebug("Login is done.")
+	logDebug("Login is done.");
 
 ## Gets the current token as soon as it is available
 func get_token() -> String:
@@ -71,9 +75,9 @@ func get_token() -> String:
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
 func login() -> void:
-	if Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
-		print("[Twitcher OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
-		await Engine.get_main_loop().create_timer(60).timeout
+	if _last_login_attempt != 0 && Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
+		print("[OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
+		await Engine.get_main_loop().create_timer(60).timeout;
 
 	_last_login_attempt = Time.get_ticks_msec()
 	if login_in_process:
@@ -92,15 +96,18 @@ func login() -> void:
 			await _start_login_process("token");
 		AuthorizationFlow.DEVICE_CODE_FLOW:
 			await _start_device_login_process();
+		AuthorizationFlow.PASSWORD_FLOW:
+			logInfo("Password flow is not yet supported");
+			pass
 	login_in_process = false;
 
 func _start_login_process(response_type: String):
-	auth_http_server.start();
+	_auth_http_server.start();
 
 	if response_type == "code":
-		auth_http_server.request_received.connect(_process_code_request.bind(auth_http_server));
+		_auth_http_server.request_received.connect(_process_code_request.bind(_auth_http_server));
 	elif response_type == "token":
-		auth_http_server.request_received.connect(_process_implicit_request.bind(auth_http_server));
+		_auth_http_server.request_received.connect(_process_implicit_request.bind(_auth_http_server));
 
 	var query_param = "&".join([
 			"response_type=%s" % response_type.uri_encode(),
@@ -118,12 +125,12 @@ func _start_login_process(response_type: String):
 		var auth_code = await _auth_succeed;
 		_token_handler.request_token("authorization_code", auth_code);
 		await _token_handler.token_resolved;
-		auth_http_server.request_received.disconnect(_process_code_request.bind(auth_http_server));
+		_auth_http_server.request_received.disconnect(_process_code_request.bind(_auth_http_server));
 	elif response_type == "token":
 		await _token_handler.token_resolved;
-		auth_http_server.request_received.disconnect(_process_implicit_request.bind(auth_http_server));
+		_auth_http_server.request_received.disconnect(_process_implicit_request.bind(_auth_http_server));
 	logInfo("Request is done stop")
-	auth_http_server.stop();
+	_auth_http_server.stop();
 
 #region DeviceCodeFlow
 
@@ -171,7 +178,7 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 	var first_linebreak = request.find("\n");
 	var first_line = request.substr(0, first_linebreak);
 	if first_line.begins_with("GET"):
-		var matcher = query_parser.search(first_line);
+		var matcher = _query_parser.search(first_line);
 		if matcher == null:
 			logDebug("Response from auth server was not right expected redirect url. It's ok browser asked probably for favicon etc.")
 			return;
@@ -209,7 +216,7 @@ func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServ
 
 	# Firstline contains request path and parameters
 	var first_line = request.substr(0, request.find("\n"));
-	var matcher = query_parser.search(first_line);
+	var matcher = _query_parser.search(first_line);
 	if matcher == null:
 		logDebug("Response from auth server was not right expected query params. It's ok browser asked probably for favicon etc.")
 		client.peer.disconnect_from_host();
