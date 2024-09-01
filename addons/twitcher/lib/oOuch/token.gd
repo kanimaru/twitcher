@@ -1,15 +1,17 @@
-extends RefCounted
+extends Resource
+
+class_name OOuchToken
 
 ## Wrapper for the tokens. Hint never store the token value as string in
 ## your code to reduce the chance to dox the tokens always use the getter.
 
+@export var _scopes: PackedStringArray = [];
+@export var _expire_date: int;
+@export var _cache_file: String;
+
 var _config_file: ConfigFile = ConfigFile.new();
 var _access_token: String = "";
 var _refresh_token: String = "";
-var _scopes: PackedStringArray = [];
-var _expire_date: int;
-
-var _cache_file: String;
 var _encryption_secret: String;
 
 func _init(cache_file: String, encryption_secret: String) -> void:
