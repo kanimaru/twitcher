@@ -6,13 +6,27 @@ extends RefCounted
 class_name TwitchSendChatMessageBody
 
 ## The ID of the broadcaster whose chat room the message will be sent to.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The ID of the user sending the message. This ID must match the user ID in the user access token.
-var sender_id: String;
+var sender_id: String:
+	set(val):
+		sender_id = val;
+		changed_data["sender_id"] = sender_id;
 ## The message to send. The message is limited to a maximum of 500 characters. Chat messages can also include emoticons. To include emoticons, use the name of the emote. The names are case sensitive. Don’t include colons around the name (e.g., :bleedPurple:). If Twitch recognizes the name, Twitch converts the name to the emote before writing the chat message to the chat room
-var message: String;
+var message: String:
+	set(val):
+		message = val;
+		changed_data["message"] = message;
 ## The ID of the chat message being replied to.
-var reply_parent_message_id: String;
+var reply_parent_message_id: String:
+	set(val):
+		reply_parent_message_id = val;
+		changed_data["reply_parent_message_id"] = reply_parent_message_id;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchSendChatMessageBody:
 	var result = TwitchSendChatMessageBody.new();
@@ -27,12 +41,7 @@ static func from_json(d: Dictionary) -> TwitchSendChatMessageBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["sender_id"] = sender_id;
-	d["message"] = message;
-	d["reply_parent_message_id"] = reply_parent_message_id;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

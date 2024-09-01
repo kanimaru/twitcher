@@ -6,9 +6,20 @@ extends RefCounted
 class_name TwitchUpdateConduitShardsBody
 
 ## Conduit ID.
-var conduit_id: String;
+var conduit_id: String:
+	set(val):
+		conduit_id = val;
+		changed_data["conduit_id"] = conduit_id;
 ## List of shards to update.
-var shards: Array[Shards];
+var shards: Array[Shards]:
+	set(val):
+		shards = val;
+		changed_data["shards"] = [];
+		if shards != null:
+			for value in shards:
+				changed_data["shards"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUpdateConduitShardsBody:
 	var result = TwitchUpdateConduitShardsBody.new();
@@ -20,13 +31,7 @@ static func from_json(d: Dictionary) -> TwitchUpdateConduitShardsBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["conduit_id"] = conduit_id;
-	d["shards"] = [];
-	if shards != null:
-		for value in shards:
-			d["shards"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -34,14 +39,27 @@ func to_json() -> String:
 ## The transport details that you want Twitch to use when sending you notifications.
 class Transport extends RefCounted:
 	## The transport method. Possible values are:      * webhook * websocket
-	var method: String;
+	var method: String:
+		set(val):
+			method = val;
+			changed_data["method"] = method;
 	## The callback URL where the notifications are sent. The URL must use the HTTPS protocol and port 443\. See Processing an event.Specify this field only if method is set to webhook.NOTE: Redirects are not followed.
-	var callback: String;
+	var callback: String:
+		set(val):
+			callback = val;
+			changed_data["callback"] = callback;
 	## The secret used to verify the signature. The secret must be an ASCII string that’s a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see Verifying the event message.Specify this field only if method is set to webhook.
-	var secret: String;
+	var secret: String:
+		set(val):
+			secret = val;
+			changed_data["secret"] = secret;
 	## An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message.Specify this field only if method is set to websocket.
-	var session_id: String;
+	var session_id: String:
+		set(val):
+			session_id = val;
+			changed_data["session_id"] = session_id;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Transport:
 		var result = Transport.new();
@@ -56,13 +74,7 @@ class Transport extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["method"] = method;
-		d["callback"] = callback;
-		d["secret"] = secret;
-		d["session_id"] = session_id;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -70,10 +82,18 @@ class Transport extends RefCounted:
 ## 
 class Shards extends RefCounted:
 	## Shard ID.
-	var id: String;
+	var id: String:
+		set(val):
+			id = val;
+			changed_data["id"] = id;
 	## The transport details that you want Twitch to use when sending you notifications.
-	var transport: Transport;
+	var transport: Transport:
+		set(val):
+			transport = val;
+			if transport != null:
+				changed_data["transport"] = transport.to_dict();
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Shards:
 		var result = Shards.new();
@@ -84,12 +104,7 @@ class Shards extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["id"] = id;
-		if transport != null:
-			d["transport"] = transport.to_dict();
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

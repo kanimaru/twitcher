@@ -6,13 +6,27 @@ extends RefCounted
 class_name TwitchStreamMarkerCreated
 
 ## An ID that identifies this marker.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The UTC date and time (in RFC3339 format) of when the user created the marker.
-var created_at: Variant;
+var created_at: Variant:
+	set(val):
+		created_at = val;
+		changed_data["created_at"] = created_at;
 ## The relative offset (in seconds) of the marker from the beginning of the stream.
-var position_seconds: int;
+var position_seconds: int:
+	set(val):
+		position_seconds = val;
+		changed_data["position_seconds"] = position_seconds;
 ## A description that the user gave the marker to help them remember why they marked the location.
-var description: String;
+var description: String:
+	set(val):
+		description = val;
+		changed_data["description"] = description;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchStreamMarkerCreated:
 	var result = TwitchStreamMarkerCreated.new();
@@ -27,12 +41,7 @@ static func from_json(d: Dictionary) -> TwitchStreamMarkerCreated:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["created_at"] = created_at;
-	d["position_seconds"] = position_seconds;
-	d["description"] = description;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

@@ -6,9 +6,19 @@ extends RefCounted
 class_name TwitchCheermoteImages
 
 ## No description available
-var light: TwitchCheermoteImageTheme;
+var light: TwitchCheermoteImageTheme:
+	set(val):
+		light = val;
+		if light != null:
+			changed_data["light"] = light.to_dict();
 ## No description available
-var dark: TwitchCheermoteImageTheme;
+var dark: TwitchCheermoteImageTheme:
+	set(val):
+		dark = val;
+		if dark != null:
+			changed_data["dark"] = dark.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCheermoteImages:
 	var result = TwitchCheermoteImages.new();
@@ -19,12 +29,7 @@ static func from_json(d: Dictionary) -> TwitchCheermoteImages:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	if light != null:
-		d["light"] = light.to_dict();
-	if dark != null:
-		d["dark"] = dark.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

@@ -6,51 +6,133 @@ extends RefCounted
 class_name TwitchExtension
 
 ## The name of the user or organization that owns the extension.
-var author_name: String;
+var author_name: String:
+	set(val):
+		author_name = val;
+		changed_data["author_name"] = author_name;
 ## A Boolean value that determines whether the extension has features that use Bits. Is **true** if the extension has features that use Bits.
-var bits_enabled: bool;
+var bits_enabled: bool:
+	set(val):
+		bits_enabled = val;
+		changed_data["bits_enabled"] = bits_enabled;
 ## A Boolean value that determines whether a user can install the extension on their channel. Is **true** if a user can install the extension.      Typically, this is set to **false** if the extension is currently in testing mode and requires users to be allowlisted (the allowlist is configured on Twitch’s [developer site](https://dev.twitch.tv/console/extensions) under the **Extensions** \-> **Extension** \-> **Version** \-> **Access**).
-var can_install: bool;
+var can_install: bool:
+	set(val):
+		can_install = val;
+		changed_data["can_install"] = can_install;
 ## The location of where the extension’s configuration is stored. Possible values are:      * hosted — The Extensions Configuration Service hosts the configuration. * custom — The Extension Backend Service (EBS) hosts the configuration. * none — The extension doesn't require configuration.
-var configuration_location: String;
+var configuration_location: String:
+	set(val):
+		configuration_location = val;
+		changed_data["configuration_location"] = configuration_location;
 ## A longer description of the extension. It appears on the details page.
-var description: String;
+var description: String:
+	set(val):
+		description = val;
+		changed_data["description"] = description;
 ## A URL to the extension’s Terms of Service.
-var eula_tos_url: String;
+var eula_tos_url: String:
+	set(val):
+		eula_tos_url = val;
+		changed_data["eula_tos_url"] = eula_tos_url;
 ## A Boolean value that determines whether the extension can communicate with the installed channel’s chat. Is **true** if the extension can communicate with the channel’s chat room.
-var has_chat_support: bool;
+var has_chat_support: bool:
+	set(val):
+		has_chat_support = val;
+		changed_data["has_chat_support"] = has_chat_support;
 ## A URL to the default icon that’s displayed in the Extensions directory.
-var icon_url: String;
+var icon_url: String:
+	set(val):
+		icon_url = val;
+		changed_data["icon_url"] = icon_url;
 ## No description available
-var icon_urls: TwitchExtensionIconUrls;
+var icon_urls: TwitchExtensionIconUrls:
+	set(val):
+		icon_urls = val;
+		if icon_urls != null:
+			changed_data["icon_urls"] = icon_urls.to_dict();
 ## The extension’s ID.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The extension’s name.
-var name: String;
+var name: String:
+	set(val):
+		name = val;
+		changed_data["name"] = name;
 ## A URL to the extension’s privacy policy.
-var privacy_policy_url: String;
+var privacy_policy_url: String:
+	set(val):
+		privacy_policy_url = val;
+		changed_data["privacy_policy_url"] = privacy_policy_url;
 ## A Boolean value that determines whether the extension wants to explicitly ask viewers to link their Twitch identity.
-var request_identity_link: bool;
+var request_identity_link: bool:
+	set(val):
+		request_identity_link = val;
+		changed_data["request_identity_link"] = request_identity_link;
 ## A list of URLs to screenshots that are shown in the Extensions marketplace.
-var screenshot_urls: Array[String];
+var screenshot_urls: Array[String]:
+	set(val):
+		screenshot_urls = val;
+		changed_data["screenshot_urls"] = [];
+		if screenshot_urls != null:
+			for value in screenshot_urls:
+				changed_data["screenshot_urls"].append(value);
 ## The extension’s state. Possible values are:      * Approved * AssetsUploaded * Deleted * Deprecated * InReview * InTest * PendingAction * Rejected * Released
-var state: String;
+var state: String:
+	set(val):
+		state = val;
+		changed_data["state"] = state;
 ## Indicates whether the extension can view the user’s subscription level on the channel that the extension is installed on. Possible values are:      * none — The extension can't view the user’s subscription level. * optional — The extension can view the user’s subscription level.
-var subscriptions_support_level: String;
+var subscriptions_support_level: String:
+	set(val):
+		subscriptions_support_level = val;
+		changed_data["subscriptions_support_level"] = subscriptions_support_level;
 ## A short description of the extension that streamers see when hovering over the discovery splash screen in the Extensions manager.
-var summary: String;
+var summary: String:
+	set(val):
+		summary = val;
+		changed_data["summary"] = summary;
 ## The email address that users use to get support for the extension.
-var support_email: String;
+var support_email: String:
+	set(val):
+		support_email = val;
+		changed_data["support_email"] = support_email;
 ## The extension’s version number.
-var version: String;
+var version: String:
+	set(val):
+		version = val;
+		changed_data["version"] = version;
 ## A brief description displayed on the channel to explain how the extension works.
-var viewer_summary: String;
+var viewer_summary: String:
+	set(val):
+		viewer_summary = val;
+		changed_data["viewer_summary"] = viewer_summary;
 ## Describes all views-related information such as how the extension is displayed on mobile devices.
-var views: Views;
+var views: Views:
+	set(val):
+		views = val;
+		if views != null:
+			changed_data["views"] = views.to_dict();
 ## Allowlisted configuration URLs for displaying the extension (the allowlist is configured on Twitch’s [developer site](https://dev.twitch.tv/console/extensions) under the **Extensions** \-> **Extension** \-> **Version** \-> **Capabilities**).
-var allowlisted_config_urls: Array[String];
+var allowlisted_config_urls: Array[String]:
+	set(val):
+		allowlisted_config_urls = val;
+		changed_data["allowlisted_config_urls"] = [];
+		if allowlisted_config_urls != null:
+			for value in allowlisted_config_urls:
+				changed_data["allowlisted_config_urls"].append(value);
 ## Allowlisted panel URLs for displaying the extension (the allowlist is configured on Twitch’s [developer site](https://dev.twitch.tv/console/extensions) under the **Extensions** \-> **Extension** \-> **Version** \-> **Capabilities**).
-var allowlisted_panel_urls: Array[String];
+var allowlisted_panel_urls: Array[String]:
+	set(val):
+		allowlisted_panel_urls = val;
+		changed_data["allowlisted_panel_urls"] = [];
+		if allowlisted_panel_urls != null:
+			for value in allowlisted_panel_urls:
+				changed_data["allowlisted_panel_urls"].append(value);
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchExtension:
 	var result = TwitchExtension.new();
@@ -106,42 +188,7 @@ static func from_json(d: Dictionary) -> TwitchExtension:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["author_name"] = author_name;
-	d["bits_enabled"] = bits_enabled;
-	d["can_install"] = can_install;
-	d["configuration_location"] = configuration_location;
-	d["description"] = description;
-	d["eula_tos_url"] = eula_tos_url;
-	d["has_chat_support"] = has_chat_support;
-	d["icon_url"] = icon_url;
-	if icon_urls != null:
-		d["icon_urls"] = icon_urls.to_dict();
-	d["id"] = id;
-	d["name"] = name;
-	d["privacy_policy_url"] = privacy_policy_url;
-	d["request_identity_link"] = request_identity_link;
-	d["screenshot_urls"] = [];
-	if screenshot_urls != null:
-		for value in screenshot_urls:
-			d["screenshot_urls"].append(value);
-	d["state"] = state;
-	d["subscriptions_support_level"] = subscriptions_support_level;
-	d["summary"] = summary;
-	d["support_email"] = support_email;
-	d["version"] = version;
-	d["viewer_summary"] = viewer_summary;
-	if views != null:
-		d["views"] = views.to_dict();
-	d["allowlisted_config_urls"] = [];
-	if allowlisted_config_urls != null:
-		for value in allowlisted_config_urls:
-			d["allowlisted_config_urls"].append(value);
-	d["allowlisted_panel_urls"] = [];
-	if allowlisted_panel_urls != null:
-		for value in allowlisted_panel_urls:
-			d["allowlisted_panel_urls"].append(value);
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -149,8 +196,12 @@ func to_json() -> String:
 ## Describes how the extension is displayed on mobile devices.
 class Mobile extends RefCounted:
 	## The HTML file that is shown to viewers on mobile devices. This page is presented to viewers as a panel behind the chat area of the mobile app.
-	var viewer_url: String;
+	var viewer_url: String:
+		set(val):
+			viewer_url = val;
+			changed_data["viewer_url"] = viewer_url;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Mobile:
 		var result = Mobile.new();
@@ -159,10 +210,7 @@ class Mobile extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["viewer_url"] = viewer_url;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -170,12 +218,22 @@ class Mobile extends RefCounted:
 ## Describes how the extension is rendered if the extension may be activated as a panel extension.
 class TwitchPanel extends RefCounted:
 	## The HTML file that is shown to viewers on the channel page when the extension is activated in a Panel slot.
-	var viewer_url: String;
+	var viewer_url: String:
+		set(val):
+			viewer_url = val;
+			changed_data["viewer_url"] = viewer_url;
 	## The height, in pixels, of the panel component that the extension is rendered in.
-	var height: int;
+	var height: int:
+		set(val):
+			height = val;
+			changed_data["height"] = height;
 	## A Boolean value that determines whether the extension can link to non-Twitch domains.
-	var can_link_external_content: bool;
+	var can_link_external_content: bool:
+		set(val):
+			can_link_external_content = val;
+			changed_data["can_link_external_content"] = can_link_external_content;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> TwitchPanel:
 		var result = TwitchPanel.new();
@@ -188,12 +246,7 @@ class TwitchPanel extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["viewer_url"] = viewer_url;
-		d["height"] = height;
-		d["can_link_external_content"] = can_link_external_content;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -201,10 +254,17 @@ class TwitchPanel extends RefCounted:
 ## Describes how the extension is rendered if the extension may be activated as a video-overlay extension.
 class VideoOverlay extends RefCounted:
 	## The HTML file that is shown to viewers on the channel page when the extension is activated on the Video - Overlay slot.
-	var viewer_url: String;
+	var viewer_url: String:
+		set(val):
+			viewer_url = val;
+			changed_data["viewer_url"] = viewer_url;
 	## A Boolean value that determines whether the extension can link to non-Twitch domains.
-	var can_link_external_content: bool;
+	var can_link_external_content: bool:
+		set(val):
+			can_link_external_content = val;
+			changed_data["can_link_external_content"] = can_link_external_content;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> VideoOverlay:
 		var result = VideoOverlay.new();
@@ -215,11 +275,7 @@ class VideoOverlay extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["viewer_url"] = viewer_url;
-		d["can_link_external_content"] = can_link_external_content;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -227,20 +283,42 @@ class VideoOverlay extends RefCounted:
 ## Describes how the extension is rendered if the extension may be activated as a video-component extension.
 class Component extends RefCounted:
 	## The HTML file that is shown to viewers on the channel page when the extension is activated in a Video - Component slot.
-	var viewer_url: String;
+	var viewer_url: String:
+		set(val):
+			viewer_url = val;
+			changed_data["viewer_url"] = viewer_url;
 	## The width value of the ratio (width : height) which determines the extension’s width, and how the extension’s iframe will resize in different video player environments.
-	var aspect_ratio_x: int;
+	var aspect_ratio_x: int:
+		set(val):
+			aspect_ratio_x = val;
+			changed_data["aspect_ratio_x"] = aspect_ratio_x;
 	## The height value of the ratio (width : height) which determines the extension’s height, and how the extension’s iframe will resize in different video player environments.
-	var aspect_ratio_y: int;
+	var aspect_ratio_y: int:
+		set(val):
+			aspect_ratio_y = val;
+			changed_data["aspect_ratio_y"] = aspect_ratio_y;
 	## A Boolean value that determines whether to apply CSS zoom. If **true**, a CSS zoom is applied such that the size of the extension is variable but the inner dimensions are fixed based on Scale Pixels. This allows your extension to render as if it is of fixed width and height. If **false**, the inner dimensions of the extension iframe are variable, meaning your extension must implement responsiveness.
-	var autoscale: bool;
+	var autoscale: bool:
+		set(val):
+			autoscale = val;
+			changed_data["autoscale"] = autoscale;
 	## The base width, in pixels, of the extension to use when scaling (see `autoscale`). This value is ignored if `autoscale` is **false**.
-	var scale_pixels: int;
+	var scale_pixels: int:
+		set(val):
+			scale_pixels = val;
+			changed_data["scale_pixels"] = scale_pixels;
 	## The height as a percent of the maximum height of a video component extension. Values are between 1% - 100%.
-	var target_height: int;
+	var target_height: int:
+		set(val):
+			target_height = val;
+			changed_data["target_height"] = target_height;
 	## A Boolean value that determines whether the extension can link to non-Twitch domains.
-	var can_link_external_content: bool;
+	var can_link_external_content: bool:
+		set(val):
+			can_link_external_content = val;
+			changed_data["can_link_external_content"] = can_link_external_content;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Component:
 		var result = Component.new();
@@ -261,16 +339,7 @@ class Component extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["viewer_url"] = viewer_url;
-		d["aspect_ratio_x"] = aspect_ratio_x;
-		d["aspect_ratio_y"] = aspect_ratio_y;
-		d["autoscale"] = autoscale;
-		d["scale_pixels"] = scale_pixels;
-		d["target_height"] = target_height;
-		d["can_link_external_content"] = can_link_external_content;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -278,10 +347,17 @@ class Component extends RefCounted:
 ## Describes the view that is shown to broadcasters while they are configuring your extension within the Extension Manager.
 class Config extends RefCounted:
 	## The HTML file shown to broadcasters while they are configuring your extension within the Extension Manager.
-	var viewer_url: String;
+	var viewer_url: String:
+		set(val):
+			viewer_url = val;
+			changed_data["viewer_url"] = viewer_url;
 	## A Boolean value that determines whether the extension can link to non-Twitch domains.
-	var can_link_external_content: bool;
+	var can_link_external_content: bool:
+		set(val):
+			can_link_external_content = val;
+			changed_data["can_link_external_content"] = can_link_external_content;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Config:
 		var result = Config.new();
@@ -292,11 +368,7 @@ class Config extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["viewer_url"] = viewer_url;
-		d["can_link_external_content"] = can_link_external_content;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -304,16 +376,37 @@ class Config extends RefCounted:
 ## Describes all views-related information such as how the extension is displayed on mobile devices.
 class Views extends RefCounted:
 	## Describes how the extension is displayed on mobile devices.
-	var mobile: Mobile;
+	var mobile: Mobile:
+		set(val):
+			mobile = val;
+			if mobile != null:
+				changed_data["mobile"] = mobile.to_dict();
 	## Describes how the extension is rendered if the extension may be activated as a panel extension.
-	var panel: TwitchPanel;
+	var panel: TwitchPanel:
+		set(val):
+			panel = val;
+			if panel != null:
+				changed_data["panel"] = panel.to_dict();
 	## Describes how the extension is rendered if the extension may be activated as a video-overlay extension.
-	var video_overlay: VideoOverlay;
+	var video_overlay: VideoOverlay:
+		set(val):
+			video_overlay = val;
+			if video_overlay != null:
+				changed_data["video_overlay"] = video_overlay.to_dict();
 	## Describes how the extension is rendered if the extension may be activated as a video-component extension.
-	var component: Component;
+	var component: Component:
+		set(val):
+			component = val;
+			if component != null:
+				changed_data["component"] = component.to_dict();
 	## Describes the view that is shown to broadcasters while they are configuring your extension within the Extension Manager.
-	var config: Config;
+	var config: Config:
+		set(val):
+			config = val;
+			if config != null:
+				changed_data["config"] = config.to_dict();
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Views:
 		var result = Views.new();
@@ -330,19 +423,7 @@ class Views extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		if mobile != null:
-			d["mobile"] = mobile.to_dict();
-		if panel != null:
-			d["panel"] = panel.to_dict();
-		if video_overlay != null:
-			d["video_overlay"] = video_overlay.to_dict();
-		if component != null:
-			d["component"] = component.to_dict();
-		if config != null:
-			d["config"] = config.to_dict();
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

@@ -6,29 +6,67 @@ extends RefCounted
 class_name TwitchChannelTeam
 
 ## An ID that identifies the broadcaster.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The broadcaster’s login name.
-var broadcaster_login: String;
+var broadcaster_login: String:
+	set(val):
+		broadcaster_login = val;
+		changed_data["broadcaster_login"] = broadcaster_login;
 ## The broadcaster’s display name.
-var broadcaster_name: String;
+var broadcaster_name: String:
+	set(val):
+		broadcaster_name = val;
+		changed_data["broadcaster_name"] = broadcaster_name;
 ## A URL to the team’s background image.
-var background_image_url: String;
+var background_image_url: String:
+	set(val):
+		background_image_url = val;
+		changed_data["background_image_url"] = background_image_url;
 ## A URL to the team’s banner.
-var banner: String;
+var banner: String:
+	set(val):
+		banner = val;
+		changed_data["banner"] = banner;
 ## The UTC date and time (in RFC3339 format) of when the team was created.
-var created_at: Variant;
+var created_at: Variant:
+	set(val):
+		created_at = val;
+		changed_data["created_at"] = created_at;
 ## The UTC date and time (in RFC3339 format) of the last time the team was updated.
-var updated_at: Variant;
+var updated_at: Variant:
+	set(val):
+		updated_at = val;
+		changed_data["updated_at"] = updated_at;
 ## The team’s description. The description may contain formatting such as Markdown, HTML, newline (\\n) characters, etc.
-var info: String;
+var info: String:
+	set(val):
+		info = val;
+		changed_data["info"] = info;
 ## A URL to a thumbnail image of the team’s logo.
-var thumbnail_url: String;
+var thumbnail_url: String:
+	set(val):
+		thumbnail_url = val;
+		changed_data["thumbnail_url"] = thumbnail_url;
 ## The team’s name.
-var team_name: String;
+var team_name: String:
+	set(val):
+		team_name = val;
+		changed_data["team_name"] = team_name;
 ## The team’s display name.
-var team_display_name: String;
+var team_display_name: String:
+	set(val):
+		team_display_name = val;
+		changed_data["team_display_name"] = team_display_name;
 ## An ID that identifies the team.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchChannelTeam:
 	var result = TwitchChannelTeam.new();
@@ -59,20 +97,7 @@ static func from_json(d: Dictionary) -> TwitchChannelTeam:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["background_image_url"] = background_image_url;
-	d["banner"] = banner;
-	d["created_at"] = created_at;
-	d["updated_at"] = updated_at;
-	d["info"] = info;
-	d["thumbnail_url"] = thumbnail_url;
-	d["team_name"] = team_name;
-	d["team_display_name"] = team_display_name;
-	d["id"] = id;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

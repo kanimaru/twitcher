@@ -6,25 +6,59 @@ extends RefCounted
 class_name TwitchCharityCampaign
 
 ## An ID that identifies the charity campaign.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## An ID that identifies the broadcaster that’s running the campaign.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The broadcaster’s login name.
-var broadcaster_login: String;
+var broadcaster_login: String:
+	set(val):
+		broadcaster_login = val;
+		changed_data["broadcaster_login"] = broadcaster_login;
 ## The broadcaster’s display name.
-var broadcaster_name: String;
+var broadcaster_name: String:
+	set(val):
+		broadcaster_name = val;
+		changed_data["broadcaster_name"] = broadcaster_name;
 ## The charity’s name.
-var charity_name: String;
+var charity_name: String:
+	set(val):
+		charity_name = val;
+		changed_data["charity_name"] = charity_name;
 ## A description of the charity.
-var charity_description: String;
+var charity_description: String:
+	set(val):
+		charity_description = val;
+		changed_data["charity_description"] = charity_description;
 ## A URL to an image of the charity’s logo. The image’s type is PNG and its size is 100px X 100px.
-var charity_logo: String;
+var charity_logo: String:
+	set(val):
+		charity_logo = val;
+		changed_data["charity_logo"] = charity_logo;
 ## A URL to the charity’s website.
-var charity_website: String;
+var charity_website: String:
+	set(val):
+		charity_website = val;
+		changed_data["charity_website"] = charity_website;
 ## The current amount of donations that the campaign has received.
-var current_amount: CurrentAmount;
+var current_amount: CurrentAmount:
+	set(val):
+		current_amount = val;
+		if current_amount != null:
+			changed_data["current_amount"] = current_amount.to_dict();
 ## The campaign’s fundraising goal. This field is **null** if the broadcaster has not defined a fundraising goal.
-var target_amount: TargetAmount;
+var target_amount: TargetAmount:
+	set(val):
+		target_amount = val;
+		if target_amount != null:
+			changed_data["target_amount"] = target_amount.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCharityCampaign:
 	var result = TwitchCharityCampaign.new();
@@ -51,20 +85,7 @@ static func from_json(d: Dictionary) -> TwitchCharityCampaign:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["charity_name"] = charity_name;
-	d["charity_description"] = charity_description;
-	d["charity_logo"] = charity_logo;
-	d["charity_website"] = charity_website;
-	if current_amount != null:
-		d["current_amount"] = current_amount.to_dict();
-	if target_amount != null:
-		d["target_amount"] = target_amount.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -72,12 +93,22 @@ func to_json() -> String:
 ## The current amount of donations that the campaign has received.
 class CurrentAmount extends RefCounted:
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
-	var value: int;
+	var value: int:
+		set(val):
+			value = val;
+			changed_data["value"] = value;
 	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate `value` from minor units to major units by using the formula:      `value / 10^decimal_places`
-	var decimal_places: int;
+	var decimal_places: int:
+		set(val):
+			decimal_places = val;
+			changed_data["decimal_places"] = decimal_places;
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
-	var currency: String;
+	var currency: String:
+		set(val):
+			currency = val;
+			changed_data["currency"] = currency;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> CurrentAmount:
 		var result = CurrentAmount.new();
@@ -90,12 +121,7 @@ class CurrentAmount extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["value"] = value;
-		d["decimal_places"] = decimal_places;
-		d["currency"] = currency;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -103,12 +129,22 @@ class CurrentAmount extends RefCounted:
 ## The campaign’s fundraising goal. This field is **null** if the broadcaster has not defined a fundraising goal.
 class TargetAmount extends RefCounted:
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
-	var value: int;
+	var value: int:
+		set(val):
+			value = val;
+			changed_data["value"] = value;
 	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate `value` from minor units to major units by using the formula:      `value / 10^decimal_places`
-	var decimal_places: int;
+	var decimal_places: int:
+		set(val):
+			decimal_places = val;
+			changed_data["decimal_places"] = decimal_places;
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
-	var currency: String;
+	var currency: String:
+		set(val):
+			currency = val;
+			changed_data["currency"] = currency;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> TargetAmount:
 		var result = TargetAmount.new();
@@ -121,12 +157,7 @@ class TargetAmount extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["value"] = value;
-		d["decimal_places"] = decimal_places;
-		d["currency"] = currency;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

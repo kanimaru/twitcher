@@ -6,39 +6,95 @@ extends RefCounted
 class_name TwitchVideo
 
 ## An ID that identifies the video.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The ID of the stream that the video originated from if the video's type is "archive;" otherwise, **null**.
-var stream_id: String;
+var stream_id: String:
+	set(val):
+		stream_id = val;
+		changed_data["stream_id"] = stream_id;
 ## The ID of the broadcaster that owns the video.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The broadcaster's login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
 ## The broadcaster's display name.
-var user_name: String;
+var user_name: String:
+	set(val):
+		user_name = val;
+		changed_data["user_name"] = user_name;
 ## The video's title.
-var title: String;
+var title: String:
+	set(val):
+		title = val;
+		changed_data["title"] = title;
 ## The video's description.
-var description: String;
+var description: String:
+	set(val):
+		description = val;
+		changed_data["description"] = description;
 ## The date and time, in UTC, of when the video was created. The timestamp is in RFC3339 format.
-var created_at: Variant;
+var created_at: Variant:
+	set(val):
+		created_at = val;
+		changed_data["created_at"] = created_at;
 ## The date and time, in UTC, of when the video was published. The timestamp is in RFC3339 format.
-var published_at: Variant;
+var published_at: Variant:
+	set(val):
+		published_at = val;
+		changed_data["published_at"] = published_at;
 ## The video's URL.
-var url: String;
+var url: String:
+	set(val):
+		url = val;
+		changed_data["url"] = url;
 ## A URL to a thumbnail image of the video. Before using the URL, you must replace the `%{width}` and `%{height}` placeholders with the width and height of the thumbnail you want returned. Due to current limitations, `${width}` must be 320 and `${height}` must be 180.
-var thumbnail_url: String;
+var thumbnail_url: String:
+	set(val):
+		thumbnail_url = val;
+		changed_data["thumbnail_url"] = thumbnail_url;
 ## The video's viewable state. Always set to **public**.
-var viewable: String;
+var viewable: String:
+	set(val):
+		viewable = val;
+		changed_data["viewable"] = viewable;
 ## The number of times that users have watched the video.
-var view_count: int;
+var view_count: int:
+	set(val):
+		view_count = val;
+		changed_data["view_count"] = view_count;
 ## The ISO 639-1 two-letter language code that the video was broadcast in. For example, the language code is DE if the video was broadcast in German. For a list of supported languages, see [Supported Stream Language](https://help.twitch.tv/s/article/languages-on-twitch#streamlang). The language value is "other" if the video was broadcast in a language not in the list of supported languages.
-var language: String;
+var language: String:
+	set(val):
+		language = val;
+		changed_data["language"] = language;
 ## The video's type. Possible values are:      * archive — An on-demand video (VOD) of one of the broadcaster's past streams. * highlight — A highlight reel of one of the broadcaster's past streams. See [Creating Highlights](https://help.twitch.tv/s/article/creating-highlights-and-stream-markers). * upload — A video that the broadcaster uploaded to their video library. See Upload under [Video Producer](https://help.twitch.tv/s/article/video-on-demand?language=en%5FUS#videoproducer).
-var type: String;
+var type: String:
+	set(val):
+		type = val;
+		changed_data["type"] = type;
 ## The video's length in ISO 8601 duration format. For example, 3m21s represents 3 minutes, 21 seconds.
-var duration: String;
+var duration: String:
+	set(val):
+		duration = val;
+		changed_data["duration"] = duration;
 ## The segments that Twitch Audio Recognition muted; otherwise, **null**.
-var muted_segments: Array[MutedSegments];
+var muted_segments: Array[MutedSegments]:
+	set(val):
+		muted_segments = val;
+		changed_data["muted_segments"] = [];
+		if muted_segments != null:
+			for value in muted_segments:
+				changed_data["muted_segments"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchVideo:
 	var result = TwitchVideo.new();
@@ -80,28 +136,7 @@ static func from_json(d: Dictionary) -> TwitchVideo:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["stream_id"] = stream_id;
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	d["title"] = title;
-	d["description"] = description;
-	d["created_at"] = created_at;
-	d["published_at"] = published_at;
-	d["url"] = url;
-	d["thumbnail_url"] = thumbnail_url;
-	d["viewable"] = viewable;
-	d["view_count"] = view_count;
-	d["language"] = language;
-	d["type"] = type;
-	d["duration"] = duration;
-	d["muted_segments"] = [];
-	if muted_segments != null:
-		for value in muted_segments:
-			d["muted_segments"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -109,10 +144,17 @@ func to_json() -> String:
 ## 
 class MutedSegments extends RefCounted:
 	## The duration of the muted segment, in seconds.
-	var duration: int;
+	var duration: int:
+		set(val):
+			duration = val;
+			changed_data["duration"] = duration;
 	## The offset, in seconds, from the beginning of the video to where the muted segment begins.
-	var offset: int;
+	var offset: int:
+		set(val):
+			offset = val;
+			changed_data["offset"] = offset;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> MutedSegments:
 		var result = MutedSegments.new();
@@ -123,11 +165,7 @@ class MutedSegments extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["duration"] = duration;
-		d["offset"] = offset;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

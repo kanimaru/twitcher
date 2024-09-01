@@ -6,7 +6,12 @@ extends RefCounted
 class_name TwitchUpdateShieldModeStatusBody
 
 ## A Boolean value that determines whether to activate Shield Mode. Set to **true** to activate Shield Mode; otherwise, **false** to deactivate Shield Mode.
-var is_active: bool;
+var is_active: bool:
+	set(val):
+		is_active = val;
+		changed_data["is_active"] = is_active;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUpdateShieldModeStatusBody:
 	var result = TwitchUpdateShieldModeStatusBody.new();
@@ -15,9 +20,7 @@ static func from_json(d: Dictionary) -> TwitchUpdateShieldModeStatusBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["is_active"] = is_active;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

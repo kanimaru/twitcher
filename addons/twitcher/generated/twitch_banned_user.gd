@@ -6,23 +6,52 @@ extends RefCounted
 class_name TwitchBannedUser
 
 ## The ID of the banned user.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The banned user’s login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
 ## The banned user’s display name.
-var user_name: String;
+var user_name: String:
+	set(val):
+		user_name = val;
+		changed_data["user_name"] = user_name;
 ## The UTC date and time (in RFC3339 format) of when the timeout expires, or an empty string if the user is permanently banned.
-var expires_at: Variant;
+var expires_at: Variant:
+	set(val):
+		expires_at = val;
+		changed_data["expires_at"] = expires_at;
 ## The UTC date and time (in RFC3339 format) of when the user was banned.
-var created_at: Variant;
+var created_at: Variant:
+	set(val):
+		created_at = val;
+		changed_data["created_at"] = created_at;
 ## The reason the user was banned or put in a timeout if the moderator provided one.
-var reason: String;
+var reason: String:
+	set(val):
+		reason = val;
+		changed_data["reason"] = reason;
 ## The ID of the moderator that banned the user or put them in a timeout.
-var moderator_id: String;
+var moderator_id: String:
+	set(val):
+		moderator_id = val;
+		changed_data["moderator_id"] = moderator_id;
 ## The moderator’s login name.
-var moderator_login: String;
+var moderator_login: String:
+	set(val):
+		moderator_login = val;
+		changed_data["moderator_login"] = moderator_login;
 ## The moderator’s display name.
-var moderator_name: String;
+var moderator_name: String:
+	set(val):
+		moderator_name = val;
+		changed_data["moderator_name"] = moderator_name;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchBannedUser:
 	var result = TwitchBannedUser.new();
@@ -47,17 +76,7 @@ static func from_json(d: Dictionary) -> TwitchBannedUser:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	d["expires_at"] = expires_at;
-	d["created_at"] = created_at;
-	d["reason"] = reason;
-	d["moderator_id"] = moderator_id;
-	d["moderator_login"] = moderator_login;
-	d["moderator_name"] = moderator_name;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

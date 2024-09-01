@@ -2388,6 +2388,32 @@ func get_shield_mode_status(moderator_id: String, broadcaster_id: String = Twitc
 	return TwitchGetShieldModeStatusResponse.from_json(result);
 
 
+## NEW Warns a user in the specified broadcaster’s chat room, preventing them from chat interaction until the warning is acknowledged.
+##
+## https://dev.twitch.tv/docs/api/reference#warn-chat-user
+func warn_chat_user(moderator_id: String, body: TwitchWarnChatUserBody, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchWarnChatUserResponse:
+	var path = "/helix/moderation/warnings?"
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchWarnChatUserResponse.from_json(result);
+
+
+## Optional Variant of warn_chat_user
+## NEW Warns a user in the specified broadcaster’s chat room, preventing them from chat interaction until the warning is acknowledged.
+##
+## https://dev.twitch.tv/docs/api/reference#warn-chat-user
+func warn_chat_user_bopt(moderator_id: String, body: Dictionary, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchWarnChatUserResponse:
+	var path = "/helix/moderation/warnings?"
+
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_POST, body, "application/json");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchWarnChatUserResponse.from_json(result);
+
+
 ## Gets a list of polls that the broadcaster created.
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-polls

@@ -6,23 +6,52 @@ extends RefCounted
 class_name TwitchUpdateAutoModSettingsBody
 
 ## The Automod level for hostility involving aggression.
-var aggression: int;
+var aggression: int:
+	set(val):
+		aggression = val;
+		changed_data["aggression"] = aggression;
 ## The Automod level for hostility involving name calling or insults.
-var bullying: int;
+var bullying: int:
+	set(val):
+		bullying = val;
+		changed_data["bullying"] = bullying;
 ## The Automod level for discrimination against disability.
-var disability: int;
+var disability: int:
+	set(val):
+		disability = val;
+		changed_data["disability"] = disability;
 ## The Automod level for discrimination against women.
-var misogyny: int;
+var misogyny: int:
+	set(val):
+		misogyny = val;
+		changed_data["misogyny"] = misogyny;
 ## The default AutoMod level for the broadcaster.
-var overall_level: int;
+var overall_level: int:
+	set(val):
+		overall_level = val;
+		changed_data["overall_level"] = overall_level;
 ## The Automod level for racial discrimination.
-var race_ethnicity_or_religion: int;
+var race_ethnicity_or_religion: int:
+	set(val):
+		race_ethnicity_or_religion = val;
+		changed_data["race_ethnicity_or_religion"] = race_ethnicity_or_religion;
 ## The Automod level for sexual content.
-var sex_based_terms: int;
+var sex_based_terms: int:
+	set(val):
+		sex_based_terms = val;
+		changed_data["sex_based_terms"] = sex_based_terms;
 ## The AutoMod level for discrimination based on sexuality, sex, or gender.
-var sexuality_sex_or_gender: int;
+var sexuality_sex_or_gender: int:
+	set(val):
+		sexuality_sex_or_gender = val;
+		changed_data["sexuality_sex_or_gender"] = sexuality_sex_or_gender;
 ## The Automod level for profanity.
-var swearing: int;
+var swearing: int:
+	set(val):
+		swearing = val;
+		changed_data["swearing"] = swearing;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUpdateAutoModSettingsBody:
 	var result = TwitchUpdateAutoModSettingsBody.new();
@@ -47,17 +76,7 @@ static func from_json(d: Dictionary) -> TwitchUpdateAutoModSettingsBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["aggression"] = aggression;
-	d["bullying"] = bullying;
-	d["disability"] = disability;
-	d["misogyny"] = misogyny;
-	d["overall_level"] = overall_level;
-	d["race_ethnicity_or_religion"] = race_ethnicity_or_religion;
-	d["sex_based_terms"] = sex_based_terms;
-	d["sexuality_sex_or_gender"] = sexuality_sex_or_gender;
-	d["swearing"] = swearing;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

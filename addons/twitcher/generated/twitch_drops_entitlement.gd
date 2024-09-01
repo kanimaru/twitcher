@@ -6,19 +6,42 @@ extends RefCounted
 class_name TwitchDropsEntitlement
 
 ## An ID that identifies the entitlement.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## An ID that identifies the benefit (reward).
-var benefit_id: String;
+var benefit_id: String:
+	set(val):
+		benefit_id = val;
+		changed_data["benefit_id"] = benefit_id;
 ## The UTC date and time (in RFC3339 format) of when the entitlement was granted.
-var timestamp: Variant;
+var timestamp: Variant:
+	set(val):
+		timestamp = val;
+		changed_data["timestamp"] = timestamp;
 ## An ID that identifies the user who was granted the entitlement.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## An ID that identifies the game the user was playing when the reward was entitled.
-var game_id: String;
+var game_id: String:
+	set(val):
+		game_id = val;
+		changed_data["game_id"] = game_id;
 ## The entitlement’s fulfillment status. Possible values are:       * CLAIMED * FULFILLED
-var fulfillment_status: String;
+var fulfillment_status: String:
+	set(val):
+		fulfillment_status = val;
+		changed_data["fulfillment_status"] = fulfillment_status;
 ## The UTC date and time (in RFC3339 format) of when the entitlement was last updated.
-var last_updated: Variant;
+var last_updated: Variant:
+	set(val):
+		last_updated = val;
+		changed_data["last_updated"] = last_updated;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchDropsEntitlement:
 	var result = TwitchDropsEntitlement.new();
@@ -39,15 +62,7 @@ static func from_json(d: Dictionary) -> TwitchDropsEntitlement:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["benefit_id"] = benefit_id;
-	d["timestamp"] = timestamp;
-	d["user_id"] = user_id;
-	d["game_id"] = game_id;
-	d["fulfillment_status"] = fulfillment_status;
-	d["last_updated"] = last_updated;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

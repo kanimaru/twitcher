@@ -6,9 +6,21 @@ extends RefCounted
 class_name TwitchGetCharityCampaignDonationsResponse
 
 ## A list that contains the donations that users have made to the broadcaster’s charity campaign. The list is empty if the broadcaster is not currently running a charity campaign; the donation information is not available after the campaign ends.
-var data: Array[TwitchCharityCampaignDonation];
+var data: Array[TwitchCharityCampaignDonation]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
 ## An object that contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-var pagination: Pagination;
+var pagination: Pagination:
+	set(val):
+		pagination = val;
+		if pagination != null:
+			changed_data["pagination"] = pagination.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetCharityCampaignDonationsResponse:
 	var result = TwitchGetCharityCampaignDonationsResponse.new();
@@ -20,14 +32,7 @@ static func from_json(d: Dictionary) -> TwitchGetCharityCampaignDonationsRespons
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	if pagination != null:
-		d["pagination"] = pagination.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -35,8 +40,12 @@ func to_json() -> String:
 ## An object that contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
-	var cursor: String;
+	var cursor: String:
+		set(val):
+			cursor = val;
+			changed_data["cursor"] = cursor;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Pagination:
 		var result = Pagination.new();
@@ -45,10 +54,7 @@ class Pagination extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["cursor"] = cursor;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

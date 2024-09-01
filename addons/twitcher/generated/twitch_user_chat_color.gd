@@ -6,13 +6,27 @@ extends RefCounted
 class_name TwitchUserChatColor
 
 ## An ID that uniquely identifies the user.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The user’s login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
 ## The user’s display name.
-var user_name: String;
+var user_name: String:
+	set(val):
+		user_name = val;
+		changed_data["user_name"] = user_name;
 ## The Hex color code that the user uses in chat for their name. If the user hasn’t specified a color in their settings, the string is empty.
-var color: String;
+var color: String:
+	set(val):
+		color = val;
+		changed_data["color"] = color;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUserChatColor:
 	var result = TwitchUserChatColor.new();
@@ -27,12 +41,7 @@ static func from_json(d: Dictionary) -> TwitchUserChatColor:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	d["color"] = color;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

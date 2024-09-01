@@ -6,9 +6,20 @@ extends RefCounted
 class_name TwitchGuestStarSession
 
 ## ID uniquely representing the Guest Star session.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## List of guests currently interacting with the Guest Star session.
-var guests: Array[TwitchGuest];
+var guests: Array[TwitchGuest]:
+	set(val):
+		guests = val;
+		changed_data["guests"] = [];
+		if guests != null:
+			for value in guests:
+				changed_data["guests"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGuestStarSession:
 	var result = TwitchGuestStarSession.new();
@@ -20,13 +31,7 @@ static func from_json(d: Dictionary) -> TwitchGuestStarSession:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["guests"] = [];
-	if guests != null:
-		for value in guests:
-			d["guests"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

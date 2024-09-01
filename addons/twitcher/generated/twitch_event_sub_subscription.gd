@@ -6,21 +6,48 @@ extends RefCounted
 class_name TwitchEventSubSubscription
 
 ## An ID that identifies the subscription.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The subscription's status. The subscriber receives events only for **enabled** subscriptions. Possible values are:      * enabled — The subscription is enabled. * webhook\_callback\_verification\_pending — The subscription is pending verification of the specified callback URL. * webhook\_callback\_verification\_failed — The specified callback URL failed verification. * notification\_failures\_exceeded — The notification delivery failure rate was too high. * authorization\_revoked — The authorization was revoked for one or more users specified in the **Condition** object. * moderator\_removed — The moderator that authorized the subscription is no longer one of the broadcaster's moderators. * user\_removed — One of the users specified in the **Condition** object was removed. * version\_removed — The subscription to subscription type and version is no longer supported. * beta\_maintenance — The subscription to the beta subscription type was removed due to maintenance. * websocket\_disconnected — The client closed the connection. * websocket\_failed\_ping\_pong — The client failed to respond to a ping message. * websocket\_received\_inbound\_traffic — The client sent a non-pong message. Clients may only send pong messages (and only in response to a ping message). * websocket\_connection\_unused — The client failed to subscribe to events within the required time. * websocket\_internal\_error — The Twitch WebSocket server experienced an unexpected error. * websocket\_network\_timeout — The Twitch WebSocket server timed out writing the message to the client. * websocket\_network\_error — The Twitch WebSocket server experienced a network error writing the message to the client.
-var status: String;
+var status: String:
+	set(val):
+		status = val;
+		changed_data["status"] = status;
 ## The subscription's type. See [Subscription Types](https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#subscription-types).
-var type: String;
+var type: String:
+	set(val):
+		type = val;
+		changed_data["type"] = type;
 ## The version number that identifies this definition of the subscription's data.
-var version: String;
+var version: String:
+	set(val):
+		version = val;
+		changed_data["version"] = version;
 ## The subscription's parameter values. This is a string-encoded JSON object whose contents are determined by the subscription type.
-var condition: Dictionary;
+var condition: Dictionary:
+	set(val):
+		condition = val;
+		changed_data["condition"] = condition;
 ## The date and time (in RFC3339 format) of when the subscription was created.
-var created_at: Variant;
+var created_at: Variant:
+	set(val):
+		created_at = val;
+		changed_data["created_at"] = created_at;
 ## The transport details used to send the notifications.
-var transport: Transport;
+var transport: Transport:
+	set(val):
+		transport = val;
+		if transport != null:
+			changed_data["transport"] = transport.to_dict();
 ## The amount that the subscription counts against your limit. [Learn More](https://dev.twitch.tv/docs/eventsub/manage-subscriptions/#subscription-limits)
-var cost: int;
+var cost: int:
+	set(val):
+		cost = val;
+		changed_data["cost"] = cost;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchEventSubSubscription:
 	var result = TwitchEventSubSubscription.new();
@@ -43,17 +70,7 @@ static func from_json(d: Dictionary) -> TwitchEventSubSubscription:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["status"] = status;
-	d["type"] = type;
-	d["version"] = version;
-	d["condition"] = condition;
-	d["created_at"] = created_at;
-	if transport != null:
-		d["transport"] = transport.to_dict();
-	d["cost"] = cost;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -61,16 +78,32 @@ func to_json() -> String:
 ## The transport details used to send the notifications.
 class Transport extends RefCounted:
 	## The transport method. Possible values are:      * webhook * websocket
-	var method: String;
+	var method: String:
+		set(val):
+			method = val;
+			changed_data["method"] = method;
 	## The callback URL where the notifications are sent. Included only if `method` is set to **webhook**.
-	var callback: String;
+	var callback: String:
+		set(val):
+			callback = val;
+			changed_data["callback"] = callback;
 	## An ID that identifies the WebSocket that notifications are sent to. Included only if `method` is set to **websocket**.
-	var session_id: String;
+	var session_id: String:
+		set(val):
+			session_id = val;
+			changed_data["session_id"] = session_id;
 	## The UTC date and time that the WebSocket connection was established. Included only if `method` is set to **websocket**.
-	var connected_at: Variant;
+	var connected_at: Variant:
+		set(val):
+			connected_at = val;
+			changed_data["connected_at"] = connected_at;
 	## The UTC date and time that the WebSocket connection was lost. Included only if `method` is set to **websocket**.
-	var disconnected_at: Variant;
+	var disconnected_at: Variant:
+		set(val):
+			disconnected_at = val;
+			changed_data["disconnected_at"] = disconnected_at;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Transport:
 		var result = Transport.new();
@@ -87,14 +120,7 @@ class Transport extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["method"] = method;
-		d["callback"] = callback;
-		d["session_id"] = session_id;
-		d["connected_at"] = connected_at;
-		d["disconnected_at"] = disconnected_at;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

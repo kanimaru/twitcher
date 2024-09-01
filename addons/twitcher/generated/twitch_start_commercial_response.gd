@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchStartCommercialResponse
 
 ## An array that contains a single object with the status of your start commercial request.
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchStartCommercialResponse:
 	var result = TwitchStartCommercialResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchStartCommercialResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -29,12 +32,22 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## The length of the commercial you requested. If you request a commercial that’s longer than 180 seconds, the API uses 180 seconds.
-	var length: int;
+	var length: int:
+		set(val):
+			length = val;
+			changed_data["length"] = length;
 	## A message that indicates whether Twitch was able to serve an ad.
-	var message: String;
+	var message: String:
+		set(val):
+			message = val;
+			changed_data["message"] = message;
 	## The number of seconds you must wait before running another commercial.
-	var retry_after: int;
+	var retry_after: int:
+		set(val):
+			retry_after = val;
+			changed_data["retry_after"] = retry_after;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -47,12 +60,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["length"] = length;
-		d["message"] = message;
-		d["retry_after"] = retry_after;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

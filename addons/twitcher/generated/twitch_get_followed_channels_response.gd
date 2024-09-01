@@ -6,11 +6,26 @@ extends RefCounted
 class_name TwitchGetFollowedChannelsResponse
 
 ## The list of broadcasters that the user follows. The list is in descending order by `followed_at` (with the most recently followed broadcaster first). The list is empty if the user doesn’t follow anyone.
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
-var pagination: Pagination;
+var pagination: Pagination:
+	set(val):
+		pagination = val;
+		if pagination != null:
+			changed_data["pagination"] = pagination.to_dict();
 ## The total number of broadcasters that the user follows. As someone pages through the list, the number may change as the user follows or unfollows broadcasters.
-var total: int;
+var total: int:
+	set(val):
+		total = val;
+		changed_data["total"] = total;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetFollowedChannelsResponse:
 	var result = TwitchGetFollowedChannelsResponse.new();
@@ -24,15 +39,7 @@ static func from_json(d: Dictionary) -> TwitchGetFollowedChannelsResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	if pagination != null:
-		d["pagination"] = pagination.to_dict();
-	d["total"] = total;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -40,14 +47,27 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## An ID that uniquely identifies the broadcaster that this user is following.
-	var broadcaster_id: String;
+	var broadcaster_id: String:
+		set(val):
+			broadcaster_id = val;
+			changed_data["broadcaster_id"] = broadcaster_id;
 	## The broadcaster’s login name.
-	var broadcaster_login: String;
+	var broadcaster_login: String:
+		set(val):
+			broadcaster_login = val;
+			changed_data["broadcaster_login"] = broadcaster_login;
 	## The broadcaster’s display name.
-	var broadcaster_name: String;
+	var broadcaster_name: String:
+		set(val):
+			broadcaster_name = val;
+			changed_data["broadcaster_name"] = broadcaster_name;
 	## The UTC timestamp when the user started following the broadcaster.
-	var followed_at: Variant;
+	var followed_at: Variant:
+		set(val):
+			followed_at = val;
+			changed_data["followed_at"] = followed_at;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -62,13 +82,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["broadcaster_id"] = broadcaster_id;
-		d["broadcaster_login"] = broadcaster_login;
-		d["broadcaster_name"] = broadcaster_name;
-		d["followed_at"] = followed_at;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -76,8 +90,12 @@ class Data extends RefCounted:
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
 class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
-	var cursor: String;
+	var cursor: String:
+		set(val):
+			cursor = val;
+			changed_data["cursor"] = cursor;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Pagination:
 		var result = Pagination.new();
@@ -86,10 +104,7 @@ class Pagination extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["cursor"] = cursor;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

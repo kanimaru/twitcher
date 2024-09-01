@@ -6,45 +6,112 @@ extends RefCounted
 class_name TwitchCustomReward
 
 ## The ID that uniquely identifies the broadcaster.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The broadcaster’s login name.
-var broadcaster_login: String;
+var broadcaster_login: String:
+	set(val):
+		broadcaster_login = val;
+		changed_data["broadcaster_login"] = broadcaster_login;
 ## The broadcaster’s display name.
-var broadcaster_name: String;
+var broadcaster_name: String:
+	set(val):
+		broadcaster_name = val;
+		changed_data["broadcaster_name"] = broadcaster_name;
 ## The ID that uniquely identifies this custom reward.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The title of the reward.
-var title: String;
+var title: String:
+	set(val):
+		title = val;
+		changed_data["title"] = title;
 ## The prompt shown to the viewer when they redeem the reward if user input is required. See the `is_user_input_required` field.
-var prompt: String;
+var prompt: String:
+	set(val):
+		prompt = val;
+		changed_data["prompt"] = prompt;
 ## The cost of the reward in Channel Points.
-var cost: int;
+var cost: int:
+	set(val):
+		cost = val;
+		changed_data["cost"] = cost;
 ## A set of custom images for the reward. This field is **null** if the broadcaster didn’t upload images.
-var image: TwitchImage;
+var image: TwitchImage:
+	set(val):
+		image = val;
+		if image != null:
+			changed_data["image"] = image.to_dict();
 ## A set of default images for the reward.
-var default_image: DefaultImage;
+var default_image: DefaultImage:
+	set(val):
+		default_image = val;
+		if default_image != null:
+			changed_data["default_image"] = default_image.to_dict();
 ## The background color to use for the reward. The color is in Hex format (for example, #00E5CB).
-var background_color: String;
+var background_color: String:
+	set(val):
+		background_color = val;
+		changed_data["background_color"] = background_color;
 ## A Boolean value that determines whether the reward is enabled. Is **true** if enabled; otherwise, **false**. Disabled rewards aren’t shown to the user.
-var is_enabled: bool;
+var is_enabled: bool:
+	set(val):
+		is_enabled = val;
+		changed_data["is_enabled"] = is_enabled;
 ## A Boolean value that determines whether the user must enter information when they redeem the reward. Is **true** if the user is prompted.
-var is_user_input_required: bool;
+var is_user_input_required: bool:
+	set(val):
+		is_user_input_required = val;
+		changed_data["is_user_input_required"] = is_user_input_required;
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per live stream.
-var max_per_stream_setting: MaxPerStreamSetting;
+var max_per_stream_setting: MaxPerStreamSetting:
+	set(val):
+		max_per_stream_setting = val;
+		if max_per_stream_setting != null:
+			changed_data["max_per_stream_setting"] = max_per_stream_setting.to_dict();
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per user per live stream.
-var max_per_user_per_stream_setting: MaxPerUserPerStreamSetting;
+var max_per_user_per_stream_setting: MaxPerUserPerStreamSetting:
+	set(val):
+		max_per_user_per_stream_setting = val;
+		if max_per_user_per_stream_setting != null:
+			changed_data["max_per_user_per_stream_setting"] = max_per_user_per_stream_setting.to_dict();
 ## The settings used to determine whether to apply a cooldown period between redemptions and the length of the cooldown.
-var global_cooldown_setting: GlobalCooldownSetting;
+var global_cooldown_setting: GlobalCooldownSetting:
+	set(val):
+		global_cooldown_setting = val;
+		if global_cooldown_setting != null:
+			changed_data["global_cooldown_setting"] = global_cooldown_setting.to_dict();
 ## A Boolean value that determines whether the reward is currently paused. Is **true** if the reward is paused. Viewers can’t redeem paused rewards.
-var is_paused: bool;
+var is_paused: bool:
+	set(val):
+		is_paused = val;
+		changed_data["is_paused"] = is_paused;
 ## A Boolean value that determines whether the reward is currently in stock. Is **true** if the reward is in stock. Viewers can’t redeem out of stock rewards.
-var is_in_stock: bool;
+var is_in_stock: bool:
+	set(val):
+		is_in_stock = val;
+		changed_data["is_in_stock"] = is_in_stock;
 ## A Boolean value that determines whether redemptions should be set to FULFILLED status immediately when a reward is redeemed. If **false**, status is set to UNFULFILLED and follows the normal request queue process.
-var should_redemptions_skip_request_queue: bool;
+var should_redemptions_skip_request_queue: bool:
+	set(val):
+		should_redemptions_skip_request_queue = val;
+		changed_data["should_redemptions_skip_request_queue"] = should_redemptions_skip_request_queue;
 ## The number of redemptions redeemed during the current live stream. The number counts against the `max_per_stream_setting` limit. This field is **null** if the broadcaster’s stream isn’t live or _max\_per\_stream\_setting_ isn’t enabled.
-var redemptions_redeemed_current_stream: int;
+var redemptions_redeemed_current_stream: int:
+	set(val):
+		redemptions_redeemed_current_stream = val;
+		changed_data["redemptions_redeemed_current_stream"] = redemptions_redeemed_current_stream;
 ## The timestamp of when the cooldown period expires. Is **null** if the reward isn’t in a cooldown state. See the `global_cooldown_setting` field.
-var cooldown_expires_at: Variant;
+var cooldown_expires_at: Variant:
+	set(val):
+		cooldown_expires_at = val;
+		changed_data["cooldown_expires_at"] = cooldown_expires_at;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCustomReward:
 	var result = TwitchCustomReward.new();
@@ -91,33 +158,7 @@ static func from_json(d: Dictionary) -> TwitchCustomReward:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["id"] = id;
-	d["title"] = title;
-	d["prompt"] = prompt;
-	d["cost"] = cost;
-	if image != null:
-		d["image"] = image.to_dict();
-	if default_image != null:
-		d["default_image"] = default_image.to_dict();
-	d["background_color"] = background_color;
-	d["is_enabled"] = is_enabled;
-	d["is_user_input_required"] = is_user_input_required;
-	if max_per_stream_setting != null:
-		d["max_per_stream_setting"] = max_per_stream_setting.to_dict();
-	if max_per_user_per_stream_setting != null:
-		d["max_per_user_per_stream_setting"] = max_per_user_per_stream_setting.to_dict();
-	if global_cooldown_setting != null:
-		d["global_cooldown_setting"] = global_cooldown_setting.to_dict();
-	d["is_paused"] = is_paused;
-	d["is_in_stock"] = is_in_stock;
-	d["should_redemptions_skip_request_queue"] = should_redemptions_skip_request_queue;
-	d["redemptions_redeemed_current_stream"] = redemptions_redeemed_current_stream;
-	d["cooldown_expires_at"] = cooldown_expires_at;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -125,12 +166,22 @@ func to_json() -> String:
 ## A set of custom images for the reward. This field is **null** if the broadcaster didn’t upload images.
 class TwitchImage extends RefCounted:
 	## The URL to a small version of the image.
-	var url_1x: String;
+	var url_1x: String:
+		set(val):
+			url_1x = val;
+			changed_data["url_1x"] = url_1x;
 	## The URL to a medium version of the image.
-	var url_2x: String;
+	var url_2x: String:
+		set(val):
+			url_2x = val;
+			changed_data["url_2x"] = url_2x;
 	## The URL to a large version of the image.
-	var url_4x: String;
+	var url_4x: String:
+		set(val):
+			url_4x = val;
+			changed_data["url_4x"] = url_4x;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> TwitchImage:
 		var result = TwitchImage.new();
@@ -143,12 +194,7 @@ class TwitchImage extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["url_1x"] = url_1x;
-		d["url_2x"] = url_2x;
-		d["url_4x"] = url_4x;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -156,12 +202,22 @@ class TwitchImage extends RefCounted:
 ## A set of default images for the reward.
 class DefaultImage extends RefCounted:
 	## The URL to a small version of the image.
-	var url_1x: String;
+	var url_1x: String:
+		set(val):
+			url_1x = val;
+			changed_data["url_1x"] = url_1x;
 	## The URL to a medium version of the image.
-	var url_2x: String;
+	var url_2x: String:
+		set(val):
+			url_2x = val;
+			changed_data["url_2x"] = url_2x;
 	## The URL to a large version of the image.
-	var url_4x: String;
+	var url_4x: String:
+		set(val):
+			url_4x = val;
+			changed_data["url_4x"] = url_4x;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> DefaultImage:
 		var result = DefaultImage.new();
@@ -174,12 +230,7 @@ class DefaultImage extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["url_1x"] = url_1x;
-		d["url_2x"] = url_2x;
-		d["url_4x"] = url_4x;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -187,10 +238,17 @@ class DefaultImage extends RefCounted:
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per live stream.
 class MaxPerStreamSetting extends RefCounted:
 	## A Boolean value that determines whether the reward applies a limit on the number of redemptions allowed per live stream. Is **true** if the reward applies a limit.
-	var is_enabled: bool;
+	var is_enabled: bool:
+		set(val):
+			is_enabled = val;
+			changed_data["is_enabled"] = is_enabled;
 	## The maximum number of redemptions allowed per live stream.
-	var max_per_stream: int;
+	var max_per_stream: int:
+		set(val):
+			max_per_stream = val;
+			changed_data["max_per_stream"] = max_per_stream;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> MaxPerStreamSetting:
 		var result = MaxPerStreamSetting.new();
@@ -201,11 +259,7 @@ class MaxPerStreamSetting extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["is_enabled"] = is_enabled;
-		d["max_per_stream"] = max_per_stream;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -213,10 +267,17 @@ class MaxPerStreamSetting extends RefCounted:
 ## The settings used to determine whether to apply a maximum to the number of redemptions allowed per user per live stream.
 class MaxPerUserPerStreamSetting extends RefCounted:
 	## A Boolean value that determines whether the reward applies a limit on the number of redemptions allowed per user per live stream. Is **true** if the reward applies a limit.
-	var is_enabled: bool;
+	var is_enabled: bool:
+		set(val):
+			is_enabled = val;
+			changed_data["is_enabled"] = is_enabled;
 	## The maximum number of redemptions allowed per user per live stream.
-	var max_per_user_per_stream: int;
+	var max_per_user_per_stream: int:
+		set(val):
+			max_per_user_per_stream = val;
+			changed_data["max_per_user_per_stream"] = max_per_user_per_stream;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> MaxPerUserPerStreamSetting:
 		var result = MaxPerUserPerStreamSetting.new();
@@ -227,11 +288,7 @@ class MaxPerUserPerStreamSetting extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["is_enabled"] = is_enabled;
-		d["max_per_user_per_stream"] = max_per_user_per_stream;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -239,10 +296,17 @@ class MaxPerUserPerStreamSetting extends RefCounted:
 ## The settings used to determine whether to apply a cooldown period between redemptions and the length of the cooldown.
 class GlobalCooldownSetting extends RefCounted:
 	## A Boolean value that determines whether to apply a cooldown period. Is **true** if a cooldown period is enabled.
-	var is_enabled: bool;
+	var is_enabled: bool:
+		set(val):
+			is_enabled = val;
+			changed_data["is_enabled"] = is_enabled;
 	## The cooldown period, in seconds.
-	var global_cooldown_seconds: int;
+	var global_cooldown_seconds: int:
+		set(val):
+			global_cooldown_seconds = val;
+			changed_data["global_cooldown_seconds"] = global_cooldown_seconds;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> GlobalCooldownSetting:
 		var result = GlobalCooldownSetting.new();
@@ -253,11 +317,7 @@ class GlobalCooldownSetting extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["is_enabled"] = is_enabled;
-		d["global_cooldown_seconds"] = global_cooldown_seconds;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

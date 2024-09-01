@@ -6,29 +6,70 @@ extends RefCounted
 class_name TwitchPrediction
 
 ## An ID that identifies this prediction.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## An ID that identifies the broadcaster that created the prediction.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The broadcaster’s display name.
-var broadcaster_name: String;
+var broadcaster_name: String:
+	set(val):
+		broadcaster_name = val;
+		changed_data["broadcaster_name"] = broadcaster_name;
 ## The broadcaster’s login name.
-var broadcaster_login: String;
+var broadcaster_login: String:
+	set(val):
+		broadcaster_login = val;
+		changed_data["broadcaster_login"] = broadcaster_login;
 ## The question that the prediction asks. For example, _Will I finish this entire pizza?_
-var title: String;
+var title: String:
+	set(val):
+		title = val;
+		changed_data["title"] = title;
 ## The ID of the winning outcome. Is **null** unless `status` is RESOLVED.
-var winning_outcome_id: String;
+var winning_outcome_id: String:
+	set(val):
+		winning_outcome_id = val;
+		changed_data["winning_outcome_id"] = winning_outcome_id;
 ## The list of possible outcomes for the prediction.
-var outcomes: Array[TwitchPredictionOutcome];
+var outcomes: Array[TwitchPredictionOutcome]:
+	set(val):
+		outcomes = val;
+		changed_data["outcomes"] = [];
+		if outcomes != null:
+			for value in outcomes:
+				changed_data["outcomes"].append(value.to_dict());
 ## The length of time (in seconds) that the prediction will run for.
-var prediction_window: int;
+var prediction_window: int:
+	set(val):
+		prediction_window = val;
+		changed_data["prediction_window"] = prediction_window;
 ## The prediction’s status. Valid values are:      * ACTIVE — The Prediction is running and viewers can make predictions. * CANCELED — The broadcaster canceled the Prediction and refunded the Channel Points to the participants. * LOCKED — The broadcaster locked the Prediction, which means viewers can no longer make predictions. * RESOLVED — The winning outcome was determined and the Channel Points were distributed to the viewers who predicted the correct outcome.
-var status: String;
+var status: String:
+	set(val):
+		status = val;
+		changed_data["status"] = status;
 ## The UTC date and time of when the Prediction began.
-var created_at: Variant;
+var created_at: Variant:
+	set(val):
+		created_at = val;
+		changed_data["created_at"] = created_at;
 ## The UTC date and time of when the Prediction ended. If `status` is ACTIVE, this is set to **null**.
-var ended_at: Variant;
+var ended_at: Variant:
+	set(val):
+		ended_at = val;
+		changed_data["ended_at"] = ended_at;
 ## The UTC date and time of when the Prediction was locked. If `status` is not LOCKED, this is set to **null**.
-var locked_at: Variant;
+var locked_at: Variant:
+	set(val):
+		locked_at = val;
+		changed_data["locked_at"] = locked_at;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchPrediction:
 	var result = TwitchPrediction.new();
@@ -60,23 +101,7 @@ static func from_json(d: Dictionary) -> TwitchPrediction:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_name"] = broadcaster_name;
-	d["broadcaster_login"] = broadcaster_login;
-	d["title"] = title;
-	d["winning_outcome_id"] = winning_outcome_id;
-	d["outcomes"] = [];
-	if outcomes != null:
-		for value in outcomes:
-			d["outcomes"].append(value.to_dict());
-	d["prediction_window"] = prediction_window;
-	d["status"] = status;
-	d["created_at"] = created_at;
-	d["ended_at"] = ended_at;
-	d["locked_at"] = locked_at;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

@@ -6,11 +6,22 @@ extends RefCounted
 class_name TwitchUserBlockList
 
 ## An ID that identifies the blocked user.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The blocked user’s login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
 ## The blocked user’s display name.
-var display_name: String;
+var display_name: String:
+	set(val):
+		display_name = val;
+		changed_data["display_name"] = display_name;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUserBlockList:
 	var result = TwitchUserBlockList.new();
@@ -23,11 +34,7 @@ static func from_json(d: Dictionary) -> TwitchUserBlockList:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["display_name"] = display_name;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

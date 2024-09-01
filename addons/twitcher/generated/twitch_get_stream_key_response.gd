@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchGetStreamKeyResponse
 
 ## A list that contains the channel’s stream key.
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetStreamKeyResponse:
 	var result = TwitchGetStreamKeyResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchGetStreamKeyResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -29,8 +32,12 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## The channel’s stream key.
-	var stream_key: String;
+	var stream_key: String:
+		set(val):
+			stream_key = val;
+			changed_data["stream_key"] = stream_key;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -39,10 +46,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["stream_key"] = stream_key;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

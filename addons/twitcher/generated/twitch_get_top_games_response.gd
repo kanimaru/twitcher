@@ -6,9 +6,21 @@ extends RefCounted
 class_name TwitchGetTopGamesResponse
 
 ## The list of broadcasts. The broadcasts are sorted by the number of viewers, with the most popular first.
-var data: Array[TwitchGame];
+var data: Array[TwitchGame]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-var pagination: Pagination;
+var pagination: Pagination:
+	set(val):
+		pagination = val;
+		if pagination != null:
+			changed_data["pagination"] = pagination.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetTopGamesResponse:
 	var result = TwitchGetTopGamesResponse.new();
@@ -20,14 +32,7 @@ static func from_json(d: Dictionary) -> TwitchGetTopGamesResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	if pagination != null:
-		d["pagination"] = pagination.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -35,8 +40,12 @@ func to_json() -> String:
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ or _before_ query parameter to get the next or previous page of results.
-	var cursor: String;
+	var cursor: String:
+		set(val):
+			cursor = val;
+			changed_data["cursor"] = cursor;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Pagination:
 		var result = Pagination.new();
@@ -45,10 +54,7 @@ class Pagination extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["cursor"] = cursor;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchStartRaidResponse
 
 ## A list that contains a single object with information about the pending raid.
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchStartRaidResponse:
 	var result = TwitchStartRaidResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchStartRaidResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -29,10 +32,17 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## The UTC date and time, in RFC3339 format, of when the raid was requested.
-	var created_at: Variant;
+	var created_at: Variant:
+		set(val):
+			created_at = val;
+			changed_data["created_at"] = created_at;
 	## A Boolean value that indicates whether the channel being raided contains mature content.
-	var is_mature: bool;
+	var is_mature: bool:
+		set(val):
+			is_mature = val;
+			changed_data["is_mature"] = is_mature;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -43,11 +53,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["created_at"] = created_at;
-		d["is_mature"] = is_mature;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

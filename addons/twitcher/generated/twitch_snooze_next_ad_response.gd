@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchSnoozeNextAdResponse
 
 ## A list that contains information about the channel’s snoozes and next upcoming ad after successfully snoozing.
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchSnoozeNextAdResponse:
 	var result = TwitchSnoozeNextAdResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchSnoozeNextAdResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -29,12 +32,22 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## The number of snoozes available for the broadcaster.
-	var snooze_count: int;
+	var snooze_count: int:
+		set(val):
+			snooze_count = val;
+			changed_data["snooze_count"] = snooze_count;
 	## The UTC timestamp when the broadcaster will gain an additional snooze, in RFC3339 format.
-	var snooze_refresh_at: Variant;
+	var snooze_refresh_at: Variant:
+		set(val):
+			snooze_refresh_at = val;
+			changed_data["snooze_refresh_at"] = snooze_refresh_at;
 	## The UTC timestamp of the broadcaster’s next scheduled ad, in RFC3339 format.
-	var next_ad_at: Variant;
+	var next_ad_at: Variant:
+		set(val):
+			next_ad_at = val;
+			changed_data["next_ad_at"] = next_ad_at;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -47,12 +60,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["snooze_count"] = snooze_count;
-		d["snooze_refresh_at"] = snooze_refresh_at;
-		d["next_ad_at"] = next_ad_at;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

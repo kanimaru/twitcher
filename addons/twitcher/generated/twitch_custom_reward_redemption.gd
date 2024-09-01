@@ -6,27 +6,63 @@ extends RefCounted
 class_name TwitchCustomRewardRedemption
 
 ## The ID that uniquely identifies the broadcaster.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The broadcaster’s login name.
-var broadcaster_login: String;
+var broadcaster_login: String:
+	set(val):
+		broadcaster_login = val;
+		changed_data["broadcaster_login"] = broadcaster_login;
 ## The broadcaster’s display name.
-var broadcaster_name: String;
+var broadcaster_name: String:
+	set(val):
+		broadcaster_name = val;
+		changed_data["broadcaster_name"] = broadcaster_name;
 ## The ID that uniquely identifies this redemption..
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The ID of the user that redeemed the reward.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The user’s display name.
-var user_name: String;
+var user_name: String:
+	set(val):
+		user_name = val;
+		changed_data["user_name"] = user_name;
 ## The user’s login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
 ## An object that describes the reward that the user redeemed.
-var reward: Reward;
+var reward: Reward:
+	set(val):
+		reward = val;
+		if reward != null:
+			changed_data["reward"] = reward.to_dict();
 ## The text that the user entered at the prompt when they redeemed the reward; otherwise, an empty string if user input was not required.
-var user_input: String;
+var user_input: String:
+	set(val):
+		user_input = val;
+		changed_data["user_input"] = user_input;
 ## The state of the redemption. Possible values are:      * CANCELED * FULFILLED * UNFULFILLED
-var status: String;
+var status: String:
+	set(val):
+		status = val;
+		changed_data["status"] = status;
 ## The date and time of when the reward was redeemed, in RFC3339 format.
-var redeemed_at: Variant;
+var redeemed_at: Variant:
+	set(val):
+		redeemed_at = val;
+		changed_data["redeemed_at"] = redeemed_at;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCustomRewardRedemption:
 	var result = TwitchCustomRewardRedemption.new();
@@ -55,20 +91,7 @@ static func from_json(d: Dictionary) -> TwitchCustomRewardRedemption:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["id"] = id;
-	d["user_id"] = user_id;
-	d["user_name"] = user_name;
-	d["user_login"] = user_login;
-	if reward != null:
-		d["reward"] = reward.to_dict();
-	d["user_input"] = user_input;
-	d["status"] = status;
-	d["redeemed_at"] = redeemed_at;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -76,14 +99,27 @@ func to_json() -> String:
 ## An object that describes the reward that the user redeemed.
 class Reward extends RefCounted:
 	## The ID that uniquely identifies the reward.
-	var id: String;
+	var id: String:
+		set(val):
+			id = val;
+			changed_data["id"] = id;
 	## The reward’s title.
-	var title: String;
+	var title: String:
+		set(val):
+			title = val;
+			changed_data["title"] = title;
 	## The prompt displayed to the viewer if user input is required.
-	var prompt: String;
+	var prompt: String:
+		set(val):
+			prompt = val;
+			changed_data["prompt"] = prompt;
 	## The reward’s cost, in Channel Points.
-	var cost: int;
+	var cost: int:
+		set(val):
+			cost = val;
+			changed_data["cost"] = cost;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Reward:
 		var result = Reward.new();
@@ -98,13 +134,7 @@ class Reward extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["id"] = id;
-		d["title"] = title;
-		d["prompt"] = prompt;
-		d["cost"] = cost;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

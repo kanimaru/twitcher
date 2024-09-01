@@ -6,25 +6,60 @@ extends RefCounted
 class_name TwitchTeam
 
 ## The list of team members.
-var users: Array[Users];
+var users: Array[Users]:
+	set(val):
+		users = val;
+		changed_data["users"] = [];
+		if users != null:
+			for value in users:
+				changed_data["users"].append(value.to_dict());
 ## A URL to the team’s background image.
-var background_image_url: String;
+var background_image_url: String:
+	set(val):
+		background_image_url = val;
+		changed_data["background_image_url"] = background_image_url;
 ## A URL to the team’s banner.
-var banner: String;
+var banner: String:
+	set(val):
+		banner = val;
+		changed_data["banner"] = banner;
 ## The UTC date and time (in RFC3339 format) of when the team was created.
-var created_at: Variant;
+var created_at: Variant:
+	set(val):
+		created_at = val;
+		changed_data["created_at"] = created_at;
 ## The UTC date and time (in RFC3339 format) of the last time the team was updated.
-var updated_at: Variant;
+var updated_at: Variant:
+	set(val):
+		updated_at = val;
+		changed_data["updated_at"] = updated_at;
 ## The team’s description. The description may contain formatting such as Markdown, HTML, newline (\\n) characters, etc.
-var info: String;
+var info: String:
+	set(val):
+		info = val;
+		changed_data["info"] = info;
 ## A URL to a thumbnail image of the team’s logo.
-var thumbnail_url: String;
+var thumbnail_url: String:
+	set(val):
+		thumbnail_url = val;
+		changed_data["thumbnail_url"] = thumbnail_url;
 ## The team’s name.
-var team_name: String;
+var team_name: String:
+	set(val):
+		team_name = val;
+		changed_data["team_name"] = team_name;
 ## The team’s display name.
-var team_display_name: String;
+var team_display_name: String:
+	set(val):
+		team_display_name = val;
+		changed_data["team_display_name"] = team_display_name;
 ## An ID that identifies the team.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchTeam:
 	var result = TwitchTeam.new();
@@ -52,21 +87,7 @@ static func from_json(d: Dictionary) -> TwitchTeam:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["users"] = [];
-	if users != null:
-		for value in users:
-			d["users"].append(value.to_dict());
-	d["background_image_url"] = background_image_url;
-	d["banner"] = banner;
-	d["created_at"] = created_at;
-	d["updated_at"] = updated_at;
-	d["info"] = info;
-	d["thumbnail_url"] = thumbnail_url;
-	d["team_name"] = team_name;
-	d["team_display_name"] = team_display_name;
-	d["id"] = id;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -74,12 +95,22 @@ func to_json() -> String:
 ## 
 class Users extends RefCounted:
 	## An ID that identifies the team member.
-	var user_id: String;
+	var user_id: String:
+		set(val):
+			user_id = val;
+			changed_data["user_id"] = user_id;
 	## The team member’s login name.
-	var user_login: String;
+	var user_login: String:
+		set(val):
+			user_login = val;
+			changed_data["user_login"] = user_login;
 	## The team member’s display name.
-	var user_name: String;
+	var user_name: String:
+		set(val):
+			user_name = val;
+			changed_data["user_name"] = user_name;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Users:
 		var result = Users.new();
@@ -92,12 +123,7 @@ class Users extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["user_id"] = user_id;
-		d["user_login"] = user_login;
-		d["user_name"] = user_name;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

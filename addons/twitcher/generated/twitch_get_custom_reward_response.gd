@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchGetCustomRewardResponse
 
 ## A list of custom rewards. The list is in ascending order by `id`. If the broadcaster hasn’t created custom rewards, the list is empty.
-var data: Array[TwitchCustomReward];
+var data: Array[TwitchCustomReward]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetCustomRewardResponse:
 	var result = TwitchGetCustomRewardResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchGetCustomRewardResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

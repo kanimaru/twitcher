@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchEndPollResponse
 
 ## A list that contains the poll that you ended.
-var data: Array[TwitchPoll];
+var data: Array[TwitchPoll]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchEndPollResponse:
 	var result = TwitchEndPollResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchEndPollResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

@@ -6,9 +6,17 @@ extends RefCounted
 class_name TwitchStartCommercialBody
 
 ## The ID of the partner or affiliate broadcaster that wants to run the commercial. This ID must match the user ID found in the OAuth token.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The length of the commercial to run, in seconds. Twitch tries to serve a commercial that’s the requested length, but it may be shorter or longer. The maximum length you should request is 180 seconds.
-var length: int;
+var length: int:
+	set(val):
+		length = val;
+		changed_data["length"] = length;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchStartCommercialBody:
 	var result = TwitchStartCommercialBody.new();
@@ -19,10 +27,7 @@ static func from_json(d: Dictionary) -> TwitchStartCommercialBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["length"] = length;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

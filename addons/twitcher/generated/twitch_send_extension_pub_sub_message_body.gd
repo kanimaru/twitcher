@@ -6,13 +6,30 @@ extends RefCounted
 class_name TwitchSendExtensionPubSubMessageBody
 
 ## The target of the message. Possible values are:      * broadcast * global * whisper-<user-id>    If `is_global_broadcast` is **true**, you must set this field to global. The broadcast and global values are mutually exclusive; specify only one of them.
-var target: Array[String];
+var target: Array[String]:
+	set(val):
+		target = val;
+		changed_data["target"] = [];
+		if target != null:
+			for value in target:
+				changed_data["target"].append(value);
 ## The ID of the broadcaster to send the message to. Don’t include this field if `is_global_broadcast` is set to **true**.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## A Boolean value that determines whether the message should be sent to all channels where your extension is active. Set to **true** if the message should be sent to all channels. The default is **false**.
-var is_global_broadcast: bool;
+var is_global_broadcast: bool:
+	set(val):
+		is_global_broadcast = val;
+		changed_data["is_global_broadcast"] = is_global_broadcast;
 ## The message to send. The message can be a plain-text string or a string-encoded JSON object. The message is limited to a maximum of 5 KB.
-var message: String;
+var message: String:
+	set(val):
+		message = val;
+		changed_data["message"] = message;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchSendExtensionPubSubMessageBody:
 	var result = TwitchSendExtensionPubSubMessageBody.new();
@@ -28,15 +45,7 @@ static func from_json(d: Dictionary) -> TwitchSendExtensionPubSubMessageBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["target"] = [];
-	if target != null:
-		for value in target:
-			d["target"].append(value);
-	d["broadcaster_id"] = broadcaster_id;
-	d["is_global_broadcast"] = is_global_broadcast;
-	d["message"] = message;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

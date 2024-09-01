@@ -6,11 +6,22 @@ extends RefCounted
 class_name TwitchExtensionIconUrls
 
 ## No description available
-var _100x100: String;
+var _100x100: String:
+	set(val):
+		_100x100 = val;
+		changed_data["100x100"] = _100x100;
 ## No description available
-var _24x24: String;
+var _24x24: String:
+	set(val):
+		_24x24 = val;
+		changed_data["24x24"] = _24x24;
 ## No description available
-var _300x200: String;
+var _300x200: String:
+	set(val):
+		_300x200 = val;
+		changed_data["300x200"] = _300x200;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchExtensionIconUrls:
 	var result = TwitchExtensionIconUrls.new();
@@ -23,11 +34,7 @@ static func from_json(d: Dictionary) -> TwitchExtensionIconUrls:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["100x100"] = _100x100;
-	d["24x24"] = _24x24;
-	d["300x200"] = _300x200;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

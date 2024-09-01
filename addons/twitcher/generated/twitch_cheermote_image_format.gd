@@ -6,15 +6,32 @@ extends RefCounted
 class_name TwitchCheermoteImageFormat
 
 ## No description available
-var _1: String;
+var _1: String:
+	set(val):
+		_1 = val;
+		changed_data["1"] = _1;
 ## No description available
-var _2: String;
+var _2: String:
+	set(val):
+		_2 = val;
+		changed_data["2"] = _2;
 ## No description available
-var _3: String;
+var _3: String:
+	set(val):
+		_3 = val;
+		changed_data["3"] = _3;
 ## No description available
-var _4: String;
+var _4: String:
+	set(val):
+		_4 = val;
+		changed_data["4"] = _4;
 ## No description available
-var _1_5: String;
+var _1_5: String:
+	set(val):
+		_1_5 = val;
+		changed_data["1.5"] = _1_5;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCheermoteImageFormat:
 	var result = TwitchCheermoteImageFormat.new();
@@ -31,13 +48,7 @@ static func from_json(d: Dictionary) -> TwitchCheermoteImageFormat:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["1"] = _1;
-	d["2"] = _2;
-	d["3"] = _3;
-	d["4"] = _4;
-	d["1.5"] = _1_5;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

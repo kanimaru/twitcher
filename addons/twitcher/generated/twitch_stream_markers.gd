@@ -6,17 +6,43 @@ extends RefCounted
 class_name TwitchStreamMarkers
 
 ## The ID of the user that created the marker.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The user’s display name.
-var user_name: String;
+var user_name: String:
+	set(val):
+		user_name = val;
+		changed_data["user_name"] = user_name;
 ## The user’s login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
 ## A list of videos that contain markers. The list contains a single video.
-var videos: Array;
+var videos: Array:
+	set(val):
+		videos = val;
+		changed_data["videos"] = [];
+		if videos != null:
+			for value in videos:
+				changed_data["videos"].append(value);
 ## An ID that identifies this video.
-var video_id: String;
+var video_id: String:
+	set(val):
+		video_id = val;
+		changed_data["video_id"] = video_id;
 ## The list of markers in this video. The list in ascending order by when the marker was created.
-var markers: Array[Markers];
+var markers: Array[Markers]:
+	set(val):
+		markers = val;
+		changed_data["markers"] = [];
+		if markers != null:
+			for value in markers:
+				changed_data["markers"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchStreamMarkers:
 	var result = TwitchStreamMarkers.new();
@@ -37,20 +63,7 @@ static func from_json(d: Dictionary) -> TwitchStreamMarkers:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["user_name"] = user_name;
-	d["user_login"] = user_login;
-	d["videos"] = [];
-	if videos != null:
-		for value in videos:
-			d["videos"].append(value);
-	d["video_id"] = video_id;
-	d["markers"] = [];
-	if markers != null:
-		for value in markers:
-			d["markers"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -58,16 +71,32 @@ func to_json() -> String:
 ## 
 class Markers extends RefCounted:
 	## An ID that identifies this marker.
-	var id: String;
+	var id: String:
+		set(val):
+			id = val;
+			changed_data["id"] = id;
 	## The UTC date and time (in RFC3339 format) of when the user created the marker.
-	var created_at: Variant;
+	var created_at: Variant:
+		set(val):
+			created_at = val;
+			changed_data["created_at"] = created_at;
 	## The description that the user gave the marker to help them remember why they marked the location. Is an empty string if the user didn’t provide one.
-	var description: String;
+	var description: String:
+		set(val):
+			description = val;
+			changed_data["description"] = description;
 	## The relative offset (in seconds) of the marker from the beginning of the stream.
-	var position_seconds: int;
+	var position_seconds: int:
+		set(val):
+			position_seconds = val;
+			changed_data["position_seconds"] = position_seconds;
 	## A URL that opens the video in Twitch Highlighter.
-	var url: String;
+	var url: String:
+		set(val):
+			url = val;
+			changed_data["url"] = url;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Markers:
 		var result = Markers.new();
@@ -84,14 +113,7 @@ class Markers extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["id"] = id;
-		d["created_at"] = created_at;
-		d["description"] = description;
-		d["position_seconds"] = position_seconds;
-		d["url"] = url;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

@@ -6,9 +6,20 @@ extends RefCounted
 class_name TwitchGetExtensionLiveChannelsResponse
 
 ## The list of broadcasters that are streaming live and that have installed or activated the extension.
-var data: Array[TwitchExtensionLiveChannel];
+var data: Array[TwitchExtensionLiveChannel]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
 ## This field contains the cursor used to page through the results. The field is empty if there are no more pages left to page through. Note that this field is a string compared to other endpoints that use a **Pagination** object. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-var pagination: String;
+var pagination: String:
+	set(val):
+		pagination = val;
+		changed_data["pagination"] = pagination;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetExtensionLiveChannelsResponse:
 	var result = TwitchGetExtensionLiveChannelsResponse.new();
@@ -20,13 +31,7 @@ static func from_json(d: Dictionary) -> TwitchGetExtensionLiveChannelsResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	d["pagination"] = pagination;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

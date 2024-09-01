@@ -6,9 +6,17 @@ extends RefCounted
 class_name TwitchUpdateConduitsBody
 
 ## Conduit ID.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The new number of shards for this conduit.
-var shard_count: int;
+var shard_count: int:
+	set(val):
+		shard_count = val;
+		changed_data["shard_count"] = shard_count;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUpdateConduitsBody:
 	var result = TwitchUpdateConduitsBody.new();
@@ -19,10 +27,7 @@ static func from_json(d: Dictionary) -> TwitchUpdateConduitsBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["shard_count"] = shard_count;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

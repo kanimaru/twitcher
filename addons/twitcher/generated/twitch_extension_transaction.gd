@@ -6,25 +6,58 @@ extends RefCounted
 class_name TwitchExtensionTransaction
 
 ## An ID that identifies the transaction.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The UTC date and time (in RFC3339 format) of the transaction.
-var timestamp: Variant;
+var timestamp: Variant:
+	set(val):
+		timestamp = val;
+		changed_data["timestamp"] = timestamp;
 ## The ID of the broadcaster that owns the channel where the transaction occurred.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The broadcaster’s login name.
-var broadcaster_login: String;
+var broadcaster_login: String:
+	set(val):
+		broadcaster_login = val;
+		changed_data["broadcaster_login"] = broadcaster_login;
 ## The broadcaster’s display name.
-var broadcaster_name: String;
+var broadcaster_name: String:
+	set(val):
+		broadcaster_name = val;
+		changed_data["broadcaster_name"] = broadcaster_name;
 ## The ID of the user that purchased the digital product.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The user’s login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
 ## The user’s display name.
-var user_name: String;
+var user_name: String:
+	set(val):
+		user_name = val;
+		changed_data["user_name"] = user_name;
 ## The type of transaction. Possible values are:      * BITS\_IN\_EXTENSION
-var product_type: String;
+var product_type: String:
+	set(val):
+		product_type = val;
+		changed_data["product_type"] = product_type;
 ## Contains details about the digital product.
-var product_data: ProductData;
+var product_data: ProductData:
+	set(val):
+		product_data = val;
+		if product_data != null:
+			changed_data["product_data"] = product_data.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchExtensionTransaction:
 	var result = TwitchExtensionTransaction.new();
@@ -51,19 +84,7 @@ static func from_json(d: Dictionary) -> TwitchExtensionTransaction:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["timestamp"] = timestamp;
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	d["product_type"] = product_type;
-	if product_data != null:
-		d["product_data"] = product_data.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -71,10 +92,17 @@ func to_json() -> String:
 ## Contains details about the digital product’s cost.
 class Cost extends RefCounted:
 	## The amount exchanged for the digital product.
-	var amount: int;
+	var amount: int:
+		set(val):
+			amount = val;
+			changed_data["amount"] = amount;
 	## The type of currency exchanged. Possible values are:      * bits
-	var type: String;
+	var type: String:
+		set(val):
+			type = val;
+			changed_data["type"] = type;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Cost:
 		var result = Cost.new();
@@ -85,11 +113,7 @@ class Cost extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["amount"] = amount;
-		d["type"] = type;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -97,20 +121,43 @@ class Cost extends RefCounted:
 ## Contains details about the digital product.
 class ProductData extends RefCounted:
 	## An ID that identifies the digital product.
-	var sku: String;
+	var sku: String:
+		set(val):
+			sku = val;
+			changed_data["sku"] = sku;
 	## Set to `twitch.ext.` \+ `<the extension's ID>`.
-	var domain: String;
+	var domain: String:
+		set(val):
+			domain = val;
+			changed_data["domain"] = domain;
 	## Contains details about the digital product’s cost.
-	var cost: Cost;
+	var cost: Cost:
+		set(val):
+			cost = val;
+			if cost != null:
+				changed_data["cost"] = cost.to_dict();
 	## A Boolean value that determines whether the product is in development. Is **true** if the digital product is in development and cannot be exchanged.
-	var inDevelopment: bool;
+	var inDevelopment: bool:
+		set(val):
+			inDevelopment = val;
+			changed_data["inDevelopment"] = inDevelopment;
 	## The name of the digital product.
-	var displayName: String;
+	var displayName: String:
+		set(val):
+			displayName = val;
+			changed_data["displayName"] = displayName;
 	## This field is always empty since you may purchase only unexpired products.
-	var expiration: String;
+	var expiration: String:
+		set(val):
+			expiration = val;
+			changed_data["expiration"] = expiration;
 	## A Boolean value that determines whether the data was broadcast to all instances of the extension. Is **true** if the data was broadcast to all instances.
-	var broadcast: bool;
+	var broadcast: bool:
+		set(val):
+			broadcast = val;
+			changed_data["broadcast"] = broadcast;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> ProductData:
 		var result = ProductData.new();
@@ -131,17 +178,7 @@ class ProductData extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["sku"] = sku;
-		d["domain"] = domain;
-		if cost != null:
-			d["cost"] = cost.to_dict();
-		d["inDevelopment"] = inDevelopment;
-		d["displayName"] = displayName;
-		d["expiration"] = expiration;
-		d["broadcast"] = broadcast;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

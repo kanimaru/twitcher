@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchResolveUnbanRequestsResponse
 
 ## 
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchResolveUnbanRequestsResponse:
 	var result = TwitchResolveUnbanRequestsResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchResolveUnbanRequestsResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -29,36 +32,82 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## Unban request ID.
-	var id: String;
+	var id: String:
+		set(val):
+			id = val;
+			changed_data["id"] = id;
 	## User ID of broadcaster whose channel is receiving the unban request.
-	var broadcaster_id: String;
+	var broadcaster_id: String:
+		set(val):
+			broadcaster_id = val;
+			changed_data["broadcaster_id"] = broadcaster_id;
 	## The broadcaster’s login name.
-	var broadcaster_login: String;
+	var broadcaster_login: String:
+		set(val):
+			broadcaster_login = val;
+			changed_data["broadcaster_login"] = broadcaster_login;
 	## The broadcaster’s display name.
-	var broadcaster_name: String;
+	var broadcaster_name: String:
+		set(val):
+			broadcaster_name = val;
+			changed_data["broadcaster_name"] = broadcaster_name;
 	## User ID of moderator who approved/denied the request.
-	var moderator_id: String;
+	var moderator_id: String:
+		set(val):
+			moderator_id = val;
+			changed_data["moderator_id"] = moderator_id;
 	## The moderator’s login name.
-	var moderator_login: String;
+	var moderator_login: String:
+		set(val):
+			moderator_login = val;
+			changed_data["moderator_login"] = moderator_login;
 	## The moderator’s display name.
-	var moderator_name: String;
+	var moderator_name: String:
+		set(val):
+			moderator_name = val;
+			changed_data["moderator_name"] = moderator_name;
 	## User ID of the requestor who is asking for an unban.
-	var user_id: String;
+	var user_id: String:
+		set(val):
+			user_id = val;
+			changed_data["user_id"] = user_id;
 	## The user’s login name.
-	var user_login: String;
+	var user_login: String:
+		set(val):
+			user_login = val;
+			changed_data["user_login"] = user_login;
 	## The user’s display name.
-	var user_name: String;
+	var user_name: String:
+		set(val):
+			user_name = val;
+			changed_data["user_name"] = user_name;
 	## Text of the request from the requesting user.
-	var text: String;
+	var text: String:
+		set(val):
+			text = val;
+			changed_data["text"] = text;
 	## Status of the request. One of:       * approved * denied
-	var status: String;
+	var status: String:
+		set(val):
+			status = val;
+			changed_data["status"] = status;
 	## Timestamp of when the unban request was created.
-	var created_at: Variant;
+	var created_at: Variant:
+		set(val):
+			created_at = val;
+			changed_data["created_at"] = created_at;
 	## Timestamp of when moderator/broadcaster approved or denied the request.
-	var resolved_at: Variant;
+	var resolved_at: Variant:
+		set(val):
+			resolved_at = val;
+			changed_data["resolved_at"] = resolved_at;
 	## Text input by the resolver (moderator) of the unban request.
-	var resolution_text: String;
+	var resolution_text: String:
+		set(val):
+			resolution_text = val;
+			changed_data["resolution_text"] = resolution_text;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -95,24 +144,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["id"] = id;
-		d["broadcaster_id"] = broadcaster_id;
-		d["broadcaster_login"] = broadcaster_login;
-		d["broadcaster_name"] = broadcaster_name;
-		d["moderator_id"] = moderator_id;
-		d["moderator_login"] = moderator_login;
-		d["moderator_name"] = moderator_name;
-		d["user_id"] = user_id;
-		d["user_login"] = user_login;
-		d["user_name"] = user_name;
-		d["text"] = text;
-		d["status"] = status;
-		d["created_at"] = created_at;
-		d["resolved_at"] = resolved_at;
-		d["resolution_text"] = resolution_text;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

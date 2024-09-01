@@ -6,7 +6,12 @@ extends RefCounted
 class_name TwitchCreateConduitsBody
 
 ## The number of shards to create for this conduit.
-var shard_count: int;
+var shard_count: int:
+	set(val):
+		shard_count = val;
+		changed_data["shard_count"] = shard_count;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCreateConduitsBody:
 	var result = TwitchCreateConduitsBody.new();
@@ -15,9 +20,7 @@ static func from_json(d: Dictionary) -> TwitchCreateConduitsBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["shard_count"] = shard_count;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

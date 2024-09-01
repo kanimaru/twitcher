@@ -6,7 +6,13 @@ extends RefCounted
 class_name TwitchGetChannelStreamScheduleResponse
 
 ## The broadcaster’s streaming schedule.
-var data: Data;
+var data: Data:
+	set(val):
+		data = val;
+		if data != null:
+			changed_data["data"] = data.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetChannelStreamScheduleResponse:
 	var result = TwitchGetChannelStreamScheduleResponse.new();
@@ -15,10 +21,7 @@ static func from_json(d: Dictionary) -> TwitchGetChannelStreamScheduleResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	if data != null:
-		d["data"] = data.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -26,10 +29,17 @@ func to_json() -> String:
 ## The dates when the broadcaster is on vacation and not streaming. Is set to **null** if vacation mode is not enabled.
 class Vacation extends RefCounted:
 	## The UTC date and time (in RFC3339 format) of when the broadcaster’s vacation starts.
-	var start_time: Variant;
+	var start_time: Variant:
+		set(val):
+			start_time = val;
+			changed_data["start_time"] = start_time;
 	## The UTC date and time (in RFC3339 format) of when the broadcaster’s vacation ends.
-	var end_time: Variant;
+	var end_time: Variant:
+		set(val):
+			end_time = val;
+			changed_data["end_time"] = end_time;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Vacation:
 		var result = Vacation.new();
@@ -40,11 +50,7 @@ class Vacation extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["start_time"] = start_time;
-		d["end_time"] = end_time;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -52,8 +58,12 @@ class Vacation extends RefCounted:
 ## The information used to page through a list of results. The object is empty if there are no more pages left to page through. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
 class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Set the request’s _after_ query parameter to this value.
-	var cursor: String;
+	var cursor: String:
+		set(val):
+			cursor = val;
+			changed_data["cursor"] = cursor;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Pagination:
 		var result = Pagination.new();
@@ -62,10 +72,7 @@ class Pagination extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["cursor"] = cursor;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -73,18 +80,42 @@ class Pagination extends RefCounted:
 ## The broadcaster’s streaming schedule.
 class Data extends RefCounted:
 	## The list of broadcasts in the broadcaster’s streaming schedule.
-	var segments: Array[TwitchChannelStreamScheduleSegment];
+	var segments: Array[TwitchChannelStreamScheduleSegment]:
+		set(val):
+			segments = val;
+			changed_data["segments"] = [];
+			if segments != null:
+				for value in segments:
+					changed_data["segments"].append(value.to_dict());
 	## The ID of the broadcaster that owns the broadcast schedule.
-	var broadcaster_id: String;
+	var broadcaster_id: String:
+		set(val):
+			broadcaster_id = val;
+			changed_data["broadcaster_id"] = broadcaster_id;
 	## The broadcaster’s display name.
-	var broadcaster_name: String;
+	var broadcaster_name: String:
+		set(val):
+			broadcaster_name = val;
+			changed_data["broadcaster_name"] = broadcaster_name;
 	## The broadcaster’s login name.
-	var broadcaster_login: String;
+	var broadcaster_login: String:
+		set(val):
+			broadcaster_login = val;
+			changed_data["broadcaster_login"] = broadcaster_login;
 	## The dates when the broadcaster is on vacation and not streaming. Is set to **null** if vacation mode is not enabled.
-	var vacation: Vacation;
+	var vacation: Vacation:
+		set(val):
+			vacation = val;
+			if vacation != null:
+				changed_data["vacation"] = vacation.to_dict();
 	## The information used to page through a list of results. The object is empty if there are no more pages left to page through. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
-	var pagination: Pagination;
+	var pagination: Pagination:
+		set(val):
+			pagination = val;
+			if pagination != null:
+				changed_data["pagination"] = pagination.to_dict();
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -104,20 +135,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["segments"] = [];
-		if segments != null:
-			for value in segments:
-				d["segments"].append(value.to_dict());
-		d["broadcaster_id"] = broadcaster_id;
-		d["broadcaster_name"] = broadcaster_name;
-		d["broadcaster_login"] = broadcaster_login;
-		if vacation != null:
-			d["vacation"] = vacation.to_dict();
-		if pagination != null:
-			d["pagination"] = pagination.to_dict();
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

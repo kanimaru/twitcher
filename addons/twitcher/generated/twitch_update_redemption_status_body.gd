@@ -6,7 +6,12 @@ extends RefCounted
 class_name TwitchUpdateRedemptionStatusBody
 
 ## The status to set the redemption to. Possible values are:      * CANCELED * FULFILLED    Setting the status to CANCELED refunds the user’s channel points.
-var status: String;
+var status: String:
+	set(val):
+		status = val;
+		changed_data["status"] = status;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUpdateRedemptionStatusBody:
 	var result = TwitchUpdateRedemptionStatusBody.new();
@@ -15,9 +20,7 @@ static func from_json(d: Dictionary) -> TwitchUpdateRedemptionStatusBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["status"] = status;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchGetUserBlockListResponse
 
 ## The list of blocked users. The list is in descending order by when the user was blocked.
-var data: Array[TwitchUserBlockList];
+var data: Array[TwitchUserBlockList]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetUserBlockListResponse:
 	var result = TwitchGetUserBlockListResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchGetUserBlockListResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

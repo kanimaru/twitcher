@@ -6,11 +6,22 @@ extends RefCounted
 class_name TwitchManageHeldAutoModMessagesBody
 
 ## The moderator who is approving or denying the held message. This ID must match the user ID in the access token.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The ID of the message to allow or deny.
-var msg_id: String;
+var msg_id: String:
+	set(val):
+		msg_id = val;
+		changed_data["msg_id"] = msg_id;
 ## The action to take for the message. Possible values are:      * ALLOW * DENY
-var action: String;
+var action: String:
+	set(val):
+		action = val;
+		changed_data["action"] = action;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchManageHeldAutoModMessagesBody:
 	var result = TwitchManageHeldAutoModMessagesBody.new();
@@ -23,11 +34,7 @@ static func from_json(d: Dictionary) -> TwitchManageHeldAutoModMessagesBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["msg_id"] = msg_id;
-	d["action"] = action;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

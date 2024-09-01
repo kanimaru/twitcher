@@ -6,13 +6,27 @@ extends RefCounted
 class_name TwitchUserExtensionPanel
 
 ## A Boolean value that determines the extension’s activation state. If **false**, the user has not configured a panel extension.
-var active: bool;
+var active: bool:
+	set(val):
+		active = val;
+		changed_data["active"] = active;
 ## An ID that identifies the extension.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The extension’s version.
-var version: String;
+var version: String:
+	set(val):
+		version = val;
+		changed_data["version"] = version;
 ## The extension’s name.
-var name: String;
+var name: String:
+	set(val):
+		name = val;
+		changed_data["name"] = name;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUserExtensionPanel:
 	var result = TwitchUserExtensionPanel.new();
@@ -27,12 +41,7 @@ static func from_json(d: Dictionary) -> TwitchUserExtensionPanel:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["active"] = active;
-	d["id"] = id;
-	d["version"] = version;
-	d["name"] = name;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

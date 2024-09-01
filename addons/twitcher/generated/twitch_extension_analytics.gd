@@ -6,13 +6,28 @@ extends RefCounted
 class_name TwitchExtensionAnalytics
 
 ## An ID that identifies the extension that the report was generated for.
-var extension_id: String;
+var extension_id: String:
+	set(val):
+		extension_id = val;
+		changed_data["extension_id"] = extension_id;
 ## The URL that you use to download the report. The URL is valid for 5 minutes.
-var URL: String;
+var URL: String:
+	set(val):
+		URL = val;
+		changed_data["URL"] = URL;
 ## The type of report.
-var type: String;
+var type: String:
+	set(val):
+		type = val;
+		changed_data["type"] = type;
 ## The reporting window’s start and end dates, in RFC3339 format.
-var date_range: DateRange;
+var date_range: DateRange:
+	set(val):
+		date_range = val;
+		if date_range != null:
+			changed_data["date_range"] = date_range.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchExtensionAnalytics:
 	var result = TwitchExtensionAnalytics.new();
@@ -27,13 +42,7 @@ static func from_json(d: Dictionary) -> TwitchExtensionAnalytics:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["extension_id"] = extension_id;
-	d["URL"] = URL;
-	d["type"] = type;
-	if date_range != null:
-		d["date_range"] = date_range.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -41,10 +50,17 @@ func to_json() -> String:
 ## The reporting window’s start and end dates, in RFC3339 format.
 class DateRange extends RefCounted:
 	## The reporting window’s start date.
-	var started_at: Variant;
+	var started_at: Variant:
+		set(val):
+			started_at = val;
+			changed_data["started_at"] = started_at;
 	## The reporting window’s end date.
-	var ended_at: Variant;
+	var ended_at: Variant:
+		set(val):
+			ended_at = val;
+			changed_data["ended_at"] = ended_at;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> DateRange:
 		var result = DateRange.new();
@@ -55,11 +71,7 @@ class DateRange extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["started_at"] = started_at;
-		d["ended_at"] = ended_at;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

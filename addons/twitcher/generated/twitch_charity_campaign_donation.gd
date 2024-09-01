@@ -6,17 +6,38 @@ extends RefCounted
 class_name TwitchCharityCampaignDonation
 
 ## An ID that identifies the donation. The ID is unique across campaigns.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## An ID that identifies the charity campaign that the donation applies to.
-var campaign_id: String;
+var campaign_id: String:
+	set(val):
+		campaign_id = val;
+		changed_data["campaign_id"] = campaign_id;
 ## An ID that identifies a user that donated money to the campaign.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The user’s login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
 ## The user’s display name.
-var user_name: String;
+var user_name: String:
+	set(val):
+		user_name = val;
+		changed_data["user_name"] = user_name;
 ## An object that contains the amount of money that the user donated.
-var amount: Amount;
+var amount: Amount:
+	set(val):
+		amount = val;
+		if amount != null:
+			changed_data["amount"] = amount.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCharityCampaignDonation:
 	var result = TwitchCharityCampaignDonation.new();
@@ -35,15 +56,7 @@ static func from_json(d: Dictionary) -> TwitchCharityCampaignDonation:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["campaign_id"] = campaign_id;
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	if amount != null:
-		d["amount"] = amount.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -51,12 +64,22 @@ func to_json() -> String:
 ## An object that contains the amount of money that the user donated.
 class Amount extends RefCounted:
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
-	var value: int;
+	var value: int:
+		set(val):
+			value = val;
+			changed_data["value"] = value;
 	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate `value` from minor units to major units by using the formula:      `value / 10^decimal_places`
-	var decimal_places: int;
+	var decimal_places: int:
+		set(val):
+			decimal_places = val;
+			changed_data["decimal_places"] = decimal_places;
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
-	var currency: String;
+	var currency: String:
+		set(val):
+			currency = val;
+			changed_data["currency"] = currency;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Amount:
 		var result = Amount.new();
@@ -69,12 +92,7 @@ class Amount extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["value"] = value;
-		d["decimal_places"] = decimal_places;
-		d["currency"] = currency;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

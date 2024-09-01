@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchSendChatMessageResponse
 
 ## 
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchSendChatMessageResponse:
 	var result = TwitchSendChatMessageResponse.new();
@@ -16,23 +24,25 @@ static func from_json(d: Dictionary) -> TwitchSendChatMessageResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
 
-## 
+## The reason the message was dropped, if any.
 class DropReason extends RefCounted:
 	## Code for why the message was dropped.
-	var code: String;
+	var code: String:
+		set(val):
+			code = val;
+			changed_data["code"] = code;
 	## Message for why the message was dropped.
-	var message: String;
+	var message: String:
+		set(val):
+			message = val;
+			changed_data["message"] = message;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> DropReason:
 		var result = DropReason.new();
@@ -43,11 +53,7 @@ class DropReason extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["code"] = code;
-		d["message"] = message;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -55,12 +61,23 @@ class DropReason extends RefCounted:
 ## 
 class Data extends RefCounted:
 	## The message id for the message that was sent.
-	var message_id: String;
+	var message_id: String:
+		set(val):
+			message_id = val;
+			changed_data["message_id"] = message_id;
 	## If the message passed all checks and was sent.
-	var is_sent: bool;
+	var is_sent: bool:
+		set(val):
+			is_sent = val;
+			changed_data["is_sent"] = is_sent;
 	## The reason the message was dropped, if any.
-	var drop_reason: Array[DropReason];
+	var drop_reason: DropReason:
+		set(val):
+			drop_reason = val;
+			if drop_reason != null:
+				changed_data["drop_reason"] = drop_reason.to_dict();
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -69,20 +86,11 @@ class Data extends RefCounted:
 		if d.has("is_sent") && d["is_sent"] != null:
 			result.is_sent = d["is_sent"];
 		if d.has("drop_reason") && d["drop_reason"] != null:
-			for value in d["drop_reason"]:
-				result.drop_reason.append(DropReason.from_json(value));
+			result.drop_reason = DropReason.from_json(d["drop_reason"]);
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["message_id"] = message_id;
-		d["is_sent"] = is_sent;
-		d["drop_reason"] = [];
-		if drop_reason != null:
-			for value in drop_reason:
-				d["drop_reason"].append(value.to_dict());
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

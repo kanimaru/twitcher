@@ -6,9 +6,19 @@ extends RefCounted
 class_name TwitchCheermoteImageTheme
 
 ## No description available
-var animated_format: TwitchCheermoteImageFormat;
+var animated_format: TwitchCheermoteImageFormat:
+	set(val):
+		animated_format = val;
+		if animated_format != null:
+			changed_data["animated"] = animated_format.to_dict();
 ## No description available
-var static_format: TwitchCheermoteImageFormat;
+var static_format: TwitchCheermoteImageFormat:
+	set(val):
+		static_format = val;
+		if static_format != null:
+			changed_data["static"] = static_format.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCheermoteImageTheme:
 	var result = TwitchCheermoteImageTheme.new();
@@ -19,12 +29,7 @@ static func from_json(d: Dictionary) -> TwitchCheermoteImageTheme:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	if animated_format != null:
-		d["animated"] = animated_format.to_dict();
-	if static_format != null:
-		d["static"] = static_format.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

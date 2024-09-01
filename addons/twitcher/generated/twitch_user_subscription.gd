@@ -6,21 +6,47 @@ extends RefCounted
 class_name TwitchUserSubscription
 
 ## An ID that identifies the broadcaster.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The broadcaster’s login name.
-var broadcaster_login: String;
+var broadcaster_login: String:
+	set(val):
+		broadcaster_login = val;
+		changed_data["broadcaster_login"] = broadcaster_login;
 ## The broadcaster’s display name.
-var broadcaster_name: String;
+var broadcaster_name: String:
+	set(val):
+		broadcaster_name = val;
+		changed_data["broadcaster_name"] = broadcaster_name;
 ## The ID of the user that gifted the subscription. The object includes this field only if `is_gift` is **true**.
-var gifter_id: String;
+var gifter_id: String:
+	set(val):
+		gifter_id = val;
+		changed_data["gifter_id"] = gifter_id;
 ## The gifter’s login name. The object includes this field only if `is_gift` is **true**.
-var gifter_login: String;
+var gifter_login: String:
+	set(val):
+		gifter_login = val;
+		changed_data["gifter_login"] = gifter_login;
 ## The gifter’s display name. The object includes this field only if `is_gift` is **true**.
-var gifter_name: String;
+var gifter_name: String:
+	set(val):
+		gifter_name = val;
+		changed_data["gifter_name"] = gifter_name;
 ## A Boolean value that determines whether the subscription is a gift subscription. Is **true** if the subscription was gifted.
-var is_gift: bool;
+var is_gift: bool:
+	set(val):
+		is_gift = val;
+		changed_data["is_gift"] = is_gift;
 ## The type of subscription. Possible values are:      * 1000 — Tier 1 * 2000 — Tier 2 * 3000 — Tier 3
-var tier: String;
+var tier: String:
+	set(val):
+		tier = val;
+		changed_data["tier"] = tier;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUserSubscription:
 	var result = TwitchUserSubscription.new();
@@ -43,16 +69,7 @@ static func from_json(d: Dictionary) -> TwitchUserSubscription:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["gifter_id"] = gifter_id;
-	d["gifter_login"] = gifter_login;
-	d["gifter_name"] = gifter_name;
-	d["is_gift"] = is_gift;
-	d["tier"] = tier;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

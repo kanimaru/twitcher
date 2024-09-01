@@ -6,11 +6,22 @@ extends RefCounted
 class_name TwitchSendExtensionChatMessageBody
 
 ## The message. The message may contain a maximum of 280 characters.
-var text: String;
+var text: String:
+	set(val):
+		text = val;
+		changed_data["text"] = text;
 ## The ID of the extension that’s sending the chat message.
-var extension_id: String;
+var extension_id: String:
+	set(val):
+		extension_id = val;
+		changed_data["extension_id"] = extension_id;
 ## The extension’s version number.
-var extension_version: String;
+var extension_version: String:
+	set(val):
+		extension_version = val;
+		changed_data["extension_version"] = extension_version;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchSendExtensionChatMessageBody:
 	var result = TwitchSendExtensionChatMessageBody.new();
@@ -23,11 +34,7 @@ static func from_json(d: Dictionary) -> TwitchSendExtensionChatMessageBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["text"] = text;
-	d["extension_id"] = extension_id;
-	d["extension_version"] = extension_version;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

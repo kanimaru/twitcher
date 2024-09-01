@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchGetAdScheduleResponse
 
 ## A list that contains information related to the channel’s ad schedule.
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetAdScheduleResponse:
 	var result = TwitchGetAdScheduleResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchGetAdScheduleResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -29,18 +32,37 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## The number of snoozes available for the broadcaster.
-	var snooze_count: int;
+	var snooze_count: int:
+		set(val):
+			snooze_count = val;
+			changed_data["snooze_count"] = snooze_count;
 	## The UTC timestamp when the broadcaster will gain an additional snooze, in RFC3339 format.
-	var snooze_refresh_at: Variant;
+	var snooze_refresh_at: Variant:
+		set(val):
+			snooze_refresh_at = val;
+			changed_data["snooze_refresh_at"] = snooze_refresh_at;
 	## The UTC timestamp of the broadcaster’s next scheduled ad, in RFC3339 format. Empty if the channel has no ad scheduled or is not live.
-	var next_ad_at: Variant;
+	var next_ad_at: Variant:
+		set(val):
+			next_ad_at = val;
+			changed_data["next_ad_at"] = next_ad_at;
 	## The length in seconds of the scheduled upcoming ad break.
-	var duration: int;
+	var duration: int:
+		set(val):
+			duration = val;
+			changed_data["duration"] = duration;
 	## The UTC timestamp of the broadcaster’s last ad-break, in RFC3339 format. Empty if the channel has not run an ad or is not live.
-	var last_ad_at: Variant;
+	var last_ad_at: Variant:
+		set(val):
+			last_ad_at = val;
+			changed_data["last_ad_at"] = last_ad_at;
 	## The amount of pre-roll free time remaining for the channel in seconds. Returns 0 if they are currently not pre-roll free.
-	var preroll_free_time: int;
+	var preroll_free_time: int:
+		set(val):
+			preroll_free_time = val;
+			changed_data["preroll_free_time"] = preroll_free_time;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -59,15 +81,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["snooze_count"] = snooze_count;
-		d["snooze_refresh_at"] = snooze_refresh_at;
-		d["next_ad_at"] = next_ad_at;
-		d["duration"] = duration;
-		d["last_ad_at"] = last_ad_at;
-		d["preroll_free_time"] = preroll_free_time;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

@@ -6,11 +6,22 @@ extends RefCounted
 class_name TwitchContentClassificationLabel
 
 ## Unique identifier for the CCL.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## Localized description of the CCL.
-var description: String;
+var description: String:
+	set(val):
+		description = val;
+		changed_data["description"] = description;
 ## Localized name of the CCL.
-var name: String;
+var name: String:
+	set(val):
+		name = val;
+		changed_data["name"] = name;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchContentClassificationLabel:
 	var result = TwitchContentClassificationLabel.new();
@@ -23,11 +34,7 @@ static func from_json(d: Dictionary) -> TwitchContentClassificationLabel:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["description"] = description;
-	d["name"] = name;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

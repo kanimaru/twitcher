@@ -6,9 +6,21 @@ extends RefCounted
 class_name TwitchGetModeratedChannelsResponse
 
 ## The list of channels that the user has moderator privileges in.
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through.
-var pagination: Pagination;
+var pagination: Pagination:
+	set(val):
+		pagination = val;
+		if pagination != null:
+			changed_data["pagination"] = pagination.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetModeratedChannelsResponse:
 	var result = TwitchGetModeratedChannelsResponse.new();
@@ -20,14 +32,7 @@ static func from_json(d: Dictionary) -> TwitchGetModeratedChannelsResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	if pagination != null:
-		d["pagination"] = pagination.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -35,12 +40,22 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## An ID that uniquely identifies the channel this user can moderate.
-	var broadcaster_id: String;
+	var broadcaster_id: String:
+		set(val):
+			broadcaster_id = val;
+			changed_data["broadcaster_id"] = broadcaster_id;
 	## The channel’s login name.
-	var broadcaster_login: String;
+	var broadcaster_login: String:
+		set(val):
+			broadcaster_login = val;
+			changed_data["broadcaster_login"] = broadcaster_login;
 	## The channels’ display name.
-	var broadcaster_name: String;
+	var broadcaster_name: String:
+		set(val):
+			broadcaster_name = val;
+			changed_data["broadcaster_name"] = broadcaster_name;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -53,12 +68,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["broadcaster_id"] = broadcaster_id;
-		d["broadcaster_login"] = broadcaster_login;
-		d["broadcaster_name"] = broadcaster_name;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -66,8 +76,12 @@ class Data extends RefCounted:
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through.
 class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Use the cursor to set the request’s after query parameter.
-	var cursor: String;
+	var cursor: String:
+		set(val):
+			cursor = val;
+			changed_data["cursor"] = cursor;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Pagination:
 		var result = Pagination.new();
@@ -76,10 +90,7 @@ class Pagination extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["cursor"] = cursor;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

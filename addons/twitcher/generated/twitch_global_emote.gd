@@ -6,17 +6,47 @@ extends RefCounted
 class_name TwitchGlobalEmote
 
 ## An ID that identifies this emote.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The name of the emote. This is the name that viewers type in the chat window to get the emote to appear.
-var name: String;
+var name: String:
+	set(val):
+		name = val;
+		changed_data["name"] = name;
 ## The image URLs for the emote. These image URLs always provide a static, non-animated emote image with a light background.      **NOTE:** You should use the templated URL in the `template` field to fetch the image instead of using these URLs.
-var images: Images;
+var images: Images:
+	set(val):
+		images = val;
+		if images != null:
+			changed_data["images"] = images.to_dict();
 ## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only `static`. But if the emote is available as a static PNG and an animated GIF, the array contains `static` and `animated`. The possible formats are:      * animated — An animated GIF is available for this emote. * static — A static PNG file is available for this emote.
-var format: Array[String];
+var format: Array[String]:
+	set(val):
+		format = val;
+		changed_data["format"] = [];
+		if format != null:
+			for value in format:
+				changed_data["format"].append(value);
 ## The sizes that the emote is available in. For example, if the emote is available in small and medium sizes, the array contains 1.0 and 2.0\. Possible sizes are:      * 1.0 — A small version (28px x 28px) is available. * 2.0 — A medium version (56px x 56px) is available. * 3.0 — A large version (112px x 112px) is available.
-var scale: Array[String];
+var scale: Array[String]:
+	set(val):
+		scale = val;
+		changed_data["scale"] = [];
+		if scale != null:
+			for value in scale:
+				changed_data["scale"].append(value);
 ## The background themes that the emote is available in. Possible themes are:      * dark * light
-var theme_mode: Array[String];
+var theme_mode: Array[String]:
+	set(val):
+		theme_mode = val;
+		changed_data["theme_mode"] = [];
+		if theme_mode != null:
+			for value in theme_mode:
+				changed_data["theme_mode"].append(value);
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGlobalEmote:
 	var result = TwitchGlobalEmote.new();
@@ -38,24 +68,7 @@ static func from_json(d: Dictionary) -> TwitchGlobalEmote:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["name"] = name;
-	if images != null:
-		d["images"] = images.to_dict();
-	d["format"] = [];
-	if format != null:
-		for value in format:
-			d["format"].append(value);
-	d["scale"] = [];
-	if scale != null:
-		for value in scale:
-			d["scale"].append(value);
-	d["theme_mode"] = [];
-	if theme_mode != null:
-		for value in theme_mode:
-			d["theme_mode"].append(value);
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -63,12 +76,22 @@ func to_json() -> String:
 ## The image URLs for the emote. These image URLs always provide a static, non-animated emote image with a light background.      **NOTE:** You should use the templated URL in the `template` field to fetch the image instead of using these URLs.
 class Images extends RefCounted:
 	## A URL to the small version (28px x 28px) of the emote.
-	var url_1x: String;
+	var url_1x: String:
+		set(val):
+			url_1x = val;
+			changed_data["url_1x"] = url_1x;
 	## A URL to the medium version (56px x 56px) of the emote.
-	var url_2x: String;
+	var url_2x: String:
+		set(val):
+			url_2x = val;
+			changed_data["url_2x"] = url_2x;
 	## A URL to the large version (112px x 112px) of the emote.
-	var url_4x: String;
+	var url_4x: String:
+		set(val):
+			url_4x = val;
+			changed_data["url_4x"] = url_4x;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Images:
 		var result = Images.new();
@@ -81,12 +104,7 @@ class Images extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["url_1x"] = url_1x;
-		d["url_2x"] = url_2x;
-		d["url_4x"] = url_4x;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

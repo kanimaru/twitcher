@@ -6,33 +6,77 @@ extends RefCounted
 class_name TwitchUpdateCustomRewardBody
 
 ## The reward’s title. The title may contain a maximum of 45 characters and it must be unique amongst all of the broadcaster’s custom rewards.
-var title: String;
+var title: String:
+	set(val):
+		title = val;
+		changed_data["title"] = title;
 ## The prompt shown to the viewer when they redeem the reward. Specify a prompt if `is_user_input_required` is **true**. The prompt is limited to a maximum of 200 characters.
-var prompt: String;
+var prompt: String:
+	set(val):
+		prompt = val;
+		changed_data["prompt"] = prompt;
 ## The cost of the reward, in channel points. The minimum is 1 point.
-var cost: int;
+var cost: int:
+	set(val):
+		cost = val;
+		changed_data["cost"] = cost;
 ## The background color to use for the reward. Specify the color using Hex format (for example, \\#00E5CB).
-var background_color: String;
+var background_color: String:
+	set(val):
+		background_color = val;
+		changed_data["background_color"] = background_color;
 ## A Boolean value that indicates whether the reward is enabled. Set to **true** to enable the reward. Viewers see only enabled rewards.
-var is_enabled: bool;
+var is_enabled: bool:
+	set(val):
+		is_enabled = val;
+		changed_data["is_enabled"] = is_enabled;
 ## A Boolean value that determines whether users must enter information to redeem the reward. Set to **true** if user input is required. See the `prompt` field.
-var is_user_input_required: bool;
+var is_user_input_required: bool:
+	set(val):
+		is_user_input_required = val;
+		changed_data["is_user_input_required"] = is_user_input_required;
 ## A Boolean value that determines whether to limit the maximum number of redemptions allowed per live stream (see the `max_per_stream` field). Set to **true** to limit redemptions.
-var is_max_per_stream_enabled: bool;
+var is_max_per_stream_enabled: bool:
+	set(val):
+		is_max_per_stream_enabled = val;
+		changed_data["is_max_per_stream_enabled"] = is_max_per_stream_enabled;
 ## The maximum number of redemptions allowed per live stream. Applied only if `is_max_per_stream_enabled` is **true**. The minimum value is 1.
-var max_per_stream: int;
+var max_per_stream: int:
+	set(val):
+		max_per_stream = val;
+		changed_data["max_per_stream"] = max_per_stream;
 ## A Boolean value that determines whether to limit the maximum number of redemptions allowed per user per stream (see `max_per_user_per_stream`). The minimum value is 1\. Set to **true** to limit redemptions.
-var is_max_per_user_per_stream_enabled: bool;
+var is_max_per_user_per_stream_enabled: bool:
+	set(val):
+		is_max_per_user_per_stream_enabled = val;
+		changed_data["is_max_per_user_per_stream_enabled"] = is_max_per_user_per_stream_enabled;
 ## The maximum number of redemptions allowed per user per stream. Applied only if `is_max_per_user_per_stream_enabled` is **true**.
-var max_per_user_per_stream: int;
+var max_per_user_per_stream: int:
+	set(val):
+		max_per_user_per_stream = val;
+		changed_data["max_per_user_per_stream"] = max_per_user_per_stream;
 ## A Boolean value that determines whether to apply a cooldown period between redemptions. Set to **true** to apply a cooldown period. For the duration of the cooldown period, see `global_cooldown_seconds`.
-var is_global_cooldown_enabled: bool;
+var is_global_cooldown_enabled: bool:
+	set(val):
+		is_global_cooldown_enabled = val;
+		changed_data["is_global_cooldown_enabled"] = is_global_cooldown_enabled;
 ## The cooldown period, in seconds. Applied only if `is_global_cooldown_enabled` is **true**. The minimum value is 1; however, for it to be shown in the Twitch UX, the minimum value is 60.
-var global_cooldown_seconds: int;
+var global_cooldown_seconds: int:
+	set(val):
+		global_cooldown_seconds = val;
+		changed_data["global_cooldown_seconds"] = global_cooldown_seconds;
 ## A Boolean value that determines whether to pause the reward. Set to **true** to pause the reward. Viewers can’t redeem paused rewards..
-var is_paused: bool;
+var is_paused: bool:
+	set(val):
+		is_paused = val;
+		changed_data["is_paused"] = is_paused;
 ## A Boolean value that determines whether redemptions should be set to FULFILLED status immediately when a reward is redeemed. If **false**, status is set to UNFULFILLED and follows the normal request queue process.
-var should_redemptions_skip_request_queue: bool;
+var should_redemptions_skip_request_queue: bool:
+	set(val):
+		should_redemptions_skip_request_queue = val;
+		changed_data["should_redemptions_skip_request_queue"] = should_redemptions_skip_request_queue;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUpdateCustomRewardBody:
 	var result = TwitchUpdateCustomRewardBody.new();
@@ -67,22 +111,7 @@ static func from_json(d: Dictionary) -> TwitchUpdateCustomRewardBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["title"] = title;
-	d["prompt"] = prompt;
-	d["cost"] = cost;
-	d["background_color"] = background_color;
-	d["is_enabled"] = is_enabled;
-	d["is_user_input_required"] = is_user_input_required;
-	d["is_max_per_stream_enabled"] = is_max_per_stream_enabled;
-	d["max_per_stream"] = max_per_stream;
-	d["is_max_per_user_per_stream_enabled"] = is_max_per_user_per_stream_enabled;
-	d["max_per_user_per_stream"] = max_per_user_per_stream;
-	d["is_global_cooldown_enabled"] = is_global_cooldown_enabled;
-	d["global_cooldown_seconds"] = global_cooldown_seconds;
-	d["is_paused"] = is_paused;
-	d["should_redemptions_skip_request_queue"] = should_redemptions_skip_request_queue;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

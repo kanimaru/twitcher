@@ -6,11 +6,22 @@ extends RefCounted
 class_name TwitchUserModerator
 
 ## The ID of the user that has permission to moderate the broadcaster’s channel.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The user’s login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
 ## The user’s display name.
-var user_name: String;
+var user_name: String:
+	set(val):
+		user_name = val;
+		changed_data["user_name"] = user_name;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUserModerator:
 	var result = TwitchUserModerator.new();
@@ -23,11 +34,7 @@ static func from_json(d: Dictionary) -> TwitchUserModerator:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["user_id"] = user_id;
-	d["user_login"] = user_login;
-	d["user_name"] = user_name;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

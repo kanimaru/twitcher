@@ -6,9 +6,20 @@ extends RefCounted
 class_name TwitchExtensionSecret
 
 ## The version number that identifies this definition of the secret’s data.
-var format_version: int;
+var format_version: int:
+	set(val):
+		format_version = val;
+		changed_data["format_version"] = format_version;
 ## The list of secrets.
-var secrets: Array[Secrets];
+var secrets: Array[Secrets]:
+	set(val):
+		secrets = val;
+		changed_data["secrets"] = [];
+		if secrets != null:
+			for value in secrets:
+				changed_data["secrets"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchExtensionSecret:
 	var result = TwitchExtensionSecret.new();
@@ -20,13 +31,7 @@ static func from_json(d: Dictionary) -> TwitchExtensionSecret:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["format_version"] = format_version;
-	d["secrets"] = [];
-	if secrets != null:
-		for value in secrets:
-			d["secrets"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -34,12 +39,22 @@ func to_json() -> String:
 ## 
 class Secrets extends RefCounted:
 	## The raw secret that you use with JWT encoding.
-	var content: String;
+	var content: String:
+		set(val):
+			content = val;
+			changed_data["content"] = content;
 	## The UTC date and time (in RFC3339 format) that you may begin using this secret to sign a JWT.
-	var active_at: Variant;
+	var active_at: Variant:
+		set(val):
+			active_at = val;
+			changed_data["active_at"] = active_at;
 	## The UTC date and time (in RFC3339 format) that you must stop using this secret to decode a JWT.
-	var expires_at: Variant;
+	var expires_at: Variant:
+		set(val):
+			expires_at = val;
+			changed_data["expires_at"] = expires_at;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Secrets:
 		var result = Secrets.new();
@@ -52,12 +67,7 @@ class Secrets extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["content"] = content;
-		d["active_at"] = active_at;
-		d["expires_at"] = expires_at;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

@@ -6,27 +6,62 @@ extends RefCounted
 class_name TwitchUser
 
 ## An ID that identifies the user.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## The user's login name.
-var login: String;
+var login: String:
+	set(val):
+		login = val;
+		changed_data["login"] = login;
 ## The user's display name.
-var display_name: String;
+var display_name: String:
+	set(val):
+		display_name = val;
+		changed_data["display_name"] = display_name;
 ## The type of user. Possible values are:      * admin — Twitch administrator * global\_mod * staff — Twitch staff * "" — Normal user
-var type: String;
+var type: String:
+	set(val):
+		type = val;
+		changed_data["type"] = type;
 ## The type of broadcaster. Possible values are:      * affiliate — An [affiliate broadcaster](https://help.twitch.tv/s/article/joining-the-affiliate-program) * partner — A [partner broadcaster](https://help.twitch.tv/s/article/partner-program-overview) * "" — A normal broadcaster
-var broadcaster_type: String;
+var broadcaster_type: String:
+	set(val):
+		broadcaster_type = val;
+		changed_data["broadcaster_type"] = broadcaster_type;
 ## The user's description of their channel.
-var description: String;
+var description: String:
+	set(val):
+		description = val;
+		changed_data["description"] = description;
 ## A URL to the user's profile image.
-var profile_image_url: String;
+var profile_image_url: String:
+	set(val):
+		profile_image_url = val;
+		changed_data["profile_image_url"] = profile_image_url;
 ## A URL to the user's offline image.
-var offline_image_url: String;
+var offline_image_url: String:
+	set(val):
+		offline_image_url = val;
+		changed_data["offline_image_url"] = offline_image_url;
 ## The number of times the user's channel has been viewed.      **NOTE**: This field has been deprecated (see [Get Users API endpoint – "view\_count" deprecation](https://discuss.dev.twitch.tv/t/get-users-api-endpoint-view-count-deprecation/37777)). Any data in this field is not valid and should not be used.
-var view_count: int;
+var view_count: int:
+	set(val):
+		view_count = val;
+		changed_data["view_count"] = view_count;
 ## The user's verified email address. The object includes this field only if the user access token includes the **user:read:email** scope.      If the request contains more than one user, only the user associated with the access token that provided consent will include an email address — the email address for all other users will be empty.
-var email: String;
+var email: String:
+	set(val):
+		email = val;
+		changed_data["email"] = email;
 ## The UTC date and time that the user's account was created. The timestamp is in RFC3339 format.
-var created_at: Variant;
+var created_at: Variant:
+	set(val):
+		created_at = val;
+		changed_data["created_at"] = created_at;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchUser:
 	var result = TwitchUser.new();
@@ -55,19 +90,7 @@ static func from_json(d: Dictionary) -> TwitchUser:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["id"] = id;
-	d["login"] = login;
-	d["display_name"] = display_name;
-	d["type"] = type;
-	d["broadcaster_type"] = broadcaster_type;
-	d["description"] = description;
-	d["profile_image_url"] = profile_image_url;
-	d["offline_image_url"] = offline_image_url;
-	d["view_count"] = view_count;
-	d["email"] = email;
-	d["created_at"] = created_at;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

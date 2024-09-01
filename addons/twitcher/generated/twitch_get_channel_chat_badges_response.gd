@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchGetChannelChatBadgesResponse
 
 ## The list of chat badges. The list is sorted in ascending order by `set_id`, and within a set, the list is sorted in ascending order by `id`.
-var data: Array[TwitchChatBadge];
+var data: Array[TwitchChatBadge]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetChannelChatBadgesResponse:
 	var result = TwitchGetChannelChatBadgesResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchGetChannelChatBadgesResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

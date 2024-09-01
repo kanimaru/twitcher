@@ -6,13 +6,30 @@ extends RefCounted
 class_name TwitchCreatePredictionBody
 
 ## The ID of the broadcaster that’s running the prediction. This ID must match the user ID in the user access token.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The question that the broadcaster is asking. For example, _Will I finish this entire pizza?_ The title is limited to a maximum of 45 characters.
-var title: String;
+var title: String:
+	set(val):
+		title = val;
+		changed_data["title"] = title;
 ## The list of possible outcomes that the viewers may choose from. The list must contain a minimum of 2 choices and up to a maximum of 10 choices.
-var outcomes: Array[Outcomes];
+var outcomes: Array[Outcomes]:
+	set(val):
+		outcomes = val;
+		changed_data["outcomes"] = [];
+		if outcomes != null:
+			for value in outcomes:
+				changed_data["outcomes"].append(value.to_dict());
 ## The length of time (in seconds) that the prediction will run for. The minimum is 30 seconds and the maximum is 1800 seconds (30 minutes).
-var prediction_window: int;
+var prediction_window: int:
+	set(val):
+		prediction_window = val;
+		changed_data["prediction_window"] = prediction_window;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCreatePredictionBody:
 	var result = TwitchCreatePredictionBody.new();
@@ -28,15 +45,7 @@ static func from_json(d: Dictionary) -> TwitchCreatePredictionBody:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["title"] = title;
-	d["outcomes"] = [];
-	if outcomes != null:
-		for value in outcomes:
-			d["outcomes"].append(value.to_dict());
-	d["prediction_window"] = prediction_window;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -44,8 +53,12 @@ func to_json() -> String:
 ## 
 class Outcomes extends RefCounted:
 	## The text of one of the outcomes that the viewer may select. The title is limited to a maximum of 25 characters.
-	var title: String;
+	var title: String:
+		set(val):
+			title = val;
+			changed_data["title"] = title;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Outcomes:
 		var result = Outcomes.new();
@@ -54,10 +67,7 @@ class Outcomes extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["title"] = title;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

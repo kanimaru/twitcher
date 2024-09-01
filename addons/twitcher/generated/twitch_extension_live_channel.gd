@@ -6,15 +6,32 @@ extends RefCounted
 class_name TwitchExtensionLiveChannel
 
 ## The ID of the broadcaster that is streaming live and has installed or activated the extension.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The broadcaster’s display name.
-var broadcaster_name: String;
+var broadcaster_name: String:
+	set(val):
+		broadcaster_name = val;
+		changed_data["broadcaster_name"] = broadcaster_name;
 ## The name of the category or game being streamed.
-var game_name: String;
+var game_name: String:
+	set(val):
+		game_name = val;
+		changed_data["game_name"] = game_name;
 ## The ID of the category or game being streamed.
-var game_id: String;
+var game_id: String:
+	set(val):
+		game_id = val;
+		changed_data["game_id"] = game_id;
 ## The title of the broadcaster’s stream. May be an empty string if not specified.
-var title: String;
+var title: String:
+	set(val):
+		title = val;
+		changed_data["title"] = title;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchExtensionLiveChannel:
 	var result = TwitchExtensionLiveChannel.new();
@@ -31,13 +48,7 @@ static func from_json(d: Dictionary) -> TwitchExtensionLiveChannel:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_name"] = broadcaster_name;
-	d["game_name"] = game_name;
-	d["game_id"] = game_id;
-	d["title"] = title;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchCreateClipResponse
 
 ## 
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCreateClipResponse:
 	var result = TwitchCreateClipResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchCreateClipResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -29,10 +32,17 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## A URL that you can use to edit the clip’s title, identify the part of the clip to publish, and publish the clip. [Learn More](https://help.twitch.tv/s/article/how-to-use-clips)      The URL is valid for up to 24 hours or until the clip is published, whichever comes first.
-	var edit_url: String;
+	var edit_url: String:
+		set(val):
+			edit_url = val;
+			changed_data["edit_url"] = edit_url;
 	## An ID that uniquely identifies the clip.
-	var id: String;
+	var id: String:
+		set(val):
+			id = val;
+			changed_data["id"] = id;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -43,11 +53,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["edit_url"] = edit_url;
-		d["id"] = id;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

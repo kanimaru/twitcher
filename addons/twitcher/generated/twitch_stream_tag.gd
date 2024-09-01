@@ -6,13 +6,27 @@ extends RefCounted
 class_name TwitchStreamTag
 
 ## An ID that identifies this tag.
-var tag_id: String;
+var tag_id: String:
+	set(val):
+		tag_id = val;
+		changed_data["tag_id"] = tag_id;
 ## A Boolean value that determines whether the tag is an automatic tag. An automatic tag is one that Twitch adds to the stream. Broadcasters may not add automatic tags to their channel. The value is **true** if the tag is an automatic tag; otherwise, **false**.
-var is_auto: bool;
+var is_auto: bool:
+	set(val):
+		is_auto = val;
+		changed_data["is_auto"] = is_auto;
 ## A dictionary that contains the localized names of the tag. The key is in the form, <locale>-<coutry/region>. For example, en-us. The value is the localized name.
-var localization_names: Dictionary;
+var localization_names: Dictionary:
+	set(val):
+		localization_names = val;
+		changed_data["localization_names"] = localization_names;
 ## A dictionary that contains the localized descriptions of the tag. The key is in the form, <locale>-<coutry/region>. For example, en-us. The value is the localized description.
-var localization_descriptions: Dictionary;
+var localization_descriptions: Dictionary:
+	set(val):
+		localization_descriptions = val;
+		changed_data["localization_descriptions"] = localization_descriptions;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchStreamTag:
 	var result = TwitchStreamTag.new();
@@ -27,12 +41,7 @@ static func from_json(d: Dictionary) -> TwitchStreamTag:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["tag_id"] = tag_id;
-	d["is_auto"] = is_auto;
-	d["localization_names"] = localization_names;
-	d["localization_descriptions"] = localization_descriptions;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

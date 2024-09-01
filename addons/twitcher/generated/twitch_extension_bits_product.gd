@@ -6,17 +6,38 @@ extends RefCounted
 class_name TwitchExtensionBitsProduct
 
 ## The product's SKU. The SKU is unique across an extension's products.
-var sku: String;
+var sku: String:
+	set(val):
+		sku = val;
+		changed_data["sku"] = sku;
 ## An object that contains the product's cost information.
-var cost: Cost;
+var cost: Cost:
+	set(val):
+		cost = val;
+		if cost != null:
+			changed_data["cost"] = cost.to_dict();
 ## A Boolean value that indicates whether the product is in development. If **true**, the product is not available for public use.
-var in_development: bool;
+var in_development: bool:
+	set(val):
+		in_development = val;
+		changed_data["in_development"] = in_development;
 ## The product's name as displayed in the extension.
-var display_name: String;
+var display_name: String:
+	set(val):
+		display_name = val;
+		changed_data["display_name"] = display_name;
 ## The date and time, in RFC3339 format, when the product expires.
-var expiration: Variant;
+var expiration: Variant:
+	set(val):
+		expiration = val;
+		changed_data["expiration"] = expiration;
 ## A Boolean value that determines whether Bits product purchase events are broadcast to all instances of an extension on a channel. The events are broadcast via the `onTransactionComplete` helper callback. Is **true** if the event is broadcast to all instances.
-var is_broadcast: bool;
+var is_broadcast: bool:
+	set(val):
+		is_broadcast = val;
+		changed_data["is_broadcast"] = is_broadcast;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchExtensionBitsProduct:
 	var result = TwitchExtensionBitsProduct.new();
@@ -35,15 +56,7 @@ static func from_json(d: Dictionary) -> TwitchExtensionBitsProduct:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["sku"] = sku;
-	if cost != null:
-		d["cost"] = cost.to_dict();
-	d["in_development"] = in_development;
-	d["display_name"] = display_name;
-	d["expiration"] = expiration;
-	d["is_broadcast"] = is_broadcast;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -51,10 +64,17 @@ func to_json() -> String:
 ## An object that contains the product's cost information.
 class Cost extends RefCounted:
 	## The product's price.
-	var amount: int;
+	var amount: int:
+		set(val):
+			amount = val;
+			changed_data["amount"] = amount;
 	## The type of currency. Possible values are:      * bits
-	var type: String;
+	var type: String:
+		set(val):
+			type = val;
+			changed_data["type"] = type;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Cost:
 		var result = Cost.new();
@@ -65,11 +85,7 @@ class Cost extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["amount"] = amount;
-		d["type"] = type;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

@@ -6,11 +6,26 @@ extends RefCounted
 class_name TwitchGetUserEmotesResponse
 
 ## 
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
 ## A templated URL. Uses the values from the _id_, _format_, _scale_, and _theme\_mode_ fields to replace the like-named placeholder strings in the templated URL to create a CDN (content delivery network) URL that you use to fetch the emote.        For information about what the template looks like and how to use it to fetch emotes, see [Emote CDN URL](https://dev.twitch.tv/docs/irc/emotes#cdn-template) format.
-var template: String;
+var template: String:
+	set(val):
+		template = val;
+		changed_data["template"] = template;
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through.        For more information about pagination support, see [Twitch API Guide - Pagination](https://dev.twitch.tv/docs/api/guide#pagination).
-var pagination: Pagination;
+var pagination: Pagination:
+	set(val):
+		pagination = val;
+		if pagination != null:
+			changed_data["pagination"] = pagination.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetUserEmotesResponse:
 	var result = TwitchGetUserEmotesResponse.new();
@@ -24,15 +39,7 @@ static func from_json(d: Dictionary) -> TwitchGetUserEmotesResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	d["template"] = template;
-	if pagination != null:
-		d["pagination"] = pagination.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -40,22 +47,56 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## An ID that uniquely identifies this emote.
-	var id: String;
+	var id: String:
+		set(val):
+			id = val;
+			changed_data["id"] = id;
 	## The User ID of broadcaster whose channel is receiving the unban request.
-	var name: String;
-	## The type of emote. The possible values are:       * **bitstier** — A Bits tier emote. * **follower** — A follower emote. * **subscriptions** — A subscriber emote.
-	var emote_type: String;
+	var name: String:
+		set(val):
+			name = val;
+			changed_data["name"] = name;
+	## The type of emote. The possible values are:       * **none** — No emote type was assigned to this emote. * **bitstier** — A Bits tier emote. * **follower** — A follower emote. * **subscriptions** — A subscriber emote. * **channelpoints** — An emote granted by using channel points. * **rewards** — An emote granted to the user through a special event. * **hypetrain** — An emote granted for participation in a Hype Train. * **prime** — An emote granted for linking an Amazon Prime account. * **turbo** — An emote granted for having Twitch Turbo. * **smilies** — Emoticons supported by Twitch. * **globals** — An emote accessible by everyone. * **owl2019** — Emotes related to Overwatch League 2019. * **twofactor** — Emotes granted by enabling two-factor authentication on an account. * **limitedtime** — Emotes that were granted for only a limited time.
+	var emote_type: String:
+		set(val):
+			emote_type = val;
+			changed_data["emote_type"] = emote_type;
 	## An ID that identifies the emote set that the emote belongs to.
-	var emote_set_id: String;
+	var emote_set_id: String:
+		set(val):
+			emote_set_id = val;
+			changed_data["emote_set_id"] = emote_set_id;
 	## The ID of the broadcaster who owns the emote.
-	var owner_id: String;
+	var owner_id: String:
+		set(val):
+			owner_id = val;
+			changed_data["owner_id"] = owner_id;
 	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated.       * **animated** — An animated GIF is available for this emote. * **static** — A static PNG file is available for this emote.
-	var format: Array[String];
+	var format: Array[String]:
+		set(val):
+			format = val;
+			changed_data["format"] = [];
+			if format != null:
+				for value in format:
+					changed_data["format"].append(value);
 	## The sizes that the emote is available in. For example, if the emote is available in small and medium sizes, the array contains 1.0 and 2.0\.       * **1.0** — A small version (28px x 28px) is available. * **2.0** — A medium version (56px x 56px) is available. * **3.0** — A large version (112px x 112px) is available.
-	var scale: Array[String];
+	var scale: Array[String]:
+		set(val):
+			scale = val;
+			changed_data["scale"] = [];
+			if scale != null:
+				for value in scale:
+					changed_data["scale"].append(value);
 	## The background themes that the emote is available in.       * **dark** * **light**
-	var theme_mode: Array[String];
+	var theme_mode: Array[String]:
+		set(val):
+			theme_mode = val;
+			changed_data["theme_mode"] = [];
+			if theme_mode != null:
+				for value in theme_mode:
+					changed_data["theme_mode"].append(value);
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -81,26 +122,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["id"] = id;
-		d["name"] = name;
-		d["emote_type"] = emote_type;
-		d["emote_set_id"] = emote_set_id;
-		d["owner_id"] = owner_id;
-		d["format"] = [];
-		if format != null:
-			for value in format:
-				d["format"].append(value);
-		d["scale"] = [];
-		if scale != null:
-			for value in scale:
-				d["scale"].append(value);
-		d["theme_mode"] = [];
-		if theme_mode != null:
-			for value in theme_mode:
-				d["theme_mode"].append(value);
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -108,8 +130,12 @@ class Data extends RefCounted:
 ## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through.        For more information about pagination support, see [Twitch API Guide - Pagination](https://dev.twitch.tv/docs/api/guide#pagination).
 class Pagination extends RefCounted:
 	## The cursor used to get the next page of results. Use the cursor to set the request’s after query parameter.
-	var cursor: String;
+	var cursor: String:
+		set(val):
+			cursor = val;
+			changed_data["cursor"] = cursor;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Pagination:
 		var result = Pagination.new();
@@ -118,10 +144,7 @@ class Pagination extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["cursor"] = cursor;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

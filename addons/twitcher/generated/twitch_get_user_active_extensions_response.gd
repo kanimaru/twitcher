@@ -6,7 +6,13 @@ extends RefCounted
 class_name TwitchGetUserActiveExtensionsResponse
 
 ## The active extensions that the broadcaster has installed.
-var data: Data;
+var data: Data:
+	set(val):
+		data = val;
+		if data != null:
+			changed_data["data"] = data.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetUserActiveExtensionsResponse:
 	var result = TwitchGetUserActiveExtensionsResponse.new();
@@ -15,10 +21,7 @@ static func from_json(d: Dictionary) -> TwitchGetUserActiveExtensionsResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	if data != null:
-		d["data"] = data.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -26,12 +29,22 @@ func to_json() -> String:
 ## The active extensions that the broadcaster has installed.
 class Data extends RefCounted:
 	## A dictionary that contains the data for a panel extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the panel’s data for each key.
-	var panel: Dictionary;
+	var panel: Dictionary:
+		set(val):
+			panel = val;
+			changed_data["panel"] = panel;
 	## A dictionary that contains the data for a video-overlay extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the overlay’s data for each key.
-	var overlay: Dictionary;
+	var overlay: Dictionary:
+		set(val):
+			overlay = val;
+			changed_data["overlay"] = overlay;
 	## A dictionary that contains the data for a video-component extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the component’s data for each key.
-	var component: Dictionary;
+	var component: Dictionary:
+		set(val):
+			component = val;
+			changed_data["component"] = component;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -44,12 +57,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["panel"] = panel;
-		d["overlay"] = overlay;
-		d["component"] = component;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

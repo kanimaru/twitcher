@@ -6,29 +6,67 @@ extends RefCounted
 class_name TwitchBroadcasterSubscription
 
 ## An ID that identifies the broadcaster.
-var broadcaster_id: String;
+var broadcaster_id: String:
+	set(val):
+		broadcaster_id = val;
+		changed_data["broadcaster_id"] = broadcaster_id;
 ## The broadcaster’s login name.
-var broadcaster_login: String;
+var broadcaster_login: String:
+	set(val):
+		broadcaster_login = val;
+		changed_data["broadcaster_login"] = broadcaster_login;
 ## The broadcaster’s display name.
-var broadcaster_name: String;
+var broadcaster_name: String:
+	set(val):
+		broadcaster_name = val;
+		changed_data["broadcaster_name"] = broadcaster_name;
 ## The ID of the user that gifted the subscription to the user. Is an empty string if `is_gift` is **false**.
-var gifter_id: String;
+var gifter_id: String:
+	set(val):
+		gifter_id = val;
+		changed_data["gifter_id"] = gifter_id;
 ## The gifter’s login name. Is an empty string if `is_gift` is **false**.
-var gifter_login: String;
+var gifter_login: String:
+	set(val):
+		gifter_login = val;
+		changed_data["gifter_login"] = gifter_login;
 ## The gifter’s display name. Is an empty string if `is_gift` is **false**.
-var gifter_name: String;
+var gifter_name: String:
+	set(val):
+		gifter_name = val;
+		changed_data["gifter_name"] = gifter_name;
 ## A Boolean value that determines whether the subscription is a gift subscription. Is **true** if the subscription was gifted.
-var is_gift: bool;
+var is_gift: bool:
+	set(val):
+		is_gift = val;
+		changed_data["is_gift"] = is_gift;
 ## The name of the subscription.
-var plan_name: String;
+var plan_name: String:
+	set(val):
+		plan_name = val;
+		changed_data["plan_name"] = plan_name;
 ## The type of subscription. Possible values are:      * 1000 — Tier 1 * 2000 — Tier 2 * 3000 — Tier 3
-var tier: String;
+var tier: String:
+	set(val):
+		tier = val;
+		changed_data["tier"] = tier;
 ## An ID that identifies the subscribing user.
-var user_id: String;
+var user_id: String:
+	set(val):
+		user_id = val;
+		changed_data["user_id"] = user_id;
 ## The user’s display name.
-var user_name: String;
+var user_name: String:
+	set(val):
+		user_name = val;
+		changed_data["user_name"] = user_name;
 ## The user’s login name.
-var user_login: String;
+var user_login: String:
+	set(val):
+		user_login = val;
+		changed_data["user_login"] = user_login;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchBroadcasterSubscription:
 	var result = TwitchBroadcasterSubscription.new();
@@ -59,20 +97,7 @@ static func from_json(d: Dictionary) -> TwitchBroadcasterSubscription:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_id"] = broadcaster_id;
-	d["broadcaster_login"] = broadcaster_login;
-	d["broadcaster_name"] = broadcaster_name;
-	d["gifter_id"] = gifter_id;
-	d["gifter_login"] = gifter_login;
-	d["gifter_name"] = gifter_name;
-	d["is_gift"] = is_gift;
-	d["plan_name"] = plan_name;
-	d["tier"] = tier;
-	d["user_id"] = user_id;
-	d["user_name"] = user_name;
-	d["user_login"] = user_login;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

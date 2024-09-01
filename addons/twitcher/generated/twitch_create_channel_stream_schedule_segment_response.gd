@@ -6,7 +6,13 @@ extends RefCounted
 class_name TwitchCreateChannelStreamScheduleSegmentResponse
 
 ## The broadcaster’s streaming scheduled.
-var data: Data;
+var data: Data:
+	set(val):
+		data = val;
+		if data != null:
+			changed_data["data"] = data.to_dict();
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCreateChannelStreamScheduleSegmentResponse:
 	var result = TwitchCreateChannelStreamScheduleSegmentResponse.new();
@@ -15,10 +21,7 @@ static func from_json(d: Dictionary) -> TwitchCreateChannelStreamScheduleSegment
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	if data != null:
-		d["data"] = data.to_dict();
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -26,10 +29,17 @@ func to_json() -> String:
 ## The dates when the broadcaster is on vacation and not streaming. Is set to **null** if vacation mode is not enabled.
 class Vacation extends RefCounted:
 	## The UTC date and time (in RFC3339 format) of when the broadcaster’s vacation starts.
-	var start_time: Variant;
+	var start_time: Variant:
+		set(val):
+			start_time = val;
+			changed_data["start_time"] = start_time;
 	## The UTC date and time (in RFC3339 format) of when the broadcaster’s vacation ends.
-	var end_time: Variant;
+	var end_time: Variant:
+		set(val):
+			end_time = val;
+			changed_data["end_time"] = end_time;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Vacation:
 		var result = Vacation.new();
@@ -40,11 +50,7 @@ class Vacation extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["start_time"] = start_time;
-		d["end_time"] = end_time;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
@@ -52,16 +58,36 @@ class Vacation extends RefCounted:
 ## The broadcaster’s streaming scheduled.
 class Data extends RefCounted:
 	## A list that contains the single broadcast segment that you added.
-	var segments: Array[TwitchChannelStreamScheduleSegment];
+	var segments: Array[TwitchChannelStreamScheduleSegment]:
+		set(val):
+			segments = val;
+			changed_data["segments"] = [];
+			if segments != null:
+				for value in segments:
+					changed_data["segments"].append(value.to_dict());
 	## The ID of the broadcaster that owns the broadcast schedule.
-	var broadcaster_id: String;
+	var broadcaster_id: String:
+		set(val):
+			broadcaster_id = val;
+			changed_data["broadcaster_id"] = broadcaster_id;
 	## The broadcaster’s display name.
-	var broadcaster_name: String;
+	var broadcaster_name: String:
+		set(val):
+			broadcaster_name = val;
+			changed_data["broadcaster_name"] = broadcaster_name;
 	## The broadcaster’s login name.
-	var broadcaster_login: String;
+	var broadcaster_login: String:
+		set(val):
+			broadcaster_login = val;
+			changed_data["broadcaster_login"] = broadcaster_login;
 	## The dates when the broadcaster is on vacation and not streaming. Is set to **null** if vacation mode is not enabled.
-	var vacation: Vacation;
+	var vacation: Vacation:
+		set(val):
+			vacation = val;
+			if vacation != null:
+				changed_data["vacation"] = vacation.to_dict();
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -79,18 +105,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["segments"] = [];
-		if segments != null:
-			for value in segments:
-				d["segments"].append(value.to_dict());
-		d["broadcaster_id"] = broadcaster_id;
-		d["broadcaster_name"] = broadcaster_name;
-		d["broadcaster_login"] = broadcaster_login;
-		if vacation != null:
-			d["vacation"] = vacation.to_dict();
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

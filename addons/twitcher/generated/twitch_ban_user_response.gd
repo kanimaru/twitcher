@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchBanUserResponse
 
 ## A list that contains the user you successfully banned or put in a timeout.
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchBanUserResponse:
 	var result = TwitchBanUserResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchBanUserResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -29,16 +32,32 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## The broadcaster whose chat room the user was banned from chatting in.
-	var broadcaster_id: String;
+	var broadcaster_id: String:
+		set(val):
+			broadcaster_id = val;
+			changed_data["broadcaster_id"] = broadcaster_id;
 	## The moderator that banned or put the user in the timeout.
-	var moderator_id: String;
+	var moderator_id: String:
+		set(val):
+			moderator_id = val;
+			changed_data["moderator_id"] = moderator_id;
 	## The user that was banned or put in a timeout.
-	var user_id: String;
+	var user_id: String:
+		set(val):
+			user_id = val;
+			changed_data["user_id"] = user_id;
 	## The UTC date and time (in RFC3339 format) that the ban or timeout was placed.
-	var created_at: Variant;
+	var created_at: Variant:
+		set(val):
+			created_at = val;
+			changed_data["created_at"] = created_at;
 	## The UTC date and time (in RFC3339 format) that the timeout will end. Is **null** if the user was banned instead of being put in a timeout.
-	var end_time: Variant;
+	var end_time: Variant:
+		set(val):
+			end_time = val;
+			changed_data["end_time"] = end_time;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -55,14 +74,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["broadcaster_id"] = broadcaster_id;
-		d["moderator_id"] = moderator_id;
-		d["user_id"] = user_id;
-		d["created_at"] = created_at;
-		d["end_time"] = end_time;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

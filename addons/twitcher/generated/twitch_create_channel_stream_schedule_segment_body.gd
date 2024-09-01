@@ -6,17 +6,37 @@ extends RefCounted
 class_name TwitchCreateChannelStreamScheduleSegmentBody
 
 ## The date and time that the broadcast segment starts. Specify the date and time in RFC3339 format (for example, 2021-07-01T18:00:00Z).
-var start_time: Variant;
+var start_time: Variant:
+	set(val):
+		start_time = val;
+		changed_data["start_time"] = start_time;
 ## The time zone where the broadcast takes place. Specify the time zone using [IANA time zone database](https://www.iana.org/time-zones) format (for example, America/New\_York).
-var timezone: String;
+var timezone: String:
+	set(val):
+		timezone = val;
+		changed_data["timezone"] = timezone;
 ## The length of time, in minutes, that the broadcast is scheduled to run. The duration must be in the range 30 through 1380 (23 hours).
-var duration: String;
+var duration: String:
+	set(val):
+		duration = val;
+		changed_data["duration"] = duration;
 ## A Boolean value that determines whether the broadcast recurs weekly. Is **true** if the broadcast recurs weekly. Only partners and affiliates may add non-recurring broadcasts.
-var is_recurring: bool;
+var is_recurring: bool:
+	set(val):
+		is_recurring = val;
+		changed_data["is_recurring"] = is_recurring;
 ## The ID of the category that best represents the broadcast’s content. To get the category ID, use the [Search Categories](https://dev.twitch.tv/docs/api/reference#search-categories) endpoint.
-var category_id: String;
+var category_id: String:
+	set(val):
+		category_id = val;
+		changed_data["category_id"] = category_id;
 ## The broadcast’s title. The title may contain a maximum of 140 characters.
-var title: String;
+var title: String:
+	set(val):
+		title = val;
+		changed_data["title"] = title;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCreateChannelStreamScheduleSegmentBody:
 	var result = TwitchCreateChannelStreamScheduleSegmentBody.new();
@@ -35,14 +55,7 @@ static func from_json(d: Dictionary) -> TwitchCreateChannelStreamScheduleSegment
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["start_time"] = start_time;
-	d["timezone"] = timezone;
-	d["duration"] = duration;
-	d["is_recurring"] = is_recurring;
-	d["category_id"] = category_id;
-	d["title"] = title;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

@@ -6,7 +6,15 @@ extends RefCounted
 class_name TwitchGetShieldModeStatusResponse
 
 ## A list that contains a single object with the broadcaster’s Shield Mode status.
-var data: Array[Data];
+var data: Array[Data]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetShieldModeStatusResponse:
 	var result = TwitchGetShieldModeStatusResponse.new();
@@ -16,12 +24,7 @@ static func from_json(d: Dictionary) -> TwitchGetShieldModeStatusResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
@@ -29,16 +32,32 @@ func to_json() -> String:
 ## 
 class Data extends RefCounted:
 	## A Boolean value that determines whether Shield Mode is active. Is **true** if the broadcaster activated Shield Mode; otherwise, **false**.
-	var is_active: bool;
+	var is_active: bool:
+		set(val):
+			is_active = val;
+			changed_data["is_active"] = is_active;
 	## An ID that identifies the moderator that last activated Shield Mode. Is an empty string if Shield Mode hasn’t been previously activated.
-	var moderator_id: String;
+	var moderator_id: String:
+		set(val):
+			moderator_id = val;
+			changed_data["moderator_id"] = moderator_id;
 	## The moderator’s login name. Is an empty string if Shield Mode hasn’t been previously activated.
-	var moderator_login: String;
+	var moderator_login: String:
+		set(val):
+			moderator_login = val;
+			changed_data["moderator_login"] = moderator_login;
 	## The moderator’s display name. Is an empty string if Shield Mode hasn’t been previously activated.
-	var moderator_name: String;
+	var moderator_name: String:
+		set(val):
+			moderator_name = val;
+			changed_data["moderator_name"] = moderator_name;
 	## The UTC timestamp (in RFC3339 format) of when Shield Mode was last activated. Is an empty string if Shield Mode hasn’t been previously activated.
-	var last_activated_at: Variant;
+	var last_activated_at: Variant:
+		set(val):
+			last_activated_at = val;
+			changed_data["last_activated_at"] = last_activated_at;
 
+	var changed_data: Dictionary = {};
 
 	static func from_json(d: Dictionary) -> Data:
 		var result = Data.new();
@@ -55,14 +74,7 @@ class Data extends RefCounted:
 		return result;
 
 	func to_dict() -> Dictionary:
-		var d: Dictionary = {};
-		d["is_active"] = is_active;
-		d["moderator_id"] = moderator_id;
-		d["moderator_login"] = moderator_login;
-		d["moderator_name"] = moderator_name;
-		d["last_activated_at"] = last_activated_at;
-		return d;
-
+		return changed_data;
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());

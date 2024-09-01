@@ -6,9 +6,20 @@ extends RefCounted
 class_name TwitchGetGlobalEmotesResponse
 
 ## The list of global emotes.
-var data: Array[TwitchGlobalEmote];
+var data: Array[TwitchGlobalEmote]:
+	set(val):
+		data = val;
+		changed_data["data"] = [];
+		if data != null:
+			for value in data:
+				changed_data["data"].append(value.to_dict());
 ## A templated URL. Use the values from the `id`, `format`, `scale`, and `theme_mode` fields to replace the like-named placeholder strings in the templated URL to create a CDN (content delivery network) URL that you use to fetch the emote. For information about what the template looks like and how to use it to fetch emotes, see [Emote CDN URL format](https://dev.twitch.tv/docs/irc/emotes#cdn-template). You should use this template instead of using the URLs in the `images` object.
-var template: String;
+var template: String:
+	set(val):
+		template = val;
+		changed_data["template"] = template;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchGetGlobalEmotesResponse:
 	var result = TwitchGetGlobalEmotesResponse.new();
@@ -20,13 +31,7 @@ static func from_json(d: Dictionary) -> TwitchGetGlobalEmotesResponse:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["data"] = [];
-	if data != null:
-		for value in data:
-			d["data"].append(value.to_dict());
-	d["template"] = template;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

@@ -6,11 +6,22 @@ extends RefCounted
 class_name TwitchSetExtensionRequiredConfigurationBody
 
 ## The ID of the extension to update.
-var extension_id: String;
+var extension_id: String:
+	set(val):
+		extension_id = val;
+		changed_data["extension_id"] = extension_id;
 ## The version of the extension to update.
-var extension_version: String;
+var extension_version: String:
+	set(val):
+		extension_version = val;
+		changed_data["extension_version"] = extension_version;
 ## The required\_configuration string to use with the extension.
-var required_configuration: String;
+var required_configuration: String:
+	set(val):
+		required_configuration = val;
+		changed_data["required_configuration"] = required_configuration;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchSetExtensionRequiredConfigurationBody:
 	var result = TwitchSetExtensionRequiredConfigurationBody.new();
@@ -23,11 +34,7 @@ static func from_json(d: Dictionary) -> TwitchSetExtensionRequiredConfigurationB
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["extension_id"] = extension_id;
-	d["extension_version"] = extension_version;
-	d["required_configuration"] = required_configuration;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

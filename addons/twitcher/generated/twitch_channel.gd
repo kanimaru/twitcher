@@ -6,29 +6,73 @@ extends RefCounted
 class_name TwitchChannel
 
 ## The ISO 639-1 two-letter language code of the language used by the broadcaster. For example, _en_ for English. If the broadcaster uses a language not in the list of [supported stream languages](https://help.twitch.tv/s/article/languages-on-twitch#streamlang), the value is _other_.
-var broadcaster_language: String;
+var broadcaster_language: String:
+	set(val):
+		broadcaster_language = val;
+		changed_data["broadcaster_language"] = broadcaster_language;
 ## The broadcaster’s login name.
-var broadcaster_login: String;
+var broadcaster_login: String:
+	set(val):
+		broadcaster_login = val;
+		changed_data["broadcaster_login"] = broadcaster_login;
 ## The broadcaster’s display name.
-var display_name: String;
+var display_name: String:
+	set(val):
+		display_name = val;
+		changed_data["display_name"] = display_name;
 ## The ID of the game that the broadcaster is playing or last played.
-var game_id: String;
+var game_id: String:
+	set(val):
+		game_id = val;
+		changed_data["game_id"] = game_id;
 ## The name of the game that the broadcaster is playing or last played.
-var game_name: String;
+var game_name: String:
+	set(val):
+		game_name = val;
+		changed_data["game_name"] = game_name;
 ## An ID that uniquely identifies the channel (this is the broadcaster’s ID).
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
 ## A Boolean value that determines whether the broadcaster is streaming live. Is **true** if the broadcaster is streaming live; otherwise, **false**.
-var is_live: bool;
+var is_live: bool:
+	set(val):
+		is_live = val;
+		changed_data["is_live"] = is_live;
 ## **IMPORTANT** As of February 28, 2023, this field is deprecated and returns only an empty array. If you use this field, please update your code to use the `tags` field.      The list of tags that apply to the stream. The list contains IDs only when the channel is steaming live. For a list of possible tags, see [List of All Tags](https://www.twitch.tv/directory/all/tags). The list doesn’t include Category Tags.
-var tag_ids: Array[String];
+var tag_ids: Array[String]:
+	set(val):
+		tag_ids = val;
+		changed_data["tag_ids"] = [];
+		if tag_ids != null:
+			for value in tag_ids:
+				changed_data["tag_ids"].append(value);
 ## The tags applied to the channel.
-var tags: Array[String];
+var tags: Array[String]:
+	set(val):
+		tags = val;
+		changed_data["tags"] = [];
+		if tags != null:
+			for value in tags:
+				changed_data["tags"].append(value);
 ## A URL to a thumbnail of the broadcaster’s profile image.
-var thumbnail_url: String;
+var thumbnail_url: String:
+	set(val):
+		thumbnail_url = val;
+		changed_data["thumbnail_url"] = thumbnail_url;
 ## The stream’s title. Is an empty string if the broadcaster didn’t set it.
-var title: String;
+var title: String:
+	set(val):
+		title = val;
+		changed_data["title"] = title;
 ## The UTC date and time (in RFC3339 format) of when the broadcaster started streaming. The string is empty if the broadcaster is not streaming live.
-var started_at: Variant;
+var started_at: Variant:
+	set(val):
+		started_at = val;
+		changed_data["started_at"] = started_at;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchChannel:
 	var result = TwitchChannel.new();
@@ -61,26 +105,7 @@ static func from_json(d: Dictionary) -> TwitchChannel:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["broadcaster_language"] = broadcaster_language;
-	d["broadcaster_login"] = broadcaster_login;
-	d["display_name"] = display_name;
-	d["game_id"] = game_id;
-	d["game_name"] = game_name;
-	d["id"] = id;
-	d["is_live"] = is_live;
-	d["tag_ids"] = [];
-	if tag_ids != null:
-		for value in tag_ids:
-			d["tag_ids"].append(value);
-	d["tags"] = [];
-	if tags != null:
-		for value in tags:
-			d["tags"].append(value);
-	d["thumbnail_url"] = thumbnail_url;
-	d["title"] = title;
-	d["started_at"] = started_at;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());

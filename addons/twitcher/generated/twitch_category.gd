@@ -6,11 +6,22 @@ extends RefCounted
 class_name TwitchCategory
 
 ## A URL to an image of the game’s box art or streaming category.
-var box_art_url: String;
+var box_art_url: String:
+	set(val):
+		box_art_url = val;
+		changed_data["box_art_url"] = box_art_url;
 ## The name of the game or category.
-var name: String;
+var name: String:
+	set(val):
+		name = val;
+		changed_data["name"] = name;
 ## An ID that uniquely identifies the game or category.
-var id: String;
+var id: String:
+	set(val):
+		id = val;
+		changed_data["id"] = id;
+
+var changed_data: Dictionary = {};
 
 static func from_json(d: Dictionary) -> TwitchCategory:
 	var result = TwitchCategory.new();
@@ -23,11 +34,7 @@ static func from_json(d: Dictionary) -> TwitchCategory:
 	return result;
 
 func to_dict() -> Dictionary:
-	var d: Dictionary = {};
-	d["box_art_url"] = box_art_url;
-	d["name"] = name;
-	d["id"] = id;
-	return d;
+	return changed_data;
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
