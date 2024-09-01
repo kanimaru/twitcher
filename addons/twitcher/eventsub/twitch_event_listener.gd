@@ -17,7 +17,7 @@ func _ready() -> void:
 	if TwitchSetting.use_test_server:
 		TwitchService.eventsub_debug.event.connect(_on_received)
 	event_sub.event.connect(_on_received);
-	var all_subs: Array[Subscription] = TwitchSubscriptions.get_all();
+	var all_subs: Array[TwitchSubscriptions.Subscription] = TwitchSubscriptions.get_all();
 	subscription_name = all_subs[subscription].value;
 
 func _on_received(type: String, data: Dictionary):
