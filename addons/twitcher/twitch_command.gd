@@ -91,8 +91,8 @@ func _handle_command(raw_message: String, channel_name: String, username: String
 		var info = TwitchCommandInfo.new(command_name, null, message, channel_name, username, tags)
 		command_received.emit(username, info, arg_array)
 
-func _get_perm_flag_from_tags(tags : Dictionary) -> int:
-	var flag = 0
+func _get_perm_flag_from_tags(tags : Variant) -> int:
+	var flag: int = 0
 	var badges = tags.get("badges")
 	if(badges != null):
 		for badge in badges.split(","):

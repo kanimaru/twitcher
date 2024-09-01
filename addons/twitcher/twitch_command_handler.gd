@@ -126,7 +126,7 @@ func _handle_command(command: TwitchCommandData, raw_message: String, channel_na
 	else:
 		command.function_reference.call(TwitchCommandInfo.new(command_name, command, message, channel_name, username, tags), arg_array)
 
-func _get_perm_flag_from_tags(tags : Dictionary) -> int:
+func _get_perm_flag_from_tags(tags : Variant) -> int:
 	var flag = 0
 	var badges = tags.get("badges")
 	if(badges != null):
