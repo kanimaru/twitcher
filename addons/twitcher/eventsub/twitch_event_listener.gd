@@ -13,9 +13,11 @@ var subscription_name: String;
 
 func _ready() -> void:
 	assert(subscription != null);
-	var event_sub = TwitchService.eventsub as TwitchEventsub;
+	var event_sub: TwitchEventsub = TwitchService.eventsub as TwitchEventsub;
+	if TwitchSetting.use_test_server:
+		TwitchService.eventsub_debug.event.connect(_on_received)
 	event_sub.event.connect(_on_received);
-	var all_subs = TwitchSubscriptions.get_all();
+	var all_subs: Array[Subscription] = TwitchSubscriptions.get_all();
 	subscription_name = all_subs[subscription].value;
 
 func _on_received(type: String, data: Dictionary):
