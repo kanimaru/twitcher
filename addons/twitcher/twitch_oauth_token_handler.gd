@@ -5,6 +5,11 @@ class_name TwitchTokenHandler
 ## Time between checking the validation of the tokens
 var _last_validation_check: int = 0
 
+func _init(setting: OAuthSetting) -> void:
+	super(setting)
+	# We don't need to check right after the start
+	_last_validation_check = Time.get_ticks_msec() + 60 * 60 * 1000;
+
 func _check_token_refresh() -> void:
 	super._check_token_refresh()
 
