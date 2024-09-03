@@ -64,7 +64,7 @@ static func get_user(username: String) -> TwitchUser:
 		return null;
 	return user_data.data[0];
 	
-// Get data about a currently authenticated user 
+## Get data about a currently authenticated user 
 static func get_current_user() -> TwitchUser:
 	var user_data : TwitchGetUsersResponse = await api.get_users([], []);
 	return user_data.data[0];
