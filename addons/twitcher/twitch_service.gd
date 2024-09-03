@@ -63,6 +63,11 @@ static func get_user(username: String) -> TwitchUser:
 		printerr("Username was not found: %s" % username);
 		return null;
 	return user_data.data[0];
+	
+// Get data about a currently authenticated user 
+static func get_current_user() -> TwitchUser:
+	var user_data : TwitchGetUsersResponse = await api.get_users([], []);
+	return user_data.data[0];
 
 ## Get the image of an user
 static func load_profile_image(user: TwitchUser) -> ImageTexture:
