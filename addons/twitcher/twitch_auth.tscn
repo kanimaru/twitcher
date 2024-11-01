@@ -1,0 +1,53 @@
+[gd_scene load_steps=11 format=3 uid="uid://cuskx3pjheybj"]
+
+[ext_resource type="Script" path="res://addons/twitcher/twitch_auth.gd" id="1_wu5ja"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="2_clj08"]
+[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="2_t486o"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="2_wox2b"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/token.gd" id="3_ln5p4"]
+[ext_resource type="Script" path="res://addons/twitcher/twitch_oauth_token_handler.gd" id="3_sxsvf"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/scopes.gd" id="4_a0ws7"]
+
+[sub_resource type="Resource" id="Resource_2h5hp"]
+script = ExtResource("2_wox2b")
+redirect_url = "http://localhost:7170"
+well_known_url = ""
+token_url = ""
+authorization_url = ""
+device_authorization_url = ""
+cache_file = "res://auth.key"
+client_id = ""
+client_secret = ""
+authorization_flow = 0
+_encryption_key_provider = ExtResource("2_t486o")
+
+[sub_resource type="Resource" id="Resource_4emy4"]
+script = ExtResource("3_ln5p4")
+_crypto_key_provider = ExtResource("2_t486o")
+_identifier = "Auth-8195"
+_cache_path = "user://auth.conf"
+
+[sub_resource type="Resource" id="Resource_2oeuy"]
+script = ExtResource("4_a0ws7")
+used_scopes = Array[StringName]([])
+
+[node name="TwitchAuth" type="Node"]
+script = ExtResource("1_wu5ja")
+setting = SubResource("Resource_2h5hp")
+token = SubResource("Resource_4emy4")
+scopes = SubResource("Resource_2oeuy")
+
+[node name="OAuth" type="Node" parent="." node_paths=PackedStringArray("token_handler")]
+unique_name_in_owner = true
+process_mode = 3
+script = ExtResource("2_clj08")
+setting = SubResource("Resource_2h5hp")
+scopes = SubResource("Resource_2oeuy")
+token_handler = NodePath("../TokenHandler")
+
+[node name="TokenHandler" type="Node" parent="."]
+unique_name_in_owner = true
+process_mode = 4
+script = ExtResource("3_sxsvf")
+setting = SubResource("Resource_2h5hp")
+token = SubResource("Resource_4emy4")

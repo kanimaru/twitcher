@@ -8,16 +8,16 @@ class_name TwitchEventListener
 ## Called when the event got received
 signal received(data: Dictionary)
 
-@export var subscription: TwitchSubscriptions.Subscriptions;
+@export var event_sub: TwitchEventsub
+@export var subscription: TwitchEventsubDefinition.Type;
 var subscription_name: String;
 
 func _ready() -> void:
 	assert(subscription != null);
-	var event_sub: TwitchEventsub = TwitchService.eventsub as TwitchEventsub;
 	if TwitchSetting.use_test_server:
-		TwitchService.eventsub_debug.event.connect(_on_received)
+		event_sub.event.connect(_on_received)
 	event_sub.event.connect(_on_received);
-	var all_subs: Array[TwitchSubscriptions.Subscription] = TwitchSubscriptions.get_all();
+	var all_subs: Array[TwitchEventsubDefinition.Definition] = TwitchEventsubDefinition.ALL.values();
 	subscription_name = all_subs[subscription].value;
 
 func _on_received(type: String, data: Dictionary):

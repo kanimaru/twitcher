@@ -1,5 +1,16 @@
 extends Control
 
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Please set this settings first before running the example!
+# twitch/auth/client_id 		< you find while registering the application see readme for howto
+# twitch/auth/client_secret		< you find while registering the application see readme for howto
+# twitch/auth/broadcaster_id 	< Your broadcaster id you can convert it here https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
+# twitch/websocket/irc/username < Your username needed for IRC
+# twitch/auth/scopes/chat		< Add both Scopes chat_read, chat_edit
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 ## Container where the messages get added
 @onready var chat_container: VBoxContainer = %ChatContainer
 ## Text to send
@@ -8,17 +19,22 @@ extends Control
 @onready var send: Button = %Send
 ## Channel to send / receive the messages
 @onready var channel: TwitchIrcChannel = %TwitchIrcChannel
+@onready var twitch_service: TwitchService = %TwitchService
+@onready var configuration_warning: Label = %ConfigurationWarning
 
 func _ready() -> void:
-	# !!! Change following in the project settings that the example works !!!
-	# twitch/auth/broadcaster_id 	< Your broadcaster id you can convert it here https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
-	# twitch/auth/client_id 		< you find while registering the application see readme for howto
-	# twitch/auth/client_secret		< you find while registering the application see readme for howto
-	# twitch/websocket/irc/username < Your username needed for IRC
-	# twitch/auth/scopes/chat		< Add both Scopes chat_read, chat_edit
+	configuration_warning.hide()
+	if TwitchSetting.client_id == "":
+		configuration_warning.show()
+		push_error("Please configure client credentials according to the readme")
+		return
 
-	# Setup all of the library, connect to evensub, irc etc.
-	await TwitchService.setup();
+	# Setup all of the library, connect to irc etc.
+	await twitch_service.setup();
+	var current_user = await twitch_service.get_current_user();
+
+	channel.channel_name = current_user.display_name;
+
 	# Listen to the message received of the chat
 	channel.message_received.connect(_on_chat_message);
 	# When the send button is pressed send the message

@@ -1,4 +1,4 @@
-extends RefCounted
+extends Node
 
 ## Will load badges, icons and profile images
 class_name TwitchIconLoader
@@ -12,38 +12,45 @@ signal emoji_loaded(definition: TwitchEmoteDefinition);
 const ALLOW_EMPTY = true;
 const MAX_SPLITS = 1;
 
-var api: TwitchRestAPI;
+@export var api: TwitchRestAPI;
+@export var http_client_manager: HttpClientManager;
 
 ## All requests that are currently in progress
-var requests_in_progress : Array[StringName];
+var _requests_in_progress : Array[StringName];
 ## Badge definition for global and the channel.
-var cached_badges : Dictionary = {};
+var _cached_badges : Dictionary = {};
 ## Emote definition for global and the channel.
-var cached_emotes : Dictionary = {};
+var _cached_emotes : Dictionary = {};
 
 ## All cached emotes with emote_id as key and spriteframes as value.
 ## Is needed that the garbage collector isn't deleting our cache.
 var _cached_images : Array[SpriteFrames] = [];
+var _is_pre_loaded : bool
 
 var static_image_transformer = TwitchImageTransformer.new();
 
-func _init(twitch_api : TwitchRestAPI) -> void:
-	api = twitch_api;
 
-func do_preload():
-	var broadcaster_id = TwitchSetting.broadcaster_id;
+func _ready() -> void:
+	_do_preload()
+
+
+func _do_preload():
 	await preload_emotes();
-	await preload_emotes(broadcaster_id);
 	await preload_badges();
-	await preload_badges(broadcaster_id);
+	_is_pre_loaded = true
 	preload_done.emit();
-
 	_fireup_cache();
+
+
+## Use this to ensure that the cheermotes got preloaded.
+func wait_preloaded(): if !_is_pre_loaded: await preload_done;
+
 
 ## Loading all images from the directory into the memory cache
 func _fireup_cache() -> void:
 	_cache_directory(TwitchSetting.cache_emote);
 	_cache_directory(TwitchSetting.cache_badge);
+
 
 func _cache_directory(path: String):
 	DirAccess.make_dir_recursive_absolute(path);
@@ -58,13 +65,14 @@ func _cache_directory(path: String):
 #region Emotes
 
 func preload_emotes(channel_id: String = "global") -> void:
-	if (!cached_emotes.has(channel_id)):
+	if (!_cached_emotes.has(channel_id)):
 		var response;
 		if channel_id == "global":
 			response = await api.get_global_emotes();
 		else:
 			response = await api.get_channel_emotes(channel_id);
-		cached_emotes[channel_id] = _map_emotes(response);
+		_cached_emotes[channel_id] = _map_emotes(response);
+
 
 ## Returns requested emotes.
 ## Key: EmoteID as String ; Value: SpriteFrames
@@ -78,6 +86,7 @@ func get_emotes(emote_ids : Array[String]) -> Dictionary:
 	for requested_emote in requests:
 		result[requested_emote.id] = emotes[requested_emote];
 	return result;
+
 
 ## Returns requested emotes.
 ## Key: TwitchEmoteDefinition ; Value: SpriteFrames
@@ -95,8 +104,8 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 		if not TwitchSetting.image_transformer.is_supporting_animation():
 			emote_definition.type_static();
 
-		if requests_in_progress.has(cache_path): continue;
-		requests_in_progress.append(cache_path);
+		if _requests_in_progress.has(cache_path): continue;
+		_requests_in_progress.append(cache_path);
 		var request : BufferedHTTPClient.RequestData = _load_emote(emote_definition);
 		requests[emote_definition] = request;
 
@@ -107,7 +116,7 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 		var sprite_frames = await _convert_response(request, cache_path, spriteframe_path);
 		response[emote_definition] = sprite_frames;
 		_cached_images.append(sprite_frames);
-		requests_in_progress.erase(cache_path);
+		_requests_in_progress.erase(cache_path);
 		emoji_loaded.emit(emote_definition);
 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
@@ -117,10 +126,12 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 
 	return response;
 
+
 func _load_emote(emote_definition : TwitchEmoteDefinition) -> BufferedHTTPClient.RequestData:
 	var request_path = "/emoticons/v2/%s/%s/%s/%1.1f" % [emote_definition.id, emote_definition._type, emote_definition._theme, emote_definition._scale];
-	var client = HttpClientManager.get_client(TwitchSetting.twitch_image_cdn_host);
-	return client.request(request_path, HTTPClient.METHOD_GET, BufferedHTTPClient.HEADERS, "");
+	var client = http_client_manager.get_client(TwitchSetting.twitch_image_cdn_host);
+	return client.request(request_path, HTTPClient.METHOD_GET, {}, "");
+
 
 func _map_emotes(result: Variant) -> Dictionary:
 	var mappings : Dictionary = {};
@@ -131,10 +142,11 @@ func _map_emotes(result: Variant) -> Dictionary:
 		mappings[emote.get("id")] = emote;
 	return mappings;
 
+
 func get_cached_emotes(channel_id) -> Dictionary:
-	if not cached_emotes.has(channel_id):
+	if not _cached_emotes.has(channel_id):
 		await preload_emotes(channel_id);
-	return cached_emotes[channel_id];
+	return _cached_emotes[channel_id];
 
 #endregion
 
@@ -163,14 +175,16 @@ class BadgeData extends RefCounted:
 			scale
 		]);
 
+
 func preload_badges(channel_id: String = "global") -> void:
-	if not cached_badges.has(channel_id):
+	if not _cached_badges.has(channel_id):
 		var response;
 		if channel_id == "global":
 			response = await(api.get_global_chat_badges());
 		else:
 			response = await(api.get_channel_chat_badges(channel_id));
-		cached_badges[channel_id] = _cache_badges(response);
+		_cached_badges[channel_id] = _cache_badges(response);
+
 
 ## Returns the requested badge either from cache or loads from web. Scale can be 1, 2 or 4.
 ## Key: Badge Composite ; Value: SpriteFrames
@@ -200,6 +214,7 @@ func get_badges(badge_composites : Array[String], channel_id : String = "global"
 
 	return response;
 
+
 func _load_badge(badge_data: BadgeData) -> BufferedHTTPClient.RequestData:
 	var channel_id = badge_data.channel;
 	var badge_set = badge_data.badge_set;
@@ -207,17 +222,18 @@ func _load_badge(badge_data: BadgeData) -> BufferedHTTPClient.RequestData:
 	var scale = badge_data.scale;
 
 	var is_global_chanel = channel_id == "global";
-	if not cached_badges.has(channel_id):
+	if not _cached_badges.has(channel_id):
 		await preload_badges(channel_id);
-	var channel_has_badge = cached_badges[channel_id].has(badge_set) && cached_badges[channel_id][badge_set]["versions"].has(badge_id);
+	var channel_has_badge = _cached_badges[channel_id].has(badge_set) && _cached_badges[channel_id][badge_set]["versions"].has(badge_id);
 	if (!is_global_chanel && !channel_has_badge):
 		badge_data.channel = "global";
 		return await _load_badge(badge_data);
 
 	var base_url = TwitchSetting.twitch_image_cdn_host;
-	var request_path = cached_badges[channel_id][badge_set]["versions"][badge_id]["image_url_%sx" % scale].trim_prefix(base_url);
-	var client = HttpClientManager.get_client(base_url);
-	return client.request(request_path, HTTPClient.METHOD_GET, BufferedHTTPClient.HEADERS, "");
+	var request_path = _cached_badges[channel_id][badge_set]["versions"][badge_id]["image_url_%sx" % scale].trim_prefix(base_url);
+	var client = http_client_manager.get_client(base_url);
+	return client.request(request_path, HTTPClient.METHOD_GET, {}, "");
+
 
 ## Maps the badges into a dict of category / versions / badge_id
 func _cache_badges(result: Variant) -> Dictionary:
@@ -233,10 +249,11 @@ func _cache_badges(result: Variant) -> Dictionary:
 			mappings[badge["set_id"]]["versions"][version["id"]] = version;
 	return mappings;
 
+
 func get_cached_badges(channel_id) -> Dictionary:
-	if(!cached_badges.has(channel_id)):
+	if(!_cached_badges.has(channel_id)):
 		await preload_badges(channel_id);
-	return cached_badges[channel_id];
+	return _cached_badges[channel_id];
 #endregion
 
 #region Utilities

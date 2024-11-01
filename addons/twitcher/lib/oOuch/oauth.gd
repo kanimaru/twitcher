@@ -1,11 +1,11 @@
-extends RefCounted
+@tool
+extends Node
 
 ## Orchestrates the complete authentication process
 class_name OAuth
 
 const OAuthHTTPServer = preload("./http_server.gd");
 const OAuthHTTPClient = preload("./http_client.gd");
-const OAuthTokenHandler = preload("./token_handler.gd");
 const OAuthDeviceCodeResponse = preload("./device_code_response.gd");
 
 ## Called when the authorization for AuthCodeFlow is complete to handle the auth code
@@ -20,13 +20,17 @@ signal device_code_requested(device_code: OAuthDeviceCodeResponse);
 ## Called when the token has changed
 signal token_changed(access_token: String);
 
-var login_in_process: bool;
+@export var setting: OAuthSetting;
+@export var scopes: OAuthScopes;
+@export var token_handler: OAuthTokenHandler;
 
+var login_in_process: bool;
+## Special solution just for twitch ignore it in all other providers
+var force_verify: String;
 var _query_parser = RegEx.create_from_string("GET (.*?/?)\\??(.*?)? HTTP/1\\.1.*?")
 var _auth_http_server: OAuthHTTPServer;
-var _token_handler: OAuthTokenHandler;
-var _setting: OAuthSetting;
 var _last_login_attempt: int;
+
 
 enum AuthorizationFlow {
 	AUTHORIZATION_CODE_FLOW,
@@ -36,62 +40,64 @@ enum AuthorizationFlow {
 	PASSWORD_FLOW
 }
 
-func _init(setting: OAuthSetting, token_handler: OAuthTokenHandler) -> void:
-	_setting = setting;
-	_auth_http_server = OAuthHTTPServer.new(setting.get_redirect_port());
-	_token_handler = token_handler;
-	_token_handler.unauthenticated.connect(_on_unauthenticated);
-	_token_handler.token_resolved.connect(_on_token_resolved);
+func _ready() -> void:
+	_auth_http_server = OAuthHTTPServer.new(setting.redirect_port);
+	if token_handler == null:
+		token_handler = OAuthTokenHandler.new()
+		add_child(token_handler)
+	token_handler.unauthenticated.connect(_on_unauthenticated);
+	token_handler.token_resolved.connect(_on_token_resolved);
+
 
 func _on_unauthenticated() -> void:
 	login()
 
-func _on_token_resolved(token: OAuthTokenHandler.OAuthToken) -> void:
+
+func _on_token_resolved(token: OAuthToken) -> void:
 	token_changed.emit(token.get_access_token());
+
 
 ## Checks if the authentication is valid.
 func is_authenticated() -> bool:
-	return _token_handler.is_token_valid();
+	return token_handler.is_token_valid();
+
 
 ## Starts the token refresh process to rotate the tokens
 func refresh_token() -> void:
-	await _token_handler.refresh_tokens();
+	await token_handler.refresh_tokens();
 
-## Checks if the authentication is done or requests a new authentication.
-## Use this to ensure that the OAuth is initialized
-func ensure_authentication() -> void:
-	if not _token_handler.is_token_valid():
-		logInfo("Token is invalid.");
-		await login();
-	logDebug("Login is done.");
 
 ## Gets the current token as soon as it is available
 func get_token() -> String:
-	if _token_handler.get_access_token() == "":
-		await _token_handler.token_resolved;
-	return _token_handler.get_access_token();
+	if token_handler.get_access_token() == "":
+		await token_handler.token_resolved;
+	return token_handler.get_access_token();
+
 
 ## Depending on the authorization_flow it gets resolves the token via the different
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
 func login() -> void:
-	if _last_login_attempt != 0 && Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
-		print("[OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
-		await Engine.get_main_loop().create_timer(60).timeout;
+	if token_handler.is_token_valid(): return
 
-	_last_login_attempt = Time.get_ticks_msec()
 	if login_in_process:
 		logDebug("Another process tries already to login. Abort");
-		await _token_handler.token_resolved;
+		await token_handler.token_resolved;
 		return;
+
+	if _last_login_attempt != 0 && Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
+		print("[OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
+		await get_tree().create_timer(60).timeout;
+
+	_last_login_attempt = Time.get_ticks_msec()
 
 	login_in_process = true;
 	logInfo("do login")
-	match _setting.authorization_flow:
+	match setting.authorization_flow:
 		AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
 			await _start_login_process("code");
 		AuthorizationFlow.CLIENT_CREDENTIALS:
-			await _token_handler.request_token("client_credentials");
+			await token_handler.request_token("client_credentials");
 		AuthorizationFlow.IMPLICIT_FLOW:
 			await _start_login_process("token");
 		AuthorizationFlow.DEVICE_CODE_FLOW:
@@ -100,6 +106,7 @@ func login() -> void:
 			logInfo("Password flow is not yet supported");
 			pass
 	login_in_process = false;
+
 
 func _start_login_process(response_type: String):
 	_auth_http_server.start();
@@ -110,24 +117,25 @@ func _start_login_process(response_type: String):
 		_auth_http_server.request_received.connect(_process_implicit_request.bind(_auth_http_server));
 
 	var query_param = "&".join([
+			"force_verify=%s" % force_verify.uri_encode(),
 			"response_type=%s" % response_type.uri_encode(),
-			"client_id=%s" % _setting.client_id.uri_encode(),
-			"scope=%s" % _setting.get_scopes().uri_encode(),
-			"redirect_uri=%s" % _setting.redirect_url.uri_encode()
+			"client_id=%s" % setting.client_id.uri_encode(),
+			"scope=%s" % scopes.ssv_scopes().uri_encode(),
+			"redirect_uri=%s" % setting.redirect_url.uri_encode()
 		]);
 
-	var url = _setting.get_authorization_host() + _setting.get_authorization_path() + "?" + query_param;
+	var url = setting.authorization_host + setting.authorization_path + "?" + query_param;
 	logInfo("Start login process %s" % url);
-	logDebug("Request Scopes: %s" % _setting.get_scopes());
+	logDebug("Request Scopes: %s" % scopes.used_scopes);
 	OS.shell_open(url);
 	logDebug("Waiting for user to login.")
 	if response_type == "code":
 		var auth_code = await _auth_succeed;
-		_token_handler.request_token("authorization_code", auth_code);
-		await _token_handler.token_resolved;
+		token_handler.request_token("authorization_code", auth_code);
+		await token_handler.token_resolved;
 		_auth_http_server.request_received.disconnect(_process_code_request.bind(_auth_http_server));
 	elif response_type == "token":
-		await _token_handler.token_resolved;
+		await token_handler.token_resolved;
 		_auth_http_server.request_received.disconnect(_process_implicit_request.bind(_auth_http_server));
 	logInfo("Request is done stop")
 	_auth_http_server.stop();
@@ -136,7 +144,7 @@ func _start_login_process(response_type: String):
 
 ## Starts the device flow.
 func _start_device_login_process():
-	var scopes = _setting.get_scopes();
+	var scopes = scopes.used_scopes;
 	var device_code_response = await _fetch_device_code_response(scopes);
 	device_code_requested.emit(device_code_response);
 
@@ -144,16 +152,16 @@ func _start_device_login_process():
 	# he want to open the browser manually. Also use print not the logger so that the information
 	# is sent always.
 	print("Visit %s and enter the code %s for authorization." % [device_code_response.verification_uri, device_code_response.user_code])
-	await _token_handler.request_device_token(device_code_response, scopes);
+	await token_handler.request_device_token(device_code_response, scopes);
 
 func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 	logInfo("Start device code flow")
 	logDebug("Request Scopes: %s" % scopes);
-	var client = OAuthHTTPClient.new(_setting.get_device_authorization_host());
-	var body = "client_id=%s&scopes=%s" % [_setting.client_id, scopes.uri_encode()];
-	if _setting.client_secret != "":
-		body += "&client_secret=%s" % _setting.client_secret;
-	var request = client.request(_setting.get_device_authorization_path(), HTTPClient.METHOD_POST, {
+	var client = OAuthHTTPClient.new(setting.device_authorization_host);
+	var body = "client_id=%s&scopes=%s" % [setting.client_id, scopes.uri_encode()];
+	if setting.client_secret != "":
+		body += "&client_secret=%s" % setting.client_secret;
+	var request = client.request(setting.device_authorization_path, HTTPClient.METHOD_POST, {
 		"Content-Type": "application/x-www-form-urlencoded"
 	}, body);
 
@@ -171,7 +179,7 @@ func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServer) -> void:
 	var request = client.peer.get_utf8_string(client.peer.get_available_bytes());
 	if request == "":
-		logError("Empty response. Check if your redirect URL is set to %s." % _setting.redirect_url)
+		logError("Empty response. Check if your redirect URL is set to %s." % setting.redirect_url)
 		client.peer.disconnect_from_host();
 		return;
 
@@ -182,13 +190,13 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 		if matcher == null:
 			logDebug("Response from auth server was not right expected redirect url. It's ok browser asked probably for favicon etc.")
 			return;
-		var redirect_path = _setting.get_redirect_path();
+		var redirect_path = setting.redirect_path;
 		var request_path = matcher.get_string(1);
 		if redirect_path == request_path:
 			server.send_response(client, "200 OK", ("<html><head><title>Login</title></head><body>
 				<script>
 					var params = Object.fromEntries(new URLSearchParams(window.location.hash.substring(1)));
-					fetch('" + _setting.redirect_url + "', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params) })
+					fetch('" + setting.redirect_url + "', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params) })
 					.then(window.close)
 				</script>
 				Redirect Token to Godot
@@ -200,7 +208,7 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 			return  # Not a valid request
 		var json_body = parts[1];
 		var token_request = JSON.parse_string(json_body);
-		_token_handler.update_tokens(token_request["access_token"]);
+		token_handler.update_tokens(token_request["access_token"]);
 		logInfo("Received Access Token update it")
 		server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success!</body></html>".to_utf8_buffer());
 
@@ -210,7 +218,7 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServer) -> void:
 	var request = client.peer.get_utf8_string(client.peer.get_available_bytes());
 	if request == "":
-		logError("Empty response. Check if your redirect URL is set to %s." % _setting.redirect_url)
+		logError("Empty response. Check if your redirect URL is set to %s." % setting.redirect_url)
 		client.peer.disconnect_from_host();
 		return;
 
@@ -248,8 +256,6 @@ func _handle_error(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, quer
 
 #endregion
 
-func get_all_token() -> OAuthTokenHandler.OAuthToken:
-	return _token_handler._tokens;
 
 ## Parses a query string and returns a dictionary with the parameters.
 static func parse_query(query: String) -> Dictionary:
@@ -272,6 +278,7 @@ static func parse_query(query: String) -> Dictionary:
 # === LOGGER ===
 static var logger: Dictionary = {};
 static func set_logger(error: Callable, info: Callable, debug: Callable) -> void:
+	print("LOGGER SETUP")
 	logger.debug = debug;
 	logger.info = info;
 	logger.error = error;

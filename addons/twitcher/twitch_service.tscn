@@ -1,0 +1,58 @@
+[gd_scene load_steps=12 format=3 uid="uid://djt5lvmwxbq4a"]
+
+[ext_resource type="Script" path="res://addons/twitcher/twitch_service.gd" id="1_6jm7q"]
+[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_rest_api.gd" id="1_yq54x"]
+[ext_resource type="Script" path="res://addons/twitcher/twitch_irc.gd" id="2_vps2i"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/token.gd" id="2_xghrg"]
+[ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="3_x3t7l"]
+[ext_resource type="Script" path="res://addons/twitcher/twitch_icon_loader.gd" id="5_8eleo"]
+[ext_resource type="Script" path="res://addons/twitcher/twitch_command_handler.gd" id="6_38otf"]
+[ext_resource type="PackedScene" uid="uid://cuskx3pjheybj" path="res://addons/twitcher/twitch_auth.tscn" id="7_rtju7"]
+[ext_resource type="Script" path="res://addons/twitcher/communication/http_client_manager.gd" id="8_i5x6s"]
+[ext_resource type="Script" path="res://addons/twitcher/twitch_cheer_repository.gd" id="9_62dxb"]
+
+[sub_resource type="Resource" id="Resource_biviy"]
+script = ExtResource("2_xghrg")
+_identifier = "Default"
+_cache_path = "user://auth.conf"
+
+[node name="TwitchService" type="Node"]
+script = ExtResource("1_6jm7q")
+token = SubResource("Resource_biviy")
+
+[node name="IRC" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_vps2i")
+
+[node name="EventSub" type="Node" parent="." node_paths=PackedStringArray("api")]
+unique_name_in_owner = true
+script = ExtResource("3_x3t7l")
+api = NodePath("../API")
+
+[node name="API" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("1_yq54x")
+
+[node name="IconLoader" type="Node" parent="." node_paths=PackedStringArray("api", "http_client_manager")]
+unique_name_in_owner = true
+script = ExtResource("5_8eleo")
+api = NodePath("../API")
+http_client_manager = NodePath("../HttpClientManager")
+
+[node name="CommandHandler" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_38otf")
+
+[node name="TwitchAuth" parent="." instance=ExtResource("7_rtju7")]
+unique_name_in_owner = true
+use_project_setting = true
+
+[node name="HttpClientManager" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("8_i5x6s")
+
+[node name="CheerRepository" type="Node" parent="." node_paths=PackedStringArray("http_client_manager", "api")]
+unique_name_in_owner = true
+script = ExtResource("9_62dxb")
+http_client_manager = NodePath("../HttpClientManager")
+api = NodePath("../API")

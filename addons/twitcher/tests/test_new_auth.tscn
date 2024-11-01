@@ -1,0 +1,27 @@
+[gd_scene load_steps=7 format=3 uid="uid://dmbbptr8gofrm"]
+
+[ext_resource type="Script" path="res://addons/twitcher/tests/test_new_auth.gd" id="1_r4h1h"]
+[ext_resource type="PackedScene" uid="uid://cuskx3pjheybj" path="res://addons/twitcher/twitch_auth.tscn" id="2_qf83c"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/token.gd" id="3_hshae"]
+[ext_resource type="Resource" uid="uid://c6em6omrb7tbh" path="res://test_oauth_settings.tres" id="3_tjuwm"]
+[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="4_bnk2f"]
+
+[sub_resource type="Resource" id="Resource_peod2"]
+script = ExtResource("3_hshae")
+_crypto_key_provider = ExtResource("4_bnk2f")
+_identifier = "Auth-971"
+_cache_path = "user://auth.conf"
+
+[node name="TestNewAuth" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_r4h1h")
+
+[node name="TwitchAuthUser" parent="." instance=ExtResource("2_qf83c")]
+unique_name_in_owner = true
+setting = ExtResource("3_tjuwm")
+token = SubResource("Resource_peod2")

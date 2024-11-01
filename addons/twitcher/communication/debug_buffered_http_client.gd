@@ -2,6 +2,8 @@ extends Control
 
 @onready var clients: Tree = %Clients
 
+@export var http_client_manager: HttpClientManager
+
 ## Key: url as String | value: TreeItem
 var url_map : Dictionary = {};
 ## Key: BufferedHTTPClient | value: TreeItem
@@ -10,10 +12,10 @@ var client_map : Dictionary = {};
 var request_map : Dictionary = {};
 
 func _ready() -> void:
-	HttpClientManager.client_added.connect(_new_client);
-	HttpClientManager.client_closed.connect(_close_client);
-	for host in HttpClientManager.http_client_map:
-		for client in HttpClientManager.http_client_map[host]:
+	http_client_manager.client_added.connect(_new_client);
+	http_client_manager.client_closed.connect(_close_client);
+	for host in http_client_manager.http_client_map:
+		for client in http_client_manager.http_client_map[host]:
 			_new_client(client);
 
 func _new_client(client: BufferedHTTPClient):

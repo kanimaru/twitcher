@@ -26,50 +26,27 @@ const MSG_ID_BITSBADGETIER := &"bitsbadgetier";
 
 class Message extends RefCounted:
 	var color: String;
-	var badges: String;
-	var emotes: String;
+	var _badges: String;
+	var _emotes: String;
 	var room_id: String;
 	var raw: Variant;
+
+	var badges: Array[SpriteFrames];
+	var emotes: Array[TwitchIRC.EmoteLocation];
+
 
 	static func from_priv_msg(tag: PrivMsg) -> Message:
 		var msg = Message.new();
 		msg.color = tag.color;
-		msg.badges = tag.badges;
-		msg.emotes = tag.emotes;
+		msg._badges = tag.badges;
+		msg._emotes = tag.emotes;
 		msg.room_id = tag.room_id;
 		msg.raw = tag;
 		return msg;
 
+
 	func get_color() -> String:
 		return color;
-
-	func get_badges() -> Array[SpriteFrames]:
-		var badge_composite : Array[String] = [];
-		for badge in badges.split(",", false):
-			badge_composite.append(badge);
-		var result = await(TwitchService.get_badges(badge_composite, room_id))
-		var sprite_frames : Array[SpriteFrames] = [];
-		for sprite_frame in result.values():
-			sprite_frames.append(sprite_frame);
-		return sprite_frames;
-
-	func get_emotes() -> Array[TwitchIRC.EmoteLocation]:
-		var locations : Array[TwitchIRC.EmoteLocation] = [];
-		var emotes_to_load : Array[String] = [];
-		if emotes != null && emotes != "":
-			for emote in emotes.split("/", false):
-				var data : Array = emote.split(":");
-				for d in data[1].split(","):
-					var start_end = d.split("-");
-					locations.append(TwitchIRC.EmoteLocation.new(data[0], int(start_end[0]), int(start_end[1])));
-					emotes_to_load.append(data[0]);
-		locations.sort_custom(Callable(TwitchIRC.EmoteLocation, "smaller"));
-
-		var emotes: Dictionary = await TwitchService.icon_loader.get_emotes(emotes_to_load);
-		for emote_location: TwitchIRC.EmoteLocation in locations:
-			emote_location.sprite_frames = emotes[emote_location.id];
-
-		return locations;
 
 #endregion
 
@@ -78,6 +55,7 @@ class Message extends RefCounted:
 class BaseTags:
 	var _raw: String;
 	var _unmapped: Dictionary = {};
+
 
 	func parse_tags(tag_string: String, output: Object) -> void:
 		_raw = tag_string;
@@ -96,6 +74,7 @@ class BaseTags:
 			else:
 				output._unmapped[property_name] = "";
 
+
 	func _has_property(obj: Object, property_name: String) -> bool:
 		var properties = obj.get_property_list();
 		for property in properties:
@@ -103,8 +82,10 @@ class BaseTags:
 				return true;
 		return false;
 
+
 	func get_unmapped(property: String) -> Variant:
 		return _unmapped[property];
+
 
 	func has_unmapped(property: String) -> bool:
 		return _unmapped.has(property);
@@ -122,8 +103,10 @@ class ClearChat extends BaseTags:
 	## The UNIX timestamp.
 	var tmi_sent_ts: String
 
+
 	func _init(tags: String) -> void:
 		parse_tags(tags, self);
+
 
 ## Sent when the bot removes a single message from the chat room. [br]
 ## @login=<login>;room-id=<room-id>;target-msg-id=<target-msg-id>;tmi-sent-ts=<timestamp> [br]
@@ -138,8 +121,10 @@ class ClearMsg extends BaseTags:
 	## The UNIX timestamp.
 	var tmi_sent_ts: String;
 
+
 	func _init(tags: String) -> void:
 		parse_tags(tags, self);
+
 
 ## Sent when the bot authenticates with the server. [br]
 ## @badge-info=<badge-info>;badges=<badges>;color=<color>;display-name=<display-name>;emote-sets=<emote-sets>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type> [br]
@@ -163,8 +148,10 @@ class GlobalUserState extends BaseTags:
 	## The type of user. See TwitchTags.USER_TYPE_*
 	var user_type: String
 
+
 	func _init(tags: String) -> void:
 		parse_tags(tags, self);
+
 
 ## Sent to indicate the outcome of an action like banning a user. [br]
 ## @msg-id=<msg-id>;target-user-id=<user-id> [br]
@@ -175,8 +162,10 @@ class Notice extends BaseTags:
 	## The ID of the user that the action targeted.
 	var target_user_id: String;
 
+
 	func _init(tags: String) -> void:
 		parse_tags(tags, self);
+
 
 ## Sent when a user posts a message to the chat room. [br]
 ## @badge-info=<badge-info>;badges=<badges>;bits=<bits>client-nonce=<nonce>;color=<color>;display-name=<display-name>;emotes=<emotes>;first-msg=<first-msg>;flags=<flags>;id=<msg-id>;mod=<mod>;room-id=<room-id>;subscriber=<subscriber>;tmi-sent-ts=<timestamp>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type>;reply-parent-msg-id=<reply-parent-msg-id>;reply-parent-user-id=<reply-parent-user-id>;reply-parent-user-login=<reply-parent-user-login>;reply-parent-display-name=<reply-parent-display-name>;reply-parent-msg-body=<reply-parent-msg-body>;reply-thread-parent-msg-id=<reply-thread-parent-msg-id>;reply-thread-parent-user-login=<reply-thread-parent-user-login>;vip=<vip> [br]
@@ -244,8 +233,10 @@ class PrivMsg extends BaseTags:
 	## Not documented by Twitch.
 	var client_nonce: String
 
+
 	func _init(tags: String) -> void:
 		parse_tags(tags, self);
+
 
 ## Sent when the bot joins a channel or when the channel’s chat room settings change.  [br]
 ## @emote-only=<emote-only>;followers-only=<followers-only>;r9k=<r9k>;rituals=<rituals>;room-id=<room-id>;slow=<slow>;subs-only=<subs-only> [br]
@@ -264,8 +255,10 @@ class Roomstate extends BaseTags:
 	## A Boolean value that determines whether only subscribers and moderators can chat in the chat room. Is true (1) if only subscribers and moderators can chat; otherwise, false (0).
 	var subs_only: String;
 
+
 	func _init(tags: String) -> void:
 		parse_tags(tags, self);
+
 
 ## Sent when events like someone subscribing to the channel occurs.[br]
 ## @badge-info=<badge-info>;badges=<badges>;color=<color>;display-name=<display-name>;emotes=<emotes>;id=<id-of-msg>;login=<user>;mod=<mod>;msg-id=<msg-id>;room-id=<room-id>;subscriber=<subscriber>;system-msg=<system-msg>;tmi-sent-ts=<timestamp>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type>[br]
@@ -371,8 +364,10 @@ class Usernotice extends BaseTags:
 	## The number of months gifted as part of a single, multi-month gift.
 	var msg_param_gift_months: String;
 
+
 	func _init(tags: String) -> void:
 		parse_tags(tags, self);
+
 
 ## Sent when the bot joins a channel or sends a PRIVMSG message. [br]
 ## @badge-info=<badge-info>;badges=<badges>;color=<color>;display-name=<display-name>;emote-sets=<emote-sets>;id=<id>;mod=<mod>;subscriber=<subscriber>;turbo=<turbo>;user-type=<user-type>[br][br]
@@ -400,8 +395,10 @@ class Userstate extends BaseTags:
 	## The type of user. See TwitchTags.USER_TYPE_*
 	var user_type: String
 
+
 	func _init(tags: String) -> void:
 		parse_tags(tags, self);
+
 
 ## Sent when someone sends your bot a whisper message. [br]
 ## @badges=<badges>;color=<color>;display-name=<display-name>;emotes=<emotes>;message-id=<msg-id>;thread-id=<thread-id>;turbo=<turbo>;user-id=<user-id>;user-type=<user-type>[br]
@@ -425,6 +422,7 @@ class Whisper extends BaseTags:
 	var user_id: String;
 	## The type of user. See TwitchTags.USER_TYPE_*
 	var user_type: String;
+
 
 	func _init(tags: String) -> void:
 		parse_tags(tags, self);

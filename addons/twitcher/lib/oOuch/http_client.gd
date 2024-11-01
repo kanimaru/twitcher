@@ -1,3 +1,4 @@
+@tool
 extends RefCounted
 
 ## After this amount of request in the buffer the client isn't free anymore.
@@ -137,7 +138,6 @@ func empty_response(request_data: RequestData) -> ResponseData:
 	return response_data;
 
 func _connecting():
-	logDebug("Connecting")
 	if(client.get_status() == HTTPClient.STATUS_CANT_CONNECT):
 		client.close();
 		connect_to_host();

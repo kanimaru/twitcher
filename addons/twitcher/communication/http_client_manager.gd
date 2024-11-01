@@ -1,8 +1,10 @@
+@tool
 extends Node
 
-# Handles multiple hosts.
-# Handles parralel requests.
-# Stopping Clients after X Seconds with no additional request.
+## Handles multiple hosts.
+## Handles parralel requests.
+## Stopping Clients after X Seconds with no additional request.
+class_name HttpClientManager
 
 ## This one get send when the http client gets closed to cleanup stuff
 signal client_closed(http_client: BufferedHTTPClient);

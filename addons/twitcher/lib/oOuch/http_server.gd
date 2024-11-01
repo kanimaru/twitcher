@@ -1,3 +1,4 @@
+@tool
 extends RefCounted
 
 var server : TCPServer
@@ -44,8 +45,8 @@ func _handle_connect() -> void:
 
 func _process_request(client: Client) -> void:
 	var peer := client.peer;
+	var error = peer.poll();
 	if(peer.get_status() == StreamPeerTCP.STATUS_CONNECTED):
-		var error = peer.poll();
 		logDebug("Check if data can be polled")
 		if(error != OK):
 			logError("Can't poll data: %s" % error_string(error));

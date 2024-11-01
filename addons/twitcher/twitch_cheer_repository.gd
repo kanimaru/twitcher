@@ -1,4 +1,4 @@
-extends RefCounted
+extends Node
 
 class_name TwitchCheerRepository
 
@@ -45,7 +45,7 @@ const scales_path: Array[String] = [
 ]
 
 ## When the data for cheermotes are loaded.
-signal ready;
+signal preload_done;
 
 class CheerResult extends RefCounted:
 	var number: int;
@@ -58,37 +58,46 @@ class CheerResult extends RefCounted:
 		tier = t;
 		spriteframes = sprites;
 
-var HOST_PARSER = RegEx.create_from_string("(https://.*?)/");
-var fallback_texture: Texture2D
-var data: Array[TwitchCheermote];
-var is_ready: bool;
-var _cache: Dictionary;
-var api: TwitchRestAPI;
+@export var http_client_manager: HttpClientManager;
+@export var api: TwitchRestAPI;
 
-func _init(twitch_rest_api: TwitchRestAPI) -> void:
-	api = twitch_rest_api;
-	fallback_texture = TwitchSetting.fallback_texture2d;
+var _HOST_PARSER = RegEx.create_from_string("(https://.*?)/");
+var _fallback_texture: Texture2D
+var _data: Array[TwitchCheermote];
+var _is_preloaded: bool;
+var _cache: Dictionary;
+
+
+func _init() -> void:
+	_fallback_texture = TwitchSetting.fallback_texture2d;
+
+
+func _ready() -> void:
 	_preload_cheemote();
+
 
 func _preload_cheemote():
 	var cheer_emote_response: TwitchGetCheermotesResponse = await api.get_cheermotes();
-	data = cheer_emote_response.data
-	is_ready = true;
-	ready.emit();
+	_data = cheer_emote_response.data
+	_is_preloaded = true;
+	preload_done.emit();
+
 
 ## Use this to ensure that the cheermotes got preloaded.
-func wait_is_ready(): if !is_ready: await ready;
+func wait_preloaded(): if !_is_preloaded: await preload_done;
+
 
 ## Resolves a cheer tier emote for a specific cheer example: Cheer100
 ## Can be null when not found.
 func get_cheer_tier(cheer: String, theme: Themes = Themes.DARK, type: Types = Types.ANIMATED, scale: Scales = Scales._1) -> CheerResult:
-	for cheermote: TwitchCheermote in data:
+	for cheermote: TwitchCheermote in _data:
 		if cheer.begins_with(cheermote.prefix):
 			var number := int(cheer.trim_prefix(cheermote.prefix));
 			var tier = _find_cheer_tier(number, cheermote);
 			var sprite_frames = await _get_sprite_frames(cheermote, tier, theme, type, scale)
 			return CheerResult.new(number, cheermote, tier, sprite_frames);
 	return null;
+
 
 func _find_cheer_tier(number: int, cheer_data: TwitchCheermote) -> TwitchCheermote.Tiers:
 	var current_tier: TwitchCheermote.Tiers = cheer_data.tiers[0];
@@ -97,6 +106,7 @@ func _find_cheer_tier(number: int, cheer_data: TwitchCheermote) -> TwitchCheermo
 			current_tier = tier;
 	return current_tier;
 
+
 func _get_sprite_frames(cheermote: TwitchCheermote, tier: TwitchCheermote.Tiers, theme: Themes, type: Types, scale: Scales) -> SpriteFrames:
 	var id = _get_id(cheermote, tier, theme, type, scale);
 	if ResourceLoader.has_cached(id):
@@ -104,6 +114,7 @@ func _get_sprite_frames(cheermote: TwitchCheermote, tier: TwitchCheermote.Tiers,
 	else:
 		var request = _request_cheermote(tier, theme, type, scale);
 		return await _wait_for_cheeremote(request, id);
+
 
 ## Return specified cheermote data in form of:
 ## Key: TwitchCheermote.Tiers ; Value: SpriteFrames
@@ -124,29 +135,32 @@ func get_cheermotes(cheermote: TwitchCheermote, theme: Themes, type: Types, scal
 		response[tier] = sprite_frames;
 	return response;
 
+
 ## Checks if the prefix is existing
 func is_cheermote_prefix_existing(prefix: String) -> bool:
-	for cheer_data in data:
+	for cheer_data in _data:
 		if cheer_data.prefix == prefix:
 			return true;
 	return false;
+
 
 func _request_cheermote(cheer_tier: TwitchCheermote.Tiers, theme: Themes, type: Types, scale: Scales) -> BufferedHTTPClient.RequestData:
 	var used_theme = themes[theme];
 	var used_type = types_property[type];
 	var used_scale = scales_property[scale];
 	var img_path = cheer_tier.images[used_theme][used_type][used_scale] as String;
-	var host_result : RegExMatch = HOST_PARSER.search(img_path);
+	var host_result : RegExMatch = _HOST_PARSER.search(img_path);
 	if host_result == null:
 		var frames = SpriteFrames.new()
-		frames.add_frame("default", fallback_texture);
+		frames.add_frame("default", _fallback_texture);
 		return frames;
 
 	var host = host_result.get_string(1);
 	var request_path = img_path.trim_prefix(host);
-	var client = HttpClientManager.get_client(host);
+	var client = http_client_manager.get_client(host);
 	var request = client.request(request_path, HTTPClient.METHOD_GET, {}, "");
 	return request;
+
 
 func _wait_for_cheeremote(request: BufferedHTTPClient.RequestData, cheer_id: String) -> SpriteFrames:
 	var client = request.client;
@@ -160,6 +174,7 @@ func _wait_for_cheeremote(request: BufferedHTTPClient.RequestData, cheer_id: Str
 	sprite_frames.take_over_path(cheer_id);
 	_cache[cheer_id] = sprite_frames;
 	return sprite_frames;
+
 
 func _get_id(cheermote: TwitchCheermote, tier: TwitchCheermote.Tiers, theme: Themes, type: Types, scale: Scales) -> String:
 	return "/" + "/".join([ cheermote.prefix, tier.id, themes[theme], types_path[type], scales_path[scale] ]);

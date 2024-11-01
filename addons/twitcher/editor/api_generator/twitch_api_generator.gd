@@ -36,9 +36,9 @@ func _load_swagger_definition() -> Dictionary:
 
 func _generate_repositories():
 	var template = SimpleTemplate.new();
-	var template_method = template.read_template_file("res://addons/twitcher/editor/template_method.txt");
-	var template_parameter_optional = template.read_template_file("res://addons/twitcher/editor/template_method_parameters_optional.txt");
-	var template_body_optional = template.read_template_file("res://addons/twitcher/editor/template_method_body_optional.txt");
+	var template_method = template.read_template_file("res://addons/twitcher/editor/api_generator/template_method.txt");
+	var template_parameter_optional = template.read_template_file("res://addons/twitcher/editor/api_generator/template_method_parameters_optional.txt");
+	var template_body_optional = template.read_template_file("res://addons/twitcher/editor/api_generator/template_method_body_optional.txt");
 	var gdscript_code := ""
 	var paths = definition.get("paths", {})
 	var data = [];
@@ -108,7 +108,7 @@ func _generate_repositories():
 			if parameters["has_optional_body"]:
 				data.append(template.parse_template(template_body_optional, method_data));
 
-	template.process_template("res://addons/twitcher/editor/template_api.txt", {"methods": data}, api_output_path)
+	template.process_template("res://addons/twitcher/editor/api_generator/template_api.txt", {"methods": data}, api_output_path)
 	print("Twitch API got generated succesfully into ", api_output_path);
 
 func _parse_parameters(method_spec: Dictionary) -> Dictionary:
@@ -264,7 +264,7 @@ func _generate_components():
 		}
 		var file_name : String = "Twitch" + schema_name + ".gd";
 		file_name = file_name.to_snake_case();
-		template.process_template("res://addons/twitcher/editor/template_component.txt",
+		template.process_template("res://addons/twitcher/editor/api_generator/template_component.txt",
 				data, "res://addons/twitcher/generated/" + file_name);
 
 func _calculate_template(schema_name: String, schema: Dictionary, result_classes: Array, result_properties: Array[Dictionary]):
@@ -321,7 +321,7 @@ func _parse_properties(properties: Dictionary, result_classes: Array, result_pro
 func _get_sub_classes(parent_property_name:String, properties: Dictionary, result_classes: Array, class_description: String = "") -> Dictionary:
 	var template = SimpleTemplate.new()
 	var template_component_class = template.read_template_file(
-			"res://addons/twitcher/editor/template_component_class.txt");
+			"res://addons/twitcher/editor/api_generator/template_component_class.txt");
 	var result_properties: Array[Dictionary] = [];
 
 	_parse_properties(properties, result_classes, result_properties);

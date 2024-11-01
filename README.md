@@ -1,4 +1,10 @@
-# [Beta] Twitcher
+!!!! TODOS:
+- Change Documentation to remove autoloads
+- Add Possibility to change the Encryption key in Token.gd
+
+
+
+# [Bloody Alpha] Twitcher V2
 .. is a Godot Library for implementing Twitch functionality in Godot.
 The main purpose is to use this library for easier overlay development.
 The library can also be used to support Twitch game integration.

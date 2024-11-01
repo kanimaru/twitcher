@@ -1,4 +1,4 @@
-extends RefCounted
+extends Node
 
 class_name TwitchIRC
 
@@ -32,23 +32,9 @@ signal received_userstate(channel_name: String, tags: TwitchTags.Userstate);
 signal received_whisper(from_user: String, to_user: String, message: String, tags: TwitchTags.Whisper);
 ## The Twitch IRC server sends this message after a user posts a message to the chat room.
 signal received_privmsg(channel_name: String, username: String, message: String, tags: TwitchTags.PrivMsg);
+## When the token doesn't have enough permissions to join IRC
+signal unauthorized;
 
-## Websocket client to communicate with the Twitch IRC server.
-var client: WebsocketClient = WebsocketClient.new();
-
-## Timestamp when the next message should be sent.
-var next_message : int = Time.get_ticks_msec();
-
-## Messages to send with an interval for disconnection protection
-## see TwitchSettings.irc_send_message_delay.
-var chat_queue : Array[String] = []
-
-## All connected channels of the bot. Contains Key: channel_name -> Value: ChannelData entries.
-var channel_maps : Dictionary = {}
-
-## Returns everything between ! and @ example message looks like:
-## :foo!foo@foo.tmi.twitch.tv PRIVMSG #bar :bleedPurple
-var user_regex : RegEx = RegEx.create_from_string("!([\\w]*)@")
 
 class ChannelData extends RefCounted:
 
@@ -125,48 +111,66 @@ class EmoteLocation extends RefCounted:
 	static func smaller(a : EmoteLocation, b : EmoteLocation):
 		return a.start < b.start;
 
-var auth: TwitchAuth;
+@export var token: OAuthToken;
+@export var connect_on_enter_tree: bool = true
 
-func _init(twitch_auth : TwitchAuth) -> void:
-	auth = twitch_auth;
-	client.connection_state_changed.connect(_on_connection_state_changed);
-	client.message_received.connect(_data_received);
+## All connected channels of the bot.
+## Key: channel_name as String | Value: ChannelData
+@export var _channels := {}
 
-## Starts the connection to IRC
-func connect_to_irc() -> void:
-	client.connect_to(TwitchSetting.irc_server_url);
+var _ready_to_send: bool
+var _client := WebsocketClient.new()
 
-## Called when the websocket state has changed
-func _on_connection_state_changed(state: WebSocketPeer.State):
-	var proc_frame = Engine.get_main_loop().process_frame as Signal;
-	if(state == WebSocketPeer.STATE_OPEN):
-		_login();
-		_request_capabilities();
-		_reconnect_to_channels();
-		proc_frame.connect(_send_messages);
-	else:
-		for channel_name: String in channel_maps:
-			channel_maps[channel_name].leave();
-		if proc_frame.is_connected(_send_messages):
-			proc_frame.disconnect(_send_messages);
+## Timestamp when the next message should be sent.
+var _next_message := Time.get_ticks_msec();
+
+## Messages to send with an interval for disconnection protection
+## see TwitchSettings.irc_send_message_delay.
+var _chat_queue : Array[String] = []
+
+
+func _init() -> void:
+	_client.connection_url = TwitchSetting.irc_server_url
+	_client.message_received.connect(_data_received);
+	_client.connection_established.connect(_on_connection_established)
+	_client.connection_closed.connect(_on_connection_closed)
+	_client.connect_on_enter_tree = connect_on_enter_tree
+
+
+func _ready() -> void:
+	add_child(_client)
+
+
+func open_connection() -> void:
+	await _client.open_connection()
+
+
+func _on_connection_established() -> void:
+	_login();
+	_reconnect_to_channels();
+
+
+func _on_connection_closed() -> void:
+	_ready_to_send = false
+	for channel_name: String in _channels:
+		_channels[channel_name].leave();
+
+
+func _process(delta: float) -> void:
+	if _ready_to_send: _send_messages()
+
 
 ## Sends the login message for authorization pupose and sets an username
 func _login() -> void:
-	client.send_text("PASS oauth:%s" % await auth.get_access_token());
+	_client.send_text("PASS oauth:%s" % token.get_access_token());
 	_send("NICK " + TwitchSetting.irc_username);
-
-## Callback after a login try was made with the result value as parameter
-func _on_login(success: bool):
-	if success:
-		_join_channels_on_connect();
-	else: log.e("Can't connect");
-
-func _request_capabilities() -> void:
 	_send("CAP REQ :" + " ".join(TwitchSetting.irc_capabilities));
+
 
 ## Reconnect to all channels the bot was joined before (in case programatically joined channels)
 func _reconnect_to_channels():
-	for channel_name in channel_maps: join_channel(channel_name);
+	for channel_name in _channels: join_channel(channel_name);
+
 
 func _join_channels_on_connect():
 	for channel_name: String in TwitchSetting.irc_connect_to_channel:
@@ -175,6 +179,7 @@ func _join_channels_on_connect():
 		if message != "":
 			await channel.is_joined();
 			chat(message, channel_name);
+
 
 ## Receives data on the websocket aka new messages
 func _data_received(data : PackedByteArray) -> void:
@@ -188,17 +193,19 @@ func _data_received(data : PackedByteArray) -> void:
 		var parsed_message = ParsedMessage.new(message);
 		_handle_message(parsed_message);
 
+
 ## Tries to send messages as long as the websocket is open
 func _send_messages() -> void:
-	if client.connection_state != WebSocketPeer.STATE_OPEN:
+	if not _client.is_open:
 		log.e("Can't send message. Connection not open.")
 		# Maybe buggy when the websocket got opened but not authorized yet
 		# Can possible happen when we have a lot of load and a reconnect in the socket
 		return;
-	if not chat_queue.is_empty() && next_message <= Time.get_ticks_msec():
-		var msg_to_send = chat_queue.pop_front();
+	if not _chat_queue.is_empty() && _next_message <= Time.get_ticks_msec():
+		var msg_to_send = _chat_queue.pop_front();
 		_send(msg_to_send);
-		next_message = Time.get_ticks_msec() + TwitchSetting.irc_send_message_delay;
+		_next_message = Time.get_ticks_msec() + TwitchSetting.irc_send_message_delay;
+
 
 ## Sends join channel message
 func join_channel(channel_name : String) -> ChannelData:
@@ -207,25 +214,27 @@ func join_channel(channel_name : String) -> ChannelData:
 		return;
 
 	var lower_channel = channel_name.to_lower();
-	if not channel_maps.has(channel_name) || not channel_maps[channel_name].joined:
-		chat_queue.append("JOIN #" + lower_channel);
-		channel_maps[channel_name] = ChannelData.new(lower_channel);
-	return channel_maps[channel_name];
+	if not _channels.has(channel_name) || not _channels[channel_name].joined:
+		_chat_queue.append("JOIN #" + lower_channel);
+		_channels[channel_name] = ChannelData.new(lower_channel);
+	return _channels[channel_name];
+
 
 ## Sends leave channel message
 func leave_channel(channel_name : String) -> void:
-	if not channel_maps.has(channel_name):
+	if not _channels.has(channel_name):
 		log.e("Can't leave %s channel cause we are not joined" % channel_name);
 		return;
 
 	var lower_channel : String = channel_name.to_lower();
-	chat_queue.append("PART #" + lower_channel);
-	channel_maps.erase(lower_channel);
+	_chat_queue.append("PART #" + lower_channel);
+	_channels.erase(lower_channel);
+
 
 ## Sends a chat message to a channel. Defaults to the only connected channel.
 ## Channel should be always without '#'.
 func chat(message : String, channel_name : String = ""):
-	var channel_names : Array = channel_maps.keys();
+	var channel_names : Array = _channels.keys();
 	if channel_name == "" && channel_names.size() == 1:
 		channel_name = channel_names[0];
 
@@ -233,25 +242,28 @@ func chat(message : String, channel_name : String = ""):
 		log.e("No channel is specified to send %s" % message);
 		return;
 
-	chat_queue.append("PRIVMSG #%s :%s\r\n" % [channel_name, message]);
+	_chat_queue.append("PRIVMSG #%s :%s\r\n" % [channel_name, message]);
 
 	# Call it defered otherwise the response of the bot will be send before the command.
 	_send_message_to_channel.call_deferred(channel_name, message);
 
+
 ## send the message of the bot to the channel for display purpose
 func _send_message_to_channel(channel_name: String, message: String) -> void:
-	if channel_maps.has(channel_name):
-		var channel = channel_maps[channel_name] as ChannelData;
+	if _channels.has(channel_name):
+		var channel = _channels[channel_name] as ChannelData;
 		var username = channel.user_state.display_name;
 		# Convert the tags in a dirty way
 		var tag = TwitchTags.PrivMsg.new(channel.user_state._raw);
 		tag.room_id = channel.room_state.room_id;
 		received_privmsg.emit(channel_name, username, message, tag);
 
+
 ## Sends a string message to Twitch.
 func _send(text : String) -> void:
-	client.send_text(text);
+	_client.send_text(text);
 	log.i("< " + text.strip_edges(false));
+
 
 ## Handles all the messages. Tags can be empty when not requested via capabilities
 func _handle_message(parsed_message : ParsedMessage) -> void:
@@ -261,7 +273,8 @@ func _handle_message(parsed_message : ParsedMessage) -> void:
 	match parsed_message.command:
 		"001":
 			log.i("Authentication successful.");
-			_on_login(true);
+			_join_channels_on_connect();
+			_ready_to_send = true
 
 		"CLEARCHAT":
 			var clear_chat_tags = TwitchTags.ClearChat.new(parsed_message.tags);
@@ -301,7 +314,7 @@ func _handle_message(parsed_message : ParsedMessage) -> void:
 			var channel_name = parsed_message.channel;
 			received_roomstate.emit(channel_name, roomstate_tags)
 
-			var channel = channel_maps[channel_name] as ChannelData;
+			var channel = _channels[channel_name] as ChannelData;
 			channel.room_state = roomstate_tags;
 
 		"USERNOTICE":
@@ -313,7 +326,7 @@ func _handle_message(parsed_message : ParsedMessage) -> void:
 			var channel_name = parsed_message.channel;
 			received_usernotice.emit(channel_name, userstate_tags);
 
-			var channel = channel_maps[channel_name] as ChannelData;
+			var channel = _channels[channel_name] as ChannelData;
 			channel.user_state = userstate_tags;
 
 		"WHISPER":
@@ -331,57 +344,56 @@ func _handle_message(parsed_message : ParsedMessage) -> void:
 			from_user = from_user.substr(0, from_user.find("!"))
 			received_privmsg.emit(parsed_message.channel, from_user, parsed_message.message, privmsg_tags);
 
+
 ## Handles the update of rooms when joining the channel or a moderator
 ## updates it (Example :tmi.twitch.tv ROOMSTATE #bar)
 func _handle_cmd_state(command: String, channel_name: String, tags: Dictionary) -> void:
 	# right(-1) -> Remove the preceding # of the channel name
 	channel_name = channel_name.right(-1).to_lower();
-	if not channel_maps.has(channel_name):
-		channel_maps[channel_name] = _create_channel(channel_name);
+	if not _channels.has(channel_name):
+		_channels[channel_name] = _create_channel(channel_name);
 
-	var channel: TwitchIrcChannel = channel_maps[channel_name];
+	var channel: TwitchIrcChannel = _channels[channel_name];
 	channel.update_state(command, tags);
 	#channel_data_updated.emit(channel_name, channel.data);
 	log.i("Channel updated %s" % channel_name);
 
+
 func _create_channel(channel_name: String) -> TwitchIrcChannel:
 	var channel = TwitchIrcChannel.new();
 	channel.channel_name = channel_name;
-	channel_maps[channel_name] = channel;
+	_channels[channel_name] = channel;
 	Engine.get_main_loop().root.add_child(channel);
 	return channel;
+
 
 ## Tracks the channel.
 func add_channel(channel: TwitchIrcChannel):
 	var channel_name = channel.channel_name;
-	if not channel_maps.has(channel_name):
+	if not _channels.has(channel_name):
 		join_channel(channel_name);
-		channel_maps[channel_name] = ChannelData.new(channel_name);
-	var nodes = channel_maps[channel_name].nodes as Array[TwitchIrcChannel];
+		_channels[channel_name] = ChannelData.new(channel_name);
+	var nodes = _channels[channel_name].nodes as Array[TwitchIrcChannel];
 	nodes.append(channel);
+
 
 ## Remove the channel from getting tracked within the service
 func remove_channel(channel: TwitchIrcChannel):
 	var channel_name = channel.channel_name;
-	var channel_data = channel_maps[channel_name] as ChannelData;
+	var channel_data = _channels[channel_name] as ChannelData;
 	channel_data.nodes.erase(channel);
 	if channel_data.nodes.is_empty():
 		leave_channel(channel_name);
 
+
 func _handle_cmd_notice(info: String) -> bool:
 	if info == "Login authentication failed" || info == "Login unsuccessful":
 		log.e("Authentication failed.");
-		_on_login(false);
+		_client.close(1000, "Unauthorized.");
 		return true;
 	elif info == "You don't have permission to perform that action":
-		log.i("No permission. Attempting to obtain new token.");
-		await auth.refresh_token();
-		if await auth.is_authenticated():
-			_login();
-			return true;
-		else:
-			log.i("Please check if you have all required scopes.");
-			client.close(1000, "Token became invalid.");
-			return true;
-
+		log.i("No permission. Please check if you have all required scopes (chat:read or chat:write).");
+		unauthorized.emit()
+		_client.close(1000, "Token became invalid.");
+		return true;
 	return false;

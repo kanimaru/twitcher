@@ -1,0 +1,65 @@
+[gd_scene load_steps=2 format=3 uid="uid://6d2jst8ga4le"]
+
+[ext_resource type="Script" path="res://addons/twitcher/settings/token_info.gd" id="1_j0blf"]
+
+[node name="TokenInfo" type="GridContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2
+script = ExtResource("1_j0blf")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "TOKEN_TITLE"
+
+[node name="TokenValidTitle" type="Label" parent="."]
+layout_mode = 2
+text = "Token Valid:"
+
+[node name="TokenValidValue" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "2024-09-28T02:22:48"
+
+[node name="RefreshTokenTitle" type="Label" parent="."]
+layout_mode = 2
+text = "Refresh Token Available:"
+
+[node name="RefreshTokenValue" type="CheckBox" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Available"
+
+[node name="TokenScopeTitle" type="Label" parent="."]
+layout_mode = 2
+text = "Token Scope:"
+
+[node name="TokenScopeValue" type="TextEdit" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "channel:manage:polls,
+channel:manage:raids,
+channel:manage:redemptions,
+channel:read:ads,
+channel:read:hype_train,
+chat:edit,
+chat:read,
+moderator:manage:announcements,
+moderator:read:followers,
+moderator:read:shoutouts,
+user:bot,
+user:read:chat,
+user:write:chat"
+editable = false

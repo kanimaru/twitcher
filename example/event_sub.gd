@@ -13,8 +13,8 @@ func _ready() -> void:
 	ProjectSettings.set_setting("twitch/eventsub/channel_follow/broadcaster_user_id", broadcaster_id);
 	ProjectSettings.set_setting("twitch/eventsub/channel_follow/moderator_user_id", broadcaster_id);
 
-	TwitchService.setup();
-	TwitchService.eventsub.event.connect(_on_event)
+	#TwitchService.setup();
+	#TwitchService.eventsub.event.connect(_on_event)
 
 func _on_event(type: String, data: Dictionary):
 	match type:

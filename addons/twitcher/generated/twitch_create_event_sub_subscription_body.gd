@@ -96,4 +96,3 @@ class Transport extends RefCounted:
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
-

@@ -1,8 +1,5 @@
 @tool
-extends Object
-
 class_name TwitchSetting
-
 
 ## Uses the implicit auth flow see also: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow
 ## @deprecated use AuthorizationCodeGrantFlow...
@@ -13,6 +10,11 @@ const FLOW_CLIENT_CREDENTIALS = "ClientCredentialsGrantFlow";
 const FLOW_AUTHORIZATION_CODE = "AuthorizationCodeGrantFlow";
 ## Uses an device code and no redirect url see: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#device-code-grant-flow
 const FLOW_DEVICE_CODE_GRANT = "DeviceCodeGrantFlow";
+
+
+## Is needed to find all properties per eventsub topic correctly.
+## It checks all indicies from 0 to the max amount to find all properties
+const EVENTSUB_SUBSCRIPTION_MAX_AMOUNT = 10
 
 const LOGGER_NAME_AUTH = "TwitchAuthorization"
 const LOGGER_NAME_EVENT_SUB = "TwitchEventSub"
@@ -25,6 +27,7 @@ const LOGGER_NAME_HTTP_CLIENT = "TwitchHttpClient"
 const LOGGER_NAME_HTTP_SERVER = "TwitchHttpServer"
 const LOGGER_NAME_WEBSOCKET = "TwitchWebsocket"
 const LOGGER_NAME_CUSTOM_REWARDS = "TwitchCustomRewards"
+
 
 const ALL_LOGGERS: Array[String] = [
 	LOGGER_NAME_AUTH,
@@ -39,6 +42,7 @@ const ALL_LOGGERS: Array[String] = [
 	LOGGER_NAME_WEBSOCKET,
 	LOGGER_NAME_CUSTOM_REWARDS,
 ];
+
 
 class Property:
 	var key: String;
@@ -130,9 +134,12 @@ static var client_id: String:
 static var client_secret: String:
 	get:
 		var secret_file = ConfigFile.new()
-		if secret_file.load_encrypted_pass(secret_storage, client_id) != OK:
-			return ""
-		return secret_file.get_value("auth", "secret")
+		var err = secret_file.load_encrypted_pass(secret_storage, client_id)
+		match err:
+			OK: return secret_file.get_value("auth", "secret")
+			ERR_FILE_NOT_FOUND: return ""
+			_: print("Twitcher: Can't read the secret file for the client_secret. Probably the ClientID Changed? Delete the file manually '%s' and try again" % secret_storage)
+		return ""
 	set(val):
 		var secret_file = ConfigFile.new()
 		secret_file.load_encrypted_pass(secret_storage, client_id)
@@ -147,19 +154,10 @@ static var redirect_url: String:
 static var redirect_port: int:
 	get: return _get_redirect_port();
 
-static var _scopes: Dictionary = {}
-static var scopes: Array[String]:
-	get: return get_scopes()
-
 static var _force_verify: Property
 static var force_verify: String:
-	get: return _force_verify.get_val();
+	get: return "true" if _force_verify.get_val() else "false";
 	set(val): _force_verify.set_val(val);
-
-static var _subscriptions: Dictionary = {}
-## Return the subscribed subscriptions key = TwitchSubscriptions.Subscription, value = Dictionary with conditions (ready to use)
-static var subscriptions: Dictionary:
-	get: return get_subscriptions();
 
 static var image_transformers: Dictionary = {};
 static var image_transformer: TwitchImageTransformer:
@@ -306,6 +304,7 @@ static var _log_enabled: Property;
 static var log_enabled: Array[String]:
 	get: return get_log_enabled()
 
+
 static func _migrate_settings() -> void:
 	if ProjectSettings.has_setting("twitch/auth/client_secret"):
 		# Read the old secret and use the setter to write to the new file within user:// or specified folder see twitch/auth/api/secret_file_storage
@@ -313,8 +312,9 @@ static func _migrate_settings() -> void:
 		client_secret = secret
 		ProjectSettings.set_setting("twitch/auth/client_secret", null)
 
-static func setup() -> void:
-	_migrate_settings()
+
+static func _static_init() -> void:
+	_migrate_settings();
 
 	# Auth
 	_broadcaster_id = Property.new("twitch/auth/broadcaster_id").as_str("Broadcaster ID of youself").basic();
@@ -323,8 +323,6 @@ static func setup() -> void:
 	Property.new("twitch/auth/client_secret_deprecated", "Setting moved to its own tab for security reasons").basic();
 	_redirect_url = Property.new("twitch/auth/redirect_url", "http://localhost:7170").as_str("Redirect URL that Twitch calls after a successful login").basic();
 	_force_verify = Property.new("twitch/auth/force_verify", "false").as_bool("Set to true to force the user to re-authorize your app’s access to their resources. The default is false.");
-	_setup_scopes();
-	_setup_subscriptions();
 
 	_auth_cache = Property.new("twitch/auth/api/auth_file_cache", "user://auth.conf").as_global_save();
 	_secret_storage = Property.new("twitch/auth/api/secret_file_storage", "user://secrets.conf").as_global_save();
@@ -365,6 +363,7 @@ static func setup() -> void:
 	var default_cap_val = TwitchIrcCapabilities.get_bit_value(default_caps);
 	_irc_capabilities = Property.new("twitch/websocket/irc/capabilities", default_cap_val).as_bit_field(_get_all_irc_capabilities()).basic();
 
+
 static func get_log_enabled() -> Array[String]:
 	var result: Array[String] = [];
 	# Other classes can be initialized before the settings and use the log.
@@ -379,8 +378,10 @@ static func get_log_enabled() -> Array[String]:
 			result.append(ALL_LOGGERS[logger_idx])
 	return result
 
+
 static func is_log_enabled(logger: String) -> bool:
 	return log_enabled.find(logger) != -1;
+
 
 static func get_image_transformers() -> Array[String]:
 	var result: Array[String] = [];
@@ -399,35 +400,13 @@ static func get_image_transformers() -> Array[String]:
 
 	return result;
 
+
 static func get_image_transformer() -> TwitchImageTransformer:
 	if image_transformers.has(image_tranformer_path):
 		return image_transformers[image_tranformer_path];
 	var transformer = load(image_tranformer_path);
 	return transformer;
 
-## Converts the categoriezed bitset back to the strings
-static func get_scopes() -> Array[String]:
-	var grouped_scopes = TwitchScopes.get_grouped_scopes();
-	var result: Array[String] = [];
-	for category_name: String in grouped_scopes:
-		var scope_property: Property = _scopes[category_name];
-		var bitset = scope_property.get_val();
-		if typeof(bitset) == TYPE_STRING && bitset == "" || typeof(bitset) == TYPE_INT && bitset == 0: continue
-		var scopes = grouped_scopes[category_name];
-		for scope: TwitchScopes.Scope in scopes:
-			if bitset & scope.bit_value == scope.bit_value:
-				result.append(scope.value)
-	return result
-
-static func _setup_scopes():
-	var grouped_scopes: Dictionary = TwitchScopes.get_grouped_scopes();
-
-	for category_name: String in grouped_scopes:
-		var scopes: Array = grouped_scopes[category_name];
-		var scope_names: Array[String] = [];
-		for scope: TwitchScopes.Scope in scopes:
-			scope_names.append(scope.get_name());
-		_scopes[category_name] = Property.new("twitch/auth/scopes/" + category_name, "").as_bit_field(scope_names).basic();
 
 static func _get_redirect_port() -> int:
 	var url_parts = redirect_url.rsplit(":", true, 1);
@@ -435,15 +414,17 @@ static func _get_redirect_port() -> int:
 	if port == 0: port = 80;
 	return port;
 
+
 static func _get_all_irc_capabilities() -> Array[String]:
-	var caps = TwitchIrcCapabilities.get_all()
+	var caps = TwitchIrcCapabilities.get_all();
 	var result: Array[String] = [];
 	for cap in caps:
 		result.append(cap.get_name());
 	return result;
 
+
 static func get_irc_capabilities() -> Array[String]:
-	var result: Array[String] = []
+	var result: Array[String] = [];
 	var bitset = _irc_capabilities.get_val();
 	if typeof(bitset) == TYPE_STRING && bitset == "" || typeof(bitset) == TYPE_INT && bitset == 0:
 		return result;
@@ -452,30 +433,27 @@ static func get_irc_capabilities() -> Array[String]:
 			result.append(cap.value);
 	return result;
 
-static func _setup_subscriptions():
-	for subscription in TwitchSubscriptions.get_all():
-		var subscription_properties = []
-		_subscriptions[subscription] = subscription_properties;
-		subscription_properties.append(Property.new("twitch/eventsub/%s/subscribed" % subscription.get_name(), false).as_bool().basic());
-		for condition in subscription.conditions:
-			subscription_properties.append(Property.new("twitch/eventsub/%s/%s" % [subscription.get_name(), condition], "").as_str().basic());
 
-## Return the subscribed subscriptions key = TwitchSubscriptions.Subscription, value = Dictionary with conditions (ready to use)
-static func get_subscriptions() -> Dictionary:
-	var result = {};
-	for subscription in TwitchSubscriptions.get_all():
-		var properties: Array = _subscriptions[subscription];
-		var subscribed_property: Property = properties[0];
+#region Cache
 
-		if subscribed_property.get_val():
-			result[subscription] = get_conditions(properties);
-	return result;
+## Tries to clear badge folder, stops on the first file it can't delete and returns the error.
+static func cache_clear_badges() -> Dictionary:
+	var badge_dir = DirAccess.open(cache_badge)
+	for file in badge_dir.get_files():
+		if file.ends_with(".res"):
+			var err = badge_dir.remove(file)
+			if err != OK:
+				return { "result": err, "folder": badge_dir, "file": file }
+	return { "result": OK }
 
-static func get_conditions(properties: Array) -> Dictionary:
-	var condition: Dictionary = {}
-	# Skip first property that is the "subscribed" boolean
-	for property: Property in properties.slice(1):
-		var condition_name: String = property.key
-		condition_name = condition_name.substr(condition_name.rfind("/") + 1);
-		condition[condition_name] = property.get_val();
-	return condition;
+
+## Tries to clear emote folder, stops on the first file it can't delete and returns the error.
+static func cache_clear_emotes() -> Dictionary:
+	var emote_dir = DirAccess.open(cache_emote)
+	for file in emote_dir.get_files():
+		if file.ends_with(".res"):
+			var err = emote_dir.remove(file)
+			if err != OK:
+				return { "result": err, "folder": emote_dir, "file": file }
+	return { "result": OK }
+#endregion

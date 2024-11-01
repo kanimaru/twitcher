@@ -4,9 +4,11 @@ extends RefCounted
 ## Http client that bufferes the requests and sends them sequentialy
 class_name BufferedHTTPClient
 
+## Takes track of the amount of http clients
 static var index = 0;
 
-var l: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_HTTP_CLIENT)
+## After this amount of request in the buffer the client isn't free anymore.
+const FREE_THRESHOLD = 2;
 
 ## Will be send when a new request was added to queue
 signal request_added(request: RequestData)
@@ -20,16 +22,6 @@ signal request_done(response: ResponseData)
 ## Will return information if the client has connected or got disconnected
 signal connection_status_changed(connected: bool);
 
-## After this amount of request in the buffer the client isn't free anymore.
-const FREE_THRESHOLD = 2;
-
-const HEADERS: Dictionary = {
-	"User-Agent": "Twitcher/1.0 (Godot)",
-	"Accept": "*/*"
-};
-
-@export var base_url: String;
-@export var port: int = -1;
 
 ## Contains the request data to be send
 class RequestData extends RefCounted:
@@ -38,6 +30,7 @@ class RequestData extends RefCounted:
 	var method: int;
 	var headers: Dictionary;
 	var body: String = "";
+
 
 ## Contains the response data
 class ResponseData extends RefCounted:
@@ -48,6 +41,11 @@ class ResponseData extends RefCounted:
 	var response_header: Dictionary;
 	var error: bool;
 
+
+@export var base_url: String;
+@export var port: int = -1;
+
+var l: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_HTTP_CLIENT)
 var client: HTTPClient = HTTPClient.new();
 var requests : Array[RequestData] = [];
 var current_request : RequestData;
@@ -58,6 +56,7 @@ var connected : bool:
 		connection_status_changed.emit(val);
 		l.i("Connection state changed: %s" % val)
 
+var custom_header : Dictionary = { "Accept": "*/*" };
 var responses : Dictionary = {};
 var error_count : int;
 ## When a request fails max_error_count then cancel that request -1 for endless amount of tries.
@@ -65,34 +64,37 @@ var max_error_count : int = -1;
 ## Only one poll at a time so block for all other tries to call it
 var polling: bool;
 
+
 func _init(url: String, p: int = -1) -> void:
 	index += 1;
 	l.set_suffix(str(index) + "-" + url);
 	base_url = url;
 	port = p;
-	var main_loop = Engine.get_main_loop();
+	l.i("INIT CALLED")
 	Engine.get_main_loop().process_frame.connect(_poll);
 	connection_status_changed.emit(false);
 	connect_to_host();
+
 
 func connect_to_host() -> void:
 	l.i("connecting to %s" % base_url);
 	var err = client.connect_to_host(base_url, port);
 	if err != OK:
 		l.e("Can't connect to %s cause of %s" % [base_url, error_string(err)]);
-		return;
+
 
 ## Removes the complete http client. Don't use it after calling this method!
 func shutdown() -> void:
 	client.close();
 	Engine.get_main_loop().process_frame.disconnect(_poll);
 
+
 ## Starts a request that will be handled as soon as the client gets free.
 ## Use HTTPClient.METHOD_* for the method.
 func request(path: String, method: int, headers: Dictionary, body: String) -> RequestData:
 	l.i("Start Request(%s) %s" % [ method, path ]);
 	headers = headers.duplicate();
-	headers.merge(HEADERS);
+	headers.merge(custom_header);
 	var req = RequestData.new();
 	req.path = path;
 	req.method = method;
@@ -102,6 +104,7 @@ func request(path: String, method: int, headers: Dictionary, body: String) -> Re
 	requests.append(req);
 	request_added.emit(req);
 	return req;
+
 
 ## When the response is available return it otherwise wait for the response
 func wait_for_request(request_data: RequestData) -> ResponseData:
@@ -118,9 +121,11 @@ func wait_for_request(request_data: RequestData) -> ResponseData:
 	responses.erase(request_data);
 	return latest_response;
 
+
 ## Checks if the client can accept more requests
 func is_free() -> bool:
 	return requests.size() < FREE_THRESHOLD;
+
 
 ## The amount of requests that are pending
 func queued_request_size() -> int:
@@ -129,11 +134,13 @@ func queued_request_size() -> int:
 		requests_size += 1;
 	return requests_size;
 
+
 func _wait_error_duration():
 	var duration = pow(2, error_count);
 	duration = min(duration, 30);
 	l.i("Wait for %s in seconds" % duration);
 	await Engine.get_main_loop().create_timer(duration).timeout
+
 
 func _create_response() -> ResponseData:
 	var response_data = ResponseData.new()
@@ -144,6 +151,7 @@ func _create_response() -> ResponseData:
 	response_data.response_header = client.get_response_headers_as_dictionary();
 	return response_data;
 
+
 func empty_response(request_data: RequestData) -> ResponseData:
 	var response_data = ResponseData.new()
 	response_data.client = client;
@@ -152,7 +160,10 @@ func empty_response(request_data: RequestData) -> ResponseData:
 	response_data.response_code = 0;
 	return response_data;
 
+
 func _connecting():
+	if(client.get_status() == HTTPClient.STATUS_DISCONNECTED):
+		connect_to_host()
 	if(client.get_status() == HTTPClient.STATUS_CANT_CONNECT):
 		client.close();
 		connect_to_host();
@@ -165,7 +176,6 @@ func _connecting():
 
 func _poll() -> void:
 	if(not connected):
-		l.d("Connecting")
 		_connecting();
 		if not connected: return;
 
@@ -234,7 +244,7 @@ func _check_status(response_data: ResponseData) -> void:
 func _start_request() -> void:
 	current_request = requests.pop_front() as RequestData;
 	l.i("Start request processing [%s] %s" % [current_request.method, current_request.path])
-	var headers = HEADERS if current_request.headers == null else current_request.headers;
+	var headers = custom_header if current_request.headers == null else current_request.headers;
 	var packed_headers = _pack_headers(headers);
 	client.request(current_request.method, current_request.path, packed_headers, current_request.body);
 	request_started.emit(current_request);
