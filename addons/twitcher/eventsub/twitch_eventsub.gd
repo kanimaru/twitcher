@@ -1,7 +1,10 @@
+@tool
 extends Node
 
 ## Handles the evensub part of twitch. Returns the event data when receives it.
 class_name TwitchEventsub;
+
+const Constants = preload("res://addons/twitcher/constants.gd")
 
 var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_EVENT_SUB)
 
@@ -54,9 +57,11 @@ signal events_revoked(type: String, status: String);
 signal message_received(message: Variant);
 
 @export var api: TwitchRestAPI;
-@export var connect_on_enter_tree: bool = true
-@export var subscriptions: Array[TwitchEventsubConfig] = []:
-	set(val): _update_subscriptions(val)
+@export_enum(Constants.AUTO_CONNECT_NOT, \
+	Constants.AUTO_CONNECT_RUNTIME, \
+	Constants.AUTO_CONNECT_EDITOR_RUNTIME)
+var connect_on_enter_tree : String = Constants.AUTO_CONNECT_RUNTIME
+@export var _subscriptions: Array[TwitchEventsubConfig]
 @export var scopes: OAuthScopes
 
 
@@ -67,9 +72,6 @@ var _test_client : WebsocketClient = WebsocketClient.new();
 var _swap_over_client : WebsocketClient;
 
 var session: Session;
-## All the subscriptions that should be subscribed or resubscribed in case of reconnection.
-## Notice: Wanted to do a Dict<EventName, Request> but you can subscribe to multiple event names from different streams..
-var _subscriptions: Array = [];
 ## Holds the messages that was processed already.
 ## Key: MessageID ; Value: Timestamp
 var eventsub_messages: Dictionary = {};
@@ -120,7 +122,8 @@ func _on_connection_established() -> void:
 	if not _swap_over_process:
 		_action_stack.clear()
 		# Resubscribe
-		for sub in subscriptions: _add_action(sub, true)
+		log.i("Resubscripe too: " % _subscriptions)
+		for sub in _subscriptions: _add_action(sub, true)
 	_execute_action_stack()
 
 
@@ -128,6 +131,18 @@ func open_connection() -> void:
 	_client.open_connection()
 	if _test_client.is_closed && TwitchSetting.use_test_server:
 		_test_client.open_connection()
+
+
+## Add a new subscription
+func subscribe(eventsub_config: TwitchEventsubConfig) -> void:
+	_subscriptions.append(eventsub_config)
+	_add_action(eventsub_config, true)
+
+
+## Remove a subscription
+func unsubscribe(eventsub_config: TwitchEventsubConfig) -> void:
+	_subscriptions.erase(eventsub_config)
+	_add_action(eventsub_config, false)
 
 
 ## Process the queue of actions until its empty
@@ -139,24 +154,11 @@ func _execute_action_stack() -> void:
 		var action = _action_stack.pop_back();
 		var sub = action.subscription;
 		if action.subscribe:
-			var definition = TwitchEventsubDefinition.ALL[sub.definition]
-			subscribe(definition.val, definition.version, sub.condition);
+			var definition = sub.definition
+			_subscribe(definition.value, definition.version, sub.condition);
 		else:
-			unsubscribe(sub.id);
+			_unsubscribe(sub.id);
 	_executing_action_stack = false
-
-
-## Updates the action queue whene new subscriptions was added or removed
-func _update_subscriptions(new_subscriptions: Array[TwitchEventsubConfig]) -> void:
-	for sub in new_subscriptions:
-		if not subscriptions.has(sub):
-			_add_action(sub, true)
-		subscriptions.append(sub)
-	for sub in subscriptions:
-		if not new_subscriptions.has(sub):
-			_add_action(sub, false)
-		subscriptions.erase(sub)
-	_execute_action_stack()
 
 
 ## Adds a subscribe or unsubscribe action to the queue
@@ -165,11 +167,12 @@ func _add_action(sub: TwitchEventsubConfig, subscribe: bool) -> void:
 	sub_action.subscription = sub
 	sub_action.subscribe = subscribe
 	_action_stack.append(sub_action);
+	log.d("Add subscription action to stack: %s" % sub.definition.get_readable_name())
 
 
 ## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
 ## for details on which API versions are available and which conditions are required.
-func subscribe(event_name : String, version : String, conditions : Dictionary) -> String:
+func _subscribe(event_name : String, version : String, conditions : Dictionary) -> String:
 	var data : TwitchCreateEventSubSubscriptionBody = TwitchCreateEventSubSubscriptionBody.new();
 	var transport : TwitchCreateEventSubSubscriptionBody.Transport = TwitchCreateEventSubSubscriptionBody.Transport.new();
 	data.type = event_name;
@@ -178,6 +181,8 @@ func subscribe(event_name : String, version : String, conditions : Dictionary) -
 	data.transport = transport;
 	transport.method = "websocket";
 	transport.session_id = session.id;
+
+	log.d("Do subscribe: %s" % event_name)
 
 	var response = await api.create_eventsub_subscription(data);
 
@@ -193,7 +198,7 @@ func subscribe(event_name : String, version : String, conditions : Dictionary) -
 
 
 ## Unsubscribes from an eventsub in case of an error returns false
-func unsubscribe(subscription: TwitchEventsubConfig) -> bool:
+func _unsubscribe(subscription: TwitchEventsubConfig) -> bool:
 	var response = await api.delete_eventsub_subscription(subscription.id)
 	return response.error || response.response_code != 200
 
@@ -277,3 +282,15 @@ func _message_got_processed(message_id: String) -> bool:
 
 func _message_is_to_old(timestamp: int) -> bool:
 	return timestamp < Time.get_unix_time_from_system() - TwitchSetting.ignore_message_eventsub_in_seconds;
+
+
+func get_client() -> WebsocketClient:
+	return _client
+
+
+func get_test_client() -> WebsocketClient:
+	return _test_client
+
+
+func get_subscriptions() -> Array[TwitchEventsubConfig]:
+	return _subscriptions.duplicate()

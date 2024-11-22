@@ -10,10 +10,10 @@ func _parse_property(object: Object, type: Variant.Type, name: String, \
 		hint_type: PropertyHint, hint_string: String, usage_flags: int, \
 		wide: bool) -> bool:
 
-	if name == "condition":
+	if name == &"condition":
 		add_property_editor("condition", EventsubConfigProperty.new(), true)
 		return true
-	if name == "type":
+	if name == &"type":
 		add_property_editor("type", ToDocs.new(), true, "Documentation")
 	return false
 

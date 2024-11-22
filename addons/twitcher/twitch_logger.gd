@@ -28,10 +28,12 @@ func set_suffix(s: String) -> void:
 ## log a message on info level
 func i(text: String):
 	if is_enabled(): print_rich("[color=%s][%s%s] %s[/color]" % [color, context_name, suffix, text]);
+	else: print(context_name, " is not enabled")
 
 ## log a message on error level
 func e(text: String):
 	if is_enabled(): print_rich("[b][color=%s][%s%s] %s[/color][/b]" % [color, context_name, suffix, text]);
+	else: print(context_name, " is not enabled")
 
 func d(text: String):
 	if is_enabled() && debug: print_rich("[i][color=%s][%s%s] %s[/color][/i]" % [color, context_name, suffix, text]);

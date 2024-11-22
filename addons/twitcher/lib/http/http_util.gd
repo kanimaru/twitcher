@@ -1,7 +1,5 @@
 extends Object
 
-class_name HttpUtil
-
 ## Parses a query string and returns a dictionary with the parameters.
 static func parse_query(query: String) -> Dictionary:
 	var parameters = Dictionary()
@@ -18,3 +16,11 @@ static func parse_query(query: String) -> Dictionary:
 			var decoded_value = value.uri_decode()
 			parameters[decoded_key] = decoded_value
 	return parameters
+
+
+## Method to set all logger within this package
+static func set_logger(error: Callable, info: Callable, debug: Callable) -> void:
+	BufferedHTTPClient.set_logger(error, info, debug)
+	HttpClientManager.set_logger(error, info, debug)
+	HTTPServer.set_logger(error, info, debug)
+	WebsocketClient.set_logger(error, info, debug)

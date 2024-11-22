@@ -1,16 +1,21 @@
-[gd_scene load_steps=7 format=3 uid="uid://dmbbptr8gofrm"]
+[gd_scene load_steps=9 format=3 uid="uid://dmbbptr8gofrm"]
 
 [ext_resource type="Script" path="res://addons/twitcher/tests/test_new_auth.gd" id="1_r4h1h"]
 [ext_resource type="PackedScene" uid="uid://cuskx3pjheybj" path="res://addons/twitcher/twitch_auth.tscn" id="2_qf83c"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/token.gd" id="3_hshae"]
 [ext_resource type="Resource" uid="uid://c6em6omrb7tbh" path="res://test_oauth_settings.tres" id="3_tjuwm"]
 [ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="4_bnk2f"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/scopes.gd" id="6_yr7cd"]
 
 [sub_resource type="Resource" id="Resource_peod2"]
 script = ExtResource("3_hshae")
 _crypto_key_provider = ExtResource("4_bnk2f")
-_identifier = "Auth-971"
+_identifier = "Auth-961"
 _cache_path = "user://auth.conf"
+
+[sub_resource type="Resource" id="Resource_ysotn"]
+script = ExtResource("6_yr7cd")
+used_scopes = Array[StringName]([&"chat:edit", &"chat:read"])
 
 [node name="TestNewAuth" type="Control"]
 layout_mode = 3
@@ -25,3 +30,4 @@ script = ExtResource("1_r4h1h")
 unique_name_in_owner = true
 setting = ExtResource("3_tjuwm")
 token = SubResource("Resource_peod2")
+scopes = SubResource("Resource_ysotn")

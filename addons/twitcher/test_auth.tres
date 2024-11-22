@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="OAuthSetting" load_steps=3 format=3 uid="uid://bjpgfags40vwc"]
+
+[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="1_4pcu1"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="2_6n7fh"]
+
+[resource]
+script = ExtResource("2_6n7fh")
+redirect_url = ""
+well_known_url = ""
+token_url = "https://id.twitch.tv/oauth2/token"
+authorization_url = "https://id.twitch.tv/oauth2/authorize"
+device_authorization_url = ""
+cache_file = "res://auth.key"
+client_id = ""
+authorization_flow = 0
+_encryption_key_provider = ExtResource("1_4pcu1")
+client_secret = ""

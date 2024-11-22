@@ -3,7 +3,7 @@ extends Node
 
 class_name OAuthTokenHandler
 
-const OAuthHTTPClient = preload("./http_client.gd");
+const OAuthHTTPClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd");
 const OAuthDeviceCodeResponse = preload("./device_code_response.gd");
 
 ## Handles refreshing and resolving access and refresh tokens.
@@ -58,7 +58,7 @@ func request_token(grant_type: String, auth_code: String = ""):
 	var request_params = [
 		"grant_type=%s" % grant_type,
 		"client_id=%s" % setting.client_id,
-		"client_secret=%s" % setting.client_secret
+		"client_secret=%s" % setting.get_client_secret()
 	]
 
 	if auth_code != "":
@@ -68,8 +68,7 @@ func request_token(grant_type: String, auth_code: String = ""):
 
 	var request_body = "&".join(request_params);
 	var request = _http_client.request(setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body);
-	if(await _handle_token_request(request)):
-		logInfo("token resolved")
+	await _handle_token_request(request)
 	_requesting_token = false;
 
 
@@ -84,7 +83,7 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 		"scopes=%s" % scopes
 	]
 	if setting.client_secret != "":
-		parameters.append("client_secret=%s" % setting.client_secret);
+		parameters.append("client_secret=%s" % setting.get_client_secret());
 
 	var request_body = "&".join(parameters);
 
@@ -117,12 +116,12 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 func refresh_tokens() -> void:
 	if _requesting_token: return;
 	_requesting_token = true;
-	logInfo("Refresh token")
+	logInfo("refresh token")
 	if token.has_refresh_token():
-		var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [setting.client_id, setting.client_secret, token.get_refresh_token()];
+		var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [setting.client_id, setting.get_client_secret(), token.get_refresh_token()];
 		var request = _http_client.request(setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body);
 		if await _handle_token_request(request):
-			logInfo("Token got refreshed")
+			logInfo("token got refreshed")
 		else:
 			unauthenticated.emit();
 	else:
@@ -141,7 +140,7 @@ func _handle_token_request(request: OAuthHTTPClient.RequestData) -> bool:
 	else:
 		# Reset expiration cause token wasn't refreshed correctly.
 		token.invalidate();
-	logError("Token could not be fetched ResponseCode %s / Client Status %s / Body %s" % [response.client.get_response_code(), response.client.get_status(), response_string])
+	logError("token could not be fetched ResponseCode %s / Client Status %s / Body %s" % [response.client.get_response_code(), response.client.get_status(), response_string])
 	return false;
 
 
@@ -159,7 +158,7 @@ func _update_tokens_from_response(result: Dictionary):
 func update_tokens(access_token: String, refresh_token: String = "", expires_in: int = -1, scopes: Array[String] = []):
 	token.update_values(access_token, refresh_token, expires_in, scopes);
 	token_resolved.emit(token);
-	logInfo("Token received");
+	logInfo("token resolved");
 
 
 func get_token_expiration() -> String:
@@ -170,7 +169,7 @@ func get_token_expiration() -> String:
 func is_token_valid() -> bool:
 	var current_time = Time.get_datetime_string_from_system(true);
 	var expire_data = get_token_expiration();
-	logDebug("Check expiration: " + current_time + " < " + expire_data)
+	logDebug("check expiration: " + current_time + " < " + expire_data)
 	return token.is_token_valid();
 
 

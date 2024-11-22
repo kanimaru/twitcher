@@ -2,12 +2,11 @@ extends EditorInspectorPlugin
 
 
 func _can_handle(object: Object) -> bool:
-	return object is TwitchEventsub
+	return object is TwitchEventsub || object is TwitchService
 
 
 func _parse_property(object: Object, type: Variant.Type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
 	if name == "scopes":
-		var eventsub: TwitchEventsub = object;
 		add_property_editor("scope_validation", ScopeValidation.new(), true, "Scope Validation")
 	return false
 

@@ -1,6 +1,8 @@
 @tool
 class_name TwitchSetting
 
+const HttpUtil = preload("res://addons/twitcher/lib/http/http_util.gd")
+
 ## Uses the implicit auth flow see also: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow
 ## @deprecated use AuthorizationCodeGrantFlow...
 const FLOW_IMPLICIT = "ImplicitGrantFlow";
@@ -23,9 +25,7 @@ const LOGGER_NAME_IRC = "TwitchIRC"
 const LOGGER_NAME_IMAGE_LOADER = "TwitchImageLoader"
 const LOGGER_NAME_COMMAND_HANDLING = "TwitchCommandHandling"
 const LOGGER_NAME_SERVICE = "TwitchService"
-const LOGGER_NAME_HTTP_CLIENT = "TwitchHttpClient"
-const LOGGER_NAME_HTTP_SERVER = "TwitchHttpServer"
-const LOGGER_NAME_WEBSOCKET = "TwitchWebsocket"
+const LOGGER_NAME_HTTP = "HTTP"
 const LOGGER_NAME_CUSTOM_REWARDS = "TwitchCustomRewards"
 
 
@@ -37,9 +37,7 @@ const ALL_LOGGERS: Array[String] = [
 	LOGGER_NAME_IMAGE_LOADER,
 	LOGGER_NAME_COMMAND_HANDLING,
 	LOGGER_NAME_SERVICE,
-	LOGGER_NAME_HTTP_CLIENT,
-	LOGGER_NAME_HTTP_SERVER,
-	LOGGER_NAME_WEBSOCKET,
+	LOGGER_NAME_HTTP,
 	LOGGER_NAME_CUSTOM_REWARDS,
 ];
 
@@ -121,44 +119,6 @@ static var broadcaster_id: String:
 	get: return _broadcaster_id.get_val();
 	set(val): _broadcaster_id.set_val(val);
 
-static var _authorization_flow: Property
-static var authorization_flow: String:
-	get: return _authorization_flow.get_val();
-	set(val): _authorization_flow.set_val(val);
-
-static var _client_id: Property
-static var client_id: String:
-	get: return _client_id.get_val();
-	set(val): _client_id.set_val(val);
-
-static var client_secret: String:
-	get:
-		var secret_file = ConfigFile.new()
-		var err = secret_file.load_encrypted_pass(secret_storage, client_id)
-		match err:
-			OK: return secret_file.get_value("auth", "secret")
-			ERR_FILE_NOT_FOUND: return ""
-			_: print("Twitcher: Can't read the secret file for the client_secret. Probably the ClientID Changed? Delete the file manually '%s' and try again" % secret_storage)
-		return ""
-	set(val):
-		var secret_file = ConfigFile.new()
-		secret_file.load_encrypted_pass(secret_storage, client_id)
-		secret_file.set_value("auth", "secret", val)
-		secret_file.save_encrypted_pass(secret_storage, client_id)
-
-static var _redirect_url: Property
-static var redirect_url: String:
-	get: return _redirect_url.get_val();
-	set(val): _redirect_url.set_val(val);
-
-static var redirect_port: int:
-	get: return _get_redirect_port();
-
-static var _force_verify: Property
-static var force_verify: String:
-	get: return "true" if _force_verify.get_val() else "false";
-	set(val): _force_verify.set_val(val);
-
 static var image_transformers: Dictionary = {};
 static var image_transformer: TwitchImageTransformer:
 	get: return get_image_transformer();
@@ -177,32 +137,6 @@ static var _twitch_image_cdn_host: Property
 static var twitch_image_cdn_host: String:
 	get: return _twitch_image_cdn_host.get_val();
 	set(val): _twitch_image_cdn_host.set_val(val);
-
-static var _auth_cache: Property
-static var auth_cache: String:
-	get: return _auth_cache.get_val();
-	set(val): _auth_cache.set_val(val);
-
-static var _secret_storage: Property
-static var secret_storage: String:
-	get: return _secret_storage.get_val();
-	set(val):
-		if FileAccess.file_exists(secret_storage):
-			var content = FileAccess.get_file_as_bytes(secret_storage)
-			var file = FileAccess.open(val, FileAccess.WRITE)
-			file.store_string(content)
-			DirAccess.remove_absolute(secret_storage)
-		_secret_storage.set_val(val);
-
-static var _token_host: Property
-static var token_host: String:
-	get: return _token_host.get_val();
-	set(val): _token_host.set_val(val);
-
-static var _token_endpoint: Property
-static var token_endpoint: String:
-	get: return _token_endpoint.get_val();
-	set(val): _token_endpoint.set_val(val);
 
 static var _fallback_texture: Property
 static var fallback_texture2d: Texture2D:
@@ -304,30 +238,11 @@ static var _log_enabled: Property;
 static var log_enabled: Array[String]:
 	get: return get_log_enabled()
 
-
-static func _migrate_settings() -> void:
-	if ProjectSettings.has_setting("twitch/auth/client_secret"):
-		# Read the old secret and use the setter to write to the new file within user:// or specified folder see twitch/auth/api/secret_file_storage
-		var secret = ProjectSettings.get_setting("twitch/auth/client_secret");
-		client_secret = secret
-		ProjectSettings.set_setting("twitch/auth/client_secret", null)
-
+static var http_logger: TwitchLogger
 
 static func _static_init() -> void:
-	_migrate_settings();
-
 	# Auth
 	_broadcaster_id = Property.new("twitch/auth/broadcaster_id").as_str("Broadcaster ID of youself").basic();
-	_authorization_flow = Property.new("twitch/auth/authorization_flow", "AuthorizationCodeGrantFlow").as_select([FLOW_IMPLICIT, FLOW_CLIENT_CREDENTIALS, FLOW_AUTHORIZATION_CODE, FLOW_DEVICE_CODE_GRANT], false);
-	_client_id = Property.new("twitch/auth/client_id").as_str("Client ID you can find it in https://api.twitch.tv/").basic();
-	Property.new("twitch/auth/client_secret_deprecated", "Setting moved to its own tab for security reasons").basic();
-	_redirect_url = Property.new("twitch/auth/redirect_url", "http://localhost:7170").as_str("Redirect URL that Twitch calls after a successful login").basic();
-	_force_verify = Property.new("twitch/auth/force_verify", "false").as_bool("Set to true to force the user to re-authorize your app’s access to their resources. The default is false.");
-
-	_auth_cache = Property.new("twitch/auth/api/auth_file_cache", "user://auth.conf").as_global_save();
-	_secret_storage = Property.new("twitch/auth/api/secret_file_storage", "user://secrets.conf").as_global_save();
-	_token_host = Property.new("twitch/auth/api/token_host", "https://id.twitch.tv").as_str();
-	_token_endpoint = Property.new("twitch/auth/api/token_endpoint", "/oauth2/token").as_str();
 
 	# General
 	_api_host = Property.new("twitch/general/api/api_host", "https://api.twitch.tv").as_str();
@@ -362,6 +277,9 @@ static func _static_init() -> void:
 	var default_caps: Array[TwitchIrcCapabilities.Capability] = [TwitchIrcCapabilities.COMMANDS, TwitchIrcCapabilities.TAGS];
 	var default_cap_val = TwitchIrcCapabilities.get_bit_value(default_caps);
 	_irc_capabilities = Property.new("twitch/websocket/irc/capabilities", default_cap_val).as_bit_field(_get_all_irc_capabilities()).basic();
+
+	http_logger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_HTTP)
+	HttpUtil.set_logger(http_logger.e, http_logger.i, http_logger.d)
 
 
 static func get_log_enabled() -> Array[String]:
@@ -406,13 +324,6 @@ static func get_image_transformer() -> TwitchImageTransformer:
 		return image_transformers[image_tranformer_path];
 	var transformer = load(image_tranformer_path);
 	return transformer;
-
-
-static func _get_redirect_port() -> int:
-	var url_parts = redirect_url.rsplit(":", true, 1);
-	var port: int = int(url_parts[1]);
-	if port == 0: port = 80;
-	return port;
 
 
 static func _get_all_irc_capabilities() -> Array[String]:

@@ -24,7 +24,7 @@ extends Control
 
 func _ready() -> void:
 	configuration_warning.hide()
-	if TwitchSetting.client_id == "":
+	if twitch_service.twitch_auth.setting.client_id == "":
 		configuration_warning.show()
 		push_error("Please configure client credentials according to the readme")
 		return
@@ -42,9 +42,9 @@ func _ready() -> void:
 
 func _on_chat_message(from_user: String, message: String, tags: TwitchTags.Message):
 	# Get all badges from the user that sends the message
-	var badges = await tags.get_badges() as Array[SpriteFrames];
+	var badges = tags.badges as Array[SpriteFrames];
 	# Get all emotes within the message
-	var emotes = await tags.get_emotes() as Array[TwitchIRC.EmoteLocation];
+	var emotes = tags.emotes as Array[TwitchIRC.EmoteLocation];
 	# Color of the user
 	var color = tags.get_color();
 

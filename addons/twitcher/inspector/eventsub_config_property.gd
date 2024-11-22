@@ -23,8 +23,8 @@ func _create_conditions() -> void:
 	var eventsub_config: TwitchEventsubConfig = get_edited_object();
 	if eventsub_config == null: return
 
-	for condition_name: StringName in eventsub_config.condition:
-		var condition_value = eventsub_config.condition[condition_name]
+	for condition_name: StringName in eventsub_config.definition.conditions:
+		var condition_value = eventsub_config.condition.get_or_add(condition_name, "")
 		var condition_title = Label.new()
 		condition_title.text = condition_name.capitalize()
 		var input = LineEdit.new()

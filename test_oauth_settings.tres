@@ -11,15 +11,7 @@ token_url = "https://id.twitch.tv/oauth2/token"
 authorization_url = "https://id.twitch.tv/oauth2/authorize"
 device_authorization_url = "https://id.twitch.tv/oauth2/device"
 cache_file = "user://auth.conf"
-client_id = "e0a451pmremhgy77idg3isbcwwqidd"
+client_id = "1ae0idgxbvn6vi97ls7d89cyd919oq"
 authorization_flow = 0
 _encryption_key_provider = ExtResource("1_2yi2x")
-token_host = ""
-token_path = ""
-authorization_host = ""
-authorization_path = ""
-device_authorization_host = ""
-device_authorization_path = ""
-redirect_path = "/"
-redirect_port = 7170
-client_secret = "jKUjX/Us7PcSFvHOvtFXzX40TU/I09lsPCgw0CafXUhPQE9DXKnRLwx1gQhojgMYDFufWwglrqZai8eplMsVR+AaM+xzCWpNHd5OkqlVwZoq778e9kMPI7YCPGDhowOSXq2cPXGPgrw6qLKCRWMnsYbFzv/0Di5An5kXNIgOb0nrSd/LR8x1oqBMiaMXn+0tGXxJSWWAmjMWWIIMGgiCQpyqm6SrVkvhn82ATLYHzZ373tnStUn+CzHTBZ14dRuQgSdlXUgz/PGoPtYmoXfzexjDrTvubLHMULiEkveg3QLYdkNUbA5ft7IWnqgegIOAjt1iEha40+gDvenatLRndHDy9bDPU/qNzoiA65/M+p5GNVkDLuUfxN+C4c0tdgnOHLZZoCHWjlPyU6k7xr+VvqIcVRAMKAOTAfl7ppHem2VoKhi3tUPIGrqRbFQk+kP/NY8OAxGnqu0+BmqDBYXXAEd8GxNuK7TH8Dq9C4Ti+Db07w8KteGGeUMqGxvB8azsHs1uUol4abn9zmMfbD+nnUwYg/qyXsDVvu7Vj88dYiONMeKaC/Ih05jlJK/lsCIApz4J+gESbJr52x2tenK12pbui3tlffLyNF9xg3IEXjIC8Iz2BJVUQidnusYDSErpbkioOvni799mHgUApXf+gVAvxPQXiihrDAh5kYBygCw="
+client_secret = "JJ+m5eiYeCK7XnSgN+KccDNkrmr+r5+UHsg2EPVllihNrN0jprRXNGb+/LMuLL7wz6Q3mpnzyBX7MWcuuLTRixNi6TOmhGUtDVuc5fT7vwwrAnKo6vmgoPTfwtA8jxBm99QBmexmfigkwtvo0lpCKryQARmIJdMZlAdWfkJf2nWj8wsAgzlCS9RuTeRwqt3PLuMEVQOEFoFOV6h7aMR8cuLwdJ3quMFTRIyEemWeidqDDZinwcEgFCNwb89BocW2OMNroJOL25pE8yynrBtNJrxSlT2HWxmhit4+Q31sOHoaXMxO9unVm7l7hm8vc20r2RRzLXtypec/EoFIeCzsG9Wp+bcKYvr72RGWirBIXMfCYkaQ2g9WSJoeUT3hqq3I5Iot1AFgx9yTXDCm9MTxVkAahV+kNf6eoZAJH1pjwXIgXRYZafv4aKlZEmapozAZ6/SGEq2k6HlkVlNSJusIzCjgyzHQ8W0hstH7ND+bXHdtgqKYe1A3PCODcYnOSsV+ZfTKd/K+o5UHZplA0nLzve3B/tk4SihANx8XDlCiPyU8vwuu32IXfByo6/3V6+aaoiABDIHji/BvLPT/9spzc+2k9K/IlZS71Y/gbVqrnbWWI1Pz2TTwjAxF+90zCzqmSAkClJpKvGoZVVr+Qqa9uFll8zRHsWYnkqwkHs6ya9o="

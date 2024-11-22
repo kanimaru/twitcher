@@ -60,41 +60,9 @@ func _exit_tree() -> void:
 
 func _on_message_received(channel: String, from_user: String, message: String, tags: TwitchTags.PrivMsg):
 	if channel_name != channel: return;
-	var message_tag = TwitchTags.Message.from_priv_msg(tags);
-	message_tag.badges = await _load_badges(message_tag.badges, message_tag.room_id)
-	message_tag.emotes = await _load_emotes(message_tag.emotes)
+	var message_tag = TwitchTags.Message.from_priv_msg(tags)
+	await message_tag.load_sprites(twitch_service)
 	message_received.emit(from_user, message, message_tag);
-
-
-func _load_badges(badges: String, room_id: String) -> Array[SpriteFrames]:
-	var badge_composite : Array[String] = [];
-	for badge in badges.split(",", false):
-		badge_composite.append(badge);
-
-	var result = await(twitch_service.get_badges(badge_composite, room_id))
-	var sprite_frames : Array[SpriteFrames] = [];
-	for sprite_frame in result.values():
-		sprite_frames.append(sprite_frame);
-	return sprite_frames;
-
-
-func _load_emotes(emotes: String) -> Array[TwitchIRC.EmoteLocation]:
-	var locations : Array[TwitchIRC.EmoteLocation] = [];
-	var emotes_to_load : Array[String] = [];
-	if emotes != null && emotes != "":
-		for emote in emotes.split("/", false):
-			var data : Array = emote.split(":");
-			for d in data[1].split(","):
-				var start_end = d.split("-");
-				locations.append(TwitchIRC.EmoteLocation.new(data[0], int(start_end[0]), int(start_end[1])));
-				emotes_to_load.append(data[0]);
-	locations.sort_custom(Callable(TwitchIRC.EmoteLocation, "smaller"));
-
-	var emotes_definition: Dictionary = await twitch_service.icon_loader.get_emotes(emotes_to_load);
-	for emote_location: TwitchIRC.EmoteLocation in locations:
-		emote_location.sprite_frames = emotes_definition[emote_location.id];
-
-	return locations;
 
 
 func _on_roomstate_received(channel: String, tags: TwitchTags.Roomstate):

@@ -1,6 +1,9 @@
+@tool
 extends Node
 
 class_name TwitchIRC
+
+const Constants = preload("res://addons/twitcher/constants.gd")
 
 var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_IRC);
 
@@ -32,6 +35,8 @@ signal received_userstate(channel_name: String, tags: TwitchTags.Userstate);
 signal received_whisper(from_user: String, to_user: String, message: String, tags: TwitchTags.Whisper);
 ## The Twitch IRC server sends this message after a user posts a message to the chat room.
 signal received_privmsg(channel_name: String, username: String, message: String, tags: TwitchTags.PrivMsg);
+## When the token isn't valid anymore
+signal unauthenticated;
 ## When the token doesn't have enough permissions to join IRC
 signal unauthorized;
 
@@ -112,7 +117,10 @@ class EmoteLocation extends RefCounted:
 		return a.start < b.start;
 
 @export var token: OAuthToken;
-@export var connect_on_enter_tree: bool = true
+@export_enum(Constants.AUTO_CONNECT_NOT, \
+	Constants.AUTO_CONNECT_RUNTIME, \
+	Constants.AUTO_CONNECT_EDITOR_RUNTIME)
+var connect_on_enter_tree : String
 
 ## All connected channels of the bot.
 ## Key: channel_name as String | Value: ChannelData
@@ -134,10 +142,10 @@ func _init() -> void:
 	_client.message_received.connect(_data_received);
 	_client.connection_established.connect(_on_connection_established)
 	_client.connection_closed.connect(_on_connection_closed)
-	_client.connect_on_enter_tree = connect_on_enter_tree
 
 
 func _ready() -> void:
+	_client.connect_on_enter_tree = connect_on_enter_tree
 	add_child(_client)
 
 
@@ -196,15 +204,19 @@ func _data_received(data : PackedByteArray) -> void:
 
 ## Tries to send messages as long as the websocket is open
 func _send_messages() -> void:
+	if _chat_queue.is_empty():
+		return
+
 	if not _client.is_open:
 		log.e("Can't send message. Connection not open.")
 		# Maybe buggy when the websocket got opened but not authorized yet
 		# Can possible happen when we have a lot of load and a reconnect in the socket
-		return;
-	if not _chat_queue.is_empty() && _next_message <= Time.get_ticks_msec():
-		var msg_to_send = _chat_queue.pop_front();
-		_send(msg_to_send);
-		_next_message = Time.get_ticks_msec() + TwitchSetting.irc_send_message_delay;
+		return
+
+	if _next_message <= Time.get_ticks_msec():
+		var msg_to_send = _chat_queue.pop_front()
+		_send(msg_to_send)
+		_next_message = Time.get_ticks_msec() + TwitchSetting.irc_send_message_delay
 
 
 ## Sends join channel message
@@ -389,7 +401,8 @@ func remove_channel(channel: TwitchIrcChannel):
 func _handle_cmd_notice(info: String) -> bool:
 	if info == "Login authentication failed" || info == "Login unsuccessful":
 		log.e("Authentication failed.");
-		_client.close(1000, "Unauthorized.");
+		unauthenticated.emit()
+		_client.close(1000, "Unauthenticated.");
 		return true;
 	elif info == "You don't have permission to perform that action":
 		log.i("No permission. Please check if you have all required scopes (chat:read or chat:write).");
@@ -397,3 +410,7 @@ func _handle_cmd_notice(info: String) -> bool:
 		_client.close(1000, "Token became invalid.");
 		return true;
 	return false;
+
+
+func get_client() -> WebsocketClient:
+	return _client

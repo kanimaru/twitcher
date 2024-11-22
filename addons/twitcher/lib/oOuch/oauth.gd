@@ -4,8 +4,8 @@ extends Node
 ## Orchestrates the complete authentication process
 class_name OAuth
 
-const OAuthHTTPServer = preload("./http_server.gd");
-const OAuthHTTPClient = preload("./http_client.gd");
+const OAuthHTTPServer = preload("res://addons/twitcher/lib/http/http_server.gd");
+const OAuthHTTPClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd");
 const OAuthDeviceCodeResponse = preload("./device_code_response.gd");
 
 ## Called when the authorization for AuthCodeFlow is complete to handle the auth code
@@ -36,8 +36,7 @@ enum AuthorizationFlow {
 	AUTHORIZATION_CODE_FLOW,
 	IMPLICIT_FLOW,
 	DEVICE_CODE_FLOW,
-	CLIENT_CREDENTIALS,
-	PASSWORD_FLOW
+	CLIENT_CREDENTIALS
 }
 
 func _ready() -> void:
@@ -81,7 +80,7 @@ func login() -> void:
 	if token_handler.is_token_valid(): return
 
 	if login_in_process:
-		logDebug("Another process tries already to login. Abort");
+		logInfo("Another process tries already to login. Abort");
 		await token_handler.token_resolved;
 		return;
 
@@ -102,13 +101,13 @@ func login() -> void:
 			await _start_login_process("token");
 		AuthorizationFlow.DEVICE_CODE_FLOW:
 			await _start_device_login_process();
-		AuthorizationFlow.PASSWORD_FLOW:
-			logInfo("Password flow is not yet supported");
-			pass
+
 	login_in_process = false;
 
 
 func _start_login_process(response_type: String):
+	if scopes == null: scopes = OAuthScopes.new()
+
 	_auth_http_server.start();
 
 	if response_type == "code":
@@ -125,10 +124,10 @@ func _start_login_process(response_type: String):
 		]);
 
 	var url = setting.authorization_host + setting.authorization_path + "?" + query_param;
-	logInfo("Start login process %s" % url);
-	logDebug("Request Scopes: %s" % scopes.used_scopes);
+	logInfo("start login process to get token for scopes %s" % (",".join(scopes.used_scopes)));
+	logDebug("login to %s" % url)
 	OS.shell_open(url);
-	logDebug("Waiting for user to login.")
+	logDebug("waiting for user to login.")
 	if response_type == "code":
 		var auth_code = await _auth_succeed;
 		token_handler.request_token("authorization_code", auth_code);
@@ -137,7 +136,7 @@ func _start_login_process(response_type: String):
 	elif response_type == "token":
 		await token_handler.token_resolved;
 		_auth_http_server.request_received.disconnect(_process_implicit_request.bind(_auth_http_server));
-	logInfo("Request is done stop")
+	logInfo("authorization is done stop server")
 	_auth_http_server.stop();
 
 #region DeviceCodeFlow
@@ -241,7 +240,7 @@ func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServ
 
 ## Returns the response for the given auth request back to the browser also emits the auth code
 func _handle_success(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, query_params : Dictionary) -> void:
-	logInfo("Authentication success redirect to authorization.");
+	logInfo("Authentication success. Send auth code.");
 	server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success!</body></html>".to_utf8_buffer());
 	if query_params.has("code"):
 		_auth_succeed.emit(query_params['code']);
@@ -278,12 +277,9 @@ static func parse_query(query: String) -> Dictionary:
 # === LOGGER ===
 static var logger: Dictionary = {};
 static func set_logger(error: Callable, info: Callable, debug: Callable) -> void:
-	print("LOGGER SETUP")
 	logger.debug = debug;
 	logger.info = info;
 	logger.error = error;
-	OAuthHTTPClient.set_logger(error, info, debug);
-	OAuthHTTPServer.set_logger(error, info, debug);
 	OAuthTokenHandler.set_logger(error, info, debug);
 
 static func logDebug(text: String) -> void:

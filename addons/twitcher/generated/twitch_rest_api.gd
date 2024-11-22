@@ -9,21 +9,28 @@ class_name TwitchRestAPI
 ## Maximal tries to reauthrorize before giving up the request.
 const MAX_AUTH_ERRORS = 3;
 
-## Called when the API returns unauthorized mostly cause the accesstoken is expired
+## Called when the API returns unauthenticated mostly cause the accesstoken is expired
+signal unauthenticated
+
+## Called when the API returns 403 means there are permissions / scopes missing
 signal unauthorized
 
 @export var token: OAuthToken;
+@export var setting: OAuthSetting;
+@export var http_client_manager: HttpClientManager
 
 var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_REST_API);
 var client: BufferedHTTPClient;
 
-func _init() -> void:
-	client = BufferedHTTPClient.new(TwitchSetting.api_host);
+
+func _ready() -> void:
+	client = http_client_manager.get_client(TwitchSetting.api_host);
+
 
 func request(path: String, method: int, body: Variant = "", content_type: String = "", error_count: int = 0) -> BufferedHTTPClient.ResponseData:
 	var header : Dictionary = {
 		"Authorization": "Bearer %s" % [await token.get_access_token()],
-		"Client-ID": TwitchSetting.client_id
+		"Client-ID": setting.client_id
 	};
 	if content_type != "":
 		header["Content-Type"] = content_type;
@@ -42,8 +49,9 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 	# Token expired / or missing permissions
 	if response.client.get_response_code() == 403:
 		log.e("'%s' is unauthorized. It is probably your scopes.")
-	if response.client.get_response_code() == 401:
 		unauthorized.emit()
+	if response.client.get_response_code() == 401:
+		unauthenticated.emit()
 		await token.authorized
 		if error_count + 1 < MAX_AUTH_ERRORS:
 			return await request(path, method, body, content_type, error_count + 1);
@@ -768,6 +776,17 @@ func update_chat_settings_bopt(moderator_id: String, body: Dictionary, broadcast
 	var response = await request(path, HTTPClient.METHOD_PATCH, body, "application/json");
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
 	return TwitchUpdateChatSettingsResponse.from_json(result);
+
+
+## NEW Retrieves the active shared chat session for a channel.
+##
+## https://dev.twitch.tv/docs/api/reference#get-shared-chat-session
+func get_shared_chat_session(broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetSharedChatSessionResponse:
+	var path = "/helix/shared_chat/session?"
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	var response = await request(path, HTTPClient.METHOD_GET, "", "");
+	var result = JSON.parse_string(response.response_data.get_string_from_utf8());
+	return TwitchGetSharedChatSessionResponse.from_json(result);
 
 
 ## NEW Retrieves emotes available to the user across all channels.

@@ -81,8 +81,13 @@ func get_scopes() -> PackedStringArray:
 	return _scopes;
 
 
-func get_expiration() -> String:
-	return Time.get_datetime_string_from_unix_time(_expire_date)
+## The unix timestamp when the token is expiring
+func get_expiration() -> int:
+	return _expire_date
+
+
+func get_expiration_readable() -> String:
+	return Time.get_datetime_string_from_unix_time(_expire_date, true)
 
 
 func invalidate() -> void:

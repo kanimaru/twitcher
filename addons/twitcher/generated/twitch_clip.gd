@@ -15,7 +15,7 @@ var url: String:
 	set(val):
 		url = val;
 		changed_data["url"] = url;
-## A URL that you can use in an iframe to embed the clip (see [Embedding Video and Clips](https://dev.twitch.tv/docs/embed/video-and-clips)).
+## A URL that you can use in an iframe to embed the clip (see [Embedding Video and Clips](https://dev.twitch.tv/docs/embed/video-and-clips/)).
 var embed_url: String:
 	set(val):
 		embed_url = val;

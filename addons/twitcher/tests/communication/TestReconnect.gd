@@ -11,14 +11,14 @@ var client: BufferedHTTPClient;
 
 func _ready() -> void:
 	server = HTTPServer.new(12233);
-	server.add_request_handler(_process_request);
+	server.request_received.connect(_process_request)
 	connect_button.pressed.connect(_connect_to_server);
 	start_button.pressed.connect(_start_server);
 	stop_button.pressed.connect(_stop_server);
 	send.pressed.connect(_send)
 
 func _process_request(server: HTTPServer, client: HTTPServer.Client) -> void:
-	server.send_response(client.peer, "200", "OK".to_ascii_buffer());
+	server.send_response(client, "200", "OK".to_ascii_buffer());
 
 func _send() -> void:
 	var req = client.request("/test", HTTPClient.METHOD_GET, {}, "");
@@ -41,4 +41,3 @@ func _start_server() -> void:
 func _stop_server() -> void:
 	server.stop();
 	pass
-

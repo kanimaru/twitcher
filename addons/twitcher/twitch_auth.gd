@@ -7,20 +7,17 @@ class_name TwitchAuth
 ## The requested devicecode to show to the user for authorization
 signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
 
-## Called when the authorization process is complete
-signal authorized(success: bool);
-
 ## Where to authorize. Nullable: fallback to the ProjectSettings
 @export var setting: OAuthSetting:
 	set(val):
 		setting = val
 		_update_setting(val)
-## When the project settings should be used instead of setting
-@export var use_project_setting: bool
+## Shows the what to authorize page of twitch again. (for example you need to relogin with a different account aka bot account)
+@export var force_verify: bool
 ## Where should the tokens be saved into
-@export var token: OAuthToken = OAuthToken.new()
+@export var token: OAuthToken
 ## Scopes for the token that should be requested
-@export var scopes: OAuthScopes = OAuthScopes.new()
+@export var scopes: OAuthScopes
 
 @onready var auth: OAuth = %OAuth
 @onready var token_handler: TwitchTokenHandler = %TokenHandler
@@ -35,9 +32,9 @@ func _ready() -> void:
 
 
 func _enter_tree() -> void:
-	if setting == null || use_project_setting: setting = _get_setting()
+	if setting == null: setting = _get_setting()
 	_update_setting(setting)
-	%OAuth.force_verify = TwitchSetting.force_verify
+	%OAuth.force_verify = &"true" if force_verify else &"false"
 	%OAuth.scopes = scopes
 	%TokenHandler.token = token
 
@@ -59,20 +56,10 @@ func refresh_token() -> void:
 
 func _get_setting() -> OAuthSetting:
 	var setting = OAuthSetting.new();
-	setting.authorization_flow = _get_flow();
+	setting.authorization_flow = OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW;
 	setting.device_authorization_url = "https://id.twitch.tv/oauth2/device";
 	setting.token_url = "https://id.twitch.tv/oauth2/token";
 	setting.authorization_url = "https://id.twitch.tv/oauth2/authorize";
-	setting.client_id = TwitchSetting.client_id;
-	setting.client_secret = TwitchSetting.client_secret;
-	setting.cache_file = TwitchSetting.auth_cache;
+	setting.cache_file = "user://auth.conf";
+	setting.redirect_url = "http://localhost:7170";
 	return setting;
-
-
-func _get_flow() -> OAuth.AuthorizationFlow:
-	match TwitchSetting.authorization_flow:
-		TwitchSetting.FLOW_AUTHORIZATION_CODE: return OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW;
-		TwitchSetting.FLOW_CLIENT_CREDENTIALS: return OAuth.AuthorizationFlow.CLIENT_CREDENTIALS;
-		TwitchSetting.FLOW_DEVICE_CODE_GRANT: return OAuth.AuthorizationFlow.DEVICE_CODE_FLOW;
-		TwitchSetting.FLOW_IMPLICIT: return OAuth.AuthorizationFlow.IMPLICIT_FLOW;
-	return OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW;

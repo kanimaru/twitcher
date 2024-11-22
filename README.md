@@ -1,7 +1,7 @@
 !!!! TODOS:
 - Change Documentation to remove autoloads
 - Add Possibility to change the Encryption key in Token.gd
-
+- Clear Cache -> into toolbar
 
 
 # [Bloody Alpha] Twitcher V2

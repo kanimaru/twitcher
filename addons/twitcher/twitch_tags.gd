@@ -45,6 +45,43 @@ class Message extends RefCounted:
 		return msg;
 
 
+	func load_sprites(twitch_service: TwitchService) -> void:
+		badges = await _load_badges(twitch_service)
+		emotes = await _load_emotes(twitch_service)
+		pass
+
+
+	func _load_badges(twitch_service: TwitchService) -> Array[SpriteFrames]:
+		var badge_composite : Array[String] = [];
+		for badge in _badges.split(",", false):
+			badge_composite.append(badge)
+		var result = await twitch_service.get_badges(badge_composite, room_id)
+		var sprite_frames : Array[SpriteFrames] = [];
+		for sprite_frame in result.values():
+			sprite_frames.append(sprite_frame);
+		return sprite_frames;
+
+
+	func _load_emotes(twitch_service: TwitchService) -> Array[TwitchIRC.EmoteLocation]:
+		var locations : Array[TwitchIRC.EmoteLocation] = [];
+		var emotes_to_load : Array[String] = [];
+		if _emotes != null && _emotes != "":
+			for emote in _emotes.split("/", false):
+				var data : Array = emote.split(":");
+				for d in data[1].split(","):
+					var start_end = d.split("-");
+					locations.append(TwitchIRC.EmoteLocation.new(data[0], int(start_end[0]), int(start_end[1])));
+					emotes_to_load.append(data[0]);
+		locations.sort_custom(Callable(TwitchIRC.EmoteLocation, "smaller"));
+
+		var emotes_definition: Dictionary = await twitch_service.icon_loader.get_emotes(emotes_to_load);
+		for emote_location: TwitchIRC.EmoteLocation in locations:
+			emote_location.sprite_frames = emotes_definition[emote_location.id];
+
+		return locations;
+
+
+
 	func get_color() -> String:
 		return color;
 
