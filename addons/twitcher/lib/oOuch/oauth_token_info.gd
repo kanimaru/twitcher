@@ -1,7 +1,9 @@
 @tool
-extends GridContainer
+extends Node
 
-const Token = preload("res://addons/twitcher/lib/oOuch/token.gd")
+const Token = preload("res://addons/twitcher/lib/oOuch/oauth_token.gd")
+
+signal revoked
 
 @export var token: Token
 
@@ -9,9 +11,12 @@ const Token = preload("res://addons/twitcher/lib/oOuch/token.gd")
 @onready var token_valid_value: Label = %TokenValidValue
 @onready var refresh_token_value: CheckBox = %RefreshTokenValue
 @onready var token_scope_value: Node = %TokenScopeValue
+@onready var revoke_button: Button = %RevokeButton
 
 func _ready() -> void:
-	if token == null: return
+	if token == null:
+		_reset_token()
+		return
 	title.text = token._identifier
 	token_valid_value.text = token.get_expiration_readable()
 	if token.is_token_valid():
@@ -30,3 +35,17 @@ func _ready() -> void:
 		var scope_name = Label.new()
 		scope_name.text = scope
 		token_scope_value.add_child(scope_name)
+	revoke_button.disabled = false
+	revoke_button.pressed.connect(_on_revoke_pressed)
+
+func _on_revoke_pressed() -> void:
+	token.remove_tokens()
+	_reset_token()
+
+func _reset_token() -> void:
+	title.text = ""
+	token_valid_value.text = ""
+	refresh_token_value.button_pressed = false
+	revoke_button.disabled = true
+	for child in token_scope_value.get_children():
+		child.queue_free()

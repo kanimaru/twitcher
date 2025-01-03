@@ -246,7 +246,7 @@ func _reset_request():
 func _check_status(response_data: ResponseData) -> void:
 	var response_code = client.get_response_code()
 	if !str(response_code).begins_with("2"):
-		logInfo("[%s] problems with result \nresponse code: %s \nbody: %s" % [response_data.request_data.path, response_code, response_data.response_data.get_string_from_utf8()])
+		logInfo("[%s] problems with result \n\t> response code: %s \n\t> body: %s" % [response_data.request_data.path, response_code, response_data.response_data.get_string_from_utf8()])
 		var response_headers = client.get_response_headers_as_dictionary()
 		print_verbose(response_headers)
 

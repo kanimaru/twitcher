@@ -27,7 +27,7 @@ var _config_file: ConfigFile = ConfigFile.new()
 var _access_token: String = "":
 	set(val):
 		_access_token = val
-		authorized.emit()
+		if val != "": authorized.emit()
 var _refresh_token: String = "";
 
 
@@ -56,7 +56,7 @@ func _persist_tokens():
 
 
 ## Loads the tokens and returns the information if the file got created
-func _load_tokens():
+func _load_tokens() -> bool:
 	var status = _config_file.load(_cache_path)
 	if status == OK && _config_file.has_section(_identifier):
 		_expire_date = _config_file.get_value(_identifier, "expire_date", 0);
@@ -67,6 +67,22 @@ func _load_tokens():
 		_scopes = _config_file.get_value(_identifier, "scopes", "").split(",");
 		return true;
 	return false;
+
+
+func remove_tokens() -> void:
+	var status = _config_file.load(_cache_path)
+	print(status, _config_file.get_sections())
+	if status == OK && _config_file.has_section(_identifier):
+		_access_token = ""
+		_refresh_token = ""
+		_expire_date = 0
+		_scopes.clear()
+
+		_config_file.erase_section(_identifier)
+		_config_file.save(_cache_path)
+		print("%s got revoked" % _identifier)
+	else:
+		print("%s not found" % _identifier)
 
 
 func get_refresh_token() -> String:

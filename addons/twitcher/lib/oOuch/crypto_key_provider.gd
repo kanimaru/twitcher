@@ -1,13 +1,16 @@
 @tool
 extends Resource
 
-## Used to provide a key that is used to encrypt different things in the application.
-## Please don't store the key in the project otherwise your secrets may revealed easily!
+## Provides a key to encrypt secrets in the application.
+## Please don't store the key in the project,
+## otherwise your secrets may revealed easily!
 class_name CryptoKeyProvider
 
 static var CRYPTO: Crypto = Crypto.new()
 
+## Folder to the private and public keys
 @export var auth_encryption_cache: String = "user://token_encryption"
+## Godot object to encrypt
 @export var key: CryptoKey
 
 

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="OAuthScopes" load_steps=2 format=3 uid="uid://ns1ywlg15hx"]
 
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/scopes.gd" id="1_begpp"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="1_begpp"]
 
 [resource]
 script = ExtResource("1_begpp")

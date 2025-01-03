@@ -1,38 +1,41 @@
-[gd_scene load_steps=15 format=3 uid="uid://5lyf04rwo1mf"]
+[gd_scene load_steps=17 format=3 uid="uid://5lyf04rwo1mf"]
 
 [ext_resource type="Script" path="res://example/chat.gd" id="1_rxgbp"]
-[ext_resource type="Script" path="res://addons/twitcher/twitch_irc_channel.gd" id="2_2gnd4"]
 [ext_resource type="PackedScene" uid="uid://djt5lvmwxbq4a" path="res://addons/twitcher/twitch_service.tscn" id="2_71e64"]
 [ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="3_5sdb2"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/token.gd" id="3_p2j3n"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="4_kh7i8"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/scopes.gd" id="5_f27jp"]
-[ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub_config.gd" id="7_2abpo"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="3_p2j3n"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="4_vhooy"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="5_f27jp"]
+[ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc_setting.gd" id="5_fh8bp"]
 [ext_resource type="PackedScene" uid="uid://b0ebhuv2yaow0" path="res://addons/twitcher/lib/http/DebugBufferedHttpClient.tscn" id="8_apbi4"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/title_label_settings.tres" id="9_6tdib"]
+[ext_resource type="Script" path="res://example/irc_status.gd" id="9_k01ms"]
+[ext_resource type="PackedScene" uid="uid://cinvytmtixgwu" path="res://addons/twitcher/chat/twitch_chat.tscn" id="11_dy1v6"]
 
-[sub_resource type="Resource" id="Resource_htwyq"]
-script = ExtResource("4_kh7i8")
-redirect_url = "http://localhost:8170"
+[sub_resource type="Resource" id="Resource_u0xjl"]
+script = ExtResource("4_vhooy")
+redirect_url = "http://localhost:7170"
 well_known_url = ""
 token_url = "https://id.twitch.tv/oauth2/token"
 authorization_url = "https://id.twitch.tv/oauth2/authorize"
-device_authorization_url = "https://id.twitch.tv/oauth2/device"
+device_authorization_url = ""
 cache_file = "res://auth.key"
 client_id = "1ae0idgxbvn6vi97ls7d89cyd919oq"
 authorization_flow = 0
 _encryption_key_provider = ExtResource("3_5sdb2")
-client_secret = "vURjHKcpZezh72tHxf5FZxqxT4n5gUUBU8A1A5ywwO1M0QfUialGaBk90vYU5qhrPwMuvqPRqSDPB+YbiP087kzWdtL25PDewYx2kBKXqVK/5G9r+AV6uGxJQW3nLbpAjRJ1+2QgJcKtgcoF6Rp9q2QkkRRUcoili2/oNja6ltckD2PlnI9o5QaYKri6GLEAT/sXTEpnZkbSRE9duXn7h98uOBesUfQJS+9MACXfOmvQu8OT+nIjs7Qu1mPlHevqV5aL0g+2WzQDgtSmhsRZWpVbYVx5eNsug/D5L/G/ZLR8wrsYqZDrgTlA3y9uui9GU/xBy3m4wVSJrViYqA1WLaWYJvOGnLRItM8iW8NRFdqNnLluvDhlgKHgdCG4sNuIdzNDGQuft/pvtoXxpHzSRHfD/ia3hrHr0u3/OoaoxvoxvI8o2C5R3MrUPKdYlR+mbcC8NYhvZelXOr6Kxl38oVXGEPp3lamgJhtAnPRGzjdktdc6ZTjITFg0TMy8R/eUnbWDBAuaFrFA5fS/rQ8dA59XalCuLhP2n5YxUiWL3r+CSbN1Y5JuQqYYFz+vFA7oDiKLGtW+DMIy/nurZxUlTajIN52m6umf6I065Da4VdLfwsUU+KCdJb3iZD354Qlyl9aajj6Ti5N0sAvAB8vzpx9uVv5Bmt4s8eZrqxhZWHE="
+client_secret = "BVuMF1VB4ie3pxu2S7I8vOkUF9iThU6v6DpkBv77zlTuUAs7Ob7/PTkHnLukk7oLB/V4uoEce0zX+eB+Y/tON+S9AX5KCQncxGIxA8Nro1bY2In4HULW3sXQyXnSugt3GcbIr4/19e/c+petCN1/vD6VnRX2Q6j43xSxrhoP+wtljHvYyNMRz/7sY4zFb7kOaQtdnFpWVSFBqaTuEkeQbXIH5IrjMvh4tP007eHXaLF4ljiLx85Osi2SlnI0zV0Ebgj65mYWM9oHpu1lIMSvo0pwBNhZ+8gu/SLfImChMzfN41yXtlgx7C2FqMxkproq6Nhn0BABNXhD9Cg9mDAXgMGm2K2nUZcOMi52bNotnGDkZVPiTgjxF5eDfS10caIF6kbPDw7VYzyqpr2nlW58UM7Jwm8Vik2gtjsgPYkV77HeQVJVwAjWFHO4y/C9+dDoCD0CEvrLJFRx5FdtRt/u0w8D++3CIbGGlrGJybiIwQZvs2ND2pzuO+TChyAXXLvZ8yLBwugM6NTx3qYVIpvjOqFjuZoqHq8WKTEd4SFLLP4iqWRcRloOUyYkvarcq3/0OZUVZCHN4vRwdsbuykPbisVOVRGDFWBXplHFSbA9h0s91tgd1HyswRP6zQbYag+kxiHuw+X0INUYvDw1/CYmr4fqCJgBpc5VycIzAu7P0S0="
 
-[sub_resource type="Resource" id="Resource_ipwmb"]
-script = ExtResource("7_2abpo")
-type = 9
-condition = {
-"broadcaster_user_id": "132799162"
-}
+[sub_resource type="Resource" id="Resource_8vg0s"]
+script = ExtResource("5_fh8bp")
+username = "kani_bot"
+auto_join_channels = Array[StringName]([&"kani_dev"])
+server = "wss://irc-ws.chat.twitch.tv:443"
+send_message_delay_ms = 320
+capabilities = 7
 
 [sub_resource type="Resource" id="Resource_dhn5n"]
 script = ExtResource("5_f27jp")
-used_scopes = Array[StringName]([&"chat:edit", &"chat:read", &"bits:read"])
+used_scopes = Array[StringName]([&"chat:edit", &"chat:read"])
 
 [sub_resource type="Resource" id="Resource_742dy"]
 script = ExtResource("3_p2j3n")
@@ -44,7 +47,8 @@ _cache_path = "user://auth.conf"
 font_size = 36
 font_color = Color(0.956209, 0, 0.289367, 1)
 
-[node name="Chat" type="HBoxContainer"]
+[node name="Chat" type="Control"]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -52,20 +56,33 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rxgbp")
 
-[node name="Control" type="Control" parent="."]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="TwitchService" parent="Control" instance=ExtResource("2_71e64")]
+[node name="TwitchChat" parent="." node_paths=PackedStringArray("event_sub", "rest") instance=ExtResource("11_dy1v6")]
 unique_name_in_owner = true
-setting = SubResource("Resource_htwyq")
-irc_auto_connect = "Connect on editor + runtime"
-eventsub_auto_connect = "Connect on editor + runtime"
-_subscriptions = Array[ExtResource("7_2abpo")]([SubResource("Resource_ipwmb")])
+event_sub = NodePath("../TwitchService/EventSub")
+rest = NodePath("../TwitchService/API")
+target_user_channel = "kani_dev"
+
+[node name="TwitchService" parent="." instance=ExtResource("2_71e64")]
+unique_name_in_owner = true
+oauth_setting = SubResource("Resource_u0xjl")
+irc_setting = SubResource("Resource_8vg0s")
 scopes = SubResource("Resource_dhn5n")
 token = SubResource("Resource_742dy")
 
-[node name="ChatContainer" type="VBoxContainer" parent="Control"]
+[node name="IRC" parent="TwitchService" index="0"]
+setting = SubResource("Resource_8vg0s")
+token = SubResource("Resource_742dy")
+
+[node name="API" parent="TwitchService" index="2"]
+token = SubResource("Resource_742dy")
+setting = SubResource("Resource_u0xjl")
+
+[node name="Auth" parent="TwitchService" index="5"]
+setting = SubResource("Resource_u0xjl")
+token = SubResource("Resource_742dy")
+scopes = SubResource("Resource_dhn5n")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -73,57 +90,90 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Control/ChatContainer"]
+[node name="Control" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="ChatContainer" type="VBoxContainer" parent="HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Control/ChatContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ChatContainer" type="VBoxContainer" parent="Control/ChatContainer/ScrollContainer"]
+[node name="ChatContainer" type="VBoxContainer" parent="HBoxContainer/Control/ChatContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="InputContainer" type="HBoxContainer" parent="Control/ChatContainer"]
+[node name="InputContainer" type="HBoxContainer" parent="HBoxContainer/Control/ChatContainer"]
 layout_mode = 2
 
-[node name="InputLine" type="LineEdit" parent="Control/ChatContainer/InputContainer"]
+[node name="InputLine" type="LineEdit" parent="HBoxContainer/Control/ChatContainer/InputContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Send" type="Button" parent="Control/ChatContainer/InputContainer"]
+[node name="Send" type="Button" parent="HBoxContainer/Control/ChatContainer/InputContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Send"
 
-[node name="TwitchIrcChannel" type="Node" parent="Control" node_paths=PackedStringArray("twitch_service")]
-unique_name_in_owner = true
-script = ExtResource("2_2gnd4")
-twitch_service = NodePath("../TwitchService")
-channel_name = "kani_dev"
-
-[node name="ConfigurationWarning" type="Label" parent="Control"]
-unique_name_in_owner = true
-visible = false
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="IrcStatus" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/PanelContainer" node_paths=PackedStringArray("twitch_service")]
+layout_mode = 2
+script = ExtResource("9_k01ms")
+twitch_service = NodePath("../../../../TwitchService")
+
+[node name="Title" type="Label" parent="HBoxContainer/VBoxContainer/PanelContainer/IrcStatus"]
+layout_mode = 2
+text = "IRC Status"
+label_settings = ExtResource("9_6tdib")
+horizontal_alignment = 1
+
+[node name="Connected" type="CheckBox" parent="HBoxContainer/VBoxContainer/PanelContainer/IrcStatus"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Connected"
+
+[node name="DebugBufferedHttpClient" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("http_client_manager") instance=ExtResource("8_apbi4")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+http_client_manager = NodePath("../../../TwitchService/HttpClientManager")
+
+[node name="ConfigurationWarning" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 61.5
+offset_left = -514.5
 offset_top = -25.0
-offset_right = 1090.5
+offset_right = 514.5
 offset_bottom = 25.0
 grow_horizontal = 2
 grow_vertical = 2
-rotation = 0.403015
+rotation = 0.359557
 pivot_offset = Vector2(514, 25)
 text = "Please configure client credentials according to the readme"
 label_settings = SubResource("LabelSettings_2vgfi")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DebugBufferedHttpClient" parent="." node_paths=PackedStringArray("http_client_manager") instance=ExtResource("8_apbi4")]
-layout_mode = 2
-size_flags_horizontal = 3
-http_client_manager = NodePath("../Control/TwitchService/HttpClientManager")
+[editable path="TwitchService"]

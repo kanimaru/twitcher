@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3 uid="uid://6d2jst8ga4le"]
+
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_token_info.gd" id="1_xfn6u"]
+
+[node name="TokenInfo" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+script = ExtResource("1_xfn6u")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="TokenValidTitle" type="Label" parent="VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Token Valid:"
+
+[node name="TokenValidValue" type="Label" parent="VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RefreshTokenTitle" type="Label" parent="VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Refresh Token Available:"
+
+[node name="RefreshTokenValue" type="CheckBox" parent="VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+
+[node name="TokenScopeTitle" type="Label" parent="VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Token Scope:"
+
+[node name="TokenScopeValue" type="VBoxContainer" parent="VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RevokeButton" type="Button" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Will remove the cached access token / refresh token to fetch a new one"
+disabled = true
+text = "Revoke Token"

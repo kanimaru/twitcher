@@ -30,3 +30,6 @@ func _update_type(val: TwitchEventsubDefinition.Type) -> void:
 			new_condition[condition_key] = condition.get(condition_key, "")
 		condition = new_condition
 		type_changed.emit(val)
+
+func _to_string() -> String:
+	return "%s" % definition.get_readable_name()

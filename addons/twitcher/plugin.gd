@@ -11,7 +11,8 @@ const ScopeInspectorPlugin = preload("res://addons/twitcher/inspector/scope_insp
 const RestApiInspectorPlugin = preload("res://addons/twitcher/inspector/rest_api_inspector.gd")
 const TwitchServiceInspectorPlugin = preload("res://addons/twitcher/inspector/twitch_service_inspector.gd")
 const OauthSettingInspector = preload("res://addons/twitcher/lib/oOuch/oauth_setting_inspector.gd")
-const TokenInspector = preload("res://addons/twitcher/lib/oOuch/token_inspector.gd")
+const TokenInspector = preload("res://addons/twitcher/lib/oOuch/oauth_token_inspector.gd")
+const UserInspector = preload("res://addons/twitcher/inspector/user_inspector.gd")
 
 var settings: TwitchSetting
 var gif_importer_imagemagick: GifImporterImagemagick = GifImporterImagemagick.new()
@@ -24,6 +25,7 @@ var rest_api_inspector: RestApiInspectorPlugin = RestApiInspectorPlugin.new()
 var twitch_service_inspector: TwitchServiceInspectorPlugin = TwitchServiceInspectorPlugin.new()
 var oauth_setting_inspector: OauthSettingInspector = OauthSettingInspector.new(preload("res://addons/twitcher/lib/oOuch/default_key_provider.tres"))
 var token_inspector: TokenInspector = TokenInspector.new()
+var user_inspector: UserInspector = UserInspector.new()
 
 func _enter_tree():
 	print("Twitch Plugin loading...")
@@ -35,6 +37,7 @@ func _enter_tree():
 	add_inspector_plugin(twitch_service_inspector)
 	add_inspector_plugin(oauth_setting_inspector)
 	add_inspector_plugin(token_inspector)
+	add_inspector_plugin(user_inspector)
 	add_import_plugin(gif_importer_native)
 	if is_magick_available():
 		add_import_plugin(gif_importer_imagemagick)
@@ -53,6 +56,7 @@ func _exit_tree():
 	remove_inspector_plugin(twitch_service_inspector)
 	remove_inspector_plugin(oauth_setting_inspector)
 	remove_inspector_plugin(token_inspector)
+	remove_inspector_plugin(user_inspector)
 	remove_tool_menu_item(REGENERATE_API_LABEL)
 
 

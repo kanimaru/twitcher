@@ -9,17 +9,14 @@ func _can_handle(object: Object) -> bool:
 
 
 func _parse_property(object: Object, type: Variant.Type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
-	if name == &"irc_auto_connect":
+	if name == &"irc_auto_connect" and !OS.has_feature(&"editor"):
 		var property = WebsocketProperty.new(&"irc", &"irc_auto_connect")
 		add_property_editor(name, property, true, "IRC Websocket Editor")
 
-	if name == &"eventsub_auto_connect":
+	if name == &"eventsub_auto_connect" and !OS.has_feature(&"editor"):
 		var property = WebsocketProperty.new(&"eventsub", &"eventsub_auto_connect")
 		add_property_editor(name, property, true, "Eventsub Websocket Editor")
 
-	if name == &"_subscriptions":
-		var property = SubscriptionProperty.new()
-		add_property_editor(name, property, true, "Reload Subscriptions")
 
 	return false
 
@@ -108,48 +105,3 @@ class AuthProperty extends EditorProperty:
 		await twitch_service.auth.authorize()
 		print("Authorize the editor.")
 		_on_authorized()
-
-
-class SubscriptionProperty extends EditorProperty:
-	var reload_button: Button
-
-
-	func _init() -> void:
-		reload_button = Button.new()
-		reload_button.text = "Reload"
-		reload_button.pressed.connect(_on_reload_pressed)
-		add_child(reload_button)
-
-
-	func _update_property() -> void:
-		var twitch_service: TwitchService = get_edited_object()
-		var client = twitch_service.eventsub.get_client()
-		if not client.connection_state_changed.is_connected(_on_connection_state_changed):
-			client.connection_state_changed.connect(_on_connection_state_changed)
-		_update_button_state()
-
-
-	func _on_reload_pressed() -> void:
-		var twitch_service: TwitchService = get_edited_object()
-		var subscriptions = twitch_service.get_subscriptions()
-
-		for subscription in subscriptions:
-			twitch_service.eventsub.unsubscribe(subscription)
-
-		for subscription in subscriptions:
-			twitch_service.eventsub.subscribe(subscription)
-
-
-	func _on_connection_state_changed(state : WebSocketPeer.State) -> void:
-		_update_button_state()
-
-
-	func _update_button_state() -> void:
-		var twitch_service: TwitchService = get_edited_object()
-		var client = twitch_service.eventsub.get_client()
-		if client == null:
-			reload_button.disabled = true
-		elif client.is_open:
-			reload_button.disabled = false
-		else:
-			reload_button.disabled = true

@@ -55,7 +55,7 @@ class ScopeValidation extends EditorProperty:
 
 	func _on_validate_scopes() -> void:
 		var scopes = get_edited_object().scopes;
-		var subscriptions = get_edited_object().subscriptions;
+		var subscriptions = get_edited_object().get_subscriptions();
 
 		_needed_scopes.clear()
 		for subscription: TwitchEventsubConfig in subscriptions:

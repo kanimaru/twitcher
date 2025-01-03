@@ -7,19 +7,11 @@ class_name TwitchService
 
 const Constants = preload("res://addons/twitcher/constants.gd")
 
-@export var setting: OAuthSetting = OAuthSetting.new():
+@export var oauth_setting: OAuthSetting = OAuthSetting.new():
 	set(val):
-		setting = val
+		oauth_setting = val
 		update_configuration_warnings()
-
-@export_enum(Constants.AUTO_CONNECT_NOT, \
-	Constants.AUTO_CONNECT_RUNTIME, \
-	Constants.AUTO_CONNECT_EDITOR_RUNTIME)
-var irc_auto_connect : String = Constants.AUTO_CONNECT_RUNTIME
-@export_enum(Constants.AUTO_CONNECT_NOT, \
-	Constants.AUTO_CONNECT_RUNTIME, \
-	Constants.AUTO_CONNECT_EDITOR_RUNTIME)
-var eventsub_auto_connect : String = Constants.AUTO_CONNECT_RUNTIME
+@export var irc_setting: TwitchIrcSetting = TwitchIrcSetting.new()
 @export var _subscriptions: Array[TwitchEventsubConfig] = []
 @export var scopes: OAuthScopes:
 	set(val):
@@ -46,17 +38,18 @@ func _enter_tree() -> void:
 	_log.i("setup")
 
 	%EventSub._subscriptions = _subscriptions
-	%EventSub.connect_on_enter_tree = eventsub_auto_connect
-	%IRC.connect_on_enter_tree = irc_auto_connect
 
 	%API.token = token
-	%API.setting = setting
-	%IRC.token = token
+	%API.setting = oauth_setting
+	%API.unauthenticated.connect(_on_unauthenticated)
+
 	%Auth.token = token
 	%Auth.scopes = scopes
-	%Auth.setting = setting
-	%API.unauthenticated.connect(_on_unauthenticated)
+	%Auth.setting = oauth_setting
+
+	%IRC.token = token
 	%IRC.unauthenticated.connect(_on_unauthenticated)
+	%IRC.setting = irc_setting
 
 
 func _exit_tree() -> void:
@@ -159,8 +152,8 @@ func connect_irc() -> void:
 
 ## Initializes the chat connects to IRC and preloads everything
 func _init_chat() -> void:
-	if irc_auto_connect:
-		await irc.open_connection()
+	if irc_setting == null: return
+	await irc.open_connection()
 	# TODO Find the right place
 	#await icon_loader.preload_emotes(broadcaster_id)
 	#await icon_loader.preload_badges(broadcaster_id)
@@ -281,7 +274,7 @@ func get_cheermotes(cheermote: TwitchCheermote,
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
-	if setting == null:
+	if oauth_setting == null:
 		result.append("OAuthSetting is missing")
 	if scopes == null:
 		result.append("OAuthScopes is missing")

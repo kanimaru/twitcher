@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://cinvytmtixgwu"]
+
+[ext_resource type="Script" path="res://addons/twitcher/chat/twitch_chat.gd" id="1_cylkj"]
+[ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_event_listener.gd" id="2_u4y50"]
+
+[node name="TwitchChat" type="Node"]
+script = ExtResource("1_cylkj")
+
+[node name="TwitchEventListener" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_u4y50")
+subscription = 9

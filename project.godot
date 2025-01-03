@@ -23,7 +23,7 @@ enabled=PackedStringArray("res://addons/twitcher/plugin.cfg")
 
 general/images/image_transformer="NativeImageTransformer"
 auth/client_id="e0a451pmremhgy77idg3isbcwwqidd"
-general/logging/enabled=475
+general/logging/enabled=479
 auth/scopes/chat=3
 auth/broadcaster_id="132799162"
 websocket/irc/username="kani_dev"

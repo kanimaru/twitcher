@@ -4,7 +4,7 @@ extends Node
 class_name OAuthTokenHandler
 
 const OAuthHTTPClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd");
-const OAuthDeviceCodeResponse = preload("./device_code_response.gd");
+const OAuthDeviceCodeResponse = preload("./oauth_device_code_response.gd");
 
 ## Handles refreshing and resolving access and refresh tokens.
 

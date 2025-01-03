@@ -1,6 +1,5 @@
 extends RefCounted
 
-
 ## Response of the inital device code request
 
 var device_code: String;

@@ -1,3 +1,4 @@
+@tool
 @icon("../assets/event-icon.svg")
 extends Node
 
@@ -5,21 +6,40 @@ extends Node
 ## already configured in the settings or manually subscribed.
 class_name TwitchEventListener
 
+@export var event_sub: TwitchEventsub:
+	set(val):
+		event_sub = val
+		update_configuration_warnings()
+
+@export var subscription: TwitchEventsubDefinition.Type:
+	set(val):
+		subscription = val
+		update_configuration_warnings()
+
+var subscription_definition: TwitchEventsubDefinition.Definition
+
+
 ## Called when the event got received
 signal received(data: Dictionary)
 
-@export var event_sub: TwitchEventsub
-@export var subscription: TwitchEventsubDefinition.Type;
-var subscription_name: String;
 
 func _ready() -> void:
-	assert(subscription != null);
+	if event_sub == null: return
 	if TwitchSetting.use_test_server:
 		event_sub.event.connect(_on_received)
-	event_sub.event.connect(_on_received);
-	var all_subs: Array[TwitchEventsubDefinition.Definition] = TwitchEventsubDefinition.ALL.values();
-	subscription_name = all_subs[subscription].value;
+	event_sub.event.connect(_on_received)
+	subscription_definition = TwitchEventsubDefinition.ALL[subscription]
+
 
 func _on_received(type: String, data: Dictionary):
-	if type == subscription_name:
-		received.emit(data);
+	if type == subscription_definition.value:
+		received.emit(data)
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var result: PackedStringArray = []
+	if event_sub == null:
+		result.append("'EventSub' is missing")
+	if subscription == null:
+		result.append("'Subscription' is missing")
+	return result

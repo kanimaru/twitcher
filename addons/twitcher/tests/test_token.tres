@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="OAuthToken" load_steps=3 format=3 uid="uid://d0pgj2j1dc8vu"]
 
 [ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="1_l70n0"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/token.gd" id="1_srcin"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="1_srcin"]
 
 [resource]
 script = ExtResource("1_srcin")

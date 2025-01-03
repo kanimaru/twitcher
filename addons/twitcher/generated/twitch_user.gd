@@ -94,4 +94,3 @@ func to_dict() -> Dictionary:
 
 func to_json() -> String:
 	return JSON.stringify(to_dict());
-

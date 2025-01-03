@@ -5,7 +5,7 @@ class_name OAuthSetting
 const OAuthHTTPClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd")
 
 ## That will be called when the authcode was received to send the code to the backend
-@export var redirect_url: String:
+@export var redirect_url: String = "http://localhost:7170":
 	set = _update_redirect_url
 ## Wellknown endpoint to receive the common paths for the IAM provider (optional)
 @export var well_known_url: String

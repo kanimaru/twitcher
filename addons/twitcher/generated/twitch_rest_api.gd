@@ -48,7 +48,7 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 
 	# Token expired / or missing permissions
 	if response.client.get_response_code() == 403:
-		log.e("'%s' is unauthorized. It is probably your scopes.")
+		log.e("'%s' is unauthorized. It is probably your scopes." % path)
 		unauthorized.emit()
 	if response.client.get_response_code() == 401:
 		unauthenticated.emit()
@@ -721,7 +721,7 @@ func get_global_chat_badges() -> TwitchGetGlobalChatBadgesResponse:
 	return TwitchGetGlobalChatBadgesResponse.from_json(result);
 
 
-## Gets the broadcaster’s chat settings.
+## Gets the broadcaster’s chat settingsettings.
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-chat-settings
 func get_chat_settings(moderator_id: String, broadcaster_id: String = TwitchSetting.broadcaster_id) -> TwitchGetChatSettingsResponse:

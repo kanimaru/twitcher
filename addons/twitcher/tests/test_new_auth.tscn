@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" path="res://addons/twitcher/tests/test_new_auth.gd" id="1_r4h1h"]
 [ext_resource type="PackedScene" uid="uid://cuskx3pjheybj" path="res://addons/twitcher/twitch_auth.tscn" id="2_qf83c"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/token.gd" id="3_hshae"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="3_hshae"]
 [ext_resource type="Resource" uid="uid://c6em6omrb7tbh" path="res://test_oauth_settings.tres" id="3_tjuwm"]
 [ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="4_bnk2f"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/scopes.gd" id="6_yr7cd"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="6_yr7cd"]
 
 [sub_resource type="Resource" id="Resource_peod2"]
 script = ExtResource("3_hshae")

@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://cus81w3pidhjo"]
+
+[ext_resource type="Script" path="res://addons/twitcher/inspector/user_converter.gd" id="1_ior8m"]
+
+[node name="UserConverter" type="HBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_ior8m")
+
+[node name="Login" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "User Login"
+editable = false
+
+[node name="Id" type="LineEdit" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "User ID"
+editable = false
+
+[node name="SwapView" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "C"
+
+[node name="Debounce" type="Timer" parent="."]
+unique_name_in_owner = true
+one_shot = true
