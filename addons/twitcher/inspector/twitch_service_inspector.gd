@@ -1,56 +1,17 @@
 @tool
 extends EditorInspectorPlugin
 
-const WEBSOCKET_INFO = preload("res://addons/twitcher/inspector/websocket_info.tscn")
 const Constants = preload("res://addons/twitcher/constants.gd")
 
 func _can_handle(object: Object) -> bool:
 	return object is TwitchService
 
 
-func _parse_property(object: Object, type: Variant.Type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
-	if name == &"irc_auto_connect" and !OS.has_feature(&"editor"):
-		var property = WebsocketProperty.new(&"irc", &"irc_auto_connect")
-		add_property_editor(name, property, true, "IRC Websocket Editor")
-
-	if name == &"eventsub_auto_connect" and !OS.has_feature(&"editor"):
-		var property = WebsocketProperty.new(&"eventsub", &"eventsub_auto_connect")
-		add_property_editor(name, property, true, "Eventsub Websocket Editor")
-
-
-	return false
-
 func _parse_category(object: Object, category: String) -> void:
-	if category == "twitch_service.gd":
+	if category == "twitch_service.gd" && object.get_class() != &"EditorDebuggerRemoteObject":
 		add_custom_control(AuthProperty.new())
 		var twitch_service: TwitchService = object
 
-
-class WebsocketProperty extends EditorProperty:
-
-	var _eventsub_websocket_info: Node
-	var _property: String
-	var _enable_property: String
-
-
-	func _init(property: String, enable_property: String) -> void:
-		_property = property
-		_enable_property = enable_property
-		_eventsub_websocket_info = WEBSOCKET_INFO.instantiate()
-		add_child(_eventsub_websocket_info)
-		set_bottom_editor(_eventsub_websocket_info)
-
-
-	func _update_property() -> void:
-		var twitch_service: TwitchService = get_edited_object()
-		var client = twitch_service[_property].get_client()
-		_eventsub_websocket_info.websocket = client
-
-		if twitch_service[_enable_property] == Constants.AUTO_CONNECT_EDITOR_RUNTIME:
-			_eventsub_websocket_info.visible = true
-		else:
-			_eventsub_websocket_info.visible = false
-			client.close()
 
 
 class AuthProperty extends EditorProperty:

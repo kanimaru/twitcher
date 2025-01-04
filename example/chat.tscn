@@ -7,9 +7,8 @@
 [ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="4_vhooy"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="5_f27jp"]
 [ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc_setting.gd" id="5_fh8bp"]
+[ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub_config.gd" id="7_xaf83"]
 [ext_resource type="PackedScene" uid="uid://b0ebhuv2yaow0" path="res://addons/twitcher/lib/http/DebugBufferedHttpClient.tscn" id="8_apbi4"]
-[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/title_label_settings.tres" id="9_6tdib"]
-[ext_resource type="Script" path="res://example/irc_status.gd" id="9_k01ms"]
 [ext_resource type="PackedScene" uid="uid://cinvytmtixgwu" path="res://addons/twitcher/chat/twitch_chat.tscn" id="11_dy1v6"]
 
 [sub_resource type="Resource" id="Resource_u0xjl"]
@@ -25,6 +24,24 @@ authorization_flow = 0
 _encryption_key_provider = ExtResource("3_5sdb2")
 client_secret = "BVuMF1VB4ie3pxu2S7I8vOkUF9iThU6v6DpkBv77zlTuUAs7Ob7/PTkHnLukk7oLB/V4uoEce0zX+eB+Y/tON+S9AX5KCQncxGIxA8Nro1bY2In4HULW3sXQyXnSugt3GcbIr4/19e/c+petCN1/vD6VnRX2Q6j43xSxrhoP+wtljHvYyNMRz/7sY4zFb7kOaQtdnFpWVSFBqaTuEkeQbXIH5IrjMvh4tP007eHXaLF4ljiLx85Osi2SlnI0zV0Ebgj65mYWM9oHpu1lIMSvo0pwBNhZ+8gu/SLfImChMzfN41yXtlgx7C2FqMxkproq6Nhn0BABNXhD9Cg9mDAXgMGm2K2nUZcOMi52bNotnGDkZVPiTgjxF5eDfS10caIF6kbPDw7VYzyqpr2nlW58UM7Jwm8Vik2gtjsgPYkV77HeQVJVwAjWFHO4y/C9+dDoCD0CEvrLJFRx5FdtRt/u0w8D++3CIbGGlrGJybiIwQZvs2ND2pzuO+TChyAXXLvZ8yLBwugM6NTx3qYVIpvjOqFjuZoqHq8WKTEd4SFLLP4iqWRcRloOUyYkvarcq3/0OZUVZCHN4vRwdsbuykPbisVOVRGDFWBXplHFSbA9h0s91tgd1HyswRP6zQbYag+kxiHuw+X0INUYvDw1/CYmr4fqCJgBpc5VycIzAu7P0S0="
 
+[sub_resource type="Resource" id="Resource_w27np"]
+script = ExtResource("7_xaf83")
+type = 9
+condition = {
+"broadcaster_user_id": "132799162",
+"user_id": "132799162"
+}
+
+[sub_resource type="Resource" id="Resource_dhn5n"]
+script = ExtResource("5_f27jp")
+used_scopes = Array[StringName]([&"chat:edit", &"chat:read", &"channel:bot", &"user:bot", &"user:read:chat", &"user:write:chat"])
+
+[sub_resource type="Resource" id="Resource_742dy"]
+script = ExtResource("3_p2j3n")
+_crypto_key_provider = ExtResource("3_5sdb2")
+_identifier = "Auth-2398"
+_cache_path = "user://auth.conf"
+
 [sub_resource type="Resource" id="Resource_8vg0s"]
 script = ExtResource("5_fh8bp")
 username = "kani_bot"
@@ -32,16 +49,6 @@ auto_join_channels = Array[StringName]([&"kani_dev"])
 server = "wss://irc-ws.chat.twitch.tv:443"
 send_message_delay_ms = 320
 capabilities = 7
-
-[sub_resource type="Resource" id="Resource_dhn5n"]
-script = ExtResource("5_f27jp")
-used_scopes = Array[StringName]([&"chat:edit", &"chat:read"])
-
-[sub_resource type="Resource" id="Resource_742dy"]
-script = ExtResource("3_p2j3n")
-_crypto_key_provider = ExtResource("3_5sdb2")
-_identifier = "Auth-2398"
-_cache_path = "user://auth.conf"
 
 [sub_resource type="LabelSettings" id="LabelSettings_2vgfi"]
 font_size = 36
@@ -56,22 +63,20 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rxgbp")
 
-[node name="TwitchChat" parent="." node_paths=PackedStringArray("event_sub", "rest") instance=ExtResource("11_dy1v6")]
-unique_name_in_owner = true
-event_sub = NodePath("../TwitchService/EventSub")
-rest = NodePath("../TwitchService/API")
-target_user_channel = "kani_dev"
-
 [node name="TwitchService" parent="." instance=ExtResource("2_71e64")]
 unique_name_in_owner = true
 oauth_setting = SubResource("Resource_u0xjl")
-irc_setting = SubResource("Resource_8vg0s")
+irc_setting = null
+_subscriptions = Array[ExtResource("7_xaf83")]([SubResource("Resource_w27np")])
 scopes = SubResource("Resource_dhn5n")
 token = SubResource("Resource_742dy")
 
 [node name="IRC" parent="TwitchService" index="0"]
 setting = SubResource("Resource_8vg0s")
 token = SubResource("Resource_742dy")
+
+[node name="EventSub" parent="TwitchService" index="1"]
+_subscriptions = Array[ExtResource("7_xaf83")]([SubResource("Resource_w27np")])
 
 [node name="API" parent="TwitchService" index="2"]
 token = SubResource("Resource_742dy")
@@ -81,6 +86,11 @@ setting = SubResource("Resource_u0xjl")
 setting = SubResource("Resource_u0xjl")
 token = SubResource("Resource_742dy")
 scopes = SubResource("Resource_dhn5n")
+
+[node name="TwitchChat" parent="." node_paths=PackedStringArray("twitch_service") instance=ExtResource("11_dy1v6")]
+unique_name_in_owner = true
+twitch_service = NodePath("../TwitchService")
+target_user_channel = "kani_dev"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -129,25 +139,6 @@ text = "Send"
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="IrcStatus" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/PanelContainer" node_paths=PackedStringArray("twitch_service")]
-layout_mode = 2
-script = ExtResource("9_k01ms")
-twitch_service = NodePath("../../../../TwitchService")
-
-[node name="Title" type="Label" parent="HBoxContainer/VBoxContainer/PanelContainer/IrcStatus"]
-layout_mode = 2
-text = "IRC Status"
-label_settings = ExtResource("9_6tdib")
-horizontal_alignment = 1
-
-[node name="Connected" type="CheckBox" parent="HBoxContainer/VBoxContainer/PanelContainer/IrcStatus"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Connected"
 
 [node name="DebugBufferedHttpClient" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("http_client_manager") instance=ExtResource("8_apbi4")]
 layout_mode = 2

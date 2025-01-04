@@ -12,9 +12,11 @@ signal scopes_changed
 		used_scopes = val;
 		scopes_changed.emit()
 
+
 ## Returns the scopes space separated
 func ssv_scopes() -> String:
 	return " ".join(used_scopes)
+
 
 func add_scopes(scopes: Array[StringName]) -> void:
 	for scope in scopes:

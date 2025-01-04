@@ -2,43 +2,59 @@ extends Node
 
 class_name TwitchChatMessage
 
-const FRAGMENT_TYPE_TEXT := "text"
-const FRAGMENT_TYPE_CHEERMOTE := "cheermote"
-const FRAGMENT_TYPE_EMOTE := "emote"
-const FRAGMENT_TYPE_MENTION := "mention"
+enum FragmentType {
+	text = 0,
+	cheermote = 1,
+	emote = 2,
+	mention = 3
+}
 
-const EMOTE_TYPE_ANIMATED := "animated"
-const EMOTE_TYPE_STATIC := "static"
+const FRAGMENT_TYPES = ["text", "cheermote", "emote", "mention"]
 
-const MESSAGE_TYPE_TEXT := "text"
-const MESSAGE_TYPE_CHANNEL_POINTS_HIGHLIGHTED := "channel_points_highlighted"
-const MESSAGE_TYPE_CHANNEL_POINTS_SUB_ONLY := "channel_points_sub_only"
-const MESSAGE_TYPE_USER_INTRO := "user_intro"
-const MESSAGE_TYPE_POWER_UPS_MESSAGE_EFFECT := "power_ups_message_effect"
-const MESSAGE_TYPE_POWER_UPS_GIGANTIFIED_EMOTE := "power_ups_gigantified_emote"
+enum EmoteFormat {
+	animated = 0,
+	_static = 1
+}
 
+const EMOTE_FORMATES = ["animated", "static"]
+
+enum MessageType {
+	## Normal chat message
+	text = 0,
+	## The default reward where the message is highlighted
+	channel_points_highlighted = 1,
+	## Channel points were used to send this message in sub-only mode.
+	channel_points_sub_only = 2,
+	## when a new user is typing for the first time
+	user_intro = 3,
+	## When the power up message effect was used on this message
+	power_ups_message_effect = 4,
+	## When a gigantified emote was posted
+	power_ups_gigantified_emote = 5
+}
+
+const MESSAGE_TYPES = ["text", "channel_points_highlighted", "channel_points_sub_only", "user_intro", "power_ups_message_effect", "power_ups_gigantified_emote"]
 
 class Message:
 	## The chat message in plain text.
 	var text: String
 	## Ordered list of chat message fragments.
-	var fragments: Array[Fragment]
+	var fragments: Array[Fragment] = []
 
 
-	static func from_json(d: Dictionary) -> Message:
+	static func from_json(d: Dictionary, twitch_service: TwitchService) -> Message:
 		var result = Message.new()
 		if d.has("text") and d["text"] != null:
 			result.text = d["text"]
 		if d.has("fragments") and d["fragments"] != null:
-			result.fragments = []
 			for value in d["fragments"]:
-				result.fragments.append(Fragment.from_json(value))
+				result.fragments.append(Fragment.from_json(value, twitch_service))
 		return result
 
 
 class Fragment:
 	## The type of message fragment. See "TwitchChatMessage.FRAGMENT_TYPE_*"
-	var type: String
+	var type: MessageType
 	## Message text in fragment.
 	var text: String
 	## Optional. Metadata pertaining to the cheermote.
@@ -49,16 +65,16 @@ class Fragment:
 	var mention: Mention
 
 
-	static func from_json(d: Dictionary) -> Fragment:
+	static func from_json(d: Dictionary, twitch_service: TwitchService) -> Fragment:
 		var result = Fragment.new()
 		if d.has("type") and d["type"] != null:
-			result.type = d["type"]
+			result.type = FragmentType[d["type"]]
 		if d.has("text") and d["text"] != null:
 			result.text = d["text"]
 		if d.has("cheermote") and d["cheermote"] != null:
-			result.cheermote = Cheermote.from_json(d["cheermote"])
+			result.cheermote = Cheermote.from_json(d["cheermote"], twitch_service)
 		if d.has("emote") and d["emote"] != null:
-			result.emote = Emote.from_json(d["emote"])
+			result.emote = Emote.from_json(d["emote"], twitch_service)
 		if d.has("mention") and d["mention"] != null:
 			result.mention = Mention.from_json(d["mention"])
 		return result
@@ -92,9 +108,22 @@ class Cheermote:
 	## The tier level of the cheermote.
 	var tier: int
 
+	var _twitch_service: TwitchService
 
-	static func from_json(d: Dictionary) -> Cheermote:
-		var result = Cheermote.new()
+
+	func _init(twitch_service: TwitchService) -> void:
+		_twitch_service = twitch_service
+
+
+	func get_sprite_frames(theme: TwitchCheerRepository.Themes = TwitchCheerRepository.Themes.DARK, \
+		type: TwitchCheerRepository.Types = TwitchCheerRepository.Types.ANIMATED, \
+		scale: TwitchCheerRepository.Scales = TwitchCheerRepository.Scales._1) -> SpriteFrames:
+		var cheer_results = await _twitch_service.cheer_repository.get_cheer_tier(prefix, "%s" % tier, theme, type, scale)
+		return cheer_results.spriteframes
+
+
+	static func from_json(d: Dictionary, twitch_service: TwitchService) -> Cheermote:
+		var result = Cheermote.new(twitch_service)
 		if d.has("prefix") and d["prefix"] != null:
 			result.prefix = d["prefix"]
 		if d.has("bits") and d["bits"] != null:
@@ -112,11 +141,32 @@ class Emote:
 	## The ID of the broadcaster who owns the emote.
 	var owner_id: String
 	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. See: "TwitchChatMessage.EMOTE_TYPE_*"
-	var format: Array[String]
+	var format: Array[EmoteFormat] = []
+
+	var _twitch_service: TwitchService
 
 
-	static func from_json(d: Dictionary) -> Emote:
-		var result = Emote.new()
+	func _init(twitch_service: TwitchService) -> void:
+		_twitch_service = twitch_service
+
+	## Resolves the spriteframes from this emote. Check `format` for possible formats.
+	## Format: Defaults to animated when not available it uses static
+	## Scale: 1, 2, 3
+	func get_sprite_frames(format: String = "", scale: int = 1, dark: bool = true) -> SpriteFrames:
+		var definition: TwitchEmoteDefinition = TwitchEmoteDefinition.new(id)
+		if dark: definition.theme_dark()
+		else: definition.theme_light()
+		match scale:
+			1: definition.scale_1()
+			2: definition.scale_2()
+			3: definition.scale_3()
+			_: definition.scale_1()
+		var emotes = await _twitch_service.icon_loader.get_emotes_by_definition([definition])
+		return emotes[definition]
+
+
+	static func from_json(d: Dictionary, twitch_service: TwitchService) -> Emote:
+		var result = Emote.new(twitch_service)
 		if d.has("id") and d["id"] != null:
 			result.id = d["id"]
 		if d.has("emote_set_id") and d["emote_set_id"] != null:
@@ -124,8 +174,14 @@ class Emote:
 		if d.has("owner_id") and d["owner_id"] != null:
 			result.owner_id = d["owner_id"]
 		if d.has("format") and d["format"] != null:
-			result.format = d["format"]
+			for format in d["format"]:
+				if format == "static":
+					result.format.append(EmoteFormat._static)
+				elif format == "animated":
+					result.format.append(EmoteFormat.animated)
 		return result
+
+
 
 
 class Badge:
@@ -136,7 +192,6 @@ class Badge:
 	## Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber.
 	var info: String
 
-
 	static func from_json(d: Dictionary) -> Badge:
 		var result = Badge.new()
 		if d.has("set_id") and d["set_id"] != null:
@@ -146,6 +201,7 @@ class Badge:
 		if d.has("info") and d["info"] != null:
 			result.info = d["info"]
 		return result
+
 
 
 class Cheer:
@@ -218,10 +274,10 @@ var chatter_user_login: String
 var message_id: String
 ## The structured chat message.
 var message: Message
-## The type of message. See: "TwitchChatMessage.MESSAGE_TYPE_*"
-var message_type: String
+## The type of message.
+var message_type: MessageType
 ## List of chat badges.
-var badges: Array[Badge]
+var badges: Array[Badge] = []
 ## Optional. Metadata if this message is a cheer.
 var cheer: Cheer
 ## The color of the user’s name in the chat room. This is a hexadecimal RGB color code in the form, #<RGB>;. This tag may be empty if it is never set.
@@ -239,11 +295,16 @@ var source_broadcaster_user_login: String
 ## Optional. The UUID that identifies the source message from the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 var source_message_id: String
 ## Optional. The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
-var source_badges: Array[Badge]
+var source_badges: Array[Badge] = []
 
+var _twitch_service: TwitchService
 
-static func from_json(d: Dictionary) -> TwitchChatMessage:
-	var result = TwitchChatMessage.new()
+func _init(twitch_service: TwitchService) -> void:
+	_twitch_service = twitch_service
+
+## Loads a chat message from Json decoded dictionary. TwitchService is optional in case images and badges should be load from the message.
+static func from_json(d: Dictionary, twitch_service: TwitchService) -> TwitchChatMessage:
+	var result = TwitchChatMessage.new(twitch_service)
 	if d.has("broadcaster_user_id") and d["broadcaster_user_id"] != null:
 		result.broadcaster_user_id = d["broadcaster_user_id"]
 	if d.has("broadcaster_user_name") and d["broadcaster_user_name"] != null:
@@ -259,11 +320,10 @@ static func from_json(d: Dictionary) -> TwitchChatMessage:
 	if d.has("message_id") and d["message_id"] != null:
 		result.message_id = d["message_id"]
 	if d.has("message") and d["message"] != null:
-		result.message = Message.from_json(d["message"])
+		result.message = Message.from_json(d["message"], twitch_service)
 	if d.has("message_type") and d["message_type"] != null:
-		result.message_type = d["message_type"]
+		result.message_type = MessageType[d["message_type"]]
 	if d.has("badges") and d["badges"] != null:
-		result.badges = []
 		for value in d["badges"]:
 			result.badges.append(Badge.from_json(value))
 	if d.has("cheer") and d["cheer"] != null:
@@ -283,7 +343,30 @@ static func from_json(d: Dictionary) -> TwitchChatMessage:
 	if d.has("source_message_id") and d["source_message_id"] != null:
 		result.source_message_id = d["source_message_id"]
 	if d.has("source_badges") and d["source_badges"] != null:
-		result.source_badges = []
 		for value in d["source_badges"]:
 			result.source_badges.append(Badge.from_json(value))
 	return result
+
+
+## Key: TwitchBadgeDefinition | Value: SpriteFrames
+func get_badges(scale: int = 1) -> Dictionary:
+	var definitions: Array[TwitchBadgeDefinition] = []
+	for badge in badges:
+		var badge_definition = TwitchBadgeDefinition.new(badge.set_id, badge.id, scale, broadcaster_user_id)
+		definitions.append(badge_definition)
+	var emotes = await _twitch_service.icon_loader.get_badges(definitions)
+	return emotes
+
+
+## Key: TwitchBadgeDefinition | Value: SpriteFrames
+func get_source_badges(scale: int = 1) -> Dictionary:
+	var definitions: Array[TwitchBadgeDefinition] = []
+	for badge in source_badges:
+		var badge_definition = TwitchBadgeDefinition.new(badge.set_id, badge.id, scale, broadcaster_user_id)
+		definitions.append(badge_definition)
+	var emotes = await _twitch_service.icon_loader.get_badges(definitions)
+	return emotes
+
+## Returns a the color of the user or the default when its not set never null
+func get_color(default_color: String = "#AAAAAA") -> String:
+	return default_color if color == null || color == "" else color

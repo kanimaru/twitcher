@@ -11,7 +11,7 @@ const Constants = preload("res://addons/twitcher/constants.gd")
 	set(val):
 		oauth_setting = val
 		update_configuration_warnings()
-@export var irc_setting: TwitchIrcSetting = TwitchIrcSetting.new()
+@export var irc_setting: TwitchIrcSetting
 @export var _subscriptions: Array[TwitchEventsubConfig] = []
 @export var scopes: OAuthScopes:
 	set(val):
@@ -23,7 +23,6 @@ const Constants = preload("res://addons/twitcher/constants.gd")
 		update_configuration_warnings()
 
 @onready var auth: TwitchAuth = %Auth
-@onready var irc: TwitchIRC = %IRC
 @onready var eventsub: TwitchEventsub = %EventSub
 @onready var api: TwitchRestAPI = %API
 @onready var icon_loader: TwitchIconLoader = %IconLoader
@@ -47,21 +46,16 @@ func _enter_tree() -> void:
 	%Auth.scopes = scopes
 	%Auth.setting = oauth_setting
 
-	%IRC.token = token
-	%IRC.unauthenticated.connect(_on_unauthenticated)
-	%IRC.setting = irc_setting
-
 
 func _exit_tree() -> void:
 	%API.unauthenticated.disconnect(_on_unauthenticated)
-	%IRC.unauthenticated.disconnect(_on_unauthenticated)
 
 ## Call this to setup the complete Twitch integration whenever you need.
 ## It boots everything up this Lib supports.
 func setup() -> void:
 	await auth.authorize()
-	await _init_chat()
 	await _init_cheermotes()
+	await eventsub.open_connection()
 	_log.i("TwitchService setup")
 
 
@@ -146,20 +140,6 @@ func get_subscriptions() -> Array[TwitchEventsubConfig]:
 
 #region Chat
 
-func connect_irc() -> void:
-	irc.connect_to_irc()
-
-
-## Initializes the chat connects to IRC and preloads everything
-func _init_chat() -> void:
-	if irc_setting == null: return
-	await irc.open_connection()
-	# TODO Find the right place
-	#await icon_loader.preload_emotes(broadcaster_id)
-	#await icon_loader.preload_badges(broadcaster_id)
-	await icon_loader.preload_done
-
-
 ## Sends out a shoutout to a specific user
 func shoutout(user: TwitchUser) -> void:
 	api.send_a_shoutout(TwitchSetting.broadcaster_id, user.id, TwitchSetting.broadcaster_id)
@@ -190,12 +170,6 @@ func add_command(command: String, callback: Callable, args_min: int = 0, args_ma
 func remove_command(command: String) -> void:
 	_log.i("Remove command %s" % command)
 	command_handler.remove_command(command)
-
-
-## Sends a chat to the only connected channel or in case of multiple channels doesn't do anything see
-## join_channel to get a specific channel to send to it.
-func chat(message: String, channel_name: String = "") -> void:
-	irc.chat(message, channel_name)
 
 
 ## Whispers to another user.
@@ -229,13 +203,6 @@ func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionar
 	return await icon_loader.get_emotes_by_definition(emotes)
 
 
-## Get the requested badges. (valid scale values are 1,2,3)
-## Loads from cache if possible otherwise downloads and transforms them.
-## Key: Badge Composite | Value: SpriteFrames
-func get_badges(badge: Array[String], channel_id: String = "global", scale: int = 1) -> Dictionary:
-	return await icon_loader.get_badges(badge, channel_id)
-
-
 #endregion
 #region Cheermotes
 
@@ -243,23 +210,10 @@ func _init_cheermotes() -> void:
 	await cheer_repository.wait_preloaded()
 
 
-## Returns the complete parsed data out of a cheer word.
-func get_cheer_tier(cheer_word: String,
-	theme: TwitchCheerRepository.Themes = TwitchCheerRepository.Themes.DARK,
-	type: TwitchCheerRepository.Types = TwitchCheerRepository.Types.ANIMATED,
-	scale: TwitchCheerRepository.Scales = TwitchCheerRepository.Scales._1) -> TwitchCheerRepository.CheerResult:
-	return await cheer_repository.get_cheer_tier(cheer_word, theme, type, scale)
-
-
 ## Returns the data of the Cheermotes.
 func get_cheermote_data() -> Array[TwitchCheermote]:
 	await cheer_repository.wait_is_ready()
 	return cheer_repository.data
-
-
-## Checks if a prefix is existing.
-func is_cheermote_prefix_existing(prefix: String) -> bool:
-	return cheer_repository.is_cheermote_prefix_existing(prefix)
 
 
 ## Returns all cheertiers in form of:

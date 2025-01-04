@@ -78,7 +78,7 @@ func get_token() -> String:
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
 func login() -> void:
-	if token_handler.is_token_valid(): return
+	if token_handler.is_token_valid() && not _got_scopes_changed(): return
 
 	if login_in_process:
 		# TODO Find away to implement a proper timeout for previous requests.
@@ -107,8 +107,19 @@ func login() -> void:
 
 	login_in_process = false
 
+func _got_scopes_changed() -> bool:
+	var existing_scopes = token_handler.get_scopes()
+	var requested_scopes = scopes.used_scopes
+	if existing_scopes.size() != requested_scopes.size():
+		return true
 
-func _start_login_process(response_type: String):
+	for scope in existing_scopes:
+		if requested_scopes.find(scope) == -1:
+			return true
+
+	return false
+
+func _start_login_process(response_type: String) -> void:
 	if scopes == null: scopes = OAuthScopes.new()
 
 	_auth_http_server.start()

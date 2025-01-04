@@ -36,7 +36,7 @@ func to_dict() -> Dictionary:
 func to_json() -> String:
 	return JSON.stringify(to_dict());
 
-## 
+##
 class Versions extends RefCounted:
 	## An ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde.
 	var id: String:
@@ -106,4 +106,3 @@ class Versions extends RefCounted:
 
 	func to_json() -> String:
 		return JSON.stringify(to_dict());
-
