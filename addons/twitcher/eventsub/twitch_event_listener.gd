@@ -6,10 +6,9 @@ extends Node
 ## already configured in the settings or manually subscribed.
 class_name TwitchEventListener
 
-@export var event_sub: TwitchEventsub:
-	set(val):
-		event_sub = val
-		update_configuration_warnings()
+@export var eventsub: TwitchEventsub:
+	set = _update_eventsub
+
 
 @export var subscription: TwitchEventsubDefinition.Type:
 	set(val):
@@ -24,11 +23,24 @@ signal received(data: Dictionary)
 
 
 func _ready() -> void:
-	if event_sub == null: return
-	if TwitchSetting.use_test_server:
-		event_sub.event.connect(_on_received)
-	event_sub.event.connect(_on_received)
+	_update_eventsub(eventsub)
 	subscription_definition = TwitchEventsubDefinition.ALL[subscription]
+
+
+func _update_eventsub(val: TwitchEventsub):
+	if eventsub != null:
+		if TwitchSetting.use_test_server:
+			eventsub.event.disconnect(_on_received)
+		eventsub.event.disconnect(_on_received)
+
+	eventsub = val
+	print("Eventsub: ", val)
+	update_configuration_warnings()
+	if val == null: return
+
+	if TwitchSetting.use_test_server:
+		eventsub.event.connect(_on_received)
+	eventsub.event.connect(_on_received)
 
 
 func _on_received(type: String, data: Dictionary):
@@ -38,7 +50,7 @@ func _on_received(type: String, data: Dictionary):
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
-	if event_sub == null:
+	if eventsub == null:
 		result.append("'EventSub' is missing")
 	if subscription == null:
 		result.append("'Subscription' is missing")

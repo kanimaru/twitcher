@@ -35,21 +35,21 @@ func _ready() -> void:
 	# Setup all of the library
 	await twitch_service.setup()
 	var current_user = await twitch_service.get_current_user()
-
-	twitch_chat.target_broadcaster_id = current_user.id
+	twitch_chat.broadcaster_user = current_user
 
 	# Listen to the message received of the chat
 	twitch_chat.message_received.connect(_on_chat_message)
 	# When the send button is pressed send the message
 	send.pressed.connect(_send_message)
 
-func _on_chat_message(from_user: String, message: String, tags: TwitchTags.Message):
+func _on_chat_message(message: TwitchChatMessage):
 	# Get all badges from the user that sends the message
-	var badges = tags.badges as Array[SpriteFrames]
-	# Get all emotes within the message
-	var emotes = tags.emotes as Array[TwitchIRC.EmoteLocation]
+	var badges_dict : Dictionary = await message.get_badges()
+	var badges : Array[SpriteFrames] = []
+	badges.assign(badges_dict.values())
+
 	# Color of the user
-	var color = tags.get_color()
+	var color : String = message.get_color()
 
 	# Create the message container
 	var chat_message = RichTextLabel.new()
@@ -74,29 +74,53 @@ func _on_chat_message(from_user: String, message: String, tags: TwitchTags.Messa
 		result_message += "[sprite id='b-%s']%s[/sprite]" % [badge_id, badge.resource_path]
 		badge_id += 1
 	# Add the user with its color to the message
-	result_message += "[color=%s]%s[/color]: " % [color, from_user]
+	result_message += "[color=%s]%s[/color]: " % [color, message.chatter_user_name]
 
-	# Replace all the emoji names with the appropriate emojis
-	# Tracks the start where to replace next
-	var start : int = 0
-	for emote in emotes:
-		# Takes text between the start / the last emoji and the next emoji
-		var part := message.substr(start, emote.start - start)
-		# Adds this text to the message
-		result_message += part
-		# Adds the sprite after the text
-		result_message += "[sprite id='%s']%s[/sprite]" % [emote.start, emote.sprite_frames.resource_path]
-		# Marks the start of the next text
-		start = emote.end + 1
+	# Show different effects depending on the message types
+	match message.message_type:
+		# The default message style
+		TwitchChatMessage.MessageType.text:
+			result_message = await show_text(message, result_message)
 
-	# get the text between the last emoji and the end
-	var text_part := message.substr(start, message.length() - start)
-	# adds it to the message
-	result_message += text_part
-	# adds all the emojis to the richtext and registers them to be processed
+		# When someone is using the gigantified emotes
+		TwitchChatMessage.MessageType.power_ups_gigantified_emote:
+			result_message = await show_text(message, result_message, 3)
+
+		# When someone is using the highlight my message from the channel point rewards
+		TwitchChatMessage.MessageType.channel_points_highlighted:
+			result_message += "[bgcolor=#755ebc][color=#e9fffb]"
+			result_message = await show_text(message, result_message)
+			result_message += "[/color][/bgcolor]"
+
+		# When someone is using the message effect bit reward
+		TwitchChatMessage.MessageType.power_ups_message_effect:
+			result_message += "[shake rate=20.0 level=5 connected=1]"
+			result_message = await show_text(message, result_message)
+			result_message += "[/shake]"
+
+	# Perpare all the sprites for the richtext label
 	result_message = sprite_effect.prepare_message(result_message, chat_message)
-	# Add the whole message to the richtext
 	chat_message.text = result_message
+
+## Prepares the message so that all fragments will be shown correctly
+func show_text(message: TwitchChatMessage, current_text: String, emote_scale: int = 1) -> String:
+	# Unique Id for the spriteframes to identify them
+	var fragment_id := 0
+	for fragment in message.message.fragments:
+		fragment_id += 1
+		match fragment.type:
+			TwitchChatMessage.FragmentType.text:
+				current_text += fragment.text
+			TwitchChatMessage.FragmentType.cheermote:
+				var cheermote = await fragment.cheermote.get_sprite_frames()
+				current_text += "[sprite id='f-%s']%s[/sprite]" % [fragment_id, cheermote.resource_path]
+			TwitchChatMessage.FragmentType.emote:
+				var emote = await fragment.emote.get_sprite_frames("", emote_scale)
+				current_text += "[sprite id='f-%s']%s[/sprite]" % [fragment_id, emote.resource_path]
+			TwitchChatMessage.FragmentType.mention:
+				current_text += "[color=%s]@%s[/color]" % ["#00a0b6", fragment.mention.user_name]
+	return current_text
+
 
 # Formats the time to 02:03
 func _get_time() -> String:
