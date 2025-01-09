@@ -8,71 +8,71 @@ class_name TwitchExtensionAnalytics
 ## An ID that identifies the extension that the report was generated for.
 var extension_id: String:
 	set(val):
-		extension_id = val;
-		changed_data["extension_id"] = extension_id;
+		extension_id = val
+		changed_data["extension_id"] = extension_id
 ## The URL that you use to download the report. The URL is valid for 5 minutes.
 var URL: String:
 	set(val):
-		URL = val;
-		changed_data["URL"] = URL;
+		URL = val
+		changed_data["URL"] = URL
 ## The type of report.
 var type: String:
 	set(val):
-		type = val;
-		changed_data["type"] = type;
+		type = val
+		changed_data["type"] = type
 ## The reporting window’s start and end dates, in RFC3339 format.
 var date_range: DateRange:
 	set(val):
-		date_range = val;
+		date_range = val
 		if date_range != null:
-			changed_data["date_range"] = date_range.to_dict();
+			changed_data["date_range"] = date_range.to_dict()
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchExtensionAnalytics:
-	var result = TwitchExtensionAnalytics.new();
+	var result = TwitchExtensionAnalytics.new()
 	if d.has("extension_id") && d["extension_id"] != null:
-		result.extension_id = d["extension_id"];
+		result.extension_id = d["extension_id"]
 	if d.has("URL") && d["URL"] != null:
-		result.URL = d["URL"];
+		result.URL = d["URL"]
 	if d.has("type") && d["type"] != null:
-		result.type = d["type"];
+		result.type = d["type"]
 	if d.has("date_range") && d["date_range"] != null:
-		result.date_range = DateRange.from_json(d["date_range"]);
-	return result;
+		result.date_range = DateRange.from_json(d["date_range"])
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## The reporting window’s start and end dates, in RFC3339 format.
 class DateRange extends RefCounted:
 	## The reporting window’s start date.
 	var started_at: Variant:
 		set(val):
-			started_at = val;
-			changed_data["started_at"] = started_at;
+			started_at = val
+			changed_data["started_at"] = started_at
 	## The reporting window’s end date.
 	var ended_at: Variant:
 		set(val):
-			ended_at = val;
-			changed_data["ended_at"] = ended_at;
+			ended_at = val
+			changed_data["ended_at"] = ended_at
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> DateRange:
-		var result = DateRange.new();
+		var result = DateRange.new()
 		if d.has("started_at") && d["started_at"] != null:
-			result.started_at = d["started_at"];
+			result.started_at = d["started_at"]
 		if d.has("ended_at") && d["ended_at"] != null:
-			result.ended_at = d["ended_at"];
-		return result;
+			result.ended_at = d["ended_at"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

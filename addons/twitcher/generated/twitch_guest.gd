@@ -8,150 +8,150 @@ class_name TwitchGuest
 ## ID representing this guest’s slot assignment.       * Host is always in slot "0" * Guests are assigned the following consecutive IDs (e.g, "1", "2", "3", etc) * Screen Share is represented as a special guest with the ID "SCREENSHARE" * The identifier here matches the ID referenced in browser source links used in broadcasting software.
 var slot_id: String:
 	set(val):
-		slot_id = val;
-		changed_data["slot_id"] = slot_id;
+		slot_id = val
+		changed_data["slot_id"] = slot_id
 ## Flag determining whether or not the guest is visible in the browser source in the host’s streaming software.
 var is_live: bool:
 	set(val):
-		is_live = val;
-		changed_data["is_live"] = is_live;
+		is_live = val
+		changed_data["is_live"] = is_live
 ## User ID of the guest assigned to this slot.
 var user_id: String:
 	set(val):
-		user_id = val;
-		changed_data["user_id"] = user_id;
+		user_id = val
+		changed_data["user_id"] = user_id
 ## Display name of the guest assigned to this slot.
 var user_display_name: String:
 	set(val):
-		user_display_name = val;
-		changed_data["user_display_name"] = user_display_name;
+		user_display_name = val
+		changed_data["user_display_name"] = user_display_name
 ## Login of the guest assigned to this slot.
 var user_login: String:
 	set(val):
-		user_login = val;
-		changed_data["user_login"] = user_login;
+		user_login = val
+		changed_data["user_login"] = user_login
 ## Value from 0 to 100 representing the host’s volume setting for this guest.
 var volume: int:
 	set(val):
-		volume = val;
-		changed_data["volume"] = volume;
+		volume = val
+		changed_data["volume"] = volume
 ## Timestamp when this guest was assigned a slot in the session.
 var assigned_at: Variant:
 	set(val):
-		assigned_at = val;
-		changed_data["assigned_at"] = assigned_at;
+		assigned_at = val
+		changed_data["assigned_at"] = assigned_at
 ## Information about the guest’s audio settings
 var audio_settings: AudioSettings:
 	set(val):
-		audio_settings = val;
+		audio_settings = val
 		if audio_settings != null:
-			changed_data["audio_settings"] = audio_settings.to_dict();
+			changed_data["audio_settings"] = audio_settings.to_dict()
 ## Information about the guest’s video settings
 var video_settings: VideoSettings:
 	set(val):
-		video_settings = val;
+		video_settings = val
 		if video_settings != null:
-			changed_data["video_settings"] = video_settings.to_dict();
+			changed_data["video_settings"] = video_settings.to_dict()
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchGuest:
-	var result = TwitchGuest.new();
+	var result = TwitchGuest.new()
 	if d.has("slot_id") && d["slot_id"] != null:
-		result.slot_id = d["slot_id"];
+		result.slot_id = d["slot_id"]
 	if d.has("is_live") && d["is_live"] != null:
-		result.is_live = d["is_live"];
+		result.is_live = d["is_live"]
 	if d.has("user_id") && d["user_id"] != null:
-		result.user_id = d["user_id"];
+		result.user_id = d["user_id"]
 	if d.has("user_display_name") && d["user_display_name"] != null:
-		result.user_display_name = d["user_display_name"];
+		result.user_display_name = d["user_display_name"]
 	if d.has("user_login") && d["user_login"] != null:
-		result.user_login = d["user_login"];
+		result.user_login = d["user_login"]
 	if d.has("volume") && d["volume"] != null:
-		result.volume = d["volume"];
+		result.volume = d["volume"]
 	if d.has("assigned_at") && d["assigned_at"] != null:
-		result.assigned_at = d["assigned_at"];
+		result.assigned_at = d["assigned_at"]
 	if d.has("audio_settings") && d["audio_settings"] != null:
-		result.audio_settings = AudioSettings.from_json(d["audio_settings"]);
+		result.audio_settings = AudioSettings.from_json(d["audio_settings"])
 	if d.has("video_settings") && d["video_settings"] != null:
-		result.video_settings = VideoSettings.from_json(d["video_settings"]);
-	return result;
+		result.video_settings = VideoSettings.from_json(d["video_settings"])
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## Information about the guest’s audio settings
 class AudioSettings extends RefCounted:
 	## Flag determining whether the host is allowing the guest’s audio to be seen or heard within the session.
 	var is_host_enabled: bool:
 		set(val):
-			is_host_enabled = val;
-			changed_data["is_host_enabled"] = is_host_enabled;
+			is_host_enabled = val
+			changed_data["is_host_enabled"] = is_host_enabled
 	## Flag determining whether the guest is allowing their audio to be transmitted to the session.
 	var is_guest_enabled: bool:
 		set(val):
-			is_guest_enabled = val;
-			changed_data["is_guest_enabled"] = is_guest_enabled;
+			is_guest_enabled = val
+			changed_data["is_guest_enabled"] = is_guest_enabled
 	## Flag determining whether the guest has an appropriate audio device available to be transmitted to the session.
 	var is_available: bool:
 		set(val):
-			is_available = val;
-			changed_data["is_available"] = is_available;
+			is_available = val
+			changed_data["is_available"] = is_available
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> AudioSettings:
-		var result = AudioSettings.new();
+		var result = AudioSettings.new()
 		if d.has("is_host_enabled") && d["is_host_enabled"] != null:
-			result.is_host_enabled = d["is_host_enabled"];
+			result.is_host_enabled = d["is_host_enabled"]
 		if d.has("is_guest_enabled") && d["is_guest_enabled"] != null:
-			result.is_guest_enabled = d["is_guest_enabled"];
+			result.is_guest_enabled = d["is_guest_enabled"]
 		if d.has("is_available") && d["is_available"] != null:
-			result.is_available = d["is_available"];
-		return result;
+			result.is_available = d["is_available"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 
 ## Information about the guest’s video settings
 class VideoSettings extends RefCounted:
 	## Flag determining whether the host is allowing the guest’s video to be seen or heard within the session.
 	var is_host_enabled: bool:
 		set(val):
-			is_host_enabled = val;
-			changed_data["is_host_enabled"] = is_host_enabled;
+			is_host_enabled = val
+			changed_data["is_host_enabled"] = is_host_enabled
 	## Flag determining whether the guest is allowing their video to be transmitted to the session.
 	var is_guest_enabled: bool:
 		set(val):
-			is_guest_enabled = val;
-			changed_data["is_guest_enabled"] = is_guest_enabled;
+			is_guest_enabled = val
+			changed_data["is_guest_enabled"] = is_guest_enabled
 	## Flag determining whether the guest has an appropriate video device available to be transmitted to the session.
 	var is_available: bool:
 		set(val):
-			is_available = val;
-			changed_data["is_available"] = is_available;
+			is_available = val
+			changed_data["is_available"] = is_available
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> VideoSettings:
-		var result = VideoSettings.new();
+		var result = VideoSettings.new()
 		if d.has("is_host_enabled") && d["is_host_enabled"] != null:
-			result.is_host_enabled = d["is_host_enabled"];
+			result.is_host_enabled = d["is_host_enabled"]
 		if d.has("is_guest_enabled") && d["is_guest_enabled"] != null:
-			result.is_guest_enabled = d["is_guest_enabled"];
+			result.is_guest_enabled = d["is_guest_enabled"]
 		if d.has("is_available") && d["is_available"] != null:
-			result.is_available = d["is_available"];
-		return result;
+			result.is_available = d["is_available"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

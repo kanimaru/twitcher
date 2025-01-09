@@ -1,11 +1,13 @@
-[gd_scene load_steps=9 format=3 uid="uid://dmbbptr8gofrm"]
+[gd_scene load_steps=12 format=3 uid="uid://dmbbptr8gofrm"]
 
 [ext_resource type="Script" path="res://addons/twitcher/tests/test_new_auth.gd" id="1_r4h1h"]
-[ext_resource type="PackedScene" uid="uid://cuskx3pjheybj" path="res://addons/twitcher/twitch_auth.tscn" id="2_qf83c"]
+[ext_resource type="Script" path="res://addons/twitcher/twitch_auth.gd" id="2_5qffk"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="3_hshae"]
-[ext_resource type="Resource" uid="uid://c6em6omrb7tbh" path="res://test_oauth_settings.tres" id="3_tjuwm"]
 [ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="4_bnk2f"]
+[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_rest_api.gd" id="6_yppmx"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="6_yr7cd"]
+[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/default_oauth_setting.tres" id="7_7bvku"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/http/http_client_manager.gd" id="8_k3gks"]
 
 [sub_resource type="Resource" id="Resource_peod2"]
 script = ExtResource("3_hshae")
@@ -17,6 +19,12 @@ _cache_path = "user://auth.conf"
 script = ExtResource("6_yr7cd")
 used_scopes = Array[StringName]([&"chat:edit", &"chat:read"])
 
+[sub_resource type="Resource" id="Resource_fmgwc"]
+script = ExtResource("3_hshae")
+_crypto_key_provider = ExtResource("4_bnk2f")
+_identifier = "Auth-9546"
+_cache_path = "user://auth.conf"
+
 [node name="TestNewAuth" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -26,8 +34,27 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_r4h1h")
 
-[node name="TwitchAuthUser" parent="." instance=ExtResource("2_qf83c")]
+[node name="TwitchAuthUser1" type="Node" parent="."]
 unique_name_in_owner = true
-setting = ExtResource("3_tjuwm")
+script = ExtResource("2_5qffk")
+oauth_setting = ExtResource("7_7bvku")
+force_verify = true
 token = SubResource("Resource_peod2")
 scopes = SubResource("Resource_ysotn")
+
+[node name="TwitchAuthUser2" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_5qffk")
+oauth_setting = ExtResource("7_7bvku")
+force_verify = true
+token = SubResource("Resource_fmgwc")
+scopes = SubResource("Resource_ysotn")
+
+[node name="API" type="Node" parent="." node_paths=PackedStringArray("http_client_manager")]
+unique_name_in_owner = true
+script = ExtResource("6_yppmx")
+oauth_setting = ExtResource("7_7bvku")
+http_client_manager = NodePath("../HttpClientManager")
+
+[node name="HttpClientManager" type="Node" parent="."]
+script = ExtResource("8_k3gks")

@@ -8,97 +8,97 @@ class_name TwitchChannelTeam
 ## An ID that identifies the broadcaster.
 var broadcaster_id: String:
 	set(val):
-		broadcaster_id = val;
-		changed_data["broadcaster_id"] = broadcaster_id;
+		broadcaster_id = val
+		changed_data["broadcaster_id"] = broadcaster_id
 ## The broadcaster’s login name.
 var broadcaster_login: String:
 	set(val):
-		broadcaster_login = val;
-		changed_data["broadcaster_login"] = broadcaster_login;
+		broadcaster_login = val
+		changed_data["broadcaster_login"] = broadcaster_login
 ## The broadcaster’s display name.
 var broadcaster_name: String:
 	set(val):
-		broadcaster_name = val;
-		changed_data["broadcaster_name"] = broadcaster_name;
+		broadcaster_name = val
+		changed_data["broadcaster_name"] = broadcaster_name
 ## A URL to the team’s background image.
 var background_image_url: String:
 	set(val):
-		background_image_url = val;
-		changed_data["background_image_url"] = background_image_url;
+		background_image_url = val
+		changed_data["background_image_url"] = background_image_url
 ## A URL to the team’s banner.
 var banner: String:
 	set(val):
-		banner = val;
-		changed_data["banner"] = banner;
+		banner = val
+		changed_data["banner"] = banner
 ## The UTC date and time (in RFC3339 format) of when the team was created.
 var created_at: Variant:
 	set(val):
-		created_at = val;
-		changed_data["created_at"] = created_at;
+		created_at = val
+		changed_data["created_at"] = created_at
 ## The UTC date and time (in RFC3339 format) of the last time the team was updated.
 var updated_at: Variant:
 	set(val):
-		updated_at = val;
-		changed_data["updated_at"] = updated_at;
+		updated_at = val
+		changed_data["updated_at"] = updated_at
 ## The team’s description. The description may contain formatting such as Markdown, HTML, newline (\\n) characters, etc.
 var info: String:
 	set(val):
-		info = val;
-		changed_data["info"] = info;
+		info = val
+		changed_data["info"] = info
 ## A URL to a thumbnail image of the team’s logo.
 var thumbnail_url: String:
 	set(val):
-		thumbnail_url = val;
-		changed_data["thumbnail_url"] = thumbnail_url;
+		thumbnail_url = val
+		changed_data["thumbnail_url"] = thumbnail_url
 ## The team’s name.
 var team_name: String:
 	set(val):
-		team_name = val;
-		changed_data["team_name"] = team_name;
+		team_name = val
+		changed_data["team_name"] = team_name
 ## The team’s display name.
 var team_display_name: String:
 	set(val):
-		team_display_name = val;
-		changed_data["team_display_name"] = team_display_name;
+		team_display_name = val
+		changed_data["team_display_name"] = team_display_name
 ## An ID that identifies the team.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchChannelTeam:
-	var result = TwitchChannelTeam.new();
+	var result = TwitchChannelTeam.new()
 	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
-		result.broadcaster_id = d["broadcaster_id"];
+		result.broadcaster_id = d["broadcaster_id"]
 	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
-		result.broadcaster_login = d["broadcaster_login"];
+		result.broadcaster_login = d["broadcaster_login"]
 	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
-		result.broadcaster_name = d["broadcaster_name"];
+		result.broadcaster_name = d["broadcaster_name"]
 	if d.has("background_image_url") && d["background_image_url"] != null:
-		result.background_image_url = d["background_image_url"];
+		result.background_image_url = d["background_image_url"]
 	if d.has("banner") && d["banner"] != null:
-		result.banner = d["banner"];
+		result.banner = d["banner"]
 	if d.has("created_at") && d["created_at"] != null:
-		result.created_at = d["created_at"];
+		result.created_at = d["created_at"]
 	if d.has("updated_at") && d["updated_at"] != null:
-		result.updated_at = d["updated_at"];
+		result.updated_at = d["updated_at"]
 	if d.has("info") && d["info"] != null:
-		result.info = d["info"];
+		result.info = d["info"]
 	if d.has("thumbnail_url") && d["thumbnail_url"] != null:
-		result.thumbnail_url = d["thumbnail_url"];
+		result.thumbnail_url = d["thumbnail_url"]
 	if d.has("team_name") && d["team_name"] != null:
-		result.team_name = d["team_name"];
+		result.team_name = d["team_name"]
 	if d.has("team_display_name") && d["team_display_name"] != null:
-		result.team_display_name = d["team_display_name"];
+		result.team_display_name = d["team_display_name"]
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
-	return result;
+		result.id = d["id"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

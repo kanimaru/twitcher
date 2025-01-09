@@ -8,67 +8,67 @@ class_name TwitchWarnChatUserResponse
 ## A list that contains information about the warning.
 var data: Array[Data]:
 	set(val):
-		data = val;
-		changed_data["data"] = [];
+		data = val
+		changed_data["data"] = []
 		if data != null:
 			for value in data:
-				changed_data["data"].append(value.to_dict());
+				changed_data["data"].append(value.to_dict())
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchWarnChatUserResponse:
-	var result = TwitchWarnChatUserResponse.new();
+	var result = TwitchWarnChatUserResponse.new()
 	if d.has("data") && d["data"] != null:
 		for value in d["data"]:
-			result.data.append(Data.from_json(value));
-	return result;
+			result.data.append(Data.from_json(value))
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## 
 class Data extends RefCounted:
 	## The ID of the channel in which the warning will take effect.
 	var broadcaster_id: String:
 		set(val):
-			broadcaster_id = val;
-			changed_data["broadcaster_id"] = broadcaster_id;
+			broadcaster_id = val
+			changed_data["broadcaster_id"] = broadcaster_id
 	## The ID of the warned user.
 	var user_id: String:
 		set(val):
-			user_id = val;
-			changed_data["user_id"] = user_id;
+			user_id = val
+			changed_data["user_id"] = user_id
 	## The ID of the user who applied the warning.
 	var moderator_id: String:
 		set(val):
-			moderator_id = val;
-			changed_data["moderator_id"] = moderator_id;
+			moderator_id = val
+			changed_data["moderator_id"] = moderator_id
 	## The reason provided for warning.
 	var reason: String:
 		set(val):
-			reason = val;
-			changed_data["reason"] = reason;
+			reason = val
+			changed_data["reason"] = reason
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> Data:
-		var result = Data.new();
+		var result = Data.new()
 		if d.has("broadcaster_id") && d["broadcaster_id"] != null:
-			result.broadcaster_id = d["broadcaster_id"];
+			result.broadcaster_id = d["broadcaster_id"]
 		if d.has("user_id") && d["user_id"] != null:
-			result.user_id = d["user_id"];
+			result.user_id = d["user_id"]
 		if d.has("moderator_id") && d["moderator_id"] != null:
-			result.moderator_id = d["moderator_id"];
+			result.moderator_id = d["moderator_id"]
 		if d.has("reason") && d["reason"] != null:
-			result.reason = d["reason"];
-		return result;
+			result.reason = d["reason"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

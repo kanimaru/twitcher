@@ -5,31 +5,31 @@ extends RefCounted
 
 class_name TwitchAPIGenerator
 
-const SWAGGER_API = "https://twitch-api-swagger.surge.sh"
-const api_output_path = "res://addons/twitcher/generated/twitch_rest_api.gd"
+const SWAGGER_API = "https://raw.githubusercontent.com"
+const api_output_path = "res://addons/twitcher/generated/twitch_api.gd"
 
 var client: BufferedHTTPClient;
 var definition: Dictionary = {};
 
-func generate_rest_api() -> void:
-	print("start generating REST API")
+func generate_api() -> void:
+	print("start generating API")
 	if definition == {}:
 		print("load Twitch definition")
 		definition = await _load_swagger_definition();
 	_generate_repositories();
 	_generate_components();
-	print("REST API regenerated you can find it under: res://addons/twitcher/generated/")
+	print("API regenerated you can find it under: res://addons/twitcher/generated/")
 
 #region Repository
 
 func _load_swagger_definition() -> Dictionary:
 	client = BufferedHTTPClient.new(SWAGGER_API);
 	client.max_error_count = 3;
-	var request = client.request("/openapi.json", HTTPClient.METHOD_GET, {}, "");
+	var request = client.request("/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json", HTTPClient.METHOD_GET, {}, "");
 	var response_data = await client.wait_for_request(request);
 
 	if response_data.error:
-		printerr("Cant generate REST API");
+		printerr("Cant generate API");
 	var response_str = response_data.response_data.get_string_from_utf8()
 	var response = JSON.parse_string(response_str);
 	return response;
@@ -100,7 +100,8 @@ func _generate_repositories():
 				"query_parameters": parameters["query_params"],
 				"time_parameters_opt": parameters["time_parameters_opt"],
 				"array_parameters_opt": parameters["array_parameters_opt"],
-				"query_parameters_opt": parameters["query_params_opt"]
+				"query_parameters_opt": parameters["query_params_opt"],
+				"has_broadcaster": parameters["has_broadcaster"]
 			};
 			data.append(template.parse_template(template_method, method_data));
 			if parameters["has_optional"]:
@@ -170,9 +171,9 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 
 	# Has to be last or atleast within the default parameters at the end
 	if append_broadcaster:
-		parameters_code += "broadcaster_id: String = TwitchSetting.broadcaster_id, "
-		all_parameters_code += "broadcaster_id: String = TwitchSetting.broadcaster_id, "
-		optional_body_parameters_code += "broadcaster_id: String = TwitchSetting.broadcaster_id, "
+		parameters_code += "broadcaster_id: String = \"\", "
+		all_parameters_code += "broadcaster_id: String = \"\", "
+		optional_body_parameters_code += "broadcaster_id: String = \"\", "
 
 	return {
 		"parameters": parameters_code.rstrip(", "),
@@ -186,7 +187,8 @@ func _parse_parameters(method_spec: Dictionary) -> Dictionary:
 		"array_parameters": array_parameters,
 		"query_params_opt": query_params_opt,
 		"time_parameters_opt": time_parameters_opt,
-		"array_parameters_opt": array_parameters_opt
+		"array_parameters_opt": array_parameters_opt,
+		"has_broadcaster": append_broadcaster
 	}
 
 #endregion

@@ -8,178 +8,178 @@ class_name TwitchExtensionTransaction
 ## An ID that identifies the transaction.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## The UTC date and time (in RFC3339 format) of the transaction.
 var timestamp: Variant:
 	set(val):
-		timestamp = val;
-		changed_data["timestamp"] = timestamp;
+		timestamp = val
+		changed_data["timestamp"] = timestamp
 ## The ID of the broadcaster that owns the channel where the transaction occurred.
 var broadcaster_id: String:
 	set(val):
-		broadcaster_id = val;
-		changed_data["broadcaster_id"] = broadcaster_id;
+		broadcaster_id = val
+		changed_data["broadcaster_id"] = broadcaster_id
 ## The broadcaster’s login name.
 var broadcaster_login: String:
 	set(val):
-		broadcaster_login = val;
-		changed_data["broadcaster_login"] = broadcaster_login;
+		broadcaster_login = val
+		changed_data["broadcaster_login"] = broadcaster_login
 ## The broadcaster’s display name.
 var broadcaster_name: String:
 	set(val):
-		broadcaster_name = val;
-		changed_data["broadcaster_name"] = broadcaster_name;
+		broadcaster_name = val
+		changed_data["broadcaster_name"] = broadcaster_name
 ## The ID of the user that purchased the digital product.
 var user_id: String:
 	set(val):
-		user_id = val;
-		changed_data["user_id"] = user_id;
+		user_id = val
+		changed_data["user_id"] = user_id
 ## The user’s login name.
 var user_login: String:
 	set(val):
-		user_login = val;
-		changed_data["user_login"] = user_login;
+		user_login = val
+		changed_data["user_login"] = user_login
 ## The user’s display name.
 var user_name: String:
 	set(val):
-		user_name = val;
-		changed_data["user_name"] = user_name;
+		user_name = val
+		changed_data["user_name"] = user_name
 ## The type of transaction. Possible values are:      * BITS\_IN\_EXTENSION
 var product_type: String:
 	set(val):
-		product_type = val;
-		changed_data["product_type"] = product_type;
+		product_type = val
+		changed_data["product_type"] = product_type
 ## Contains details about the digital product.
 var product_data: ProductData:
 	set(val):
-		product_data = val;
+		product_data = val
 		if product_data != null:
-			changed_data["product_data"] = product_data.to_dict();
+			changed_data["product_data"] = product_data.to_dict()
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchExtensionTransaction:
-	var result = TwitchExtensionTransaction.new();
+	var result = TwitchExtensionTransaction.new()
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("timestamp") && d["timestamp"] != null:
-		result.timestamp = d["timestamp"];
+		result.timestamp = d["timestamp"]
 	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
-		result.broadcaster_id = d["broadcaster_id"];
+		result.broadcaster_id = d["broadcaster_id"]
 	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
-		result.broadcaster_login = d["broadcaster_login"];
+		result.broadcaster_login = d["broadcaster_login"]
 	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
-		result.broadcaster_name = d["broadcaster_name"];
+		result.broadcaster_name = d["broadcaster_name"]
 	if d.has("user_id") && d["user_id"] != null:
-		result.user_id = d["user_id"];
+		result.user_id = d["user_id"]
 	if d.has("user_login") && d["user_login"] != null:
-		result.user_login = d["user_login"];
+		result.user_login = d["user_login"]
 	if d.has("user_name") && d["user_name"] != null:
-		result.user_name = d["user_name"];
+		result.user_name = d["user_name"]
 	if d.has("product_type") && d["product_type"] != null:
-		result.product_type = d["product_type"];
+		result.product_type = d["product_type"]
 	if d.has("product_data") && d["product_data"] != null:
-		result.product_data = ProductData.from_json(d["product_data"]);
-	return result;
+		result.product_data = ProductData.from_json(d["product_data"])
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## Contains details about the digital product’s cost.
 class Cost extends RefCounted:
 	## The amount exchanged for the digital product.
 	var amount: int:
 		set(val):
-			amount = val;
-			changed_data["amount"] = amount;
+			amount = val
+			changed_data["amount"] = amount
 	## The type of currency exchanged. Possible values are:      * bits
 	var type: String:
 		set(val):
-			type = val;
-			changed_data["type"] = type;
+			type = val
+			changed_data["type"] = type
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> Cost:
-		var result = Cost.new();
+		var result = Cost.new()
 		if d.has("amount") && d["amount"] != null:
-			result.amount = d["amount"];
+			result.amount = d["amount"]
 		if d.has("type") && d["type"] != null:
-			result.type = d["type"];
-		return result;
+			result.type = d["type"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 
 ## Contains details about the digital product.
 class ProductData extends RefCounted:
 	## An ID that identifies the digital product.
 	var sku: String:
 		set(val):
-			sku = val;
-			changed_data["sku"] = sku;
+			sku = val
+			changed_data["sku"] = sku
 	## Set to `twitch.ext.` \+ `<the extension's ID>`.
 	var domain: String:
 		set(val):
-			domain = val;
-			changed_data["domain"] = domain;
+			domain = val
+			changed_data["domain"] = domain
 	## Contains details about the digital product’s cost.
 	var cost: Cost:
 		set(val):
-			cost = val;
+			cost = val
 			if cost != null:
-				changed_data["cost"] = cost.to_dict();
+				changed_data["cost"] = cost.to_dict()
 	## A Boolean value that determines whether the product is in development. Is **true** if the digital product is in development and cannot be exchanged.
 	var inDevelopment: bool:
 		set(val):
-			inDevelopment = val;
-			changed_data["inDevelopment"] = inDevelopment;
+			inDevelopment = val
+			changed_data["inDevelopment"] = inDevelopment
 	## The name of the digital product.
 	var displayName: String:
 		set(val):
-			displayName = val;
-			changed_data["displayName"] = displayName;
+			displayName = val
+			changed_data["displayName"] = displayName
 	## This field is always empty since you may purchase only unexpired products.
 	var expiration: String:
 		set(val):
-			expiration = val;
-			changed_data["expiration"] = expiration;
+			expiration = val
+			changed_data["expiration"] = expiration
 	## A Boolean value that determines whether the data was broadcast to all instances of the extension. Is **true** if the data was broadcast to all instances.
 	var broadcast: bool:
 		set(val):
-			broadcast = val;
-			changed_data["broadcast"] = broadcast;
+			broadcast = val
+			changed_data["broadcast"] = broadcast
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> ProductData:
-		var result = ProductData.new();
+		var result = ProductData.new()
 		if d.has("sku") && d["sku"] != null:
-			result.sku = d["sku"];
+			result.sku = d["sku"]
 		if d.has("domain") && d["domain"] != null:
-			result.domain = d["domain"];
+			result.domain = d["domain"]
 		if d.has("cost") && d["cost"] != null:
-			result.cost = Cost.from_json(d["cost"]);
+			result.cost = Cost.from_json(d["cost"])
 		if d.has("inDevelopment") && d["inDevelopment"] != null:
-			result.inDevelopment = d["inDevelopment"];
+			result.inDevelopment = d["inDevelopment"]
 		if d.has("displayName") && d["displayName"] != null:
-			result.displayName = d["displayName"];
+			result.displayName = d["displayName"]
 		if d.has("expiration") && d["expiration"] != null:
-			result.expiration = d["expiration"];
+			result.expiration = d["expiration"]
 		if d.has("broadcast") && d["broadcast"] != null:
-			result.broadcast = d["broadcast"];
-		return result;
+			result.broadcast = d["broadcast"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

@@ -8,34 +8,34 @@ class_name TwitchContentClassificationLabel
 ## Unique identifier for the CCL.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## Localized description of the CCL.
 var description: String:
 	set(val):
-		description = val;
-		changed_data["description"] = description;
+		description = val
+		changed_data["description"] = description
 ## Localized name of the CCL.
 var name: String:
 	set(val):
-		name = val;
-		changed_data["name"] = name;
+		name = val
+		changed_data["name"] = name
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchContentClassificationLabel:
-	var result = TwitchContentClassificationLabel.new();
+	var result = TwitchContentClassificationLabel.new()
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("description") && d["description"] != null:
-		result.description = d["description"];
+		result.description = d["description"]
 	if d.has("name") && d["name"] != null:
-		result.name = d["name"];
-	return result;
+		result.name = d["name"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

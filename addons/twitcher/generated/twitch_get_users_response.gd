@@ -8,24 +8,24 @@ class_name TwitchGetUsersResponse
 ## The list of users.
 var data: Array[TwitchUser]:
 	set(val):
-		data = val;
-		changed_data["data"] = [];
+		data = val
+		changed_data["data"] = []
 		if data != null:
 			for value in data:
-				changed_data["data"].append(value.to_dict());
+				changed_data["data"].append(value.to_dict())
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchGetUsersResponse:
-	var result = TwitchGetUsersResponse.new();
+	var result = TwitchGetUsersResponse.new()
 	if d.has("data") && d["data"] != null:
 		for value in d["data"]:
-			result.data.append(TwitchUser.from_json(value));
-	return result;
+			result.data.append(TwitchUser.from_json(value))
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

@@ -8,34 +8,34 @@ class_name TwitchCategory
 ## A URL to an image of the game’s box art or streaming category.
 var box_art_url: String:
 	set(val):
-		box_art_url = val;
-		changed_data["box_art_url"] = box_art_url;
+		box_art_url = val
+		changed_data["box_art_url"] = box_art_url
 ## The name of the game or category.
 var name: String:
 	set(val):
-		name = val;
-		changed_data["name"] = name;
+		name = val
+		changed_data["name"] = name
 ## An ID that uniquely identifies the game or category.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchCategory:
-	var result = TwitchCategory.new();
+	var result = TwitchCategory.new()
 	if d.has("box_art_url") && d["box_art_url"] != null:
-		result.box_art_url = d["box_art_url"];
+		result.box_art_url = d["box_art_url"]
 	if d.has("name") && d["name"] != null:
-		result.name = d["name"];
+		result.name = d["name"]
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
-	return result;
+		result.id = d["id"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

@@ -8,31 +8,31 @@ class_name TwitchGetExtensionLiveChannelsResponse
 ## The list of broadcasters that are streaming live and that have installed or activated the extension.
 var data: Array[TwitchExtensionLiveChannel]:
 	set(val):
-		data = val;
-		changed_data["data"] = [];
+		data = val
+		changed_data["data"] = []
 		if data != null:
 			for value in data:
-				changed_data["data"].append(value.to_dict());
+				changed_data["data"].append(value.to_dict())
 ## This field contains the cursor used to page through the results. The field is empty if there are no more pages left to page through. Note that this field is a string compared to other endpoints that use a **Pagination** object. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 var pagination: String:
 	set(val):
-		pagination = val;
-		changed_data["pagination"] = pagination;
+		pagination = val
+		changed_data["pagination"] = pagination
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchGetExtensionLiveChannelsResponse:
-	var result = TwitchGetExtensionLiveChannelsResponse.new();
+	var result = TwitchGetExtensionLiveChannelsResponse.new()
 	if d.has("data") && d["data"] != null:
 		for value in d["data"]:
-			result.data.append(TwitchExtensionLiveChannel.from_json(value));
+			result.data.append(TwitchExtensionLiveChannel.from_json(value))
 	if d.has("pagination") && d["pagination"] != null:
-		result.pagination = d["pagination"];
-	return result;
+		result.pagination = d["pagination"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

@@ -8,27 +8,27 @@ class_name TwitchUpdateConduitsBody
 ## Conduit ID.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## The new number of shards for this conduit.
 var shard_count: int:
 	set(val):
-		shard_count = val;
-		changed_data["shard_count"] = shard_count;
+		shard_count = val
+		changed_data["shard_count"] = shard_count
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchUpdateConduitsBody:
-	var result = TwitchUpdateConduitsBody.new();
+	var result = TwitchUpdateConduitsBody.new()
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("shard_count") && d["shard_count"] != null:
-		result.shard_count = d["shard_count"];
-	return result;
+		result.shard_count = d["shard_count"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

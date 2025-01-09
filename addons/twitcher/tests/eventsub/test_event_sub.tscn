@@ -1,35 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://bsx0lqys5conr"]
+[gd_scene load_steps=7 format=3 uid="uid://bsx0lqys5conr"]
 
 [ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="1_e4lff"]
-[ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub_config.gd" id="2_v56b5"]
 [ext_resource type="Script" path="res://addons/twitcher/generated/twitch_rest_api.gd" id="2_w85c3"]
 [ext_resource type="Resource" uid="uid://d0pgj2j1dc8vu" path="res://addons/twitcher/tests/test_token.tres" id="3_w8vv0"]
 [ext_resource type="Resource" uid="uid://ns1ywlg15hx" path="res://addons/twitcher/tests/test_scopes.tres" id="3_xpvmy"]
-[ext_resource type="PackedScene" uid="uid://cuskx3pjheybj" path="res://addons/twitcher/twitch_auth.tscn" id="4_6fiml"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="7_g2wpu"]
-
-[sub_resource type="Resource" id="Resource_qdtnw"]
-script = ExtResource("2_v56b5")
-type = 7
-condition = {
-"broadcaster_user_id": "",
-"user_id": ""
-}
-
-[sub_resource type="CryptoKey" id="CryptoKey_x2jmv"]
-
-[sub_resource type="Resource" id="Resource_ats3p"]
-script = ExtResource("7_g2wpu")
-redirect_url = "http://localhost:7170"
-well_known_url = ""
-token_url = "https://id.twitch.tv/oauth2/token"
-authorization_url = "https://id.twitch.tv/oauth2/authorize"
-device_authorization_url = "https://id.twitch.tv/oauth2/device"
-cache_file = "user://auth.conf"
-client_id = "e0a451pmremhgy77idg3isbcwwqidd"
-client_secret = "asd"
-authorization_flow = 0
-_encryption_key = SubResource("CryptoKey_x2jmv")
+[ext_resource type="Script" path="res://addons/twitcher/twitch_auth.gd" id="5_6sj65"]
+[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/default_oauth_setting.tres" id="6_s0ine"]
 
 [node name="TestEventSub" type="Node2D"]
 
@@ -37,7 +13,6 @@ _encryption_key = SubResource("CryptoKey_x2jmv")
 unique_name_in_owner = true
 script = ExtResource("1_e4lff")
 api = NodePath("../API")
-subscriptions = Array[ExtResource("2_v56b5")]([SubResource("Resource_qdtnw")])
 scopes = ExtResource("3_xpvmy")
 
 [node name="API" type="Node" parent="."]
@@ -45,9 +20,9 @@ unique_name_in_owner = true
 script = ExtResource("2_w85c3")
 token = ExtResource("3_w8vv0")
 
-[node name="Auth" parent="." instance=ExtResource("4_6fiml")]
+[node name="Auth" type="Node" parent="."]
 unique_name_in_owner = true
-setting = SubResource("Resource_ats3p")
-use_project_setting = true
+script = ExtResource("5_6sj65")
+oauth_setting = ExtResource("6_s0ine")
 token = ExtResource("3_w8vv0")
 scopes = ExtResource("3_xpvmy")

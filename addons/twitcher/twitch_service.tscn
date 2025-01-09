@@ -1,32 +1,21 @@
-[gd_scene load_steps=19 format=3 uid="uid://djt5lvmwxbq4a"]
+[gd_scene load_steps=15 format=3 uid="uid://djt5lvmwxbq4a"]
 
 [ext_resource type="Script" path="res://addons/twitcher/twitch_service.gd" id="1_6jm7q"]
 [ext_resource type="Script" path="res://addons/twitcher/generated/twitch_rest_api.gd" id="1_yq54x"]
-[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="2_6stvm"]
+[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/default_oauth_setting.tres" id="2_r7i0d"]
 [ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc.gd" id="2_vps2i"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="2_xghrg"]
 [ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="3_x3t7l"]
+[ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="4_6nyyi"]
 [ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc_setting.gd" id="4_vtbx8"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="5_0dc02"]
-[ext_resource type="Script" path="res://addons/twitcher/twitch_icon_loader.gd" id="5_8eleo"]
 [ext_resource type="Script" path="res://addons/twitcher/twitch_command_handler.gd" id="6_38otf"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="7_87nhx"]
-[ext_resource type="PackedScene" uid="uid://cuskx3pjheybj" path="res://addons/twitcher/twitch_auth.tscn" id="7_rtju7"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/http/http_client_manager.gd" id="8_i5x6s"]
-[ext_resource type="Script" path="res://addons/twitcher/twitch_cheer_repository.gd" id="9_62dxb"]
+[ext_resource type="Script" path="res://addons/twitcher/twitch_auth.gd" id="10_bqnqx"]
+[ext_resource type="Script" path="res://addons/twitcher/twitch_media_loader.gd" id="12_2tq2g"]
 
-[sub_resource type="Resource" id="Resource_0fjmc"]
-script = ExtResource("7_87nhx")
-redirect_url = ""
-well_known_url = ""
-token_url = ""
-authorization_url = ""
-device_authorization_url = ""
-cache_file = "res://auth.key"
-client_id = ""
-authorization_flow = 0
-_encryption_key_provider = ExtResource("2_6stvm")
-client_secret = ""
+[sub_resource type="Resource" id="Resource_n1p3y"]
+script = ExtResource("5_0dc02")
+used_scopes = Array[StringName]([&"bits:read"])
 
 [sub_resource type="Resource" id="Resource_ei1b3"]
 script = ExtResource("4_vtbx8")
@@ -36,64 +25,42 @@ server = "wss://irc-ws.chat.twitch.tv:443"
 send_message_delay_ms = 320
 capabilities = 0
 
-[sub_resource type="Resource" id="Resource_n1p3y"]
-script = ExtResource("5_0dc02")
-used_scopes = Array[StringName]([&"bits:read"])
-
-[sub_resource type="Resource" id="Resource_biviy"]
-script = ExtResource("2_xghrg")
-_crypto_key_provider = ExtResource("2_6stvm")
-_identifier = "Default"
-_cache_path = "user://auth.conf"
-
 [node name="TwitchService" type="Node"]
 script = ExtResource("1_6jm7q")
-oauth_setting = SubResource("Resource_0fjmc")
-irc_setting = SubResource("Resource_ei1b3")
+oauth_setting = ExtResource("2_r7i0d")
 scopes = SubResource("Resource_n1p3y")
-token = SubResource("Resource_biviy")
+token = ExtResource("4_6nyyi")
 
 [node name="IRC" type="Node" parent="."]
-unique_name_in_owner = true
 script = ExtResource("2_vps2i")
 setting = SubResource("Resource_ei1b3")
-token = SubResource("Resource_biviy")
+token = ExtResource("4_6nyyi")
 
 [node name="EventSub" type="Node" parent="." node_paths=PackedStringArray("api")]
-unique_name_in_owner = true
 script = ExtResource("3_x3t7l")
 api = NodePath("../API")
+scopes = SubResource("Resource_n1p3y")
 
 [node name="API" type="Node" parent="." node_paths=PackedStringArray("http_client_manager")]
-unique_name_in_owner = true
 script = ExtResource("1_yq54x")
-token = SubResource("Resource_biviy")
-setting = SubResource("Resource_0fjmc")
-http_client_manager = NodePath("../HttpClientManager")
-
-[node name="IconLoader" type="Node" parent="." node_paths=PackedStringArray("api", "http_client_manager")]
-unique_name_in_owner = true
-script = ExtResource("5_8eleo")
-api = NodePath("../API")
+token = ExtResource("4_6nyyi")
+oauth_setting = ExtResource("2_r7i0d")
 http_client_manager = NodePath("../HttpClientManager")
 
 [node name="CommandHandler" type="Node" parent="." node_paths=PackedStringArray("irc")]
-unique_name_in_owner = true
 script = ExtResource("6_38otf")
 irc = NodePath("../IRC")
 
-[node name="Auth" parent="." instance=ExtResource("7_rtju7")]
-unique_name_in_owner = true
-setting = SubResource("Resource_0fjmc")
-token = SubResource("Resource_biviy")
+[node name="Auth" type="Node" parent="."]
+script = ExtResource("10_bqnqx")
+oauth_setting = ExtResource("2_r7i0d")
+token = ExtResource("4_6nyyi")
 scopes = SubResource("Resource_n1p3y")
 
 [node name="HttpClientManager" type="Node" parent="."]
-unique_name_in_owner = true
 script = ExtResource("8_i5x6s")
 
-[node name="CheerRepository" type="Node" parent="." node_paths=PackedStringArray("http_client_manager", "api")]
-unique_name_in_owner = true
-script = ExtResource("9_62dxb")
-http_client_manager = NodePath("../HttpClientManager")
+[node name="MediaLoader" type="Node" parent="." node_paths=PackedStringArray("api", "http_client_manager")]
+script = ExtResource("12_2tq2g")
 api = NodePath("../API")
+http_client_manager = NodePath("../HttpClientManager")

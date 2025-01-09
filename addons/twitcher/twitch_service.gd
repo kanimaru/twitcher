@@ -5,14 +5,12 @@ extends Node
 ## Makes some actions easier to use.
 class_name TwitchService
 
-const Constants = preload("res://addons/twitcher/constants.gd")
+const DEFAULT_TWITCH_AUTH = preload("res://addons/twitcher/scene/default_twitch_auth.tscn")
 
 @export var oauth_setting: OAuthSetting = OAuthSetting.new():
 	set(val):
 		oauth_setting = val
 		update_configuration_warnings()
-@export var irc_setting: TwitchIrcSetting
-@export var _subscriptions: Array[TwitchEventsubConfig] = []
 @export var scopes: OAuthScopes:
 	set(val):
 		scopes = val
@@ -22,40 +20,67 @@ const Constants = preload("res://addons/twitcher/constants.gd")
 		token = val
 		update_configuration_warnings()
 
-@onready var auth: TwitchAuth = %Auth
-@onready var eventsub: TwitchEventsub = %EventSub
-@onready var api: TwitchRestAPI = %API
-@onready var icon_loader: TwitchIconLoader = %IconLoader
-@onready var http_client_manager: HttpClientManager = %HttpClientManager
-@onready var cheer_repository: TwitchCheerRepository = %CheerRepository
-@onready var command_handler: TwitchCommandHandler = %CommandHandler
+@onready var auth: TwitchAuth
+@onready var eventsub: TwitchEventsub
+@onready var api: TwitchRestAPI
+@onready var irc: TwitchIRC
+@onready var media_loader: TwitchMediaLoader
+@onready var http_client_manager: HttpClientManager
+@onready var cheer_repository: TwitchCheerRepository
+@onready var command_handler: TwitchCommandHandler
 
-var _log: TwitchLogger
+var _log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_SERVICE)
 
-func _enter_tree() -> void:
-	_log = TwitchLogger.new(TwitchSetting.LOGGER_NAME_SERVICE)
-	_log.i("setup")
-
-	%EventSub._subscriptions = _subscriptions
-
-	%API.token = token
-	%API.setting = oauth_setting
-	%API.unauthenticated.connect(_on_unauthenticated)
-
-	%Auth.token = token
-	%Auth.scopes = scopes
-	%Auth.setting = oauth_setting
+func _init() -> void:
+	child_entered_tree.connect(_on_child_entered)
+	child_exiting_tree.connect(_on_child_exiting)
 
 
-func _exit_tree() -> void:
-	%API.unauthenticated.disconnect(_on_unauthenticated)
+func _ready() -> void:
+	_ensure_required_nodes()
+	_log.d("is ready")
+
+
+func _ensure_required_nodes() -> void:
+	if auth == null:
+		add_child(DEFAULT_TWITCH_AUTH.instantiate())
+	if http_client_manager == null:
+		http_client_manager = HttpClientManager.new()
+		add_child(http_client_manager)
+
+
+func _on_child_entered(node: Node) -> void:
+	if node is TwitchAuth: auth = node
+	if node is TwitchRestAPI: api = node
+	if node is TwitchEventsub: eventsub = node
+	if node is TwitchIRC: irc = node
+	if node is TwitchMediaLoader: media_loader = node
+	if node is TwitchCommandHandler: command_handler = node
+	if node is HttpClientManager: http_client_manager = node
+
+	if "token" in node && token != null:
+		node.token = token
+	if "scopes" in node && scopes != null:
+		node.scopes = scopes
+	if "oauth_setting" in node && oauth_setting != null:
+		node.oauth_setting = oauth_setting
+	if node.has_signal(&"unauthenticated"):
+		node.unauthenticated.connect(_on_unauthenticated)
+
+
+func _on_child_exiting(node: Node) -> void:
+	if node.has_signal(&"unauthenticated"):
+		node.unauthenticated.disconnect(_on_unauthenticated)
 
 ## Call this to setup the complete Twitch integration whenever you need.
 ## It boots everything up this Lib supports.
 func setup() -> void:
 	await auth.authorize()
-	await _init_cheermotes()
-	await eventsub.open_connection()
+	await propagate_call(&"do_setup")
+	for child in get_children():
+		if child.has_method(&"wait_setup"):
+			await child.wait_setup()
+
 	_log.i("TwitchService setup")
 
 
@@ -70,6 +95,9 @@ func _on_unauthenticated() -> void:
 
 ## Get data about a user by USER_ID see get_user for by username
 func get_user_by_id(user_id: String) -> TwitchUser:
+	if api == null:
+		printerr("Please setup a TwitchRestAPI Node into TwitchService.")
+		return null
 	if user_id == null || user_id == "": return null
 	var user_data : TwitchGetUsersResponse = await api.get_users([user_id], [])
 	if user_data.data.is_empty(): return null
@@ -78,6 +106,10 @@ func get_user_by_id(user_id: String) -> TwitchUser:
 
 ## Get data about a user by USERNAME see get_user_by_id for by user_id
 func get_user(username: String) -> TwitchUser:
+	if api == null:
+		printerr("Please setup a TwitchRestAPI Node into TwitchService.")
+		return null
+
 	var user_data : TwitchGetUsersResponse = await api.get_users([], [username])
 	if user_data.data.is_empty():
 		printerr("Username was not found: %s" % username)
@@ -87,35 +119,17 @@ func get_user(username: String) -> TwitchUser:
 
 ## Get data about a currently authenticated user
 func get_current_user() -> TwitchUser:
+	if api == null:
+		printerr("Please setup a TwitchRestAPI Node into TwitchService.")
+		return null
+
 	var user_data : TwitchGetUsersResponse = await api.get_users([], [])
 	return user_data.data[0]
 
 
 ## Get the image of an user
 func load_profile_image(user: TwitchUser) -> ImageTexture:
-	if user == null: return TwitchSetting.fallback_profile
-	if(ResourceLoader.has_cached(user.profile_image_url)):
-		return ResourceLoader.load(user.profile_image_url)
-	var client : BufferedHTTPClient = http_client_manager.get_client(TwitchSetting.twitch_image_cdn_host)
-	var request := client.request(user.profile_image_url, HTTPClient.METHOD_GET, {}, "")
-	var response_data := await client.wait_for_request(request)
-	var texture : ImageTexture = ImageTexture.new()
-	var response = response_data.response_data
-	if !response.is_empty():
-		var img := Image.new()
-		var content_type = response_data.response_header["Content-Type"]
-
-		match content_type:
-			"image/png": img.load_png_from_buffer(response)
-			"image/jpeg": img.load_jpg_from_buffer(response)
-			_: return TwitchSetting.fallback_profile
-		texture.set_image(img)
-	else:
-		# Don't use `texture = TwitchSetting.fallback_profile` as texture cause the path will be taken over
-		# for caching purpose!
-		texture.set_image(TwitchSetting.fallback_profile.get_image())
-	texture.take_over_path(user.profile_image_url)
-	return texture
+	return await media_loader.load_profile_image(user)
 
 #endregion
 #region EventSub
@@ -123,17 +137,29 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 
 ## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/ for details on
 ## which API versions are available and which conditions are required.
-func subscribe_event(event_name : String, version : String, conditions : Dictionary, session_id: String):
-	eventsub.subscribe_event(event_name, version, conditions, session_id)
+func subscribe_event(definition: TwitchEventsubDefinition, conditions: Dictionary) -> TwitchEventsubConfig:
+	if definition == null:
+		push_error("TwitchEventsubDefinition is null")
+		return
+
+	var config = TwitchEventsubConfig.create(definition, conditions)
+	await eventsub.subscribe(config)
+	return config
 
 
 ## Waits for connection to eventsub. Eventsub is ready to subscribe events.
 func wait_for_eventsub_connection() -> void:
+	if eventsub == null:
+		printerr("TwitchEventsub Node is missing")
+		return
 	await eventsub.wait_for_connection()
 
 
 ## Returns all of the eventsub subscriptions (variable is a copy so you can freely modify it)
 func get_subscriptions() -> Array[TwitchEventsubConfig]:
+	if eventsub == null:
+		printerr("TwitchEventsub Node is missing")
+		return []
 	return eventsub.get_subscriptions()
 
 #endregion
@@ -181,37 +207,36 @@ func whisper(message: String, username: String) -> void:
 ## Returns the definition of emotes for given channel or for the global emotes.
 ## Key: EmoteID as String | Value: TwitchGlobalEmote / TwitchChannelEmote
 func get_emotes_data(channel_id: String = "global") -> Dictionary:
-	return await icon_loader.get_cached_emotes(channel_id)
+	return await media_loader.get_cached_emotes(channel_id)
 
 
 ## Returns the definition of badges for given channel or for the global bages.
 ## Key: category / versions / badge_id | Value: TwitchChatBadge
 func get_badges_data(channel_id: String = "global") -> Dictionary:
-	return await icon_loader.get_cached_badges(channel_id)
+	return await media_loader.get_cached_badges(channel_id)
 
 
 ## Gets the requested emotes.
 ## Key: EmoteID as String | Value: SpriteFrame
 func get_emotes(ids: Array[String]) -> Dictionary:
-	return await icon_loader.get_emotes(ids)
+	return await media_loader.get_emotes(ids)
 
 
 ## Gets the requested emotes in the specified theme, scale and type.
 ## Loads from cache if possible otherwise downloads and transforms them.
 ## Key: TwitchEmoteDefinition | Value SpriteFrames
 func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionary:
-	return await icon_loader.get_emotes_by_definition(emotes)
+	return await media_loader.get_emotes_by_definition(emotes)
 
 
 #endregion
 #region Cheermotes
 
-func _init_cheermotes() -> void:
-	await cheer_repository.wait_preloaded()
-
-
 ## Returns the data of the Cheermotes.
 func get_cheermote_data() -> Array[TwitchCheermote]:
+	if cheer_repository == null:
+		printerr("TwitchCheerRepository was not set")
+		return []
 	await cheer_repository.wait_is_ready()
 	return cheer_repository.data
 

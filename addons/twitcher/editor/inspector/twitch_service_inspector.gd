@@ -1,7 +1,6 @@
 @tool
 extends EditorInspectorPlugin
 
-const Constants = preload("res://addons/twitcher/constants.gd")
 
 func _can_handle(object: Object) -> bool:
 	return object is TwitchService

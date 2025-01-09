@@ -8,53 +8,53 @@ class_name TwitchCheckAutoModStatusBody
 ## The list of messages to check. The list must contain at least one message and may contain up to a maximum of 100 messages.
 var data: Array[Data]:
 	set(val):
-		data = val;
-		changed_data["data"] = [];
+		data = val
+		changed_data["data"] = []
 		if data != null:
 			for value in data:
-				changed_data["data"].append(value.to_dict());
+				changed_data["data"].append(value.to_dict())
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchCheckAutoModStatusBody:
-	var result = TwitchCheckAutoModStatusBody.new();
+	var result = TwitchCheckAutoModStatusBody.new()
 	if d.has("data") && d["data"] != null:
 		for value in d["data"]:
-			result.data.append(Data.from_json(value));
-	return result;
+			result.data.append(Data.from_json(value))
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## 
 class Data extends RefCounted:
 	## A caller-defined ID used to correlate this message with the same message in the response.
 	var msg_id: String:
 		set(val):
-			msg_id = val;
-			changed_data["msg_id"] = msg_id;
+			msg_id = val
+			changed_data["msg_id"] = msg_id
 	## The message to check.
 	var msg_text: String:
 		set(val):
-			msg_text = val;
-			changed_data["msg_text"] = msg_text;
+			msg_text = val
+			changed_data["msg_text"] = msg_text
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> Data:
-		var result = Data.new();
+		var result = Data.new()
 		if d.has("msg_id") && d["msg_id"] != null:
-			result.msg_id = d["msg_id"];
+			result.msg_id = d["msg_id"]
 		if d.has("msg_text") && d["msg_text"] != null:
-			result.msg_text = d["msg_text"];
-		return result;
+			result.msg_text = d["msg_text"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

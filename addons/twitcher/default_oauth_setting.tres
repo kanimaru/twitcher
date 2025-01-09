@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="OAuthSetting" load_steps=3 format=3 uid="uid://jhyuw0w216ix"]
+
+[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="1_4134i"]
+[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="2_1ijl7"]
+
+[resource]
+script = ExtResource("2_1ijl7")
+redirect_url = "http://localhost:7170"
+well_known_url = ""
+token_url = "https://id.twitch.tv/oauth2/token"
+authorization_url = "https://id.twitch.tv/oauth2/authorize"
+device_authorization_url = ""
+cache_file = "res://auth.key"
+client_id = "1ae0idgxbvn6vi97ls7d89cyd919oq"
+authorization_flow = 0
+_encryption_key_provider = ExtResource("1_4134i")
+client_secret = "BVuMF1VB4ie3pxu2S7I8vOkUF9iThU6v6DpkBv77zlTuUAs7Ob7/PTkHnLukk7oLB/V4uoEce0zX+eB+Y/tON+S9AX5KCQncxGIxA8Nro1bY2In4HULW3sXQyXnSugt3GcbIr4/19e/c+petCN1/vD6VnRX2Q6j43xSxrhoP+wtljHvYyNMRz/7sY4zFb7kOaQtdnFpWVSFBqaTuEkeQbXIH5IrjMvh4tP007eHXaLF4ljiLx85Osi2SlnI0zV0Ebgj65mYWM9oHpu1lIMSvo0pwBNhZ+8gu/SLfImChMzfN41yXtlgx7C2FqMxkproq6Nhn0BABNXhD9Cg9mDAXgMGm2K2nUZcOMi52bNotnGDkZVPiTgjxF5eDfS10caIF6kbPDw7VYzyqpr2nlW58UM7Jwm8Vik2gtjsgPYkV77HeQVJVwAjWFHO4y/C9+dDoCD0CEvrLJFRx5FdtRt/u0w8D++3CIbGGlrGJybiIwQZvs2ND2pzuO+TChyAXXLvZ8yLBwugM6NTx3qYVIpvjOqFjuZoqHq8WKTEd4SFLLP4iqWRcRloOUyYkvarcq3/0OZUVZCHN4vRwdsbuykPbisVOVRGDFWBXplHFSbA9h0s91tgd1HyswRP6zQbYag+kxiHuw+X0INUYvDw1/CYmr4fqCJgBpc5VycIzAu7P0S0="

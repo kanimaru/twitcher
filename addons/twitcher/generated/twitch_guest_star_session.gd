@@ -8,31 +8,31 @@ class_name TwitchGuestStarSession
 ## ID uniquely representing the Guest Star session.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## List of guests currently interacting with the Guest Star session.
 var guests: Array[TwitchGuest]:
 	set(val):
-		guests = val;
-		changed_data["guests"] = [];
+		guests = val
+		changed_data["guests"] = []
 		if guests != null:
 			for value in guests:
-				changed_data["guests"].append(value.to_dict());
+				changed_data["guests"].append(value.to_dict())
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchGuestStarSession:
-	var result = TwitchGuestStarSession.new();
+	var result = TwitchGuestStarSession.new()
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("guests") && d["guests"] != null:
 		for value in d["guests"]:
-			result.guests.append(TwitchGuest.from_json(value));
-	return result;
+			result.guests.append(TwitchGuest.from_json(value))
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

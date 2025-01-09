@@ -2,9 +2,13 @@
 @icon("../assets/event-icon.svg")
 extends Node
 
-## Listens to an event and publishes it as signal. Expects that the signal was
-## already configured in the settings or manually subscribed.
+## Listens to an event and publishes it as signal.
+## Usage for easy access of events on test and normal eventsub makes it more obvious what a scene
+## is listening before diving in the code.
+
+## [b]Expects that the signal was already configured in the eventsub or manually subscribed[/b]
 class_name TwitchEventListener
+var _log : TwitchLogger = TwitchLogger.new("TwitchEventListener")
 
 @export var eventsub: TwitchEventsub:
 	set = _update_eventsub
@@ -13,9 +17,10 @@ class_name TwitchEventListener
 @export var subscription: TwitchEventsubDefinition.Type:
 	set(val):
 		subscription = val
+		subscription_definition = TwitchEventsubDefinition.ALL[subscription]
 		update_configuration_warnings()
 
-var subscription_definition: TwitchEventsubDefinition.Definition
+var subscription_definition: TwitchEventsubDefinition
 
 
 ## Called when the event got received
@@ -24,17 +29,24 @@ signal received(data: Dictionary)
 
 func _ready() -> void:
 	_update_eventsub(eventsub)
-	subscription_definition = TwitchEventsubDefinition.ALL[subscription]
 
 
-func _update_eventsub(val: TwitchEventsub):
+func _exit_tree() -> void:
+	stop_listening()
+
+
+func stop_listening() -> void:
+	_log.d("stop listening %s" % subscription_definition.get_readable_name())
 	if eventsub != null:
 		if TwitchSetting.use_test_server:
 			eventsub.event.disconnect(_on_received)
 		eventsub.event.disconnect(_on_received)
 
+
+func _update_eventsub(val: TwitchEventsub):
+	stop_listening()
+
 	eventsub = val
-	print("Eventsub: ", val)
 	update_configuration_warnings()
 	if val == null: return
 

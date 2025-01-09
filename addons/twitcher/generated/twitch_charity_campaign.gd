@@ -8,157 +8,157 @@ class_name TwitchCharityCampaign
 ## An ID that identifies the charity campaign.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## An ID that identifies the broadcaster that’s running the campaign.
 var broadcaster_id: String:
 	set(val):
-		broadcaster_id = val;
-		changed_data["broadcaster_id"] = broadcaster_id;
+		broadcaster_id = val
+		changed_data["broadcaster_id"] = broadcaster_id
 ## The broadcaster’s login name.
 var broadcaster_login: String:
 	set(val):
-		broadcaster_login = val;
-		changed_data["broadcaster_login"] = broadcaster_login;
+		broadcaster_login = val
+		changed_data["broadcaster_login"] = broadcaster_login
 ## The broadcaster’s display name.
 var broadcaster_name: String:
 	set(val):
-		broadcaster_name = val;
-		changed_data["broadcaster_name"] = broadcaster_name;
+		broadcaster_name = val
+		changed_data["broadcaster_name"] = broadcaster_name
 ## The charity’s name.
 var charity_name: String:
 	set(val):
-		charity_name = val;
-		changed_data["charity_name"] = charity_name;
+		charity_name = val
+		changed_data["charity_name"] = charity_name
 ## A description of the charity.
 var charity_description: String:
 	set(val):
-		charity_description = val;
-		changed_data["charity_description"] = charity_description;
+		charity_description = val
+		changed_data["charity_description"] = charity_description
 ## A URL to an image of the charity’s logo. The image’s type is PNG and its size is 100px X 100px.
 var charity_logo: String:
 	set(val):
-		charity_logo = val;
-		changed_data["charity_logo"] = charity_logo;
+		charity_logo = val
+		changed_data["charity_logo"] = charity_logo
 ## A URL to the charity’s website.
 var charity_website: String:
 	set(val):
-		charity_website = val;
-		changed_data["charity_website"] = charity_website;
+		charity_website = val
+		changed_data["charity_website"] = charity_website
 ## The current amount of donations that the campaign has received.
 var current_amount: CurrentAmount:
 	set(val):
-		current_amount = val;
+		current_amount = val
 		if current_amount != null:
-			changed_data["current_amount"] = current_amount.to_dict();
+			changed_data["current_amount"] = current_amount.to_dict()
 ## The campaign’s fundraising goal. This field is **null** if the broadcaster has not defined a fundraising goal.
 var target_amount: TargetAmount:
 	set(val):
-		target_amount = val;
+		target_amount = val
 		if target_amount != null:
-			changed_data["target_amount"] = target_amount.to_dict();
+			changed_data["target_amount"] = target_amount.to_dict()
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchCharityCampaign:
-	var result = TwitchCharityCampaign.new();
+	var result = TwitchCharityCampaign.new()
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
-		result.broadcaster_id = d["broadcaster_id"];
+		result.broadcaster_id = d["broadcaster_id"]
 	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
-		result.broadcaster_login = d["broadcaster_login"];
+		result.broadcaster_login = d["broadcaster_login"]
 	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
-		result.broadcaster_name = d["broadcaster_name"];
+		result.broadcaster_name = d["broadcaster_name"]
 	if d.has("charity_name") && d["charity_name"] != null:
-		result.charity_name = d["charity_name"];
+		result.charity_name = d["charity_name"]
 	if d.has("charity_description") && d["charity_description"] != null:
-		result.charity_description = d["charity_description"];
+		result.charity_description = d["charity_description"]
 	if d.has("charity_logo") && d["charity_logo"] != null:
-		result.charity_logo = d["charity_logo"];
+		result.charity_logo = d["charity_logo"]
 	if d.has("charity_website") && d["charity_website"] != null:
-		result.charity_website = d["charity_website"];
+		result.charity_website = d["charity_website"]
 	if d.has("current_amount") && d["current_amount"] != null:
-		result.current_amount = CurrentAmount.from_json(d["current_amount"]);
+		result.current_amount = CurrentAmount.from_json(d["current_amount"])
 	if d.has("target_amount") && d["target_amount"] != null:
-		result.target_amount = TargetAmount.from_json(d["target_amount"]);
-	return result;
+		result.target_amount = TargetAmount.from_json(d["target_amount"])
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## The current amount of donations that the campaign has received.
 class CurrentAmount extends RefCounted:
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
 	var value: int:
 		set(val):
-			value = val;
-			changed_data["value"] = value;
+			value = val
+			changed_data["value"] = value
 	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate `value` from minor units to major units by using the formula:      `value / 10^decimal_places`
 	var decimal_places: int:
 		set(val):
-			decimal_places = val;
-			changed_data["decimal_places"] = decimal_places;
+			decimal_places = val
+			changed_data["decimal_places"] = decimal_places
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
 	var currency: String:
 		set(val):
-			currency = val;
-			changed_data["currency"] = currency;
+			currency = val
+			changed_data["currency"] = currency
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> CurrentAmount:
-		var result = CurrentAmount.new();
+		var result = CurrentAmount.new()
 		if d.has("value") && d["value"] != null:
-			result.value = d["value"];
+			result.value = d["value"]
 		if d.has("decimal_places") && d["decimal_places"] != null:
-			result.decimal_places = d["decimal_places"];
+			result.decimal_places = d["decimal_places"]
 		if d.has("currency") && d["currency"] != null:
-			result.currency = d["currency"];
-		return result;
+			result.currency = d["currency"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 
 ## The campaign’s fundraising goal. This field is **null** if the broadcaster has not defined a fundraising goal.
 class TargetAmount extends RefCounted:
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
 	var value: int:
 		set(val):
-			value = val;
-			changed_data["value"] = value;
+			value = val
+			changed_data["value"] = value
 	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate `value` from minor units to major units by using the formula:      `value / 10^decimal_places`
 	var decimal_places: int:
 		set(val):
-			decimal_places = val;
-			changed_data["decimal_places"] = decimal_places;
+			decimal_places = val
+			changed_data["decimal_places"] = decimal_places
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
 	var currency: String:
 		set(val):
-			currency = val;
-			changed_data["currency"] = currency;
+			currency = val
+			changed_data["currency"] = currency
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> TargetAmount:
-		var result = TargetAmount.new();
+		var result = TargetAmount.new()
 		if d.has("value") && d["value"] != null:
-			result.value = d["value"];
+			result.value = d["value"]
 		if d.has("decimal_places") && d["decimal_places"] != null:
-			result.decimal_places = d["decimal_places"];
+			result.decimal_places = d["decimal_places"]
 		if d.has("currency") && d["currency"] != null:
-			result.currency = d["currency"];
-		return result;
+			result.currency = d["currency"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

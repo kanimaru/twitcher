@@ -1,6 +1,6 @@
 extends RefCounted
 
-## Definition to load or specify one spefcific badge
+## Definition to load or specify one specific badge
 class_name TwitchBadgeDefinition
 
 var badge_set: String

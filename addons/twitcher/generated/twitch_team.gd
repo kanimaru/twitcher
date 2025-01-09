@@ -8,123 +8,123 @@ class_name TwitchTeam
 ## The list of team members.
 var users: Array[Users]:
 	set(val):
-		users = val;
-		changed_data["users"] = [];
+		users = val
+		changed_data["users"] = []
 		if users != null:
 			for value in users:
-				changed_data["users"].append(value.to_dict());
+				changed_data["users"].append(value.to_dict())
 ## A URL to the team’s background image.
 var background_image_url: String:
 	set(val):
-		background_image_url = val;
-		changed_data["background_image_url"] = background_image_url;
+		background_image_url = val
+		changed_data["background_image_url"] = background_image_url
 ## A URL to the team’s banner.
 var banner: String:
 	set(val):
-		banner = val;
-		changed_data["banner"] = banner;
+		banner = val
+		changed_data["banner"] = banner
 ## The UTC date and time (in RFC3339 format) of when the team was created.
 var created_at: Variant:
 	set(val):
-		created_at = val;
-		changed_data["created_at"] = created_at;
+		created_at = val
+		changed_data["created_at"] = created_at
 ## The UTC date and time (in RFC3339 format) of the last time the team was updated.
 var updated_at: Variant:
 	set(val):
-		updated_at = val;
-		changed_data["updated_at"] = updated_at;
+		updated_at = val
+		changed_data["updated_at"] = updated_at
 ## The team’s description. The description may contain formatting such as Markdown, HTML, newline (\\n) characters, etc.
 var info: String:
 	set(val):
-		info = val;
-		changed_data["info"] = info;
+		info = val
+		changed_data["info"] = info
 ## A URL to a thumbnail image of the team’s logo.
 var thumbnail_url: String:
 	set(val):
-		thumbnail_url = val;
-		changed_data["thumbnail_url"] = thumbnail_url;
+		thumbnail_url = val
+		changed_data["thumbnail_url"] = thumbnail_url
 ## The team’s name.
 var team_name: String:
 	set(val):
-		team_name = val;
-		changed_data["team_name"] = team_name;
+		team_name = val
+		changed_data["team_name"] = team_name
 ## The team’s display name.
 var team_display_name: String:
 	set(val):
-		team_display_name = val;
-		changed_data["team_display_name"] = team_display_name;
+		team_display_name = val
+		changed_data["team_display_name"] = team_display_name
 ## An ID that identifies the team.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchTeam:
-	var result = TwitchTeam.new();
+	var result = TwitchTeam.new()
 	if d.has("users") && d["users"] != null:
 		for value in d["users"]:
-			result.users.append(Users.from_json(value));
+			result.users.append(Users.from_json(value))
 	if d.has("background_image_url") && d["background_image_url"] != null:
-		result.background_image_url = d["background_image_url"];
+		result.background_image_url = d["background_image_url"]
 	if d.has("banner") && d["banner"] != null:
-		result.banner = d["banner"];
+		result.banner = d["banner"]
 	if d.has("created_at") && d["created_at"] != null:
-		result.created_at = d["created_at"];
+		result.created_at = d["created_at"]
 	if d.has("updated_at") && d["updated_at"] != null:
-		result.updated_at = d["updated_at"];
+		result.updated_at = d["updated_at"]
 	if d.has("info") && d["info"] != null:
-		result.info = d["info"];
+		result.info = d["info"]
 	if d.has("thumbnail_url") && d["thumbnail_url"] != null:
-		result.thumbnail_url = d["thumbnail_url"];
+		result.thumbnail_url = d["thumbnail_url"]
 	if d.has("team_name") && d["team_name"] != null:
-		result.team_name = d["team_name"];
+		result.team_name = d["team_name"]
 	if d.has("team_display_name") && d["team_display_name"] != null:
-		result.team_display_name = d["team_display_name"];
+		result.team_display_name = d["team_display_name"]
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
-	return result;
+		result.id = d["id"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## 
 class Users extends RefCounted:
 	## An ID that identifies the team member.
 	var user_id: String:
 		set(val):
-			user_id = val;
-			changed_data["user_id"] = user_id;
+			user_id = val
+			changed_data["user_id"] = user_id
 	## The team member’s login name.
 	var user_login: String:
 		set(val):
-			user_login = val;
-			changed_data["user_login"] = user_login;
+			user_login = val
+			changed_data["user_login"] = user_login
 	## The team member’s display name.
 	var user_name: String:
 		set(val):
-			user_name = val;
-			changed_data["user_name"] = user_name;
+			user_name = val
+			changed_data["user_name"] = user_name
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> Users:
-		var result = Users.new();
+		var result = Users.new()
 		if d.has("user_id") && d["user_id"] != null:
-			result.user_id = d["user_id"];
+			result.user_id = d["user_id"]
 		if d.has("user_login") && d["user_login"] != null:
-			result.user_login = d["user_login"];
+			result.user_login = d["user_login"]
 		if d.has("user_name") && d["user_name"] != null:
-			result.user_name = d["user_name"];
-		return result;
+			result.user_name = d["user_name"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

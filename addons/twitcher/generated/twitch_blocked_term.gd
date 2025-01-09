@@ -8,62 +8,62 @@ class_name TwitchBlockedTerm
 ## The broadcaster that owns the list of blocked terms.
 var broadcaster_id: String:
 	set(val):
-		broadcaster_id = val;
-		changed_data["broadcaster_id"] = broadcaster_id;
+		broadcaster_id = val
+		changed_data["broadcaster_id"] = broadcaster_id
 ## The moderator that blocked the word or phrase from being used in the broadcaster’s chat room.
 var moderator_id: String:
 	set(val):
-		moderator_id = val;
-		changed_data["moderator_id"] = moderator_id;
+		moderator_id = val
+		changed_data["moderator_id"] = moderator_id
 ## An ID that identifies this blocked term.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## The blocked word or phrase.
 var text: String:
 	set(val):
-		text = val;
-		changed_data["text"] = text;
+		text = val
+		changed_data["text"] = text
 ## The UTC date and time (in RFC3339 format) that the term was blocked.
 var created_at: Variant:
 	set(val):
-		created_at = val;
-		changed_data["created_at"] = created_at;
+		created_at = val
+		changed_data["created_at"] = created_at
 ## The UTC date and time (in RFC3339 format) that the term was updated.      When the term is added, this timestamp is the same as `created_at`. The timestamp changes as AutoMod continues to deny the term.
 var updated_at: Variant:
 	set(val):
-		updated_at = val;
-		changed_data["updated_at"] = updated_at;
+		updated_at = val
+		changed_data["updated_at"] = updated_at
 ## The UTC date and time (in RFC3339 format) that the blocked term is set to expire. After the block expires, users may use the term in the broadcaster’s chat room.      This field is **null** if the term was added manually or was permanently blocked by AutoMod.
 var expires_at: Variant:
 	set(val):
-		expires_at = val;
-		changed_data["expires_at"] = expires_at;
+		expires_at = val
+		changed_data["expires_at"] = expires_at
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchBlockedTerm:
-	var result = TwitchBlockedTerm.new();
+	var result = TwitchBlockedTerm.new()
 	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
-		result.broadcaster_id = d["broadcaster_id"];
+		result.broadcaster_id = d["broadcaster_id"]
 	if d.has("moderator_id") && d["moderator_id"] != null:
-		result.moderator_id = d["moderator_id"];
+		result.moderator_id = d["moderator_id"]
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("text") && d["text"] != null:
-		result.text = d["text"];
+		result.text = d["text"]
 	if d.has("created_at") && d["created_at"] != null:
-		result.created_at = d["created_at"];
+		result.created_at = d["created_at"]
 	if d.has("updated_at") && d["updated_at"] != null:
-		result.updated_at = d["updated_at"];
+		result.updated_at = d["updated_at"]
 	if d.has("expires_at") && d["expires_at"] != null:
-		result.expires_at = d["expires_at"];
-	return result;
+		result.expires_at = d["expires_at"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

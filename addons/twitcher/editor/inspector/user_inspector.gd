@@ -2,8 +2,8 @@
 extends EditorInspectorPlugin
 
 
-const USER_CONVERTER = preload("res://addons/twitcher/inspector/user_converter.tscn")
-const UserConverter = preload("res://addons/twitcher/inspector/user_converter.gd")
+const USER_CONVERTER = preload("res://addons/twitcher/editor/inspector/user_converter.tscn")
+const UserConverter = preload("res://addons/twitcher/editor/inspector/user_converter.gd")
 
 
 func _can_handle(object: Object) -> bool:

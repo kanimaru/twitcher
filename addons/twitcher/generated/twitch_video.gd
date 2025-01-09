@@ -8,165 +8,165 @@ class_name TwitchVideo
 ## An ID that identifies the video.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## The ID of the stream that the video originated from if the video's type is "archive;" otherwise, **null**.
 var stream_id: String:
 	set(val):
-		stream_id = val;
-		changed_data["stream_id"] = stream_id;
+		stream_id = val
+		changed_data["stream_id"] = stream_id
 ## The ID of the broadcaster that owns the video.
 var user_id: String:
 	set(val):
-		user_id = val;
-		changed_data["user_id"] = user_id;
+		user_id = val
+		changed_data["user_id"] = user_id
 ## The broadcaster's login name.
 var user_login: String:
 	set(val):
-		user_login = val;
-		changed_data["user_login"] = user_login;
+		user_login = val
+		changed_data["user_login"] = user_login
 ## The broadcaster's display name.
 var user_name: String:
 	set(val):
-		user_name = val;
-		changed_data["user_name"] = user_name;
+		user_name = val
+		changed_data["user_name"] = user_name
 ## The video's title.
 var title: String:
 	set(val):
-		title = val;
-		changed_data["title"] = title;
+		title = val
+		changed_data["title"] = title
 ## The video's description.
 var description: String:
 	set(val):
-		description = val;
-		changed_data["description"] = description;
+		description = val
+		changed_data["description"] = description
 ## The date and time, in UTC, of when the video was created. The timestamp is in RFC3339 format.
 var created_at: Variant:
 	set(val):
-		created_at = val;
-		changed_data["created_at"] = created_at;
+		created_at = val
+		changed_data["created_at"] = created_at
 ## The date and time, in UTC, of when the video was published. The timestamp is in RFC3339 format.
 var published_at: Variant:
 	set(val):
-		published_at = val;
-		changed_data["published_at"] = published_at;
+		published_at = val
+		changed_data["published_at"] = published_at
 ## The video's URL.
 var url: String:
 	set(val):
-		url = val;
-		changed_data["url"] = url;
+		url = val
+		changed_data["url"] = url
 ## A URL to a thumbnail image of the video. Before using the URL, you must replace the `%{width}` and `%{height}` placeholders with the width and height of the thumbnail you want returned. Due to current limitations, `${width}` must be 320 and `${height}` must be 180.
 var thumbnail_url: String:
 	set(val):
-		thumbnail_url = val;
-		changed_data["thumbnail_url"] = thumbnail_url;
+		thumbnail_url = val
+		changed_data["thumbnail_url"] = thumbnail_url
 ## The video's viewable state. Always set to **public**.
 var viewable: String:
 	set(val):
-		viewable = val;
-		changed_data["viewable"] = viewable;
+		viewable = val
+		changed_data["viewable"] = viewable
 ## The number of times that users have watched the video.
 var view_count: int:
 	set(val):
-		view_count = val;
-		changed_data["view_count"] = view_count;
+		view_count = val
+		changed_data["view_count"] = view_count
 ## The ISO 639-1 two-letter language code that the video was broadcast in. For example, the language code is DE if the video was broadcast in German. For a list of supported languages, see [Supported Stream Language](https://help.twitch.tv/s/article/languages-on-twitch#streamlang). The language value is "other" if the video was broadcast in a language not in the list of supported languages.
 var language: String:
 	set(val):
-		language = val;
-		changed_data["language"] = language;
+		language = val
+		changed_data["language"] = language
 ## The video's type. Possible values are:      * archive — An on-demand video (VOD) of one of the broadcaster's past streams. * highlight — A highlight reel of one of the broadcaster's past streams. See [Creating Highlights](https://help.twitch.tv/s/article/creating-highlights-and-stream-markers). * upload — A video that the broadcaster uploaded to their video library. See Upload under [Video Producer](https://help.twitch.tv/s/article/video-on-demand?language=en%5FUS#videoproducer).
 var type: String:
 	set(val):
-		type = val;
-		changed_data["type"] = type;
+		type = val
+		changed_data["type"] = type
 ## The video's length in ISO 8601 duration format. For example, 3m21s represents 3 minutes, 21 seconds.
 var duration: String:
 	set(val):
-		duration = val;
-		changed_data["duration"] = duration;
+		duration = val
+		changed_data["duration"] = duration
 ## The segments that Twitch Audio Recognition muted; otherwise, **null**.
 var muted_segments: Array[MutedSegments]:
 	set(val):
-		muted_segments = val;
-		changed_data["muted_segments"] = [];
+		muted_segments = val
+		changed_data["muted_segments"] = []
 		if muted_segments != null:
 			for value in muted_segments:
-				changed_data["muted_segments"].append(value.to_dict());
+				changed_data["muted_segments"].append(value.to_dict())
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchVideo:
-	var result = TwitchVideo.new();
+	var result = TwitchVideo.new()
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("stream_id") && d["stream_id"] != null:
-		result.stream_id = d["stream_id"];
+		result.stream_id = d["stream_id"]
 	if d.has("user_id") && d["user_id"] != null:
-		result.user_id = d["user_id"];
+		result.user_id = d["user_id"]
 	if d.has("user_login") && d["user_login"] != null:
-		result.user_login = d["user_login"];
+		result.user_login = d["user_login"]
 	if d.has("user_name") && d["user_name"] != null:
-		result.user_name = d["user_name"];
+		result.user_name = d["user_name"]
 	if d.has("title") && d["title"] != null:
-		result.title = d["title"];
+		result.title = d["title"]
 	if d.has("description") && d["description"] != null:
-		result.description = d["description"];
+		result.description = d["description"]
 	if d.has("created_at") && d["created_at"] != null:
-		result.created_at = d["created_at"];
+		result.created_at = d["created_at"]
 	if d.has("published_at") && d["published_at"] != null:
-		result.published_at = d["published_at"];
+		result.published_at = d["published_at"]
 	if d.has("url") && d["url"] != null:
-		result.url = d["url"];
+		result.url = d["url"]
 	if d.has("thumbnail_url") && d["thumbnail_url"] != null:
-		result.thumbnail_url = d["thumbnail_url"];
+		result.thumbnail_url = d["thumbnail_url"]
 	if d.has("viewable") && d["viewable"] != null:
-		result.viewable = d["viewable"];
+		result.viewable = d["viewable"]
 	if d.has("view_count") && d["view_count"] != null:
-		result.view_count = d["view_count"];
+		result.view_count = d["view_count"]
 	if d.has("language") && d["language"] != null:
-		result.language = d["language"];
+		result.language = d["language"]
 	if d.has("type") && d["type"] != null:
-		result.type = d["type"];
+		result.type = d["type"]
 	if d.has("duration") && d["duration"] != null:
-		result.duration = d["duration"];
+		result.duration = d["duration"]
 	if d.has("muted_segments") && d["muted_segments"] != null:
 		for value in d["muted_segments"]:
-			result.muted_segments.append(MutedSegments.from_json(value));
-	return result;
+			result.muted_segments.append(MutedSegments.from_json(value))
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## 
 class MutedSegments extends RefCounted:
 	## The duration of the muted segment, in seconds.
 	var duration: int:
 		set(val):
-			duration = val;
-			changed_data["duration"] = duration;
+			duration = val
+			changed_data["duration"] = duration
 	## The offset, in seconds, from the beginning of the video to where the muted segment begins.
 	var offset: int:
 		set(val):
-			offset = val;
-			changed_data["offset"] = offset;
+			offset = val
+			changed_data["offset"] = offset
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> MutedSegments:
-		var result = MutedSegments.new();
+		var result = MutedSegments.new()
 		if d.has("duration") && d["duration"] != null:
-			result.duration = d["duration"];
+			result.duration = d["duration"]
 		if d.has("offset") && d["offset"] != null:
-			result.offset = d["offset"];
-		return result;
+			result.offset = d["offset"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

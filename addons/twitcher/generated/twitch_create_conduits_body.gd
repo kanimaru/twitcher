@@ -8,20 +8,20 @@ class_name TwitchCreateConduitsBody
 ## The number of shards to create for this conduit.
 var shard_count: int:
 	set(val):
-		shard_count = val;
-		changed_data["shard_count"] = shard_count;
+		shard_count = val
+		changed_data["shard_count"] = shard_count
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchCreateConduitsBody:
-	var result = TwitchCreateConduitsBody.new();
+	var result = TwitchCreateConduitsBody.new()
 	if d.has("shard_count") && d["shard_count"] != null:
-		result.shard_count = d["shard_count"];
-	return result;
+		result.shard_count = d["shard_count"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

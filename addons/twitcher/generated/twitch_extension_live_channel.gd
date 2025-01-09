@@ -8,48 +8,48 @@ class_name TwitchExtensionLiveChannel
 ## The ID of the broadcaster that is streaming live and has installed or activated the extension.
 var broadcaster_id: String:
 	set(val):
-		broadcaster_id = val;
-		changed_data["broadcaster_id"] = broadcaster_id;
+		broadcaster_id = val
+		changed_data["broadcaster_id"] = broadcaster_id
 ## The broadcaster’s display name.
 var broadcaster_name: String:
 	set(val):
-		broadcaster_name = val;
-		changed_data["broadcaster_name"] = broadcaster_name;
+		broadcaster_name = val
+		changed_data["broadcaster_name"] = broadcaster_name
 ## The name of the category or game being streamed.
 var game_name: String:
 	set(val):
-		game_name = val;
-		changed_data["game_name"] = game_name;
+		game_name = val
+		changed_data["game_name"] = game_name
 ## The ID of the category or game being streamed.
 var game_id: String:
 	set(val):
-		game_id = val;
-		changed_data["game_id"] = game_id;
+		game_id = val
+		changed_data["game_id"] = game_id
 ## The title of the broadcaster’s stream. May be an empty string if not specified.
 var title: String:
 	set(val):
-		title = val;
-		changed_data["title"] = title;
+		title = val
+		changed_data["title"] = title
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchExtensionLiveChannel:
-	var result = TwitchExtensionLiveChannel.new();
+	var result = TwitchExtensionLiveChannel.new()
 	if d.has("broadcaster_id") && d["broadcaster_id"] != null:
-		result.broadcaster_id = d["broadcaster_id"];
+		result.broadcaster_id = d["broadcaster_id"]
 	if d.has("broadcaster_name") && d["broadcaster_name"] != null:
-		result.broadcaster_name = d["broadcaster_name"];
+		result.broadcaster_name = d["broadcaster_name"]
 	if d.has("game_name") && d["game_name"] != null:
-		result.game_name = d["game_name"];
+		result.game_name = d["game_name"]
 	if d.has("game_id") && d["game_id"] != null:
-		result.game_id = d["game_id"];
+		result.game_id = d["game_id"]
 	if d.has("title") && d["title"] != null:
-		result.title = d["title"];
-	return result;
+		result.title = d["title"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

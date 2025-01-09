@@ -8,29 +8,29 @@ class_name TwitchCheermoteImageTheme
 ## No description available
 var animated_format: TwitchCheermoteImageFormat:
 	set(val):
-		animated_format = val;
+		animated_format = val
 		if animated_format != null:
-			changed_data["animated"] = animated_format.to_dict();
+			changed_data["animated"] = animated_format.to_dict()
 ## No description available
 var static_format: TwitchCheermoteImageFormat:
 	set(val):
-		static_format = val;
+		static_format = val
 		if static_format != null:
-			changed_data["static"] = static_format.to_dict();
+			changed_data["static"] = static_format.to_dict()
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchCheermoteImageTheme:
-	var result = TwitchCheermoteImageTheme.new();
+	var result = TwitchCheermoteImageTheme.new()
 	if d.has("animated") && d["animated"] != null:
-		result.animated_format = TwitchCheermoteImageFormat.from_json(d["animated"]);
+		result.animated_format = TwitchCheermoteImageFormat.from_json(d["animated"])
 	if d.has("static") && d["static"] != null:
-		result.static_format = TwitchCheermoteImageFormat.from_json(d["static"]);
-	return result;
+		result.static_format = TwitchCheermoteImageFormat.from_json(d["static"])
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

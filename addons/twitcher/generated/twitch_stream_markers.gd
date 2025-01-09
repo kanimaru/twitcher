@@ -8,113 +8,113 @@ class_name TwitchStreamMarkers
 ## The ID of the user that created the marker.
 var user_id: String:
 	set(val):
-		user_id = val;
-		changed_data["user_id"] = user_id;
+		user_id = val
+		changed_data["user_id"] = user_id
 ## The user’s display name.
 var user_name: String:
 	set(val):
-		user_name = val;
-		changed_data["user_name"] = user_name;
+		user_name = val
+		changed_data["user_name"] = user_name
 ## The user’s login name.
 var user_login: String:
 	set(val):
-		user_login = val;
-		changed_data["user_login"] = user_login;
+		user_login = val
+		changed_data["user_login"] = user_login
 ## A list of videos that contain markers. The list contains a single video.
 var videos: Array:
 	set(val):
-		videos = val;
-		changed_data["videos"] = [];
+		videos = val
+		changed_data["videos"] = []
 		if videos != null:
 			for value in videos:
-				changed_data["videos"].append(value);
+				changed_data["videos"].append(value)
 ## An ID that identifies this video.
 var video_id: String:
 	set(val):
-		video_id = val;
-		changed_data["video_id"] = video_id;
+		video_id = val
+		changed_data["video_id"] = video_id
 ## The list of markers in this video. The list in ascending order by when the marker was created.
 var markers: Array[Markers]:
 	set(val):
-		markers = val;
-		changed_data["markers"] = [];
+		markers = val
+		changed_data["markers"] = []
 		if markers != null:
 			for value in markers:
-				changed_data["markers"].append(value.to_dict());
+				changed_data["markers"].append(value.to_dict())
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchStreamMarkers:
-	var result = TwitchStreamMarkers.new();
+	var result = TwitchStreamMarkers.new()
 	if d.has("user_id") && d["user_id"] != null:
-		result.user_id = d["user_id"];
+		result.user_id = d["user_id"]
 	if d.has("user_name") && d["user_name"] != null:
-		result.user_name = d["user_name"];
+		result.user_name = d["user_name"]
 	if d.has("user_login") && d["user_login"] != null:
-		result.user_login = d["user_login"];
+		result.user_login = d["user_login"]
 	if d.has("videos") && d["videos"] != null:
 		for value in d["videos"]:
-			result.videos.append(value);
+			result.videos.append(value)
 	if d.has("video_id") && d["video_id"] != null:
-		result.video_id = d["video_id"];
+		result.video_id = d["video_id"]
 	if d.has("markers") && d["markers"] != null:
 		for value in d["markers"]:
-			result.markers.append(Markers.from_json(value));
-	return result;
+			result.markers.append(Markers.from_json(value))
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## 
 class Markers extends RefCounted:
 	## An ID that identifies this marker.
 	var id: String:
 		set(val):
-			id = val;
-			changed_data["id"] = id;
+			id = val
+			changed_data["id"] = id
 	## The UTC date and time (in RFC3339 format) of when the user created the marker.
 	var created_at: Variant:
 		set(val):
-			created_at = val;
-			changed_data["created_at"] = created_at;
+			created_at = val
+			changed_data["created_at"] = created_at
 	## The description that the user gave the marker to help them remember why they marked the location. Is an empty string if the user didn’t provide one.
 	var description: String:
 		set(val):
-			description = val;
-			changed_data["description"] = description;
+			description = val
+			changed_data["description"] = description
 	## The relative offset (in seconds) of the marker from the beginning of the stream.
 	var position_seconds: int:
 		set(val):
-			position_seconds = val;
-			changed_data["position_seconds"] = position_seconds;
+			position_seconds = val
+			changed_data["position_seconds"] = position_seconds
 	## A URL that opens the video in Twitch Highlighter.
 	var url: String:
 		set(val):
-			url = val;
-			changed_data["url"] = url;
+			url = val
+			changed_data["url"] = url
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> Markers:
-		var result = Markers.new();
+		var result = Markers.new()
 		if d.has("id") && d["id"] != null:
-			result.id = d["id"];
+			result.id = d["id"]
 		if d.has("created_at") && d["created_at"] != null:
-			result.created_at = d["created_at"];
+			result.created_at = d["created_at"]
 		if d.has("description") && d["description"] != null:
-			result.description = d["description"];
+			result.description = d["description"]
 		if d.has("position_seconds") && d["position_seconds"] != null:
-			result.position_seconds = d["position_seconds"];
+			result.position_seconds = d["position_seconds"]
 		if d.has("url") && d["url"] != null:
-			result.url = d["url"];
-		return result;
+			result.url = d["url"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

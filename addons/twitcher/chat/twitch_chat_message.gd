@@ -161,7 +161,7 @@ class Emote:
 			2: definition.scale_2()
 			3: definition.scale_3()
 			_: definition.scale_1()
-		var emotes = await _twitch_service.icon_loader.get_emotes_by_definition([definition])
+		var emotes = await _twitch_service.media_loader.get_emotes_by_definition([definition])
 		return emotes[definition]
 
 
@@ -354,7 +354,7 @@ func get_badges(scale: int = 1) -> Dictionary:
 	for badge in badges:
 		var badge_definition = TwitchBadgeDefinition.new(badge.set_id, badge.id, scale, broadcaster_user_id)
 		definitions.append(badge_definition)
-	var emotes = await _twitch_service.icon_loader.get_badges(definitions)
+	var emotes = await _twitch_service.media_loader.get_badges(definitions)
 	return emotes
 
 
@@ -364,7 +364,7 @@ func get_source_badges(scale: int = 1) -> Dictionary:
 	for badge in source_badges:
 		var badge_definition = TwitchBadgeDefinition.new(badge.set_id, badge.id, scale, broadcaster_user_id)
 		definitions.append(badge_definition)
-	var emotes = await _twitch_service.icon_loader.get_badges(definitions)
+	var emotes = await _twitch_service.media_loader.get_badges(definitions)
 	return emotes
 
 ## Returns a the color of the user or the default when its not set never null

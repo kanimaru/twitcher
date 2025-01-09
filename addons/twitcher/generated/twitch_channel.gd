@@ -8,105 +8,105 @@ class_name TwitchChannel
 ## The ISO 639-1 two-letter language code of the language used by the broadcaster. For example, _en_ for English. If the broadcaster uses a language not in the list of [supported stream languages](https://help.twitch.tv/s/article/languages-on-twitch#streamlang), the value is _other_.
 var broadcaster_language: String:
 	set(val):
-		broadcaster_language = val;
-		changed_data["broadcaster_language"] = broadcaster_language;
+		broadcaster_language = val
+		changed_data["broadcaster_language"] = broadcaster_language
 ## The broadcaster’s login name.
 var broadcaster_login: String:
 	set(val):
-		broadcaster_login = val;
-		changed_data["broadcaster_login"] = broadcaster_login;
+		broadcaster_login = val
+		changed_data["broadcaster_login"] = broadcaster_login
 ## The broadcaster’s display name.
 var display_name: String:
 	set(val):
-		display_name = val;
-		changed_data["display_name"] = display_name;
+		display_name = val
+		changed_data["display_name"] = display_name
 ## The ID of the game that the broadcaster is playing or last played.
 var game_id: String:
 	set(val):
-		game_id = val;
-		changed_data["game_id"] = game_id;
+		game_id = val
+		changed_data["game_id"] = game_id
 ## The name of the game that the broadcaster is playing or last played.
 var game_name: String:
 	set(val):
-		game_name = val;
-		changed_data["game_name"] = game_name;
+		game_name = val
+		changed_data["game_name"] = game_name
 ## An ID that uniquely identifies the channel (this is the broadcaster’s ID).
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## A Boolean value that determines whether the broadcaster is streaming live. Is **true** if the broadcaster is streaming live; otherwise, **false**.
 var is_live: bool:
 	set(val):
-		is_live = val;
-		changed_data["is_live"] = is_live;
+		is_live = val
+		changed_data["is_live"] = is_live
 ## **IMPORTANT** As of February 28, 2023, this field is deprecated and returns only an empty array. If you use this field, please update your code to use the `tags` field.      The list of tags that apply to the stream. The list contains IDs only when the channel is steaming live. For a list of possible tags, see [List of All Tags](https://www.twitch.tv/directory/all/tags). The list doesn’t include Category Tags.
 var tag_ids: Array[String]:
 	set(val):
-		tag_ids = val;
-		changed_data["tag_ids"] = [];
+		tag_ids = val
+		changed_data["tag_ids"] = []
 		if tag_ids != null:
 			for value in tag_ids:
-				changed_data["tag_ids"].append(value);
+				changed_data["tag_ids"].append(value)
 ## The tags applied to the channel.
 var tags: Array[String]:
 	set(val):
-		tags = val;
-		changed_data["tags"] = [];
+		tags = val
+		changed_data["tags"] = []
 		if tags != null:
 			for value in tags:
-				changed_data["tags"].append(value);
+				changed_data["tags"].append(value)
 ## A URL to a thumbnail of the broadcaster’s profile image.
 var thumbnail_url: String:
 	set(val):
-		thumbnail_url = val;
-		changed_data["thumbnail_url"] = thumbnail_url;
+		thumbnail_url = val
+		changed_data["thumbnail_url"] = thumbnail_url
 ## The stream’s title. Is an empty string if the broadcaster didn’t set it.
 var title: String:
 	set(val):
-		title = val;
-		changed_data["title"] = title;
+		title = val
+		changed_data["title"] = title
 ## The UTC date and time (in RFC3339 format) of when the broadcaster started streaming. The string is empty if the broadcaster is not streaming live.
 var started_at: Variant:
 	set(val):
-		started_at = val;
-		changed_data["started_at"] = started_at;
+		started_at = val
+		changed_data["started_at"] = started_at
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchChannel:
-	var result = TwitchChannel.new();
+	var result = TwitchChannel.new()
 	if d.has("broadcaster_language") && d["broadcaster_language"] != null:
-		result.broadcaster_language = d["broadcaster_language"];
+		result.broadcaster_language = d["broadcaster_language"]
 	if d.has("broadcaster_login") && d["broadcaster_login"] != null:
-		result.broadcaster_login = d["broadcaster_login"];
+		result.broadcaster_login = d["broadcaster_login"]
 	if d.has("display_name") && d["display_name"] != null:
-		result.display_name = d["display_name"];
+		result.display_name = d["display_name"]
 	if d.has("game_id") && d["game_id"] != null:
-		result.game_id = d["game_id"];
+		result.game_id = d["game_id"]
 	if d.has("game_name") && d["game_name"] != null:
-		result.game_name = d["game_name"];
+		result.game_name = d["game_name"]
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("is_live") && d["is_live"] != null:
-		result.is_live = d["is_live"];
+		result.is_live = d["is_live"]
 	if d.has("tag_ids") && d["tag_ids"] != null:
 		for value in d["tag_ids"]:
-			result.tag_ids.append(value);
+			result.tag_ids.append(value)
 	if d.has("tags") && d["tags"] != null:
 		for value in d["tags"]:
-			result.tags.append(value);
+			result.tags.append(value)
 	if d.has("thumbnail_url") && d["thumbnail_url"] != null:
-		result.thumbnail_url = d["thumbnail_url"];
+		result.thumbnail_url = d["thumbnail_url"]
 	if d.has("title") && d["title"] != null:
-		result.title = d["title"];
+		result.title = d["title"]
 	if d.has("started_at") && d["started_at"] != null:
-		result.started_at = d["started_at"];
-	return result;
+		result.started_at = d["started_at"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

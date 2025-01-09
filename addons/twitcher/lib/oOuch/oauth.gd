@@ -20,7 +20,7 @@ signal device_code_requested(device_code: OAuthDeviceCodeResponse)
 ## Called when the token has changed
 signal token_changed(access_token: String)
 
-@export var setting: OAuthSetting
+@export var oauth_setting: OAuthSetting
 @export var scopes: OAuthScopes
 @export var token_handler: OAuthTokenHandler
 
@@ -41,7 +41,7 @@ enum AuthorizationFlow {
 
 
 func _ready() -> void:
-	_auth_http_server = OAuthHTTPServer.new(setting.redirect_port)
+	_auth_http_server = OAuthHTTPServer.new(oauth_setting.redirect_port)
 	if token_handler == null:
 		token_handler = OAuthTokenHandler.new()
 		add_child(token_handler)
@@ -95,7 +95,7 @@ func login() -> void:
 
 	login_in_process = true
 	logInfo("do login")
-	match setting.authorization_flow:
+	match oauth_setting.authorization_flow:
 		AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
 			await _start_login_process("code")
 		AuthorizationFlow.CLIENT_CREDENTIALS:
@@ -132,12 +132,12 @@ func _start_login_process(response_type: String) -> void:
 	var query_param = "&".join([
 			"force_verify=%s" % force_verify.uri_encode(),
 			"response_type=%s" % response_type.uri_encode(),
-			"client_id=%s" % setting.client_id.uri_encode(),
+			"client_id=%s" % oauth_setting.client_id.uri_encode(),
 			"scope=%s" % scopes.ssv_scopes().uri_encode(),
-			"redirect_uri=%s" % setting.redirect_url.uri_encode()
+			"redirect_uri=%s" % oauth_setting.redirect_url.uri_encode()
 		])
 
-	var url = setting.authorization_host + setting.authorization_path + "?" + query_param
+	var url = oauth_setting.authorization_host + oauth_setting.authorization_path + "?" + query_param
 	logInfo("start login process to get token for scopes %s" % (",".join(scopes.used_scopes)))
 	logDebug("login to %s" % url)
 	OS.shell_open(url)
@@ -170,11 +170,11 @@ func _start_device_login_process():
 func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 	logInfo("Start device code flow")
 	logDebug("Request Scopes: %s" % scopes)
-	var client = OAuthHTTPClient.new(setting.device_authorization_host)
-	var body = "client_id=%s&scopes=%s" % [setting.client_id, scopes.uri_encode()]
-	if setting.client_secret != "":
-		body += "&client_secret=%s" % setting.client_secret
-	var request = client.request(setting.device_authorization_path, HTTPClient.METHOD_POST, {
+	var client = OAuthHTTPClient.new(oauth_setting.device_authorization_host)
+	var body = "client_id=%s&scopes=%s" % [oauth_setting.client_id, scopes.uri_encode()]
+	if oauth_setting.client_secret != "":
+		body += "&client_secret=%s" % oauth_setting.client_secret
+	var request = client.request(oauth_setting.device_authorization_path, HTTPClient.METHOD_POST, {
 		"Content-Type": "application/x-www-form-urlencoded"
 	}, body)
 
@@ -192,7 +192,7 @@ func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServer) -> void:
 	var request = client.peer.get_utf8_string(client.peer.get_available_bytes())
 	if request == "":
-		logError("Empty response. Check if your redirect URL is set to %s." % setting.redirect_url)
+		logError("Empty response. Check if your redirect URL is set to %s." % oauth_setting.redirect_url)
 		client.peer.disconnect_from_host()
 		return
 
@@ -203,13 +203,13 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 		if matcher == null:
 			logDebug("Response from auth server was not right expected redirect url. It's ok browser asked probably for favicon etc.")
 			return
-		var redirect_path = setting.redirect_path
+		var redirect_path = oauth_setting.redirect_path
 		var request_path = matcher.get_string(1)
 		if redirect_path == request_path:
 			server.send_response(client, "200 OK", ("<html><head><title>Login</title></head><body>
 				<script>
 					var params = Object.fromEntries(new URLSearchParams(window.location.hash.substring(1)));
-					fetch('" + setting.redirect_url + "', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params) })
+					fetch('" + oauth_setting.redirect_url + "', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params) })
 					.then(window.close);
 				</script>
 				Redirect Token to Godot
@@ -231,7 +231,7 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServer) -> void:
 	var request = client.peer.get_utf8_string(client.peer.get_available_bytes())
 	if request == "":
-		logError("Empty response. Check if your redirect URL is set to %s." % setting.redirect_url)
+		logError("Empty response. Check if your redirect URL is set to %s." % oauth_setting.redirect_url)
 		client.peer.disconnect_from_host()
 		return
 

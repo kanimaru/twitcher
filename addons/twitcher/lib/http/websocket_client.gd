@@ -4,13 +4,12 @@ extends Node
 ## Advanced websocket client that automatically reconnects to the server
 class_name WebsocketClient
 
-const Constants = preload("res://addons/twitcher/constants.gd")
 
 ## Called as soon the websocket got a connection
-signal connection_established()
+signal connection_established
 
 ## Called as soon the websocket closed the connection
-signal connection_closed()
+signal connection_closed
 
 ## Called when a complete message got received
 signal message_received(message: PackedByteArray)
@@ -54,6 +53,10 @@ func open_connection() -> void:
 	_logInfo("Open connection")
 	await _establish_connection()
 
+
+func wait_connection_established() -> void:
+	if is_open: return
+	await connection_established
 
 func _establish_connection() -> void:
 	if _is_already_connecting || not is_closed: return

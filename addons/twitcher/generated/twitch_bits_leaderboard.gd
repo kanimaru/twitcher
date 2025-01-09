@@ -8,48 +8,48 @@ class_name TwitchBitsLeaderboard
 ## An ID that identifies a user on the leaderboard.
 var user_id: String:
 	set(val):
-		user_id = val;
-		changed_data["user_id"] = user_id;
+		user_id = val
+		changed_data["user_id"] = user_id
 ## The user’s login name.
 var user_login: String:
 	set(val):
-		user_login = val;
-		changed_data["user_login"] = user_login;
+		user_login = val
+		changed_data["user_login"] = user_login
 ## The user’s display name.
 var user_name: String:
 	set(val):
-		user_name = val;
-		changed_data["user_name"] = user_name;
+		user_name = val
+		changed_data["user_name"] = user_name
 ## The user’s position on the leaderboard.
 var rank: int:
 	set(val):
-		rank = val;
-		changed_data["rank"] = rank;
+		rank = val
+		changed_data["rank"] = rank
 ## The number of Bits the user has cheered.
 var score: int:
 	set(val):
-		score = val;
-		changed_data["score"] = score;
+		score = val
+		changed_data["score"] = score
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchBitsLeaderboard:
-	var result = TwitchBitsLeaderboard.new();
+	var result = TwitchBitsLeaderboard.new()
 	if d.has("user_id") && d["user_id"] != null:
-		result.user_id = d["user_id"];
+		result.user_id = d["user_id"]
 	if d.has("user_login") && d["user_login"] != null:
-		result.user_login = d["user_login"];
+		result.user_login = d["user_login"]
 	if d.has("user_name") && d["user_name"] != null:
-		result.user_name = d["user_name"];
+		result.user_name = d["user_name"]
 	if d.has("rank") && d["rank"] != null:
-		result.rank = d["rank"];
+		result.rank = d["rank"]
 	if d.has("score") && d["score"] != null:
-		result.score = d["score"];
-	return result;
+		result.score = d["score"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

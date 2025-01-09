@@ -20,7 +20,7 @@ signal token_resolved(tokens: OAuthToken)
 signal unauthenticated()
 
 ## Where to get the tokens from
-@export var setting: OAuthSetting
+@export var oauth_setting: OAuthSetting
 
 ## Holds the current set of tokens
 @export var token: OAuthToken
@@ -34,7 +34,7 @@ var _requesting_token: bool = false
 
 func _ready() -> void:
 	if token == null: token = OAuthToken.new()
-	_http_client = OAuthHTTPClient.new(setting.token_host)
+	_http_client = OAuthHTTPClient.new(oauth_setting.token_host)
 
 
 func _process(_delta: float) -> void:
@@ -57,17 +57,17 @@ func request_token(grant_type: String, auth_code: String = ""):
 	logInfo("Request token via '%s'" % grant_type)
 	var request_params = [
 		"grant_type=%s" % grant_type,
-		"client_id=%s" % setting.client_id,
-		"client_secret=%s" % setting.get_client_secret()
+		"client_id=%s" % oauth_setting.client_id,
+		"client_secret=%s" % oauth_setting.get_client_secret()
 	]
 
 	if auth_code != "":
 		request_params.append("code=%s" % auth_code)
 	if grant_type == "authorization_code":
-		request_params.append("&redirect_uri=%s" % setting.redirect_url)
+		request_params.append("&redirect_uri=%s" % oauth_setting.redirect_url)
 
 	var request_body = "&".join(request_params)
-	var request = _http_client.request(setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body)
+	var request = _http_client.request(oauth_setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body)
 	await _handle_token_request(request)
 	_requesting_token = false
 
@@ -77,13 +77,13 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 	_requesting_token = true
 	logInfo("request token via urn:ietf:params:oauth:grant-type:device_code")
 	var parameters = [
-		"client_id=%s" % setting.client_id,
+		"client_id=%s" % oauth_setting.client_id,
 		"grant_type=%s" % grant_type,
 		"device_code=%s" % device_code_repsonse.device_code,
 		"scopes=%s" % scopes
 	]
-	if setting.client_secret != "":
-		parameters.append("client_secret=%s" % setting.get_client_secret())
+	if oauth_setting.client_secret != "":
+		parameters.append("client_secret=%s" % oauth_setting.get_client_secret())
 
 	var request_body = "&".join(parameters)
 
@@ -91,7 +91,7 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 	var expire_data = Time.get_unix_time_from_system() + device_code_repsonse.expires_in
 
 	while expire_data > Time.get_unix_time_from_system():
-		var request = _http_client.request(setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body)
+		var request = _http_client.request(oauth_setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body)
 		var response = await _http_client.wait_for_request(request)
 		var response_string: String = response.response_data.get_string_from_utf8()
 		var response_data = JSON.parse_string(response_string)
@@ -118,8 +118,8 @@ func refresh_tokens() -> void:
 	_requesting_token = true
 	logInfo("refresh token")
 	if token.has_refresh_token():
-		var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [setting.client_id, setting.get_client_secret(), token.get_refresh_token()]
-		var request = _http_client.request(setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body)
+		var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
+		var request = _http_client.request(oauth_setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body)
 		if await _handle_token_request(request):
 			logInfo("token got refreshed")
 		else:

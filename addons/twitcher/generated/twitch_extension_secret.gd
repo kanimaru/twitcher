@@ -8,67 +8,67 @@ class_name TwitchExtensionSecret
 ## The version number that identifies this definition of the secret’s data.
 var format_version: int:
 	set(val):
-		format_version = val;
-		changed_data["format_version"] = format_version;
+		format_version = val
+		changed_data["format_version"] = format_version
 ## The list of secrets.
 var secrets: Array[Secrets]:
 	set(val):
-		secrets = val;
-		changed_data["secrets"] = [];
+		secrets = val
+		changed_data["secrets"] = []
 		if secrets != null:
 			for value in secrets:
-				changed_data["secrets"].append(value.to_dict());
+				changed_data["secrets"].append(value.to_dict())
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchExtensionSecret:
-	var result = TwitchExtensionSecret.new();
+	var result = TwitchExtensionSecret.new()
 	if d.has("format_version") && d["format_version"] != null:
-		result.format_version = d["format_version"];
+		result.format_version = d["format_version"]
 	if d.has("secrets") && d["secrets"] != null:
 		for value in d["secrets"]:
-			result.secrets.append(Secrets.from_json(value));
-	return result;
+			result.secrets.append(Secrets.from_json(value))
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## 
 class Secrets extends RefCounted:
 	## The raw secret that you use with JWT encoding.
 	var content: String:
 		set(val):
-			content = val;
-			changed_data["content"] = content;
+			content = val
+			changed_data["content"] = content
 	## The UTC date and time (in RFC3339 format) that you may begin using this secret to sign a JWT.
 	var active_at: Variant:
 		set(val):
-			active_at = val;
-			changed_data["active_at"] = active_at;
+			active_at = val
+			changed_data["active_at"] = active_at
 	## The UTC date and time (in RFC3339 format) that you must stop using this secret to decode a JWT.
 	var expires_at: Variant:
 		set(val):
-			expires_at = val;
-			changed_data["expires_at"] = expires_at;
+			expires_at = val
+			changed_data["expires_at"] = expires_at
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> Secrets:
-		var result = Secrets.new();
+		var result = Secrets.new()
 		if d.has("content") && d["content"] != null:
-			result.content = d["content"];
+			result.content = d["content"]
 		if d.has("active_at") && d["active_at"] != null:
-			result.active_at = d["active_at"];
+			result.active_at = d["active_at"]
 		if d.has("expires_at") && d["expires_at"] != null:
-			result.expires_at = d["expires_at"];
-		return result;
+			result.expires_at = d["expires_at"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

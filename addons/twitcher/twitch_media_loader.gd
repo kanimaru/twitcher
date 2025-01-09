@@ -1,19 +1,25 @@
+@tool
 extends Node
 
 ## Will load badges, icons and profile images
-class_name TwitchIconLoader
+class_name TwitchMediaLoader
 
-## Will be sent when the emotes and badges got preloaded
-signal preload_done
 
 ## Called when an emoji was succesfully loaded
 signal emoji_loaded(definition: TwitchEmoteDefinition)
 
-const ALLOW_EMPTY = true
-const MAX_SPLITS = 1
+const FALLBACK_TEXTURE = preload("res://addons/twitcher/assets/fallback_texture.tres")
+const FALLBACK_PROFILE = preload("res://addons/twitcher/assets/no_profile.png")
 
 @export var api: TwitchRestAPI
 @export var http_client_manager: HttpClientManager
+@export var fallback_texture: Texture2D = FALLBACK_TEXTURE
+@export var fallback_profile: Texture2D = FALLBACK_PROFILE
+@export var image_cdn_host: String = "https://static-cdn.jtvnw.net"
+
+@export_global_dir var cache_emote: String = "user://emotes"
+@export_global_dir var cache_badge: String = "user://badges"
+@export_global_dir var cache_cheermote: String = "user://cheermote"
 
 ## All requests that are currently in progress
 var _requests_in_progress : Array[StringName]
@@ -21,35 +27,24 @@ var _requests_in_progress : Array[StringName]
 var _cached_badges : Dictionary = {}
 ## Emote definition for global and the channel.
 var _cached_emotes : Dictionary = {}
+## Key: String Cheer Prefix | Value: TwitchCheermote
+var _cached_cheermotes: Dictionary = {}
 
-## All cached emotes with emote_id as key and spriteframes as value.
+## All cached emotes, badges, cheermotes
 ## Is needed that the garbage collector isn't deleting our cache.
 var _cached_images : Array[SpriteFrames] = []
-var _is_pre_loaded : bool
-
+var _host_parser = RegEx.create_from_string("(https://.*?)/")
 var static_image_transformer = TwitchImageTransformer.new()
 
 
 func _ready() -> void:
-	_do_preload()
-
-
-func _do_preload():
-	await preload_emotes()
-	await preload_badges()
-	_is_pre_loaded = true
-	preload_done.emit()
-	_fireup_cache()
-
-
-## Use this to ensure that the cheermotes got preloaded.
-func wait_preloaded(): if !_is_pre_loaded: await preload_done
+	_load_cache()
 
 
 ## Loading all images from the directory into the memory cache
-func _fireup_cache() -> void:
-	_cache_directory(TwitchSetting.cache_emote)
-	_cache_directory(TwitchSetting.cache_badge)
+func _load_cache() -> void:
+	_cache_directory(cache_emote)
+	_cache_directory(cache_badge)
 
 
 func _cache_directory(path: String):
@@ -59,7 +54,8 @@ func _cache_directory(path: String):
 		if file.ends_with(".res"):
 			var res_path = path.path_join(file)
 			var sprite_frames: SpriteFrames = ResourceLoader.load(res_path, "SpriteFrames")
-			sprite_frames.take_over_path(res_path.trim_suffix(".res"))
+			var spriteframe_path = res_path.trim_suffix(".res")
+			sprite_frames.take_over_path(spriteframe_path)
 			_cached_images.append(sprite_frames)
 
 #region Emotes
@@ -97,7 +93,8 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
 		var cache_path: String = emote_definition.get_cache_path()
 		var spriteframe_path: String = emote_definition.get_cache_path_spriteframe()
-		if ResourceLoader.has_cached(spriteframe_path):
+		print("Loaded: ", spriteframe_path)
+		if ResourceLoader.has_cached(cache_path):
 			response[emote_definition] = ResourceLoader.load(spriteframe_path)
 			continue
 
@@ -230,10 +227,136 @@ func get_cached_badges(channel_id) -> Dictionary:
 	return _cached_badges[channel_id]
 #endregion
 
+#region Cheermote
+
+class CheerResult extends RefCounted:
+	var cheermote: TwitchCheermote
+	var tier: TwitchCheermote.Tiers
+	var spriteframes: SpriteFrames
+	func _init(cheer: TwitchCheermote, t: TwitchCheermote.Tiers, sprites: SpriteFrames):
+		cheermote = cheer
+		tier = t
+		spriteframes = sprites
+
+
+func preload_cheemote() -> void:
+	if not _cached_cheermotes.is_empty(): return
+	var cheermote_response: TwitchGetCheermotesResponse = await api.get_cheermotes()
+	for data: TwitchCheermote in cheermote_response.data:
+		_cached_cheermotes[data.prefix] = data
+
+
+## Resolves a info with spriteframes for a specific cheer definition contains also spriteframes for the given tier.
+## Can be null when not found.
+func get_cheer_info(cheermote_definition: TwitchCheermoteDefinition) -> CheerResult:
+	await preload_cheemote()
+	var cheermote : TwitchCheermote = _cached_cheermotes[cheermote_definition.prefix]
+	for cheertier in cheermote.tiers:
+		if cheertier.id == cheermote_definition.tier:
+			var sprite_frames = await _get_cheermote_sprite_frames(cheertier, cheermote_definition)
+			return CheerResult.new(cheermote, cheertier, sprite_frames)
+	return null
+
+
+func find_cheer_tier(number: int, cheer_data: TwitchCheermote) -> TwitchCheermote.Tiers:
+	var current_tier: TwitchCheermote.Tiers = cheer_data.tiers[0]
+	for tier: TwitchCheermote.Tiers in cheer_data.tiers:
+		if tier.min_bits < number && current_tier.min_bits < tier.min_bits:
+			current_tier = tier
+	return current_tier
+
+
+## Returns spriteframes mapped by tier for a cheermote
+## Key: TwitchCheermote.Tiers | Value: SpriteFrames
+func get_cheermotes(cheermote_definition: TwitchCheermoteDefinition) -> Dictionary:
+	await preload_cheemote()
+	var response: Dictionary = {}
+	var requests: Dictionary = {}
+	var cheer = _cached_cheermotes[cheermote_definition.prefix]
+	for tier: TwitchCheermote.Tiers in cheer.tiers:
+		var id = cheermote_definition.get_id()
+		if ResourceLoader.has_cached(id): response[tier] = ResourceLoader.load(id)
+		if not TwitchSetting.image_transformer.is_supporting_animation():
+			cheermote_definition.type_static()
+		else: requests[tier] = _request_cheermote(tier, cheermote_definition)
+
+	for tier: TwitchCheermote.Tiers in requests:
+		var id = cheermote_definition.get_id()
+		var request = requests[tier]
+		var sprite_frames = await _wait_for_cheeremote(request, id)
+		response[tier] = sprite_frames
+	return response
+
+
+func _get_cheermote_sprite_frames(tier: TwitchCheermote.Tiers, cheermote_definition: TwitchCheermoteDefinition) -> SpriteFrames:
+	var id = cheermote_definition.get_id()
+	if ResourceLoader.has_cached(id):
+		return ResourceLoader.load(id)
+	else:
+		var request = _request_cheermote(tier, cheermote_definition)
+		if request == null:
+			var frames := SpriteFrames.new()
+			frames.add_frame("default", fallback_texture)
+			return frames
+		return await _wait_for_cheeremote(request, id)
+
+
+func _wait_for_cheeremote(request: BufferedHTTPClient.RequestData, cheer_id: String) -> SpriteFrames:
+	var client = request.client
+	var image_transformer = TwitchSetting.image_transformer
+	var response = await client.wait_for_request(request)
+	var cache_path = cache_cheermote.path_join(cheer_id)
+	var sprite_frames = await TwitchSetting.image_transformer.convert_image(
+		cache_path,
+		response.response_data,
+		cache_path + ".res") as SpriteFrames
+	sprite_frames.take_over_path(cheer_id)
+	_cached_images.append(sprite_frames)
+	return sprite_frames
+
+
+func _request_cheermote(cheer_tier: TwitchCheermote.Tiers, cheermote: TwitchCheermoteDefinition) -> BufferedHTTPClient.RequestData:
+	var img_path = cheer_tier.images[cheermote.theme][cheermote.type][cheermote.scale] as String
+	var host_result : RegExMatch = _host_parser.search(img_path)
+	if host_result == null: return null
+	var host = host_result.get_string(1)
+	var request_path = img_path.trim_prefix(host)
+	var client = http_client_manager.get_client(host)
+	var request = client.request(request_path, HTTPClient.METHOD_GET, {}, "")
+	return request
+
+#endregion
+
 #region Utilities
 
-const GIF_HEADER: PackedByteArray = [71, 73, 70]
+## Get the image of an user
+func load_profile_image(user: TwitchUser) -> ImageTexture:
+	if user == null: return fallback_profile
+	if ResourceLoader.has_cached(user.profile_image_url):
+		return ResourceLoader.load(user.profile_image_url)
+	var client : BufferedHTTPClient = http_client_manager.get_client(image_cdn_host)
+	var request := client.request(user.profile_image_url, HTTPClient.METHOD_GET, {}, "")
+	var response_data := await client.wait_for_request(request)
+	var texture : ImageTexture = ImageTexture.new()
+	var response := response_data.response_data
+	if not response.is_empty():
+		var img := Image.new()
+		var content_type = response_data.response_header["Content-Type"]
 
+		match content_type:
+			"image/png": img.load_png_from_buffer(response)
+			"image/jpeg": img.load_jpg_from_buffer(response)
+			_: return fallback_profile
+		texture.set_image(img)
+	else:
+		# Don't use `texture = TwitchSetting.fallback_profile` as texture cause the path will be taken over
+		# for caching purpose!
+		texture.set_image(fallback_profile.get_image())
+	texture.take_over_path(user.profile_image_url)
+	return texture
+
+
+const GIF_HEADER: PackedByteArray = [71, 73, 70]
 func _convert_response(request: BufferedHTTPClient.RequestData, cache_path: String, spriteframe_path: String) -> SpriteFrames:
 	var client = request.client as BufferedHTTPClient
 	var response = await client.wait_for_request(request)

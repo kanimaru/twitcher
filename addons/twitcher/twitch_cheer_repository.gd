@@ -1,6 +1,9 @@
+@tool
 extends Node
 
 class_name TwitchCheerRepository
+
+const FALLBACK_TEXTURE = preload("res://addons/twitcher/assets/fallback_texture.tres")
 
 enum Themes {
 	DARK = 0,
@@ -58,24 +61,29 @@ class CheerResult extends RefCounted:
 
 @export var http_client_manager: HttpClientManager
 @export var api: TwitchRestAPI
+@export var _fallback_texture: Texture2D = FALLBACK_TEXTURE
 
 var _HOST_PARSER = RegEx.create_from_string("(https://.*?)/")
-var _fallback_texture: Texture2D
+
+var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_EVENT_SUB)
 # Key: String Cheer Prefix | Value: TwitchCheermote
 var cheermotes: Dictionary
 var _is_preloaded: bool
 var _cache: Dictionary
 
-
-func _init() -> void:
-	_fallback_texture = TwitchSetting.fallback_texture2d
-
-
-func _ready() -> void:
-	_preload_cheemote()
+## Propergated call from twitch service
+func do_setup() -> void:
+	await preload_cheemote()
+	log.i("Cheer setup")
 
 
-func _preload_cheemote():
+## Use this to ensure that the cheermotes got preloaded.
+func wait_preloaded() -> void: if !_is_preloaded: await preload_done
+
+
+func preload_cheemote() -> void:
+	if _is_preloaded: return
+
 	var cheermote_response: TwitchGetCheermotesResponse = await api.get_cheermotes()
 	for data: TwitchCheermote in cheermote_response.data:
 		cheermotes[data.prefix] = data
@@ -83,13 +91,12 @@ func _preload_cheemote():
 	preload_done.emit()
 
 
-## Use this to ensure that the cheermotes got preloaded.
-func wait_preloaded(): if !_is_preloaded: await preload_done
 
 
 ## Resolves a cheer tier emote for a specific cheer.
 ## Can be null when not found.
 func get_cheer_tier(prefix: String, tier: String, theme: Themes = Themes.DARK, type: Types = Types.ANIMATED, scale: Scales = Scales._1) -> CheerResult:
+	await preload_cheemote()
 	var cheermote : TwitchCheermote = cheermotes[prefix]
 	for cheertier in cheermote.tiers:
 		if cheertier.id == tier:
@@ -118,6 +125,7 @@ func _get_sprite_frames(cheermote: TwitchCheermote, tier: TwitchCheermote.Tiers,
 ## Return specified cheermote data in form of:
 ## Key: TwitchCheermote.Tiers  Value: SpriteFrames
 func get_cheermotes(cheermote: TwitchCheermote, theme: Themes, type: Types, scale: Scales) -> Dictionary:
+	await preload_cheemote()
 	var response: Dictionary = {}
 	var requests: Dictionary = {}
 	for tier: TwitchCheermote.Tiers in cheermote.tiers:

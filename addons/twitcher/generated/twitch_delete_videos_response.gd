@@ -8,24 +8,24 @@ class_name TwitchDeleteVideosResponse
 ## The list of IDs of the videos that were deleted.
 var data: Array[String]:
 	set(val):
-		data = val;
-		changed_data["data"] = [];
+		data = val
+		changed_data["data"] = []
 		if data != null:
 			for value in data:
-				changed_data["data"].append(value);
+				changed_data["data"].append(value)
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchDeleteVideosResponse:
-	var result = TwitchDeleteVideosResponse.new();
+	var result = TwitchDeleteVideosResponse.new()
 	if d.has("data") && d["data"] != null:
 		for value in d["data"]:
-			result.data.append(value);
-	return result;
+			result.data.append(value)
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

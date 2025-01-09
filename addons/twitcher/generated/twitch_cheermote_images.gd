@@ -8,29 +8,29 @@ class_name TwitchCheermoteImages
 ## No description available
 var light: TwitchCheermoteImageTheme:
 	set(val):
-		light = val;
+		light = val
 		if light != null:
-			changed_data["light"] = light.to_dict();
+			changed_data["light"] = light.to_dict()
 ## No description available
 var dark: TwitchCheermoteImageTheme:
 	set(val):
-		dark = val;
+		dark = val
 		if dark != null:
-			changed_data["dark"] = dark.to_dict();
+			changed_data["dark"] = dark.to_dict()
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchCheermoteImages:
-	var result = TwitchCheermoteImages.new();
+	var result = TwitchCheermoteImages.new()
 	if d.has("light") && d["light"] != null:
-		result.light = TwitchCheermoteImageTheme.from_json(d["light"]);
+		result.light = TwitchCheermoteImageTheme.from_json(d["light"])
 	if d.has("dark") && d["dark"] != null:
-		result.dark = TwitchCheermoteImageTheme.from_json(d["dark"]);
-	return result;
+		result.dark = TwitchCheermoteImageTheme.from_json(d["dark"])
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

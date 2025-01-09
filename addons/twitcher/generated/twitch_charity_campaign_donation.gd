@@ -8,92 +8,92 @@ class_name TwitchCharityCampaignDonation
 ## An ID that identifies the donation. The ID is unique across campaigns.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## An ID that identifies the charity campaign that the donation applies to.
 var campaign_id: String:
 	set(val):
-		campaign_id = val;
-		changed_data["campaign_id"] = campaign_id;
+		campaign_id = val
+		changed_data["campaign_id"] = campaign_id
 ## An ID that identifies a user that donated money to the campaign.
 var user_id: String:
 	set(val):
-		user_id = val;
-		changed_data["user_id"] = user_id;
+		user_id = val
+		changed_data["user_id"] = user_id
 ## The user’s login name.
 var user_login: String:
 	set(val):
-		user_login = val;
-		changed_data["user_login"] = user_login;
+		user_login = val
+		changed_data["user_login"] = user_login
 ## The user’s display name.
 var user_name: String:
 	set(val):
-		user_name = val;
-		changed_data["user_name"] = user_name;
+		user_name = val
+		changed_data["user_name"] = user_name
 ## An object that contains the amount of money that the user donated.
 var amount: Amount:
 	set(val):
-		amount = val;
+		amount = val
 		if amount != null:
-			changed_data["amount"] = amount.to_dict();
+			changed_data["amount"] = amount.to_dict()
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchCharityCampaignDonation:
-	var result = TwitchCharityCampaignDonation.new();
+	var result = TwitchCharityCampaignDonation.new()
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("campaign_id") && d["campaign_id"] != null:
-		result.campaign_id = d["campaign_id"];
+		result.campaign_id = d["campaign_id"]
 	if d.has("user_id") && d["user_id"] != null:
-		result.user_id = d["user_id"];
+		result.user_id = d["user_id"]
 	if d.has("user_login") && d["user_login"] != null:
-		result.user_login = d["user_login"];
+		result.user_login = d["user_login"]
 	if d.has("user_name") && d["user_name"] != null:
-		result.user_name = d["user_name"];
+		result.user_name = d["user_name"]
 	if d.has("amount") && d["amount"] != null:
-		result.amount = Amount.from_json(d["amount"]);
-	return result;
+		result.amount = Amount.from_json(d["amount"])
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
 ## An object that contains the amount of money that the user donated.
 class Amount extends RefCounted:
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
 	var value: int:
 		set(val):
-			value = val;
-			changed_data["value"] = value;
+			value = val
+			changed_data["value"] = value
 	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate `value` from minor units to major units by using the formula:      `value / 10^decimal_places`
 	var decimal_places: int:
 		set(val):
-			decimal_places = val;
-			changed_data["decimal_places"] = decimal_places;
+			decimal_places = val
+			changed_data["decimal_places"] = decimal_places
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
 	var currency: String:
 		set(val):
-			currency = val;
-			changed_data["currency"] = currency;
+			currency = val
+			changed_data["currency"] = currency
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> Amount:
-		var result = Amount.new();
+		var result = Amount.new()
 		if d.has("value") && d["value"] != null:
-			result.value = d["value"];
+			result.value = d["value"]
 		if d.has("decimal_places") && d["decimal_places"] != null:
-			result.decimal_places = d["decimal_places"];
+			result.decimal_places = d["decimal_places"]
 		if d.has("currency") && d["currency"] != null:
-			result.currency = d["currency"];
-		return result;
+			result.currency = d["currency"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 

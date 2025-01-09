@@ -8,52 +8,52 @@ class_name TwitchUserExtension
 ## An ID that identifies the extension.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## The extension's version.
 var version: String:
 	set(val):
-		version = val;
-		changed_data["version"] = version;
+		version = val
+		changed_data["version"] = version
 ## The extension's name.
 var name: String:
 	set(val):
-		name = val;
-		changed_data["name"] = name;
+		name = val
+		changed_data["name"] = name
 ## A Boolean value that determines whether the extension is configured and can be activated. Is **true** if the extension is configured and can be activated.
 var can_activate: bool:
 	set(val):
-		can_activate = val;
-		changed_data["can_activate"] = can_activate;
+		can_activate = val
+		changed_data["can_activate"] = can_activate
 ## The extension types that you can activate for this extension. Possible values are:      * component * mobile * overlay * panel
 var type: Array[String]:
 	set(val):
-		type = val;
-		changed_data["type"] = [];
+		type = val
+		changed_data["type"] = []
 		if type != null:
 			for value in type:
-				changed_data["type"].append(value);
+				changed_data["type"].append(value)
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchUserExtension:
-	var result = TwitchUserExtension.new();
+	var result = TwitchUserExtension.new()
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("version") && d["version"] != null:
-		result.version = d["version"];
+		result.version = d["version"]
 	if d.has("name") && d["name"] != null:
-		result.name = d["name"];
+		result.name = d["name"]
 	if d.has("can_activate") && d["can_activate"] != null:
-		result.can_activate = d["can_activate"];
+		result.can_activate = d["can_activate"]
 	if d.has("type") && d["type"] != null:
 		for value in d["type"]:
-			result.type.append(value);
-	return result;
+			result.type.append(value)
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

@@ -8,34 +8,34 @@ class_name TwitchSetExtensionRequiredConfigurationBody
 ## The ID of the extension to update.
 var extension_id: String:
 	set(val):
-		extension_id = val;
-		changed_data["extension_id"] = extension_id;
+		extension_id = val
+		changed_data["extension_id"] = extension_id
 ## The version of the extension to update.
 var extension_version: String:
 	set(val):
-		extension_version = val;
-		changed_data["extension_version"] = extension_version;
+		extension_version = val
+		changed_data["extension_version"] = extension_version
 ## The required\_configuration string to use with the extension.
 var required_configuration: String:
 	set(val):
-		required_configuration = val;
-		changed_data["required_configuration"] = required_configuration;
+		required_configuration = val
+		changed_data["required_configuration"] = required_configuration
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchSetExtensionRequiredConfigurationBody:
-	var result = TwitchSetExtensionRequiredConfigurationBody.new();
+	var result = TwitchSetExtensionRequiredConfigurationBody.new()
 	if d.has("extension_id") && d["extension_id"] != null:
-		result.extension_id = d["extension_id"];
+		result.extension_id = d["extension_id"]
 	if d.has("extension_version") && d["extension_version"] != null:
-		result.extension_version = d["extension_version"];
+		result.extension_version = d["extension_version"]
 	if d.has("required_configuration") && d["required_configuration"] != null:
-		result.required_configuration = d["required_configuration"];
-	return result;
+		result.required_configuration = d["required_configuration"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

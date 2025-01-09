@@ -3,14 +3,8 @@ extends Control
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Please set this settings first before running the example!
-# In Node 'TwitchService.Settings' set:
+# In Node 'TwitchService.OauthSettings' set:
 # - ClientID / ClientSecret
-
-# twitch/auth/client_id 		< you find while registering the application see readme for howto
-# twitch/auth/client_secret		< you find while registering the application see readme for howto
-# twitch/auth/broadcaster_id 	< Your broadcaster id you can convert it here https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
-# twitch/websocket/irc/username < Your username needed for IRC
-# twitch/auth/scopes/chat		< Add both Scopes chat_read, chat_edit
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -22,8 +16,13 @@ extends Control
 @onready var send: Button = %Send
 ## Channel to send / receive the messages
 @onready var twitch_chat: TwitchChat = %TwitchChat
+## A wrapper to the Twitch services
 @onready var twitch_service: TwitchService = %TwitchService
+## Warning in case you missed the confugration part above
 @onready var configuration_warning: Label = %ConfigurationWarning
+##
+@onready var rest: TwitchRestAPI = %Rest
+
 
 func _ready() -> void:
 	configuration_warning.hide()
@@ -41,6 +40,7 @@ func _ready() -> void:
 	twitch_chat.message_received.connect(_on_chat_message)
 	# When the send button is pressed send the message
 	send.pressed.connect(_send_message)
+
 
 func _on_chat_message(message: TwitchChatMessage):
 	# Get all badges from the user that sends the message
@@ -102,6 +102,7 @@ func _on_chat_message(message: TwitchChatMessage):
 	result_message = sprite_effect.prepare_message(result_message, chat_message)
 	chat_message.text = result_message
 
+
 ## Prepares the message so that all fragments will be shown correctly
 func show_text(message: TwitchChatMessage, current_text: String, emote_scale: int = 1) -> String:
 	# Unique Id for the spriteframes to identify them
@@ -126,6 +127,7 @@ func show_text(message: TwitchChatMessage, current_text: String, emote_scale: in
 func _get_time() -> String:
 	var time_data = Time.get_time_dict_from_system()
 	return "%02d:%02d" % [time_data["hour"], time_data["minute"]]
+
 
 func _send_message():
 	# Get the message from the input

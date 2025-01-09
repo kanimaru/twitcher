@@ -3,10 +3,7 @@ extends Node
 
 ## Handles the evensub part of twitch. Returns the event data when receives it.
 class_name TwitchEventsub
-
-const Constants = preload("res://addons/twitcher/constants.gd")
-
-var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_EVENT_SUB)
+var _log: TwitchLogger = TwitchLogger.new("TwitchEventsub")
 
 ## An object that identifies the message.
 class Metadata extends RefCounted:
@@ -57,7 +54,7 @@ signal events_revoked(type: String, status: String)
 signal message_received(message: Variant)
 
 @export var api: TwitchRestAPI
-@export var _subscriptions: Array[TwitchEventsubConfig]
+@export var _subscriptions: Array[TwitchEventsubConfig] = []
 @export var scopes: OAuthScopes
 
 
@@ -89,8 +86,13 @@ class SubscriptionAction extends RefCounted:
 	var subscribe: bool
 	var subscription: TwitchEventsubConfig
 
+	func _to_string() -> String:
+		return "%s %s" % [("Subscribe to" if subscribe else "Unsubscribe from"), subscription.definition.get_readable_name()]
+
 
 func _init() -> void:
+	_log.enabled = true
+	_log.debug = true
 	_client.connection_url = TwitchSetting.eventsub_live_server_url
 	_client.message_received.connect(_data_received)
 	_client.connection_established.connect(_on_connection_established)
@@ -106,6 +108,16 @@ func _ready() -> void:
 		add_child(_test_client)
 
 
+## Propergated call from twitch service
+func do_setup() -> void:
+	await open_connection()
+	_log.i("Eventsub setup")
+
+
+func wait_setup() -> void:
+	await wait_for_session_established()
+
+
 ## Waits until the eventsub is fully established
 func wait_for_session_established() -> void:
 	if session == null: await session_id_received
@@ -115,7 +127,7 @@ func _on_connection_established() -> void:
 	if not _swap_over_process:
 		_action_stack.clear()
 		# Resubscribe
-		log.i("Subscribe to: %s" % _subscriptions)
+		_log.i("Connection established -> resubscribe to: [%s]" % [_subscriptions])
 		for sub in _subscriptions: _add_action(sub, true)
 	_execute_action_stack()
 
@@ -129,6 +141,7 @@ func open_connection() -> void:
 
 ## Add a new subscription
 func subscribe(eventsub_config: TwitchEventsubConfig) -> void:
+	_log.i("Subscribe to %s" % eventsub_config.definition.get_readable_name())
 	_subscriptions.append(eventsub_config)
 	_add_action(eventsub_config, true)
 
@@ -141,8 +154,9 @@ func unsubscribe(eventsub_config: TwitchEventsubConfig) -> void:
 
 ## Process the queue of actions until its empty
 func _execute_action_stack() -> void:
-	await wait_for_session_established()
 	if _executing_action_stack: return
+	await wait_for_session_established()
+	_log.d("Execute actions [%s]" % [_action_stack])
 	_executing_action_stack = true
 	while not _action_stack.is_empty():
 		var action = _action_stack.pop_back()
@@ -160,7 +174,8 @@ func _add_action(sub: TwitchEventsubConfig, subscribe: bool) -> void:
 	sub_action.subscription = sub
 	sub_action.subscribe = subscribe
 	_action_stack.append(sub_action)
-	log.d("Add subscription action to stack: %s" % sub.definition.get_readable_name())
+	_log.d("Add subscribe action: %s" % sub.definition.get_readable_name())
+	_execute_action_stack()
 
 
 ## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
@@ -179,24 +194,24 @@ func _subscribe(subscription: TwitchEventsubConfig) -> String:
 	transport.method = "websocket"
 	transport.session_id = session.id
 
-	log.d("Do subscribe: %s" % event_name)
+	_log.d("Do subscribe: %s" % event_name)
 
 	var response = await api.create_eventsub_subscription(data)
 
 	if response.response_code == 401:
-		log.e("Subscription failed for '%s': Missing authentication for eventsub. The token got not authenticated yet. Please login!" % data.type)
+		_log.e("Subscription failed for '%s': Missing authentication for eventsub. The token got not authenticated yet. Please login!" % data.type)
 		_client.close(3000, "Missing Authentication")
 		return ""
 	elif response.response_code == 403:
-		log.e("Subscription failed for '%s': The token is missing proper scopes. [url='%s']Please check documentation[/url]!" % [data.type, subscription.definition.documentation_link])
+		_log.e("Subscription failed for '%s': The token is missing proper scopes. [url='%s']Please check documentation[/url]!" % [data.type, subscription.definition.documentation_link])
 		_client.close(3003, "Missing Authorization")
 		return ""
 	if response.response_code < 200 || response.response_code >= 300:
-		log.e("Subscription failed for '%s'. Unknown error %s: %s" % [data.type, response.response_code, response.response_data.get_string_from_utf8()])
+		_log.e("Subscription failed for '%s'. Unknown error %s: %s" % [data.type, response.response_code, response.response_data.get_string_from_utf8()])
 		return ""
 	elif (response.response_data.is_empty()):
 		return ""
-	log.i("Now listening to '%s' events." % data.type)
+	_log.i("Now listening to '%s' events." % data.type)
 
 	var result = JSON.parse_string(response.response_data.get_string_from_utf8())
 	return result.data[0].id
@@ -212,7 +227,7 @@ func _data_received(data : PackedByteArray) -> void:
 	var message_str : String = data.get_string_from_utf8()
 	var message_json : Dictionary = JSON.parse_string(message_str)
 	if not message_json.has("metadata"):
-		log.e("Twitch send something undocumented: %s" % message_str)
+		_log.e("Twitch send something undocumented: %s" % message_str)
 		return
 	var metadata : Metadata = Metadata.new(message_json["metadata"])
 	var id = metadata.message_id
@@ -230,6 +245,7 @@ func _data_received(data : PackedByteArray) -> void:
 			var welcome_message = TwitchWelcomeMessage.new(message_json)
 			session = welcome_message.payload.session
 			session_id_received.emit(session.id)
+			_log.i("Session established %s" % session.id)
 			message_received.emit(welcome_message)
 		"session_keepalive":
 			# Notification from server that the connection is still alive
@@ -254,7 +270,7 @@ func _data_received(data : PackedByteArray) -> void:
 
 
 func _handle_reconnect(reconnect_message: TwitchReconnectMessage):
-	log.i("Session is forced to reconnect")
+	_log.i("Session is forced to reconnect")
 	_swap_over_process = true
 	var reconnect_url = reconnect_message.payload.session.reconnect_url
 	_swap_over_client = WebsocketClient.new()
@@ -269,7 +285,7 @@ func _handle_reconnect(reconnect_message: TwitchReconnectMessage):
 	_client = _swap_over_client
 	_swap_over_client = null
 	_swap_over_process = false
-	log.i("Session reconnected on %s" % reconnect_url)
+	_log.i("Session reconnected on %s" % reconnect_url)
 
 
 ## Cleanup old messages that won't be processed anymore cause of time to prevent a
@@ -296,6 +312,6 @@ func get_client() -> WebsocketClient:
 func get_test_client() -> WebsocketClient:
 	return _test_client
 
-
+## Returns a copy of the current subscribed events. Don't modify the result they won't get applied anyway.
 func get_subscriptions() -> Array[TwitchEventsubConfig]:
 	return _subscriptions.duplicate()

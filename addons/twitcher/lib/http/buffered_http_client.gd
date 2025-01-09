@@ -133,7 +133,7 @@ func _poll() -> void:
 	# Is a request available
 	if current_request == null && not requests.is_empty():
 		current_request = requests.pop_front()
-		logInfo("[%s] start request processing" % [ current_request.path ])
+		logInfo("[%s] process request" % [ current_request.path ])
 
 		# Start connection
 		_connect_to_host()

@@ -23,6 +23,7 @@ func type_animated() -> TwitchEmoteDefinition: _type = "animated"; return self;
 func theme_dark() -> TwitchEmoteDefinition: _theme = "dark"; return self;
 func theme_light() -> TwitchEmoteDefinition: _theme = "light"; return self;
 
+
 ## Returns the path where the raw emoji should be cached
 func get_cache_path() -> String:
 	var file_name = get_file_name()

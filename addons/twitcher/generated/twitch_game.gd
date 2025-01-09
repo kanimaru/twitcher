@@ -8,41 +8,41 @@ class_name TwitchGame
 ## An ID that identifies the category or game.
 var id: String:
 	set(val):
-		id = val;
-		changed_data["id"] = id;
+		id = val
+		changed_data["id"] = id
 ## The category’s or game’s name.
 var name: String:
 	set(val):
-		name = val;
-		changed_data["name"] = name;
+		name = val
+		changed_data["name"] = name
 ## A URL to the category’s or game’s box art. You must replace the `{width}x{height}` placeholder with the size of image you want.
 var box_art_url: String:
 	set(val):
-		box_art_url = val;
-		changed_data["box_art_url"] = box_art_url;
+		box_art_url = val
+		changed_data["box_art_url"] = box_art_url
 ## The ID that [IGDB](https://www.igdb.com/) uses to identify this game. If the IGDB ID is not available to Twitch, this field is set to an empty string.
 var igdb_id: String:
 	set(val):
-		igdb_id = val;
-		changed_data["igdb_id"] = igdb_id;
+		igdb_id = val
+		changed_data["igdb_id"] = igdb_id
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchGame:
-	var result = TwitchGame.new();
+	var result = TwitchGame.new()
 	if d.has("id") && d["id"] != null:
-		result.id = d["id"];
+		result.id = d["id"]
 	if d.has("name") && d["name"] != null:
-		result.name = d["name"];
+		result.name = d["name"]
 	if d.has("box_art_url") && d["box_art_url"] != null:
-		result.box_art_url = d["box_art_url"];
+		result.box_art_url = d["box_art_url"]
 	if d.has("igdb_id") && d["igdb_id"] != null:
-		result.igdb_id = d["igdb_id"];
-	return result;
+		result.igdb_id = d["igdb_id"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 

@@ -1,6 +1,6 @@
 extends EditorInspectorPlugin
 
-const EventsubConfigProperty = preload("res://addons/twitcher/inspector/eventsub_config_property.gd")
+const EventsubConfigProperty = preload("res://addons/twitcher/editor/inspector/eventsub_config_property.gd")
 
 func _can_handle(object: Object) -> bool:
 	return object is TwitchEventsubConfig

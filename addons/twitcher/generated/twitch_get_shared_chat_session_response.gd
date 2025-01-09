@@ -5,102 +5,103 @@ extends RefCounted
 
 class_name TwitchGetSharedChatSessionResponse
 
-##
+## 
 var data: Array[Data]:
 	set(val):
-		data = val;
-		changed_data["data"] = [];
+		data = val
+		changed_data["data"] = []
 		if data != null:
 			for value in data:
-				changed_data["data"].append(value.to_dict());
+				changed_data["data"].append(value.to_dict())
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchGetSharedChatSessionResponse:
-	var result = TwitchGetSharedChatSessionResponse.new();
+	var result = TwitchGetSharedChatSessionResponse.new()
 	if d.has("data") && d["data"] != null:
 		for value in d["data"]:
-			result.data.append(Data.from_json(value));
-	return result;
+			result.data.append(Data.from_json(value))
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
-##
+## 
 class Participants extends RefCounted:
 	## The User ID of the participant channel.
 	var broadcaster_id: String:
 		set(val):
-			broadcaster_id = val;
-			changed_data["broadcaster_id"] = broadcaster_id;
+			broadcaster_id = val
+			changed_data["broadcaster_id"] = broadcaster_id
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> Participants:
-		var result = Participants.new();
+		var result = Participants.new()
 		if d.has("broadcaster_id") && d["broadcaster_id"] != null:
-			result.broadcaster_id = d["broadcaster_id"];
-		return result;
+			result.broadcaster_id = d["broadcaster_id"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
 
-##
+## 
 class Data extends RefCounted:
 	## The unique identifier for the shared chat session.
 	var session_id: String:
 		set(val):
-			session_id = val;
-			changed_data["session_id"] = session_id;
+			session_id = val
+			changed_data["session_id"] = session_id
 	## The User ID of the host channel.
 	var host_broadcaster_id: String:
 		set(val):
-			host_broadcaster_id = val;
-			changed_data["host_broadcaster_id"] = host_broadcaster_id;
+			host_broadcaster_id = val
+			changed_data["host_broadcaster_id"] = host_broadcaster_id
 	## The list of participants in the session.
 	var participants: Array[Participants]:
 		set(val):
-			participants = val;
-			changed_data["participants"] = [];
+			participants = val
+			changed_data["participants"] = []
 			if participants != null:
 				for value in participants:
-					changed_data["participants"].append(value.to_dict());
+					changed_data["participants"].append(value.to_dict())
 	## The UTC date and time (in RFC3339 format) for when the session was created.
 	var created_at: Variant:
 		set(val):
-			created_at = val;
-			changed_data["created_at"] = created_at;
+			created_at = val
+			changed_data["created_at"] = created_at
 	## The UTC date and time (in RFC3339 format) for when the session was last updated.
 	var updated_at: Variant:
 		set(val):
-			updated_at = val;
-			changed_data["updated_at"] = updated_at;
+			updated_at = val
+			changed_data["updated_at"] = updated_at
 
-	var changed_data: Dictionary = {};
+	var changed_data: Dictionary = {}
 
 	static func from_json(d: Dictionary) -> Data:
-		var result = Data.new();
+		var result = Data.new()
 		if d.has("session_id") && d["session_id"] != null:
-			result.session_id = d["session_id"];
+			result.session_id = d["session_id"]
 		if d.has("host_broadcaster_id") && d["host_broadcaster_id"] != null:
-			result.host_broadcaster_id = d["host_broadcaster_id"];
+			result.host_broadcaster_id = d["host_broadcaster_id"]
 		if d.has("participants") && d["participants"] != null:
 			for value in d["participants"]:
-				result.participants.append(Participants.from_json(value));
+				result.participants.append(Participants.from_json(value))
 		if d.has("created_at") && d["created_at"] != null:
-			result.created_at = d["created_at"];
+			result.created_at = d["created_at"]
 		if d.has("updated_at") && d["updated_at"] != null:
-			result.updated_at = d["updated_at"];
-		return result;
+			result.updated_at = d["updated_at"]
+		return result
 
 	func to_dict() -> Dictionary:
-		return changed_data;
+		return changed_data
 
 	func to_json() -> String:
-		return JSON.stringify(to_dict());
+		return JSON.stringify(to_dict())
+

@@ -3,8 +3,6 @@ extends Node
 
 class_name TwitchIRC
 
-const Constants = preload("res://addons/twitcher/constants.gd")
-
 var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_IRC)
 
 ## Sent when the bot or moderator removes all messages from the chat room or removes all messages for the specified user.
@@ -45,19 +43,23 @@ signal connection_opened
 signal connection_closed
 
 
+enum JoinState {
+	NOT_JOINED, JOINING, JOINED
+}
+
 class ChannelData extends RefCounted:
 
 	signal has_joined
 
-	var joined: bool
+	var join_state: JoinState = JoinState.NOT_JOINED
 	var channel_name: String
 	var nodes: Array[TwitchIrcChannel] = []
 	var user_state: TwitchTags.Userstate
 	var room_state: TwitchTags.Roomstate:
 		set(val):
 			room_state = val
-			if !joined && val != null:
-				joined = true
+			if join_state != JoinState.JOINED && val != null:
+				join_state = JoinState.JOINED
 				has_joined.emit()
 
 	func _init(channel: String) -> void:
@@ -65,11 +67,11 @@ class ChannelData extends RefCounted:
 
 	func leave() -> void:
 		room_state = null
-		joined = false
+		join_state = JoinState.NOT_JOINED
 		for node in nodes: node.leave()
 
 	func is_joined() -> void:
-		if not joined: await has_joined
+		if join_state != JoinState.JOINED: await has_joined
 
 
 class ParsedMessage extends RefCounted:
@@ -123,13 +125,16 @@ class EmoteLocation extends RefCounted:
 		return a.start < b.start
 
 
-@export var setting: TwitchIrcSetting:
+@export var setting: TwitchIrcSetting = TwitchIrcSetting.new():
 	set = _update_setting
-@export var token: OAuthToken
+@export var token: OAuthToken:
+	set(val):
+		token = val
+		update_configuration_warnings()
 
 ## All connected channels of the bot.
-## Key: channel_name as String | Value: ChannelData
-@export var _channels := {}
+## Key: channel_name as StringName | Value: ChannelData
+var _channels := {}
 
 ## will automatically reconnect in case of authorization problems
 var _auto_reconnect: bool
@@ -166,6 +171,12 @@ func _on_authorized() -> void:
 		open_connection()
 
 
+## Propergated call from TwitchService
+func do_setup() -> void:
+	await open_connection()
+	log.i("IRC setup")
+
+
 func open_connection() -> void:
 	_auto_reconnect = true
 	log.i("Irc open connection")
@@ -187,7 +198,7 @@ func _on_connection_established() -> void:
 func _on_connection_closed() -> void:
 	_ready_to_send = false
 	connection_closed.emit()
-	for channel_name: String in _channels:
+	for channel_name: StringName in _channels:
 		_channels[channel_name].leave()
 
 
@@ -208,7 +219,7 @@ func _reconnect_to_channels():
 
 
 func _join_channels_on_connect():
-	for channel_name: String in setting.auto_join_channels:
+	for channel_name: StringName in setting.auto_join_channels:
 		var channel = join_channel(channel_name)
 		await channel.is_joined()
 		log.i("%s joined" % channel_name)
@@ -245,37 +256,37 @@ func _send_messages() -> void:
 
 
 ## Sends join channel message
-func join_channel(channel_name : String) -> ChannelData:
-	if channel_name == "":
-		log.e("No channel is specified to join. The channel name can be set on the TwitchIrcChannel node.")
-		return
-
+func join_channel(channel_name : StringName) -> ChannelData:
 	var lower_channel = channel_name.to_lower()
-	if not _channels.has(channel_name) || not _channels[channel_name].joined:
-		_chat_queue.append("JOIN #" + lower_channel)
+	if not _channels.has(channel_name):
 		_channels[channel_name] = ChannelData.new(lower_channel)
+
+	if _channels[channel_name].join_state == JoinState.NOT_JOINED:
+		_chat_queue.append("JOIN #" + lower_channel)
+		_channels[channel_name].join_state = JoinState.JOINING
+
 	return _channels[channel_name]
 
 
 ## Sends leave channel message
-func leave_channel(channel_name : String) -> void:
+func leave_channel(channel_name : StringName) -> void:
 	if not _channels.has(channel_name):
 		log.e("Can't leave %s channel cause we are not joined" % channel_name)
 		return
 
-	var lower_channel : String = channel_name.to_lower()
+	var lower_channel : StringName = channel_name.to_lower()
 	_chat_queue.append("PART #" + lower_channel)
 	_channels.erase(lower_channel)
 
 
 ## Sends a chat message to a channel. Defaults to the only connected channel.
 ## Channel should be always without '#'.
-func chat(message : String, channel_name : String = ""):
+func chat(message : String, channel_name : StringName = &""):
 	var channel_names : Array = _channels.keys()
-	if channel_name == "" && channel_names.size() == 1:
+	if channel_name == &"" && channel_names.size() == 1:
 		channel_name = channel_names[0]
 
-	if channel_name == "":
+	if channel_name == &"":
 		log.e("No channel is specified to send %s" % message)
 		return
 
@@ -286,7 +297,7 @@ func chat(message : String, channel_name : String = ""):
 
 
 ## send the message of the bot to the channel for display purpose
-func _send_message_to_channel(channel_name: String, message: String) -> void:
+func _send_message_to_channel(channel_name: StringName, message: String) -> void:
 	if _channels.has(channel_name):
 		var channel = _channels[channel_name] as ChannelData
 		var username = channel.user_state.display_name
@@ -384,7 +395,7 @@ func _handle_message(parsed_message : ParsedMessage) -> void:
 
 ## Handles the update of rooms when joining the channel or a moderator
 ## updates it (Example :tmi.twitch.tv ROOMSTATE #bar)
-func _handle_cmd_state(command: String, channel_name: String, tags: Dictionary) -> void:
+func _handle_cmd_state(command: String, channel_name: StringName, tags: Dictionary) -> void:
 	# right(-1) -> Remove the preceding # of the channel name
 	channel_name = channel_name.right(-1).to_lower()
 	if not _channels.has(channel_name):
@@ -396,7 +407,7 @@ func _handle_cmd_state(command: String, channel_name: String, tags: Dictionary) 
 	log.i("Channel updated %s" % channel_name)
 
 
-func _create_channel(channel_name: String) -> TwitchIrcChannel:
+func _create_channel(channel_name: StringName) -> TwitchIrcChannel:
 	var channel = TwitchIrcChannel.new()
 	channel.channel_name = channel_name
 	_channels[channel_name] = channel
@@ -409,7 +420,6 @@ func add_channel(channel: TwitchIrcChannel):
 	var channel_name = channel.channel_name
 	if not _channels.has(channel_name):
 		join_channel(channel_name)
-		_channels[channel_name] = ChannelData.new(channel_name)
 	var nodes = _channels[channel_name].nodes as Array[TwitchIrcChannel]
 	nodes.append(channel)
 
@@ -439,3 +449,9 @@ func _handle_cmd_notice(info: String) -> bool:
 
 func get_client() -> WebsocketClient:
 	return _client
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var result: Array[String] = []
+	if token == null:
+		result.append("Token is missing")
+	return result

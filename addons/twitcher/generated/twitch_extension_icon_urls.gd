@@ -8,34 +8,34 @@ class_name TwitchExtensionIconUrls
 ## No description available
 var _100x100: String:
 	set(val):
-		_100x100 = val;
-		changed_data["100x100"] = _100x100;
+		_100x100 = val
+		changed_data["100x100"] = _100x100
 ## No description available
 var _24x24: String:
 	set(val):
-		_24x24 = val;
-		changed_data["24x24"] = _24x24;
+		_24x24 = val
+		changed_data["24x24"] = _24x24
 ## No description available
 var _300x200: String:
 	set(val):
-		_300x200 = val;
-		changed_data["300x200"] = _300x200;
+		_300x200 = val
+		changed_data["300x200"] = _300x200
 
-var changed_data: Dictionary = {};
+var changed_data: Dictionary = {}
 
 static func from_json(d: Dictionary) -> TwitchExtensionIconUrls:
-	var result = TwitchExtensionIconUrls.new();
+	var result = TwitchExtensionIconUrls.new()
 	if d.has("100x100") && d["100x100"] != null:
-		result._100x100 = d["100x100"];
+		result._100x100 = d["100x100"]
 	if d.has("24x24") && d["24x24"] != null:
-		result._24x24 = d["24x24"];
+		result._24x24 = d["24x24"]
 	if d.has("300x200") && d["300x200"] != null:
-		result._300x200 = d["300x200"];
-	return result;
+		result._300x200 = d["300x200"]
+	return result
 
 func to_dict() -> Dictionary:
-	return changed_data;
+	return changed_data
 
 func to_json() -> String:
-	return JSON.stringify(to_dict());
+	return JSON.stringify(to_dict())
 
