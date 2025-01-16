@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://addons/twitcher/twitch_auth.gd" id="2_5qffk"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="3_hshae"]
 [ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="4_bnk2f"]
-[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_rest_api.gd" id="6_yppmx"]
+[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_api.gd" id="6_yppmx"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="6_yr7cd"]
 [ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/default_oauth_setting.tres" id="7_7bvku"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/http/http_client_manager.gd" id="8_k3gks"]

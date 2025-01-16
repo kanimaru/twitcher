@@ -22,6 +22,7 @@ var user_id: String:
 
 signal user_login_changed(user: String)
 
+
 func _ready() -> void:
 	_login.text_changed.connect(_on_login_changed)
 	_swap_view.pressed.connect(_on_swap_view)

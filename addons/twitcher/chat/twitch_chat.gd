@@ -16,12 +16,13 @@ class_name TwitchChat
 @onready var twitch_event_listener: TwitchEventListener = %TwitchEventListener
 
 
-var _log: TwitchLogger = TwitchLogger.new("TwitchChat")
+static var _log: TwitchLogger = TwitchLogger.new("TwitchChat")
 
 var broadcaster_user: TwitchUser:
 	set(val):
 		broadcaster_user = val
 		update_configuration_warnings()
+		notify_property_list_changed()
 
 var sender_user: TwitchUser
 var _sender_user_loading: bool
@@ -30,12 +31,10 @@ signal _sender_user_loaded
 ## Triggered when a chat message got received
 signal message_received(message: TwitchChatMessage)
 ## Rest API got changed
-signal rest_updated(rest: TwitchRestAPI)
+signal rest_updated(rest: TwitchAPI)
 
 
 func _ready() -> void:
-	_log.enabled = true
-	_log.debug = true
 	_log.d("is ready")
 	twitch_event_listener.eventsub = twitch_service.eventsub
 	twitch_event_listener.received.connect(_on_event_received)
@@ -50,7 +49,6 @@ func _update_broadcaster_user(val: String) -> void:
 		broadcaster_user = await twitch_service.get_user(val)
 		twitch_service.media_loader.preload_badges(broadcaster_user.id)
 		twitch_service.media_loader.preload_emotes(broadcaster_user.id)
-	target_user_channel = val
 
 
 func _on_event_received(data: Dictionary) -> void:

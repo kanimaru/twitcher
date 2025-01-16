@@ -3,15 +3,14 @@ extends Node
 
 ## Delegate class for the oOuch Library.
 class_name TwitchAuth
-var _log: TwitchLogger = TwitchLogger.new("TwitchAuth")
+
+static var _log: TwitchLogger = TwitchLogger.new("TwitchAuth")
 
 ## The requested devicecode to show to the user for authorization
 signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
 
-## Where to authorize. Nullable: fallback to the ProjectSettings
-@export var oauth_setting: OAuthSetting:
-	set = _update_oauth_setting
-
+## Where and how to authorize.
+@export var oauth_setting: OAuthSetting
 ## Shows the what to authorize page of twitch again. (for example you need to relogin with a different account aka bot account)
 @export var force_verify: bool
 ## Where should the tokens be saved into
@@ -40,26 +39,27 @@ func _ready() -> void:
 	OAuth.set_logger(_log.e, _log.i, _log.d);
 	if oauth_setting == null: oauth_setting = _get_oauth_setting()
 	_ensure_children()
-	_update_oauth_setting.call_deferred(oauth_setting)
+
 
 
 func _ensure_children() -> void:
-	if auth == null:
-		auth = OAuth.new()
-
 	if token_handler == null:
 		token_handler = TwitchTokenHandler.new()
 
+	if auth == null:
+		auth = OAuth.new()
+
+	auth.token_handler = token_handler
 	auth.scopes = scopes
 	auth.force_verify = &"true" if force_verify else &"false"
-	token_handler.token = token
-
-
-func _update_oauth_setting(val: OAuthSetting) -> void:
-	oauth_setting = val
-	if not is_node_ready(): return
 	auth.oauth_setting = oauth_setting
 	token_handler.oauth_setting = oauth_setting
+	token_handler.token = token
+
+	if not auth.is_inside_tree():
+		add_child(auth)
+	if not token_handler.is_inside_tree():
+		add_child(token_handler)
 
 
 func authorize() -> void:

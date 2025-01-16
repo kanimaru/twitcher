@@ -115,10 +115,8 @@ class Cheermote:
 		_twitch_service = twitch_service
 
 
-	func get_sprite_frames(theme: TwitchCheerRepository.Themes = TwitchCheerRepository.Themes.DARK, \
-		type: TwitchCheerRepository.Types = TwitchCheerRepository.Types.ANIMATED, \
-		scale: TwitchCheerRepository.Scales = TwitchCheerRepository.Scales._1) -> SpriteFrames:
-		var cheer_results = await _twitch_service.cheer_repository.get_cheer_tier(prefix, "%s" % tier, theme, type, scale)
+	func get_sprite_frames(cheermote_definition: TwitchCheermoteDefinition) -> SpriteFrames:
+		var cheer_results = await _twitch_service.media_loader.get_cheer_tier(prefix, "%s" % tier, cheermote_definition.theme, cheermote_definition.type, cheermote_definition.scale)
 		return cheer_results.spriteframes
 
 

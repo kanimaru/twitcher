@@ -9,7 +9,7 @@
 [ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc_setting.gd" id="5_1si3o"]
 [ext_resource type="Script" path="res://addons/twitcher/twitch_auth.gd" id="8_bv4ru"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/http/http_client_manager.gd" id="8_ffqxp"]
-[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_rest_api.gd" id="10_nmebx"]
+[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_api.gd" id="10_nmebx"]
 [ext_resource type="Script" path="res://addons/twitcher/twitch_media_loader.gd" id="11_le525"]
 [ext_resource type="PackedScene" uid="uid://b0ebhuv2yaow0" path="res://addons/twitcher/lib/http/DebugBufferedHttpClient.tscn" id="11_ugwlt"]
 [ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc_channel.gd" id="11_y0yp4"]

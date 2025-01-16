@@ -3,7 +3,7 @@ extends Node
 
 ## Handles the evensub part of twitch. Returns the event data when receives it.
 class_name TwitchEventsub
-var _log: TwitchLogger = TwitchLogger.new("TwitchEventsub")
+static var _log: TwitchLogger = TwitchLogger.new("TwitchEventsub")
 
 ## An object that identifies the message.
 class Metadata extends RefCounted:
@@ -53,10 +53,13 @@ signal events_revoked(type: String, status: String)
 ## Called when any eventsub message is received for low level access
 signal message_received(message: Variant)
 
-@export var api: TwitchRestAPI
+@export var api: TwitchAPI
 @export var _subscriptions: Array[TwitchEventsubConfig] = []
 @export var scopes: OAuthScopes
-
+@export var eventsub_live_server_url: String = "wss://eventsub.wss.twitch.tv/ws"
+@export var eventsub_test_server_url: String = "ws://127.0.0.1:8080/ws"
+@export var use_test_server: bool
+@export var ignore_message_eventsub_in_seconds: int = 600
 
 var _client: WebsocketClient = WebsocketClient.new()
 var _test_client : WebsocketClient = WebsocketClient.new()
@@ -93,17 +96,17 @@ class SubscriptionAction extends RefCounted:
 func _init() -> void:
 	_log.enabled = true
 	_log.debug = true
-	_client.connection_url = TwitchSetting.eventsub_live_server_url
+	_client.connection_url = eventsub_live_server_url
 	_client.message_received.connect(_data_received)
 	_client.connection_established.connect(_on_connection_established)
-	_test_client.connection_url = TwitchSetting.eventsub_test_server_url
+	_test_client.connection_url = eventsub_test_server_url
 	_test_client.message_received.connect(_data_received)
 
 
 func _ready() -> void:
 	_client.name = "Websocket Client"
 	add_child(_client)
-	if TwitchSetting.use_test_server:
+	if use_test_server:
 		_test_client.name = "Websocket Client Test"
 		add_child(_test_client)
 
@@ -135,7 +138,7 @@ func _on_connection_established() -> void:
 func open_connection() -> void:
 	if _client.is_closed:
 		_client.open_connection()
-	if _test_client.is_closed && TwitchSetting.use_test_server:
+	if _test_client.is_closed && use_test_server:
 		_test_client.open_connection()
 
 
@@ -302,7 +305,7 @@ func _message_got_processed(message_id: String) -> bool:
 
 
 func _message_is_to_old(timestamp: int) -> bool:
-	return timestamp < Time.get_unix_time_from_system() - TwitchSetting.ignore_message_eventsub_in_seconds
+	return timestamp < Time.get_unix_time_from_system() - ignore_message_eventsub_in_seconds
 
 
 func get_client() -> WebsocketClient:

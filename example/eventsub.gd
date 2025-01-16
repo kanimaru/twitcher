@@ -2,7 +2,7 @@ extends Control
 
 @onready var channel_follow_event_listener: TwitchEventListener = %ChannelFollowEventListener
 @onready var twitch_service: TwitchService = %TwitchService
-@onready var api: TwitchRestAPI = %API
+@onready var api: TwitchAPI = %API
 @onready var eventsub: TwitchEventsub = %Eventsub
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -16,7 +16,7 @@ func _ready() -> void:
 	await twitch_service.setup()
 
 	var current_user: TwitchUser = await twitch_service.get_current_user()
-	api.default_broadcaster_id = current_user.id
+	api.default_broadcaster_login = current_user.id
 
 	twitch_service.subscribe_event(TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE, {
 		"broadcaster_user_id": current_user.id,

@@ -5,7 +5,9 @@ extends Node
 ## Makes some actions easier to use.
 class_name TwitchService
 
-const DEFAULT_TWITCH_AUTH = preload("res://addons/twitcher/scene/default_twitch_auth.tscn")
+const HttpUtil = preload("res://addons/twitcher/lib/http/http_util.gd")
+
+static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 
 @export var oauth_setting: OAuthSetting = OAuthSetting.new():
 	set(val):
@@ -22,14 +24,12 @@ const DEFAULT_TWITCH_AUTH = preload("res://addons/twitcher/scene/default_twitch_
 
 @onready var auth: TwitchAuth
 @onready var eventsub: TwitchEventsub
-@onready var api: TwitchRestAPI
+@onready var api: TwitchAPI
 @onready var irc: TwitchIRC
 @onready var media_loader: TwitchMediaLoader
 @onready var http_client_manager: HttpClientManager
-@onready var cheer_repository: TwitchCheerRepository
 @onready var command_handler: TwitchCommandHandler
 
-var _log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_SERVICE)
 
 func _init() -> void:
 	child_entered_tree.connect(_on_child_entered)
@@ -39,11 +39,14 @@ func _init() -> void:
 func _ready() -> void:
 	_ensure_required_nodes()
 	_log.d("is ready")
+	var http_logger = TwitchLogger.new("Http")
+	HttpUtil.set_logger(http_logger.e, http_logger.i, http_logger.d)
 
 
 func _ensure_required_nodes() -> void:
 	if auth == null:
-		add_child(DEFAULT_TWITCH_AUTH.instantiate())
+		auth = TwitchAuth.new()
+		add_child(auth)
 	if http_client_manager == null:
 		http_client_manager = HttpClientManager.new()
 		add_child(http_client_manager)
@@ -51,7 +54,7 @@ func _ensure_required_nodes() -> void:
 
 func _on_child_entered(node: Node) -> void:
 	if node is TwitchAuth: auth = node
-	if node is TwitchRestAPI: api = node
+	if node is TwitchAPI: api = node
 	if node is TwitchEventsub: eventsub = node
 	if node is TwitchIRC: irc = node
 	if node is TwitchMediaLoader: media_loader = node
@@ -96,7 +99,7 @@ func _on_unauthenticated() -> void:
 ## Get data about a user by USER_ID see get_user for by username
 func get_user_by_id(user_id: String) -> TwitchUser:
 	if api == null:
-		printerr("Please setup a TwitchRestAPI Node into TwitchService.")
+		printerr("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 	if user_id == null || user_id == "": return null
 	var user_data : TwitchGetUsersResponse = await api.get_users([user_id], [])
@@ -107,7 +110,7 @@ func get_user_by_id(user_id: String) -> TwitchUser:
 ## Get data about a user by USERNAME see get_user_by_id for by user_id
 func get_user(username: String) -> TwitchUser:
 	if api == null:
-		printerr("Please setup a TwitchRestAPI Node into TwitchService.")
+		printerr("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 
 	var user_data : TwitchGetUsersResponse = await api.get_users([], [username])
@@ -120,7 +123,7 @@ func get_user(username: String) -> TwitchUser:
 ## Get data about a currently authenticated user
 func get_current_user() -> TwitchUser:
 	if api == null:
-		printerr("Please setup a TwitchRestAPI Node into TwitchService.")
+		printerr("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 
 	var user_data : TwitchGetUsersResponse = await api.get_users([], [])
@@ -168,12 +171,15 @@ func get_subscriptions() -> Array[TwitchEventsubConfig]:
 
 ## Sends out a shoutout to a specific user
 func shoutout(user: TwitchUser) -> void:
-	api.send_a_shoutout(TwitchSetting.broadcaster_id, user.id, TwitchSetting.broadcaster_id)
+	var broadcaster_id = api.default_broadcaster_login
+	if broadcaster_id == "": return
+	api.send_a_shoutout(broadcaster_id, user.id, broadcaster_id)
 
 
 ## Sends a announcement message to the chat
 func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY):
-	var broadcaster_id = TwitchSetting.broadcaster_id
+	var broadcaster_id = api.default_broadcaster_login
+	if broadcaster_id == "": return
 	var body = TwitchSendChatAnnouncementBody.new()
 	body.message = message
 	body.color = color.value
@@ -234,20 +240,17 @@ func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionar
 
 ## Returns the data of the Cheermotes.
 func get_cheermote_data() -> Array[TwitchCheermote]:
-	if cheer_repository == null:
-		printerr("TwitchCheerRepository was not set")
+	if media_loader == null:
+		printerr("TwitchMediaLoader was not set within %s" % get_tree_string())
 		return []
-	await cheer_repository.wait_is_ready()
-	return cheer_repository.data
+	await media_loader.preload_cheemote()
+	return media_loader.all_cheermotes()
 
 
 ## Returns all cheertiers in form of:
 ## Key: TwitchCheermote.Tiers | Value: SpriteFrames
-func get_cheermotes(cheermote: TwitchCheermote,
-	theme: TwitchCheerRepository.Themes = TwitchCheerRepository.Themes.DARK,
-	type: TwitchCheerRepository.Types = TwitchCheerRepository.Types.ANIMATED,
-	scale: TwitchCheerRepository.Scales = TwitchCheerRepository.Scales._1) -> Dictionary:
-	return await cheer_repository.get_cheermotes(cheermote, theme, type, scale)
+func get_cheermotes(definition: TwitchCheermoteDefinition) -> Dictionary:
+	return await media_loader.get_cheermotes(definition)
 
 #endregion
 

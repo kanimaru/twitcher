@@ -89,7 +89,7 @@ func _notification(what: int) -> void:
 
 
 func _connect_to_host() -> void:
-	logInfo("connecting")
+	logDebug("connecting")
 	var err = client.connect_to_host(base_url, _port)
 	if err != OK:
 		logError("[%s] can't connect cause of %s" % [base_url, error_string(err)])
@@ -97,7 +97,7 @@ func _connect_to_host() -> void:
 
 
 func _disconnect() -> void:
-	logInfo("disconnecting")
+	logDebug("disconnecting")
 	client.close()
 	connected = false
 
@@ -133,7 +133,7 @@ func _poll() -> void:
 	# Is a request available
 	if current_request == null && not requests.is_empty():
 		current_request = requests.pop_front()
-		logInfo("[%s] process request" % [ current_request.path ])
+		logDebug("[%s] process request" % [ current_request.path ])
 
 		# Start connection
 		_connect_to_host()

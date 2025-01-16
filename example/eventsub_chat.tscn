@@ -8,7 +8,7 @@
 [ext_resource type="Script" path="res://addons/twitcher/twitch_auth.gd" id="6_2pnhe"]
 [ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="7_itbs2"]
 [ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub_config.gd" id="8_gya36"]
-[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_rest_api.gd" id="9_otx6d"]
+[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_api.gd" id="9_otx6d"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/http/http_client_manager.gd" id="10_8md5e"]
 [ext_resource type="Script" path="res://addons/twitcher/twitch_media_loader.gd" id="11_aprrr"]
 [ext_resource type="PackedScene" uid="uid://cinvytmtixgwu" path="res://addons/twitcher/chat/twitch_chat.tscn" id="12_5f2sm"]
@@ -56,6 +56,7 @@ scopes = ExtResource("4_wpyv0")
 
 [node name="API" type="Node" parent="TwitchService" node_paths=PackedStringArray("http_client_manager")]
 script = ExtResource("9_otx6d")
+default_broadcaster_login = "kani_dev"
 token = ExtResource("5_cneyv")
 oauth_setting = ExtResource("3_d0q0w")
 http_client_manager = NodePath("../HttpClientManager")
@@ -67,6 +68,8 @@ script = ExtResource("10_8md5e")
 script = ExtResource("11_aprrr")
 api = NodePath("../API")
 http_client_manager = NodePath("../HttpClientManager")
+image_transformer = "MagicImageTransformer"
+image_magic_path = "magick"
 
 [node name="TwitchChat" parent="." node_paths=PackedStringArray("twitch_service") instance=ExtResource("12_5f2sm")]
 unique_name_in_owner = true

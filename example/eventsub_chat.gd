@@ -20,8 +20,6 @@ extends Control
 @onready var twitch_service: TwitchService = %TwitchService
 ## Warning in case you missed the confugration part above
 @onready var configuration_warning: Label = %ConfigurationWarning
-##
-@onready var rest: TwitchRestAPI = %Rest
 
 
 func _ready() -> void:
@@ -113,7 +111,8 @@ func show_text(message: TwitchChatMessage, current_text: String, emote_scale: in
 			TwitchChatMessage.FragmentType.text:
 				current_text += fragment.text
 			TwitchChatMessage.FragmentType.cheermote:
-				var cheermote = await fragment.cheermote.get_sprite_frames()
+				var definition = TwitchCheermoteDefinition.new(fragment.cheermote.prefix, "%s" % fragment.cheermote.tier)
+				var cheermote = await fragment.cheermote.get_sprite_frames(definition)
 				current_text += "[sprite id='f-%s']%s[/sprite]" % [fragment_id, cheermote.resource_path]
 			TwitchChatMessage.FragmentType.emote:
 				var emote = await fragment.emote.get_sprite_frames("", emote_scale)

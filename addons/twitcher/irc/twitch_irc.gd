@@ -3,7 +3,7 @@ extends Node
 
 class_name TwitchIRC
 
-var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_IRC)
+static var log: TwitchLogger = TwitchLogger.new("TwitchIRC")
 
 ## Sent when the bot or moderator removes all messages from the chat room or removes all messages for the specified user.
 signal received_clearchat(channel_name: String, banned_or_timeout_user: String, tags: TwitchTags.ClearChat)
@@ -131,7 +131,7 @@ class EmoteLocation extends RefCounted:
 	set(val):
 		token = val
 		update_configuration_warnings()
-
+@export var irc_send_message_delay: int = 360
 ## All connected channels of the bot.
 ## Key: channel_name as StringName | Value: ChannelData
 var _channels := {}
@@ -252,7 +252,7 @@ func _send_messages() -> void:
 	if _next_message <= Time.get_ticks_msec():
 		var msg_to_send = _chat_queue.pop_front()
 		_send(msg_to_send)
-		_next_message = Time.get_ticks_msec() + TwitchSetting.irc_send_message_delay
+		_next_message = Time.get_ticks_msec() + irc_send_message_delay
 
 
 ## Sends join channel message

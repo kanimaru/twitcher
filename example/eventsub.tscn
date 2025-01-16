@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://addons/twitcher/twitch_service.gd" id="2_rsm4n"]
 [ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="5_t2qpq"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="7_ewdek"]
-[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_rest_api.gd" id="8_7v820"]
+[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_api.gd" id="8_7v820"]
 [ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="9_pysb7"]
 [ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/default_oauth_setting.tres" id="10_b87ds"]
 [ext_resource type="Script" path="res://addons/twitcher/lib/http/http_client_manager.gd" id="11_0ha5q"]
@@ -39,9 +39,11 @@ scopes = SubResource("Resource_5khjo")
 [node name="API" type="Node" parent="TwitchService" node_paths=PackedStringArray("http_client_manager")]
 unique_name_in_owner = true
 script = ExtResource("8_7v820")
+default_broadcaster_id = ""
 token = ExtResource("9_pysb7")
 oauth_setting = ExtResource("10_b87ds")
 http_client_manager = NodePath("../HttpClientManager")
+api_host = "https://api.twitch.tv"
 
 [node name="HttpClientManager" type="Node" parent="TwitchService"]
 script = ExtResource("11_0ha5q")
@@ -49,5 +51,5 @@ script = ExtResource("11_0ha5q")
 [node name="ChannelFollowEventListener" type="Node" parent="." node_paths=PackedStringArray("eventsub")]
 unique_name_in_owner = true
 script = ExtResource("12_4m14a")
-eventsub = NodePath("../TwitchService/Eventsub")
 subscription = 5
+eventsub = NodePath("../TwitchService/Eventsub")

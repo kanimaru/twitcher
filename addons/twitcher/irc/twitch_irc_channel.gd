@@ -7,6 +7,8 @@ extends Node
 ## This one exists only for tracking user join and leave events.
 class_name TwitchIrcChannel
 
+static var _log: TwitchLogger = TwitchLogger.new("TwitchIrcChannel")
+
 ## when a chat message in this channel got received
 signal message_received(from_user: String, message: String, tags: TwitchTags.Message)
 
@@ -37,7 +39,7 @@ var room_state: TwitchTags.Roomstate:
 
 var joined: bool
 var irc: TwitchIRC
-var log: TwitchLogger = TwitchLogger.new(TwitchSetting.LOGGER_NAME_IRC)
+
 
 func _enter_tree() -> void:
 	_enter_channel()
@@ -56,7 +58,7 @@ func _update_channel_name(new_name: StringName) -> void:
 func _enter_channel() -> void:
 	if irc == null: return
 	if channel_name == &"":
-		log.e("No channel is specified to join. The channel name can be set on the TwitchIrcChannel node.")
+		_log.e("No channel is specified to join. The channel name can be set on the TwitchIrcChannel node.")
 		return
 	irc.add_channel(self)
 

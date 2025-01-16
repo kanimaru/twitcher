@@ -7,7 +7,7 @@ extends Node
 
 @onready var twitch_auth_user1: TwitchAuth = %TwitchAuthUser1
 @onready var twitch_auth_user2: TwitchAuth = %TwitchAuthUser2
-@onready var api: TwitchRestAPI = %API
+@onready var api: TwitchAPI = %API
 
 func _ready() -> void:
 	await twitch_auth_user1.authorize()

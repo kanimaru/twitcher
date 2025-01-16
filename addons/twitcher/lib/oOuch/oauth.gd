@@ -78,6 +78,7 @@ func get_token() -> String:
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
 func login() -> void:
+	if not is_node_ready(): await ready
 	if token_handler.is_token_valid() && not _got_scopes_changed(): return
 
 	if login_in_process:

@@ -3,7 +3,7 @@
 ## {url}
 func {name}({all_parameters}) -> {result_type}:
 {if has_broadcaster}
-	broadcaster_id = broadcaster_id if broadcaster_id != "" else default_broadcaster_id
+	broadcaster_id = broadcaster_id if broadcaster_id != "" else default_broadcaster_login
 {/if}
 	var path = "{request_path}"
 {for time_parameters_opt as param}

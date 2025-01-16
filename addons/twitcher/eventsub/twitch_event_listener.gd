@@ -8,11 +8,10 @@ extends Node
 
 ## [b]Expects that the signal was already configured in the eventsub or manually subscribed[/b]
 class_name TwitchEventListener
-var _log : TwitchLogger = TwitchLogger.new("TwitchEventListener")
+static var _log : TwitchLogger = TwitchLogger.new("TwitchEventListener")
 
 @export var eventsub: TwitchEventsub:
 	set = _update_eventsub
-
 
 @export var subscription: TwitchEventsubDefinition.Type:
 	set(val):
@@ -31,28 +30,36 @@ func _ready() -> void:
 	_update_eventsub(eventsub)
 
 
+func _enter_tree() -> void:
+	start_listening()
+
+
 func _exit_tree() -> void:
 	stop_listening()
 
 
+func start_listening() -> void:
+	_log.d("start listening %s" % subscription_definition.get_readable_name())
+	if eventsub != null && not eventsub.event.is_connected(_on_received):
+		if eventsub.use_test_server:
+			eventsub.event.connect(_on_received)
+		eventsub.event.connect(_on_received)
+
+
 func stop_listening() -> void:
 	_log.d("stop listening %s" % subscription_definition.get_readable_name())
-	if eventsub != null:
-		if TwitchSetting.use_test_server:
+	if eventsub != null && eventsub.event.is_connected(_on_received):
+		if eventsub.use_test_server:
 			eventsub.event.disconnect(_on_received)
 		eventsub.event.disconnect(_on_received)
 
 
 func _update_eventsub(val: TwitchEventsub):
 	stop_listening()
-
 	eventsub = val
 	update_configuration_warnings()
 	if val == null: return
-
-	if TwitchSetting.use_test_server:
-		eventsub.event.connect(_on_received)
-	eventsub.event.connect(_on_received)
+	start_listening()
 
 
 func _on_received(type: String, data: Dictionary):

@@ -4,6 +4,11 @@ extends Node
 ## Will load badges, icons and profile images
 class_name TwitchMediaLoader
 
+var _image_transformers: Dictionary = {
+	"NativeImageTransformer": NativeImageTransformer,
+	"MagicImageTransformer": MagicImageTransformer,
+	"TwitchImageTransformer": TwitchImageTransformer,
+}
 
 ## Called when an emoji was succesfully loaded
 signal emoji_loaded(definition: TwitchEmoteDefinition)
@@ -11,8 +16,12 @@ signal emoji_loaded(definition: TwitchEmoteDefinition)
 const FALLBACK_TEXTURE = preload("res://addons/twitcher/assets/fallback_texture.tres")
 const FALLBACK_PROFILE = preload("res://addons/twitcher/assets/no_profile.png")
 
-@export var api: TwitchRestAPI
+@export var api: TwitchAPI
 @export var http_client_manager: HttpClientManager
+@export_enum("NativeImageTransformer", "MagicImageTransformer", "TwitchImageTransformer") var image_transformer: String = "TwitchImageTransformer":
+	set = update_image_transformer
+@export var image_magic_path: String = "":
+	set = update_image_magic_path
 @export var fallback_texture: Texture2D = FALLBACK_TEXTURE
 @export var fallback_profile: Texture2D = FALLBACK_PROFILE
 @export var image_cdn_host: String = "https://static-cdn.jtvnw.net"
@@ -29,6 +38,7 @@ var _cached_badges : Dictionary = {}
 var _cached_emotes : Dictionary = {}
 ## Key: String Cheer Prefix | Value: TwitchCheermote
 var _cached_cheermotes: Dictionary = {}
+var image_transformer_implementation: TwitchImageTransformer
 
 ## All cached emotes, badges, cheermotes
 ## Is needed that the garbage collector isn't deleting our cache.
@@ -91,14 +101,14 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 	var requests: Dictionary = {}
 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
-		var cache_path: String = emote_definition.get_cache_path()
-		var spriteframe_path: String = emote_definition.get_cache_path_spriteframe()
+		var cache_path: String = _get_emote_cache_path(emote_definition)
+		var spriteframe_path: String = _get_emote_cache_path_spriteframe(emote_definition)
 		print("Loaded: ", spriteframe_path)
 		if ResourceLoader.has_cached(cache_path):
 			response[emote_definition] = ResourceLoader.load(spriteframe_path)
 			continue
 
-		if not TwitchSetting.image_transformer.is_supporting_animation():
+		if not image_transformer_implementation.is_supporting_animation():
 			emote_definition.type_static()
 
 		if _requests_in_progress.has(cache_path): continue
@@ -107,8 +117,8 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 		requests[emote_definition] = request
 
 	for emote_definition: TwitchEmoteDefinition in requests:
-		var cache_path: String = emote_definition.get_cache_path()
-		var spriteframe_path: String = emote_definition.get_cache_path_spriteframe()
+		var cache_path: String = _get_emote_cache_path(emote_definition)
+		var spriteframe_path: String = _get_emote_cache_path_spriteframe(emote_definition)
 		var request = requests[emote_definition]
 		var sprite_frames = await _convert_response(request, cache_path, spriteframe_path)
 		response[emote_definition] = sprite_frames
@@ -118,15 +128,27 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
 		if not response.has(emote_definition):
-			var cache = emote_definition.get_cache_path_spriteframe()
+			var cache = _get_emote_cache_path_spriteframe(emote_definition)
 			response[emote_definition] = ResourceLoader.load(cache)
 
 	return response
 
 
+## Returns the path where the raw emoji should be cached
+func _get_emote_cache_path(emote_definition: TwitchEmoteDefinition) -> String:
+	var file_name = emote_definition.get_file_name()
+	return cache_emote.path_join(file_name)
+
+
+## Returns the path where the converted spriteframe should be cached
+func _get_emote_cache_path_spriteframe(emote_definition: TwitchEmoteDefinition) -> String:
+	var file_name = emote_definition.get_file_name() + ".res"
+	return cache_emote.path_join(file_name)
+
+
 func _load_emote(emote_definition : TwitchEmoteDefinition) -> BufferedHTTPClient.RequestData:
 	var request_path = "/emoticons/v2/%s/%s/%s/%1.1f" % [emote_definition.id, emote_definition._type, emote_definition._theme, emote_definition._scale]
-	var client = http_client_manager.get_client(TwitchSetting.twitch_image_cdn_host)
+	var client = http_client_manager.get_client(image_cdn_host)
 	return client.request(request_path, HTTPClient.METHOD_GET, {}, "")
 
 
@@ -167,7 +189,7 @@ func get_badges(badges: Array[TwitchBadgeDefinition]) -> Dictionary:
 
 	for badge_definition in badges:
 		var cache_id : String = badge_definition.get_cache_id()
-		var badge_path : String = TwitchSetting.cache_badge.path_join(cache_id)
+		var badge_path : String = cache_badge.path_join(cache_id)
 		if ResourceLoader.has_cached(badge_path):
 			response[badge_definition] = ResourceLoader.load(badge_path)
 		else:
@@ -177,8 +199,8 @@ func get_badges(badges: Array[TwitchBadgeDefinition]) -> Dictionary:
 	for badge_definition in requests:
 		var request = requests[badge_definition]
 		var id : String = badge_definition.get_cache_id()
-		var cache_path : String = TwitchSetting.cache_badge.path_join(id)
-		var spriteframe_path : String = TwitchSetting.cache_badge.path_join(id) + ".res"
+		var cache_path : String = cache_badge.path_join(id)
+		var spriteframe_path : String = cache_badge.path_join(id) + ".res"
 		var sprite_frames = await _convert_response(request, cache_path, spriteframe_path)
 		response[badge_definition] = sprite_frames
 		_cached_images.append(sprite_frames)
@@ -200,9 +222,8 @@ func _load_badge(badge_definition: TwitchBadgeDefinition) -> BufferedHTTPClient.
 		badge_definition.channel = "global"
 		return await _load_badge(badge_definition)
 
-	var base_url = TwitchSetting.twitch_image_cdn_host
-	var request_path = _cached_badges[channel_id][badge_set]["versions"][badge_id]["image_url_%sx" % scale].trim_prefix(base_url)
-	var client = http_client_manager.get_client(base_url)
+	var request_path = _cached_badges[channel_id][badge_set]["versions"][badge_id]["image_url_%sx" % scale].trim_prefix()
+	var client = http_client_manager.get_client(image_cdn_host)
 	return client.request(request_path, HTTPClient.METHOD_GET, {}, "")
 
 
@@ -246,6 +267,11 @@ func preload_cheemote() -> void:
 		_cached_cheermotes[data.prefix] = data
 
 
+func all_cheermotes() -> Array[TwitchCheermote]:
+	var cheermotes: Array[TwitchCheermote] = []
+	cheermotes.assign(_cached_cheermotes.values())
+	return cheermotes
+
 ## Resolves a info with spriteframes for a specific cheer definition contains also spriteframes for the given tier.
 ## Can be null when not found.
 func get_cheer_info(cheermote_definition: TwitchCheermoteDefinition) -> CheerResult:
@@ -276,7 +302,7 @@ func get_cheermotes(cheermote_definition: TwitchCheermoteDefinition) -> Dictiona
 	for tier: TwitchCheermote.Tiers in cheer.tiers:
 		var id = cheermote_definition.get_id()
 		if ResourceLoader.has_cached(id): response[tier] = ResourceLoader.load(id)
-		if not TwitchSetting.image_transformer.is_supporting_animation():
+		if not image_transformer_implementation.is_supporting_animation():
 			cheermote_definition.type_static()
 		else: requests[tier] = _request_cheermote(tier, cheermote_definition)
 
@@ -303,10 +329,9 @@ func _get_cheermote_sprite_frames(tier: TwitchCheermote.Tiers, cheermote_definit
 
 func _wait_for_cheeremote(request: BufferedHTTPClient.RequestData, cheer_id: String) -> SpriteFrames:
 	var client = request.client
-	var image_transformer = TwitchSetting.image_transformer
 	var response = await client.wait_for_request(request)
 	var cache_path = cache_cheermote.path_join(cheer_id)
-	var sprite_frames = await TwitchSetting.image_transformer.convert_image(
+	var sprite_frames = await image_transformer_implementation.convert_image(
 		cache_path,
 		response.response_data,
 		cache_path + ".res") as SpriteFrames
@@ -329,6 +354,33 @@ func _request_cheermote(cheer_tier: TwitchCheermote.Tiers, cheermote: TwitchChee
 
 #region Utilities
 
+func _get_configuration_warnings() -> PackedStringArray:
+	if not image_transformer_implementation.is_supported():
+		return ["Image transformer is misconfigured"]
+	return []
+
+
+func update_image_transformer(transformer_name: String) -> void:
+	if transformer_name == "" || transformer_name == null:
+		image_transformer = "TwitchImageTransformer"
+		image_transformer_implementation = TwitchImageTransformer.new()
+	else:
+		image_transformer = transformer_name
+		image_transformer_implementation = _image_transformers[transformer_name].new()
+		update_image_magic_path(image_magic_path)
+		if "fallback_texture" in image_transformer_implementation:
+			image_transformer_implementation.fallback_texture = fallback_texture
+	update_configuration_warnings()
+	notify_property_list_changed()
+
+
+func update_image_magic_path(path: String) -> void:
+	image_magic_path = path
+	if image_transformer_implementation is MagicImageTransformer:
+		image_transformer_implementation.imagemagic_path = path
+	update_configuration_warnings()
+
+
 ## Get the image of an user
 func load_profile_image(user: TwitchUser) -> ImageTexture:
 	if user == null: return fallback_profile
@@ -349,7 +401,7 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 			_: return fallback_profile
 		texture.set_image(img)
 	else:
-		# Don't use `texture = TwitchSetting.fallback_profile` as texture cause the path will be taken over
+		# Don't use `texture = fallback_profile` as texture cause the path will be taken over
 		# for caching purpose!
 		texture.set_image(fallback_profile.get_image())
 	texture.take_over_path(user.profile_image_url)
@@ -360,12 +412,11 @@ const GIF_HEADER: PackedByteArray = [71, 73, 70]
 func _convert_response(request: BufferedHTTPClient.RequestData, cache_path: String, spriteframe_path: String) -> SpriteFrames:
 	var client = request.client as BufferedHTTPClient
 	var response = await client.wait_for_request(request)
-	var image_transformer = TwitchSetting.image_transformer
 	var response_data = response.response_data as PackedByteArray
 	var file_head = response_data.slice(0, 3)
 	# REMARK: don't use content-type... twitch doesn't check and sends PNGs with GIF content type.
 	if file_head == GIF_HEADER:
-		return await image_transformer.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames
+		return await image_transformer_implementation.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames
 	else:
 		return await static_image_transformer.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames
 

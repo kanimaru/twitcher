@@ -100,19 +100,11 @@ func _poll() -> void:
 
 func _handle_state_changes(state: WebSocketPeer.State) -> void:
 	if connection_state != WebSocketPeer.STATE_OPEN && state == WebSocketPeer.STATE_OPEN:
-		_on_open_connection()
+		_logInfo("connected")
+		_tries = 0
 
 	if connection_state != WebSocketPeer.STATE_CLOSED && state == WebSocketPeer.STATE_CLOSED:
-		_on_close_connection()
-
-
-func _on_open_connection():
-	_logInfo("connected")
-	_tries = 0
-
-
-func _on_close_connection():
-	_logInfo("connection was closed [%s]: %s" % [_peer.get_close_code(), _peer.get_close_reason()])
+		_logInfo("connection was closed [%s]: %s" % [_peer.get_close_code(), _peer.get_close_reason()])
 
 
 func _read_data() -> void:

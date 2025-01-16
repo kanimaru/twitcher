@@ -1,10 +1,12 @@
 !!!! TODOS:
-- Change Documentation to remove autoloads
-- Add Possibility to change the Encryption key in Token.gd
-- Clear Cache -> into toolbar
-- Add "Remove token" button in the token editor
-- check chat example
-- 
+- Making request available in web builds
+- Changing eventsub inspector, API default_broadcaster to support username -> user id conversion
+- Making Icons for Nodes
+- Updating documentation
+- rework Command Handling
+
+
+
 # [Bloody Alpha] Twitcher V2
 .. is a Godot Library for implementing Twitch functionality in Godot.
 The main purpose is to use this library for easier overlay development.
