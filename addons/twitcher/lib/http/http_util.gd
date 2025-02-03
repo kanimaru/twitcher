@@ -21,6 +21,5 @@ static func parse_query(query: String) -> Dictionary:
 ## Method to set all logger within this package
 static func set_logger(error: Callable, info: Callable, debug: Callable) -> void:
 	BufferedHTTPClient.set_logger(error, info, debug)
-	HttpClientManager.set_logger(error, info, debug)
 	HTTPServer.set_logger(error, info, debug)
 	WebsocketClient.set_logger(error, info, debug)

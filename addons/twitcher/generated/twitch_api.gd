@@ -24,6 +24,7 @@ signal unauthorized
 		_update_default_broadcaster_login(username)
 	get():
 		if default_broadcaster_login == null || default_broadcaster_login == "":
+			# TODO Make better
 			_log.e("Please setup a 'default_broadcaster_login' within %s" % get_tree_string())
 			return ""
 		return default_broadcaster_login
@@ -31,8 +32,6 @@ signal unauthorized
 @export var token: OAuthToken
 ## OAuth settings needed for client information
 @export var oauth_setting: OAuthSetting
-## Client Manger to provide HTTP requests
-@export var http_client_manager: HttpClientManager
 ## URI to the Twitch API
 @export var api_host: String = "https://api.twitch.tv"
 
@@ -40,11 +39,14 @@ var broadcaster_user: TwitchUser:
 	set(val):
 		broadcaster_user = val
 		notify_property_list_changed()
+## Client to make HTTP requests
 var client: BufferedHTTPClient
 
 
 func _ready() -> void:
-	client = http_client_manager.get_client(api_host)
+	client = BufferedHTTPClient.new()
+	client.name = "ApiClient"
+	add_child(client)
 	if default_broadcaster_login == "" && token.is_token_valid():
 		var current_user : TwitchGetUsersResponse = await get_users([],[])
 		var user: TwitchUser = current_user.data[0]
@@ -76,14 +78,15 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 	else:
 		request_body = JSON.stringify(body)
 
-	var request = client.request(path, method, header, request_body)
+	var request = client.request(api_host + path, method, header, request_body)
 	var response = await client.wait_for_request(request)
 
 	# Token expired / or missing permissions
-	if response.client.get_response_code() == 403:
-		_log.e("'%s' is unauthorized. It is probably your scopes.")
+	if response.response_code == 403:
+		_log.e("'%s' is unauthorized. It is probably your scopes." % path)
 		unauthorized.emit()
-	if response.client.get_response_code() == 401:
+	if response.response_code == 401:
+		_log.i("'%s' is unauthenticated. Refresh token." % path)
 		unauthenticated.emit()
 		await token.authorized
 		if error_count + 1 < MAX_AUTH_ERRORS:
@@ -92,7 +95,7 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 			# Give up the request after trying multiple times and
 			# return an empty response with correct error code
 			var empty_response = client.empty_response(request)
-			empty_response.response_code = response.client.get_response_code()
+			empty_response.response_code = response.response_code
 			return empty_response
 	return response
 

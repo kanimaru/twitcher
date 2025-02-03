@@ -17,7 +17,6 @@ const FALLBACK_TEXTURE = preload("res://addons/twitcher/assets/fallback_texture.
 const FALLBACK_PROFILE = preload("res://addons/twitcher/assets/no_profile.png")
 
 @export var api: TwitchAPI
-@export var http_client_manager: HttpClientManager
 @export_enum("NativeImageTransformer", "MagicImageTransformer", "TwitchImageTransformer") var image_transformer: String = "TwitchImageTransformer":
 	set = update_image_transformer
 @export var image_magic_path: String = "":
@@ -45,9 +44,12 @@ var image_transformer_implementation: TwitchImageTransformer
 var _cached_images : Array[SpriteFrames] = []
 var _host_parser = RegEx.create_from_string("(https://.*?)/")
 var static_image_transformer = TwitchImageTransformer.new()
-
+var _client: BufferedHTTPClient
 
 func _ready() -> void:
+	_client = BufferedHTTPClient.new()
+	_client.name = "TwitchMediaLoaderClient"
+	add_child(_client)
 	_load_cache()
 
 
@@ -148,8 +150,7 @@ func _get_emote_cache_path_spriteframe(emote_definition: TwitchEmoteDefinition) 
 
 func _load_emote(emote_definition : TwitchEmoteDefinition) -> BufferedHTTPClient.RequestData:
 	var request_path = "/emoticons/v2/%s/%s/%s/%1.1f" % [emote_definition.id, emote_definition._type, emote_definition._theme, emote_definition._scale]
-	var client = http_client_manager.get_client(image_cdn_host)
-	return client.request(request_path, HTTPClient.METHOD_GET, {}, "")
+	return _client.request(image_cdn_host + request_path, HTTPClient.METHOD_GET, {}, "")
 
 
 func _map_emotes(result: Variant) -> Dictionary:
@@ -222,9 +223,8 @@ func _load_badge(badge_definition: TwitchBadgeDefinition) -> BufferedHTTPClient.
 		badge_definition.channel = "global"
 		return await _load_badge(badge_definition)
 
-	var request_path = _cached_badges[channel_id][badge_set]["versions"][badge_id]["image_url_%sx" % scale].trim_prefix()
-	var client = http_client_manager.get_client(image_cdn_host)
-	return client.request(request_path, HTTPClient.METHOD_GET, {}, "")
+	var request_path = _cached_badges[channel_id][badge_set]["versions"][badge_id]["image_url_%sx" % scale]
+	return _client.request(request_path, HTTPClient.METHOD_GET, {}, "")
 
 
 ## Maps the badges into a dict of category / versions / badge_id
@@ -328,8 +328,7 @@ func _get_cheermote_sprite_frames(tier: TwitchCheermote.Tiers, cheermote_definit
 
 
 func _wait_for_cheeremote(request: BufferedHTTPClient.RequestData, cheer_id: String) -> SpriteFrames:
-	var client = request.client
-	var response = await client.wait_for_request(request)
+	var response = await _client.wait_for_request(request)
 	var cache_path = cache_cheermote.path_join(cheer_id)
 	var sprite_frames = await image_transformer_implementation.convert_image(
 		cache_path,
@@ -345,9 +344,7 @@ func _request_cheermote(cheer_tier: TwitchCheermote.Tiers, cheermote: TwitchChee
 	var host_result : RegExMatch = _host_parser.search(img_path)
 	if host_result == null: return null
 	var host = host_result.get_string(1)
-	var request_path = img_path.trim_prefix(host)
-	var client = http_client_manager.get_client(host)
-	var request = client.request(request_path, HTTPClient.METHOD_GET, {}, "")
+	var request = _client.request(img_path, HTTPClient.METHOD_GET, {}, "")
 	return request
 
 #endregion
@@ -386,9 +383,8 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 	if user == null: return fallback_profile
 	if ResourceLoader.has_cached(user.profile_image_url):
 		return ResourceLoader.load(user.profile_image_url)
-	var client : BufferedHTTPClient = http_client_manager.get_client(image_cdn_host)
-	var request := client.request(user.profile_image_url, HTTPClient.METHOD_GET, {}, "")
-	var response_data := await client.wait_for_request(request)
+	var request := _client.request(user.profile_image_url, HTTPClient.METHOD_GET, {}, "")
+	var response_data := await _client.wait_for_request(request)
 	var texture : ImageTexture = ImageTexture.new()
 	var response := response_data.response_data
 	if not response.is_empty():
@@ -410,8 +406,7 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 
 const GIF_HEADER: PackedByteArray = [71, 73, 70]
 func _convert_response(request: BufferedHTTPClient.RequestData, cache_path: String, spriteframe_path: String) -> SpriteFrames:
-	var client = request.client as BufferedHTTPClient
-	var response = await client.wait_for_request(request)
+	var response = await _client.wait_for_request(request)
 	var response_data = response.response_data as PackedByteArray
 	var file_head = response_data.slice(0, 3)
 	# REMARK: don't use content-type... twitch doesn't check and sends PNGs with GIF content type.

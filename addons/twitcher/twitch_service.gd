@@ -5,8 +5,6 @@ extends Node
 ## Makes some actions easier to use.
 class_name TwitchService
 
-const HttpUtil = preload("res://addons/twitcher/lib/http/http_util.gd")
-
 static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 
 @export var oauth_setting: OAuthSetting = OAuthSetting.new():
@@ -27,7 +25,6 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 @onready var api: TwitchAPI
 @onready var irc: TwitchIRC
 @onready var media_loader: TwitchMediaLoader
-@onready var http_client_manager: HttpClientManager
 @onready var command_handler: TwitchCommandHandler
 
 
@@ -39,17 +36,12 @@ func _init() -> void:
 func _ready() -> void:
 	_ensure_required_nodes()
 	_log.d("is ready")
-	var http_logger = TwitchLogger.new("Http")
-	HttpUtil.set_logger(http_logger.e, http_logger.i, http_logger.d)
-
+	
 
 func _ensure_required_nodes() -> void:
 	if auth == null:
 		auth = TwitchAuth.new()
 		add_child(auth)
-	if http_client_manager == null:
-		http_client_manager = HttpClientManager.new()
-		add_child(http_client_manager)
 
 
 func _on_child_entered(node: Node) -> void:
@@ -59,7 +51,6 @@ func _on_child_entered(node: Node) -> void:
 	if node is TwitchIRC: irc = node
 	if node is TwitchMediaLoader: media_loader = node
 	if node is TwitchCommandHandler: command_handler = node
-	if node is HttpClientManager: http_client_manager = node
 
 	if "token" in node && token != null:
 		node.token = token
@@ -99,7 +90,7 @@ func _on_unauthenticated() -> void:
 ## Get data about a user by USER_ID see get_user for by username
 func get_user_by_id(user_id: String) -> TwitchUser:
 	if api == null:
-		printerr("Please setup a TwitchAPI Node into TwitchService.")
+		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 	if user_id == null || user_id == "": return null
 	var user_data : TwitchGetUsersResponse = await api.get_users([user_id], [])
@@ -110,12 +101,12 @@ func get_user_by_id(user_id: String) -> TwitchUser:
 ## Get data about a user by USERNAME see get_user_by_id for by user_id
 func get_user(username: String) -> TwitchUser:
 	if api == null:
-		printerr("Please setup a TwitchAPI Node into TwitchService.")
+		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 
 	var user_data : TwitchGetUsersResponse = await api.get_users([], [username])
 	if user_data.data.is_empty():
-		printerr("Username was not found: %s" % username)
+		_log.e("Username was not found: %s" % username)
 		return null
 	return user_data.data[0]
 
@@ -123,7 +114,7 @@ func get_user(username: String) -> TwitchUser:
 ## Get data about a currently authenticated user
 func get_current_user() -> TwitchUser:
 	if api == null:
-		printerr("Please setup a TwitchAPI Node into TwitchService.")
+		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 
 	var user_data : TwitchGetUsersResponse = await api.get_users([], [])
@@ -142,7 +133,7 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 ## which API versions are available and which conditions are required.
 func subscribe_event(definition: TwitchEventsubDefinition, conditions: Dictionary) -> TwitchEventsubConfig:
 	if definition == null:
-		push_error("TwitchEventsubDefinition is null")
+		_log.e("TwitchEventsubDefinition is null")
 		return
 
 	var config = TwitchEventsubConfig.create(definition, conditions)
@@ -153,7 +144,7 @@ func subscribe_event(definition: TwitchEventsubDefinition, conditions: Dictionar
 ## Waits for connection to eventsub. Eventsub is ready to subscribe events.
 func wait_for_eventsub_connection() -> void:
 	if eventsub == null:
-		printerr("TwitchEventsub Node is missing")
+		_log.e("TwitchEventsub Node is missing")
 		return
 	await eventsub.wait_for_connection()
 
@@ -161,7 +152,7 @@ func wait_for_eventsub_connection() -> void:
 ## Returns all of the eventsub subscriptions (variable is a copy so you can freely modify it)
 func get_subscriptions() -> Array[TwitchEventsubConfig]:
 	if eventsub == null:
-		printerr("TwitchEventsub Node is missing")
+		_log.e("TwitchEventsub Node is missing")
 		return []
 	return eventsub.get_subscriptions()
 
@@ -241,7 +232,7 @@ func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionar
 ## Returns the data of the Cheermotes.
 func get_cheermote_data() -> Array[TwitchCheermote]:
 	if media_loader == null:
-		printerr("TwitchMediaLoader was not set within %s" % get_tree_string())
+		_log.e("TwitchMediaLoader was not set within %s" % get_tree_string())
 		return []
 	await media_loader.preload_cheemote()
 	return media_loader.all_cheermotes()

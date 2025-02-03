@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cus81w3pidhjo"]
 
-[ext_resource type="Script" path="res://addons/twitcher/editor/inspector/user_converter.gd" id="1_ior8m"]
+[ext_resource type="Script" uid="uid://b6qdiwr7rawx1" path="res://addons/twitcher/editor/inspector/user_converter.gd" id="1_ior8m"]
 
 [node name="UserConverter" type="HBoxContainer"]
 offset_right = 40.0

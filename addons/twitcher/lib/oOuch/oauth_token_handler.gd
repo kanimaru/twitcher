@@ -34,7 +34,9 @@ var _requesting_token: bool = false
 
 func _ready() -> void:
 	if token == null: token = OAuthToken.new()
-	_http_client = OAuthHTTPClient.new(oauth_setting.token_host)
+	_http_client = OAuthHTTPClient.new()
+	_http_client.name = "OAuthClient"
+	add_child(_http_client)
 
 
 func _process(_delta: float) -> void:
@@ -67,7 +69,7 @@ func request_token(grant_type: String, auth_code: String = ""):
 		request_params.append("&redirect_uri=%s" % oauth_setting.redirect_url)
 
 	var request_body = "&".join(request_params)
-	var request = _http_client.request(oauth_setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body)
+	var request = _http_client.request(oauth_setting.token_url, HTTPClient.METHOD_POST, HEADERS, request_body)
 	await _handle_token_request(request)
 	_requesting_token = false
 
@@ -91,7 +93,7 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 	var expire_data = Time.get_unix_time_from_system() + device_code_repsonse.expires_in
 
 	while expire_data > Time.get_unix_time_from_system():
-		var request = _http_client.request(oauth_setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body)
+		var request = _http_client.request(oauth_setting.token_url, HTTPClient.METHOD_POST, HEADERS, request_body)
 		var response = await _http_client.wait_for_request(request)
 		var response_string: String = response.response_data.get_string_from_utf8()
 		var response_data = JSON.parse_string(response_string)
@@ -119,7 +121,7 @@ func refresh_tokens() -> void:
 	logInfo("refresh token")
 	if token.has_refresh_token():
 		var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
-		var request = _http_client.request(oauth_setting.token_path, HTTPClient.METHOD_POST, HEADERS, request_body)
+		var request = _http_client.request(oauth_setting.token_url, HTTPClient.METHOD_POST, HEADERS, request_body)
 		if await _handle_token_request(request):
 			logInfo("token got refreshed")
 		else:
@@ -140,7 +142,7 @@ func _handle_token_request(request: OAuthHTTPClient.RequestData) -> bool:
 	else:
 		# Reset expiration cause token wasn't refreshed correctly.
 		token.invalidate()
-	logError("token could not be fetched ResponseCode %s / Client Status %s / Body %s" % [response.client.get_response_code(), response.client.get_status(), response_string])
+	logError("token could not be fetched ResponseCode %s / Body %s" % [response.response_code, response_string])
 	return false
 
 

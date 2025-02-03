@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CryptoKeyProvider" load_steps=2 format=3 uid="uid://c4scwuk8q0r40"]
 
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/crypto_key_provider.gd" id="1_q12uq"]
+[ext_resource type="Script" uid="uid://dcrliedgr6eol" path="res://addons/twitcher/lib/oOuch/crypto_key_provider.gd" id="1_q12uq"]
 
 [resource]
 script = ExtResource("1_q12uq")
-auth_encryption_cache = "user://token_encryption"
+encryption_key_path = "user://token_encryption.key"

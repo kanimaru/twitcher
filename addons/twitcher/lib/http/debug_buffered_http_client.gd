@@ -2,40 +2,38 @@ extends Control
 
 @onready var clients: Tree = %Clients
 
-@export var http_client_manager: HttpClientManager
-
-## Key: url as String | value: TreeItem
-var url_map : Dictionary = {}
 ## Key: BufferedHTTPClient | value: TreeItem
-var client_map : Dictionary = {}
+var client_map : Dictionary[BufferedHTTPClient, TreeItem] = {}
 ## Key: RequestData | value: TreeItem
-var request_map : Dictionary = {}
+var request_map : Dictionary[BufferedHTTPClient.RequestData, TreeItem] = {}
 
 
 func _ready() -> void:
-	http_client_manager.client_added.connect(_new_client)
-	http_client_manager.client_closed.connect(_close_client)
-	for host in http_client_manager.http_client_map:
-		for client in http_client_manager.http_client_map[host]:
-			_new_client(client)
+	get_tree().root.child_entered_tree.connect(_on_child_enter)
+	_add_http_clients(get_tree().root)
+	
+	
+func _add_http_clients(parent: Node) -> void:
+	for child in parent.get_children():
+		_on_child_enter(child)
+		_add_http_clients(child)
+		
+
+func _on_child_enter(node: Node) -> void:
+	if node is BufferedHTTPClient:
+		_new_client(node)
 
 
 func _new_client(client: BufferedHTTPClient):
-	var url = client.base_url
-	if not url_map.has(url):
-		url_map[url] = _add_path(url)
+	var parent = clients.create_item()
+	parent.set_text(0, client.name)
+	
+	client_map[client] = parent
 
-	var parent: TreeItem = url_map[url]
-
-	var http_item = clients.create_item(parent)
-	http_item.set_text(0, "Client-%s" % client.index)
-	client_map[client] = http_item
-
-	client.request_added.connect(_on_add_request.bind(http_item))
-	client.request_started.connect(_on_start_request)
+	client.request_added.connect(_on_add_request.bind(parent))
 	client.request_done.connect(_on_done_request)
 	for request in client.requests:
-		_on_add_request(request, http_item)
+		_on_add_request(request, parent)
 
 
 func _on_add_request(request: BufferedHTTPClient.RequestData, http_item: TreeItem):
@@ -45,22 +43,11 @@ func _on_add_request(request: BufferedHTTPClient.RequestData, http_item: TreeIte
 	request_map[request] = request_item
 
 
-func _on_start_request(request: BufferedHTTPClient.RequestData):
-	var request_item = request_map[request] as TreeItem
-	request_item.set_text(1, "PROGRESSING")
-
-
 func _on_done_request(response: BufferedHTTPClient.ResponseData):
 	var request_item = request_map[response.request_data] as TreeItem
 	request_item.set_text(1, "DONE")
 	await get_tree().create_timer(60).timeout
 	if request_item != null: request_item.free()
-
-
-func _add_path(path: String) -> TreeItem:
-	var item = clients.create_item()
-	item.set_text(0, path)
-	return item
 
 
 func _close_client(client: BufferedHTTPClient):

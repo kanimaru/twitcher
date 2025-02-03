@@ -9,9 +9,9 @@ class_name CryptoKeyProvider
 static var CRYPTO: Crypto = Crypto.new()
 
 ## Folder to the private and public keys
-@export var auth_encryption_cache: String = "user://token_encryption"
+@export_global_file(".key") var encryption_key_path: String = "user://token_encryption.key"
 ## Godot object to encrypt
-@export var key: CryptoKey
+var key: CryptoKey = CryptoKey.new()
 
 
 func _init() -> void:
@@ -19,11 +19,9 @@ func _init() -> void:
 
 
 func _ensure_encryption_key() -> void:
-	if key != null: return
-	if not FileAccess.file_exists(auth_encryption_cache + ".key"):
-		var key = CRYPTO.generate_rsa(4096)
-		key.save(auth_encryption_cache + ".key")
-		key.save(auth_encryption_cache + ".pub", true)
-		print("On first start a new encryption key was created at: %s \n It is used to encrypt access-, refresh-tokens and client credentials." % auth_encryption_cache)
-	key = CryptoKey.new()
-	key.load(auth_encryption_cache + ".key")
+	if not FileAccess.file_exists(encryption_key_path):
+		key = CRYPTO.generate_rsa(4096)
+		key.save(encryption_key_path)
+		print("On first start a new encryption key was created at: %s \n It is used to encrypt access-, refresh-tokens and client credentials." % encryption_key_path)
+	else:
+		key.load(encryption_key_path)

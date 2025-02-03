@@ -1,5 +1,6 @@
 !!!! TODOS:
 - Making request available in web builds
+- Check download of emojis in a chat message
 - Changing eventsub inspector, API default_broadcaster to support username -> user id conversion
 - Making Icons for Nodes
 - Updating documentation
@@ -7,7 +8,7 @@
 
 
 
-# [Bloody Alpha] Twitcher V2
+# [Early Beta] Twitcher V2
 .. is a Godot Library for implementing Twitch functionality in Godot.
 The main purpose is to use this library for easier overlay development.
 The library can also be used to support Twitch game integration.

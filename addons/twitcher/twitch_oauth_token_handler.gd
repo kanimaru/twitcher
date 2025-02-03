@@ -23,7 +23,7 @@ func _check_token_refresh() -> void:
 ## Calles the validation endpoint of Twtich to make sure
 func _validate_token() -> void:
 	_last_validation_check = Time.get_ticks_msec() + 60 * 60 * 1000;
-	var validation_request = _http_client.request("/oauth2/validate", HTTPClient.METHOD_GET, {
+	var validation_request = _http_client.request("https://id.twitch.tv/oauth2/validate", HTTPClient.METHOD_GET, {
 		"Authorization": "OAuth %s" % token.get_access_token()
 	}, "")
 	var response = await _http_client.wait_for_request(validation_request)

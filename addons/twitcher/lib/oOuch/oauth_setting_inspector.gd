@@ -2,11 +2,7 @@
 extends EditorInspectorPlugin
 
 const BufferedHttpClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd")
-
-var _encryption_key_provider: CryptoKeyProvider
-
-func _init(encryption_key_provider: CryptoKeyProvider) -> void:
-	_encryption_key_provider = encryption_key_provider
+const EncryptionKeyProvider: CryptoKeyProvider = preload("res://addons/twitcher/lib/oOuch/default_key_provider.tres")
 
 
 func _can_handle(object: Object) -> bool:
@@ -18,12 +14,12 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		add_property_editor("well_known_url", WellKnownUriProperty.new())
 		return true
 	if name == "client_id":
-		add_property_editor("client_secret", SecretProperty.new(_encryption_key_provider.key), true, "Client Secret")
+		add_property_editor("client_secret", SecretProperty.new(EncryptionKeyProvider.key), true, "Client Secret")
 	return false
 
 
 class SecretProperty extends EditorProperty:
-	var _crypto: Crypto = Crypto.new()
+	static var CRYPTO: Crypto = Crypto.new()
 	var _crypto_key: CryptoKey
 	var _line_edit: LineEdit = LineEdit.new()
 
@@ -42,7 +38,7 @@ class SecretProperty extends EditorProperty:
 		var value := ""
 		if secret != "":
 			var value_raw := Marshalls.base64_to_raw(secret)
-			var value_bytes := _crypto.decrypt(_crypto_key, value_raw)
+			var value_bytes := CRYPTO.decrypt(_crypto_key, value_raw)
 			value = value_bytes.get_string_from_utf8()
 		_line_edit.text = value
 
@@ -60,9 +56,10 @@ class SecretProperty extends EditorProperty:
 		if plain_value == "":
 			emit_changed(get_edited_property(), "")
 			return
-		var encrypted_value := _crypto.encrypt(_crypto_key, plain_value.to_utf8_buffer())
+		var encrypted_value := CRYPTO.encrypt(_crypto_key, plain_value.to_utf8_buffer())
 		var secret = Marshalls.raw_to_base64(encrypted_value)
 		emit_changed(get_edited_property(), secret)
+
 
 class WellKnownUriProperty extends EditorProperty:
 	var _url_regex = RegEx.create_from_string("((https?://)?([^:/]+))(:([0-9]+))?(/.*)?")
@@ -70,9 +67,13 @@ class WellKnownUriProperty extends EditorProperty:
 	var _container: VBoxContainer
 	var _well_known_url: LineEdit
 	var _submit: Button
-
+	var _client: BufferedHttpClient
+	
 	func _init() -> void:
 		_container = VBoxContainer.new()
+		_client = BufferedHttpClient.new()
+		_client.name = "OauthSettingInspectorClient"
+		add_child(_client)
 
 		_well_known_url = LineEdit.new()
 		_well_known_url.placeholder_text = "https://id.twitch.tv/oauth2/.well-known/openid-configuration"
@@ -99,12 +100,8 @@ class WellKnownUriProperty extends EditorProperty:
 	func load_from_wellknown(wellknow_url: String) -> void:
 		var matches = _url_regex.search(wellknow_url)
 		var url = matches.get_string(1)
-		var port = matches.get_string(5)
-		if port == "": port = -1
-		var path = matches.get_string(6)
-		var http_client = BufferedHttpClient.new(url, port)
-		var request = http_client.request(path, HTTPClient.METHOD_GET, {}, "")
-		var response = await http_client.wait_for_request(request) as BufferedHttpClient.ResponseData
+		var request = _client.request(url, HTTPClient.METHOD_GET, {}, "")
+		var response = await _client.wait_for_request(request) as BufferedHttpClient.ResponseData
 		var json = JSON.parse_string(response.response_data.get_string_from_utf8())
 
 		var device_code = json.get("device_authorization_endpoint", "")

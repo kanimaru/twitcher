@@ -21,7 +21,7 @@ func _process_request(server: HTTPServer, client: HTTPServer.Client) -> void:
 	server.send_response(client, "200", "OK".to_ascii_buffer());
 
 func _send() -> void:
-	var req = client.request("/test", HTTPClient.METHOD_GET, {}, "");
+	var req = client.request("127.0.0.1:12233/test", HTTPClient.METHOD_GET, {}, "");
 	var resp = await client.wait_for_request(req);
 	var response: PackedByteArray = resp.response_data;
 	print(response.get_string_from_ascii());
@@ -31,8 +31,7 @@ func _status_changed(connected: bool):
 	else: connection_status.text = "Disconntected"
 
 func _connect_to_server():
-	client = BufferedHTTPClient.new("127.0.0.1", 12233);
-	client.connection_status_changed.connect(_status_changed);
+	client = BufferedHTTPClient.new();
 
 func _start_server() -> void:
 	server.start();

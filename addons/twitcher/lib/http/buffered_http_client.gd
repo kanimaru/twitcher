@@ -1,66 +1,53 @@
 @tool
-extends RefCounted
+extends Node
 
 ## Http client that bufferes the requests and sends them sequentialy
 class_name BufferedHTTPClient
 
-## Takes track of the amount of http clients
-static var index = 0
-
-## After this amount of request in the buffer the client isn't free anymore.
-const FREE_THRESHOLD = 2
 
 ## Will be send when a new request was added to queue
 signal request_added(request: RequestData)
 
-## Request is now started and handled.
-signal request_started(request: RequestData)
-
 ## Will be send when a request is done.
 signal request_done(response: ResponseData)
-
-## Will return information if the client has connected or got disconnected
-signal connection_status_changed(connected: bool)
 
 
 ## Contains the request data to be send
 class RequestData extends RefCounted:
+	## The client that the request belongs too
 	var client: BufferedHTTPClient
+	## The request node that is executing the request
+	var http_request: HTTPRequest
+	## Path of the request
 	var path: String
+	## The method that is used to call request
 	var method: int
+	## The request headers
 	var headers: Dictionary
+	## The body that is requested (TODO does it make more sense to make a Byte Array out of it?)
 	var body: String = ""
+	## Amount of retries
+	var retry: int
 
 
 ## Contains the response data
 class ResponseData extends RefCounted:
-	var client: HTTPClient
+	## Result of the request see `HTTPRequest.Result`
+	var result: int
+	## Response code from the request like 200 for OK
 	var response_code: int
+	## the initial request data
 	var request_data: RequestData
+	## The body of the response as byte array
 	var response_data: PackedByteArray
+	## The response header as dictionary, where multiple keys are concatenated with ';'
 	var response_header: Dictionary
+	## Had the response an error
 	var error: bool
 
-enum State {
-	WAITING_FOR_REQUEST,
-	CONNECTING,
-	PROCESSING_REQUEST
-}
-
-
-
-@export var base_url: String
-@export var _port: int = -1
-
-var client: HTTPClient = HTTPClient.new()
 var requests : Array[RequestData] = []
 var current_request : RequestData
 var current_response_data : PackedByteArray = PackedByteArray()
-var connected : bool:
-	set(val):
-		connected = val
-		connection_status_changed.emit(val)
-		logInfo("connected" if val else "disconnected")
 
 var custom_header : Dictionary = { "Accept": "*/*" }
 var responses : Dictionary = {}
@@ -71,41 +58,6 @@ var max_error_count : int = -1
 var polling: bool
 var processing: bool:
 	get: return not requests.is_empty() || current_request != null
-var state: State = State.WAITING_FOR_REQUEST
-
-
-func _init(baseurl: String, port: int = -1) -> void:
-	index += 1
-	logger_format = ("{ %s-%s } " % [str(index), baseurl]) + "%s"
-	base_url = baseurl
-	_port = port
-	Engine.get_main_loop().process_frame.connect(_poll)
-	connection_status_changed.emit(false)
-
-
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_PREDELETE and self != null:
-		Engine.get_main_loop().process_frame.disconnect(_poll)
-
-
-func _connect_to_host() -> void:
-	logDebug("connecting")
-	var err = client.connect_to_host(base_url, _port)
-	if err != OK:
-		logError("[%s] can't connect cause of %s" % [base_url, error_string(err)])
-	state = State.CONNECTING
-
-
-func _disconnect() -> void:
-	logDebug("disconnecting")
-	client.close()
-	connected = false
-
-
-## Removes the complete http client. Don't use it after calling this method!
-func shutdown() -> void:
-	_disconnect()
-	free()
 
 
 ## Starts a request that will be handled as soon as the client gets free.
@@ -120,43 +72,17 @@ func request(path: String, method: int, headers: Dictionary, body: String) -> Re
 	req.body = body
 	req.headers = headers
 	req.client = self
+	req.http_request = HTTPRequest.new()
+	req.http_request.use_threads = true
+	req.http_request.timeout = 30
+	req.http_request.request_completed.connect(_on_request_completed.bind(req))
+	add_child(req.http_request)
+	var err : Error = req.http_request.request(req.path, _pack_headers(req.headers), req.method, req.body)
+	if err != OK: logError("Problems with request to %s cause of %s" % [path, error_string(err)])
 	requests.append(req)
 	request_added.emit(req)
-
+	logDebug("[%s] request started " % [ path ])
 	return req
-
-
-func _poll() -> void:
-	if polling: return
-	polling = true
-
-	# Is a request available
-	if current_request == null && not requests.is_empty():
-		current_request = requests.pop_front()
-		logDebug("[%s] process request" % [ current_request.path ])
-
-		# Start connection
-		_connect_to_host()
-
-	match state:
-		# Await connection
-		State.CONNECTING:
-			_poll_connecting()
-			if connected:
-				var headers = custom_header if current_request.headers == null else current_request.headers
-				var packed_headers = _pack_headers(headers)
-				# do request
-				client.request(current_request.method, current_request.path, packed_headers, current_request.body)
-				request_started.emit(current_request)
-				state = State.PROCESSING_REQUEST
-
-		State.PROCESSING_REQUEST:
-			_process_request()
-
-	# close connection
-
-
-	polling = false
 
 
 ## When the response is available return it otherwise wait for the response
@@ -175,80 +101,51 @@ func wait_for_request(request_data: RequestData) -> ResponseData:
 	return latest_response
 
 
-func _poll_connecting() -> void:
-	match client.get_status():
-		HTTPClient.STATUS_DISCONNECTED:
-			_connect_to_host()
-
-		HTTPClient.STATUS_CANT_CONNECT:
-			client.close()
-			_connect_to_host()
-
-		HTTPClient.STATUS_CONNECTING, HTTPClient.STATUS_RESOLVING:
-			client.poll()
-
-		HTTPClient.STATUS_CONNECTED:
-			connected = true
-
-
-func _process_request() -> void:
-	match client.get_status():
-		HTTPClient.STATUS_REQUESTING:
-			logDebug("[%s] requesting" % current_request.path)
-			client.poll()
-
-		HTTPClient.STATUS_BODY:
-			logDebug("[%s] data received" % current_request.path)
-			_handle_response()
-			error_count = 0
-
-		HTTPClient.STATUS_CONNECTED, HTTPClient.STATUS_DISCONNECTED:
-			if current_request != null:
-				logInfo("[%s] Response received" % current_request.path)
-				var response_data = _create_response();
-				_check_status(response_data);
-				responses[current_request] = response_data;
-				request_done.emit(response_data);
-				_reset_request();
-				_disconnect()
-
-		HTTPClient.STATUS_CONNECTION_ERROR:
-			logDebug("[%s] error" % current_request.path)
-			_disconnect()
-			logInfo("[%s] retry cause of disconnect" % current_request.path)
-			requests.append(current_request)
-			_reset_request()
-			_connect_to_host()
-
-		_:
-			logInfo("[%s] unexpected state reached" % current_request.path)
-			await _handle_error()
-
-
-func _handle_error():
-	await _wait_error_duration()
-	logError("Error happened (client status: %s)" % client.get_status())
-	error_count += 1
-	if error_count >= max_error_count && max_error_count != -1:
-		# Giveup
-		var response_data = _create_response()
+func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, request_data: RequestData) -> void:
+	var response_data : ResponseData = ResponseData.new()
+	if result != HTTPRequest.Result.RESULT_SUCCESS:
+		logInfo("[%s] problems with result \n\t> response code: %s \n\t> body: %s" % [request_data.path, response_code, body.get_string_from_utf8()])
 		response_data.error = true
-		request_done.emit(response_data)
-		logError("[%s] abort request max retries reached. (client status: %s)" % [current_request.path, client.get_status()])
-	logError("problem with request client status: %s response code: %s cause of %s" % [client.get_status(), client.get_response_code(), current_response_data.get_string_from_utf8()])
+
+	if result == HTTPRequest.Result.RESULT_CONNECTION_ERROR:
+		if request_data.retry == max_error_count:
+			printerr("Maximum amount of retries for the request. Abort request: %s" % [request_data.path])
+			return
+		var wait_time = pow(2, request_data.retry)
+		wait_time = min(wait_time, 30)
+		logDebug("Wait for %s" % wait_time)
+		await get_tree().create_timer(wait_time).timeout
+		var http_request: HTTPRequest = request_data.http_request.duplicate()
+		add_child(http_request)
+		request_data.http_request = http_request
+		request_data.retry += 1
+		http_request.request(request_data.url, _pack_headers(request_data.headers), request_data.method, request_data.body)
+		http_request.request_completed.connect(_on_request_completed.bind(http_request))
+
+	response_data.result = result
+	response_data.request_data = request_data
+	response_data.response_data = body
+	response_data.response_code = response_code
+	response_data.response_header = _get_response_headers_as_dictionary(headers)
+	responses[request_data] = response_data
+	logInfo("[%s] request done with result %s " % [ request_data.path, result ])
+	request_done.emit(response_data)
 
 
-func _reset_request():
-	current_request = null
-	current_response_data.clear()
+func _get_response_headers_as_dictionary(headers: PackedStringArray) -> Dictionary:
+	var header_dict: Dictionary = {}
+	if headers == null:
+		return header_dict
 
-
-func _check_status(response_data: ResponseData) -> void:
-	var response_code = client.get_response_code()
-	if !str(response_code).begins_with("2"):
-		logInfo("[%s] problems with result \n\t> response code: %s \n\t> body: %s" % [response_data.request_data.path, response_code, response_data.response_data.get_string_from_utf8()])
-		var response_headers = client.get_response_headers_as_dictionary()
-		print_verbose(response_headers)
+	for header in headers:
+		var header_data = header.split(":", true, 1)
+		var key = header_data[0]
+		var val = header_data[1]
+		if header_dict.has(key):
+			header_dict[key] += "; " + val
+		else:
+			header_dict[key] = val
+	return header_dict
 
 
 func _pack_headers(headers: Dictionary) -> PackedStringArray:
@@ -267,63 +164,29 @@ func queued_request_size() -> int:
 	return requests_size
 
 
-func _wait_error_duration():
-	var duration = pow(2, error_count)
-	duration = min(duration, 30)
-	logInfo("wait for %s in seconds" % duration)
-	await Engine.get_main_loop().create_timer(duration).timeout
-
-
-func _handle_response() -> void:
-	if client.has_response():
-		client.poll()
-		if client.get_status() != HTTPClient.STATUS_BODY:
-			logDebug("[%s] status is %s but want to read body" % [ current_request.path, client.get_status() ])
-		var chunk = client.read_response_body_chunk()
-		if chunk.size() > 0:
-			current_response_data += chunk
-	else:
-		logError("no response? shouldn't happen.")
-
-
-func _create_response() -> ResponseData:
-	var response_data = ResponseData.new()
-	response_data.client = client
-	response_data.request_data = current_request
-	response_data.response_data = current_response_data.duplicate()
-	response_data.response_code = client.get_response_code()
-	response_data.response_header = client.get_response_headers_as_dictionary()
-	return response_data
-
-
 func empty_response(request_data: RequestData) -> ResponseData:
 	var response_data = ResponseData.new()
-	response_data.client = client
 	response_data.request_data = request_data
 	response_data.response_data = []
 	response_data.response_code = 0
 	response_data.response_header = {}
+	response_data.result = 0
 	return response_data
 
-
-## Checks if the client can accept more requests
-func is_free() -> bool:
-	return requests.size() < FREE_THRESHOLD
 
 # === LOGGER ===
 
 static var logger: Dictionary = {}
-static var logger_format: String
 static func set_logger(error: Callable, info: Callable, debug: Callable) -> void:
 	logger.debug = debug
 	logger.info = info
 	logger.error = error
 
 static func logDebug(text: String) -> void:
-	if logger.has("debug"): logger.debug.call(logger_format % text)
+	if logger.has("debug"): logger.debug.call(text)
 
 static func logInfo(text: String) -> void:
-	if logger.has("info"): logger.info.call(logger_format % text)
+	if logger.has("info"): logger.info.call(text)
 
 static func logError(text: String) -> void:
-	if logger.has("error"): logger.error.call(logger_format % text)
+	if logger.has("error"): logger.error.call(text)

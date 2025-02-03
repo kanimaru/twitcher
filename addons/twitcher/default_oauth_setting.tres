@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="OAuthSetting" load_steps=3 format=3 uid="uid://jhyuw0w216ix"]
 
 [ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="1_4134i"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="2_1ijl7"]
+[ext_resource type="Script" uid="uid://00xbijwpi8xa" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="2_1ijl7"]
 
 [resource]
 script = ExtResource("2_1ijl7")
@@ -11,7 +11,7 @@ token_url = "https://id.twitch.tv/oauth2/token"
 authorization_url = "https://id.twitch.tv/oauth2/authorize"
 device_authorization_url = ""
 cache_file = "res://auth.key"
-client_id = "1ae0idgxbvn6vi97ls7d89cyd919oq"
+client_id = ""
 authorization_flow = 0
 _encryption_key_provider = ExtResource("1_4134i")
-client_secret = "t4xe/NrrPnsIGqFmdZ2NPXhrhCMCpS9NaiuL0rUMqCi0TBjEIzoDyqafB3KOZxUckOdvF1QBfOANbD4y4GmQ2VsTbB416/dMK3ub6GlVYqBWfQG8CHfR+GUNLpEPbybRuqh3XmGXaqQk5LwLO26ux/HgELjGsE/fcdbu80Bay/+h3Rh/Q23hr5Y4PqZyuq7VSwdvBFmn3WVjArxdL6qrLK0DhLGtAQHbLPkrktNVUPikQFIlElSb1Wu2rYYpaIc1msCJHOMltZxJfGudw7psPRu0LKlfjTAh0+3B0jpDbE5qjM3KNr94hSCv+BjVQo+Im7lEoURsuZikpolyDJl3MgRJxwTZrEOyq2PI+bhYQBO5505wUcUUjw9N+lt+VOusXrA2lplr2fsnpLWexgsCx+22ryT/qTJHzxeK7qCYEHla/HJvEZ6oOWJOXWxDHgwLZRCzdM5k9159XQtev7VSQ36MFclobHYTrf6ZoI7uilVZwbb98RlwxJHm8DyXE+iNKpMr+ifmWWjyd+WNI4H858z5n+YlLcuLZO5NhEeu1XpEPKd/3374qz9LHo/ZlWk+YJljGs7lsuo0XjsdLFXN2yYc5mcjjVHybEKPqOhjcZ41f4Pa7sRTq+m2IBrGWoGBRq3tcaEY89uP8IATwSzxo1H9vLtSogs7wDVevEEdUxs="
+client_secret = ""

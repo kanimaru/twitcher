@@ -30,7 +30,7 @@ var force_verify: String
 var _query_parser = RegEx.create_from_string("GET (.*?/?)\\??(.*?)? HTTP/1\\.1.*?")
 var _auth_http_server: OAuthHTTPServer
 var _last_login_attempt: int
-
+var _client: OAuthHTTPClient
 
 enum AuthorizationFlow {
 	AUTHORIZATION_CODE_FLOW,
@@ -41,6 +41,8 @@ enum AuthorizationFlow {
 
 
 func _ready() -> void:
+	_client = OAuthHTTPClient.new()
+	add_child(_client)
 	_auth_http_server = OAuthHTTPServer.new(oauth_setting.redirect_port)
 	if token_handler == null:
 		token_handler = OAuthTokenHandler.new()
@@ -138,7 +140,7 @@ func _start_login_process(response_type: String) -> void:
 			"redirect_uri=%s" % oauth_setting.redirect_url.uri_encode()
 		])
 
-	var url = oauth_setting.authorization_host + oauth_setting.authorization_path + "?" + query_param
+	var url = oauth_setting.authorization_url + "?" + query_param
 	logInfo("start login process to get token for scopes %s" % (",".join(scopes.used_scopes)))
 	logDebug("login to %s" % url)
 	OS.shell_open(url)
@@ -171,15 +173,14 @@ func _start_device_login_process():
 func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 	logInfo("Start device code flow")
 	logDebug("Request Scopes: %s" % scopes)
-	var client = OAuthHTTPClient.new(oauth_setting.device_authorization_host)
 	var body = "client_id=%s&scopes=%s" % [oauth_setting.client_id, scopes.uri_encode()]
 	if oauth_setting.client_secret != "":
 		body += "&client_secret=%s" % oauth_setting.client_secret
-	var request = client.request(oauth_setting.device_authorization_path, HTTPClient.METHOD_POST, {
+	var request = _client.request(oauth_setting.device_authorization_url, HTTPClient.METHOD_POST, {
 		"Content-Type": "application/x-www-form-urlencoded"
 	}, body)
 
-	var initial_response_data = await client.wait_for_request(request)
+	var initial_response_data = await _client.wait_for_request(request)
 	if initial_response_data.response_code != 200:
 		logError("Couldn't initiate device code flow response code %s" % initial_response_data.response_code)
 	var initial_response_string = initial_response_data.response_data.get_string_from_ascii()

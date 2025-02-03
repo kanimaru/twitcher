@@ -11,7 +11,7 @@ class_name TwitchChat
 		update_configuration_warnings()
 
 @export var target_user_channel: String = "":
-	set = _update_broadcaster_user
+	set = _update_target_user_channel
 
 @onready var twitch_event_listener: TwitchEventListener = %TwitchEventListener
 
@@ -19,10 +19,7 @@ class_name TwitchChat
 static var _log: TwitchLogger = TwitchLogger.new("TwitchChat")
 
 var broadcaster_user: TwitchUser:
-	set(val):
-		broadcaster_user = val
-		update_configuration_warnings()
-		notify_property_list_changed()
+	set = _update_broadcaster_user
 
 var sender_user: TwitchUser
 var _sender_user_loading: bool
@@ -38,17 +35,41 @@ func _ready() -> void:
 	_log.d("is ready")
 	twitch_event_listener.eventsub = twitch_service.eventsub
 	twitch_event_listener.received.connect(_on_event_received)
-	_update_broadcaster_user(target_user_channel)
+	_update_target_user_channel(target_user_channel)
 
 
-func _update_broadcaster_user(val: String) -> void:
+func _update_target_user_channel(val: String) -> void:
 	target_user_channel = val
 	if not is_inside_tree(): return
-	if val != null && val != "" && (val != target_user_channel || broadcaster_user == null):
+	if val != null && val != "":
 		_log.d("change channel to %s" % val)
 		broadcaster_user = await twitch_service.get_user(val)
+		
+		
+func _update_broadcaster_user(val: TwitchUser) -> void:
+		broadcaster_user = val
+		update_configuration_warnings()
+		notify_property_list_changed()
 		twitch_service.media_loader.preload_badges(broadcaster_user.id)
 		twitch_service.media_loader.preload_emotes(broadcaster_user.id)
+		_subscribe_to_channel()
+		
+		
+func _subscribe_to_channel() -> void:
+	var subscriptions = twitch_service.eventsub.get_subscriptions()
+	for subscription: TwitchEventsubConfig in subscriptions:
+		if subscription.type == TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE and \
+			subscription.condition.broadcaster_user_id == broadcaster_user.id:
+				# it is already subscribed
+				return
+		
+	var config = TwitchEventsubConfig.new()
+	config.type = TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE
+	config.condition = {
+		"broadcaster_user_id": broadcaster_user.id,
+		"user_id": broadcaster_user.id
+	}
+	twitch_service.eventsub.subscribe(config)
 
 
 func _on_event_received(data: Dictionary) -> void:
