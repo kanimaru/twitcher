@@ -4,6 +4,7 @@ extends Control
 @onready var twitch_service: TwitchService = %TwitchService
 @onready var api: TwitchAPI = %API
 @onready var eventsub: TwitchEventsub = %Eventsub
+@onready var thx: Label = %Thx
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Please set this settings first before running the example!
@@ -16,14 +17,23 @@ func _ready() -> void:
 	await twitch_service.setup()
 
 	var current_user: TwitchUser = await twitch_service.get_current_user()
-	api.default_broadcaster_login = current_user.id
+	api.default_broadcaster_login = current_user.login
 
-	twitch_service.subscribe_event(TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE, {
+	twitch_service.subscribe_event(TwitchEventsubDefinition.CHANNEL_FOLLOW, {
 		"broadcaster_user_id": current_user.id,
-		"user_id": current_user.id
+		"moderator_user_id": current_user.id
 	})
 	channel_follow_event_listener.received.connect(_on_event)
 
 
 func _on_event(data: Dictionary) -> void:
-	print("Thx for following %s" % data["user_name"]);
+	show_follow(data["user_name"])
+	
+	
+func show_follow(username: String) -> void:
+	thx.text = "Thx for the follow! %s" % username
+	var tween = get_tree().create_tween()
+	tween.tween_property(thx.label_settings, "font_color", Color.WHITE, 1).from(Color.TRANSPARENT)
+	tween.tween_property(thx.label_settings, "font_color", Color.TRANSPARENT, 1)
+	
+	

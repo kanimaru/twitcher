@@ -17,12 +17,16 @@ class_name OAuthSetting
 ## Where should the tokens be cached
 @export var cache_file: String = "res://auth.key"
 ## Client ID to authorize
-@export var client_id: String
+@export var client_id: String:
+	set(val): 
+		client_id = val
+		emit_changed()
 ## Defines the authorization flow.
 @export var authorization_flow: OAuth.AuthorizationFlow = OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
 	set(val):
 		authorization_flow = val
 		notify_property_list_changed()
+		emit_changed()
 
 @export var _encryption_key_provider: CryptoKeyProvider = preload("res://addons/twitcher/lib/oOuch/default_key_provider.tres")
 
@@ -37,7 +41,10 @@ var redirect_port: int:
 		return redirect_port
 
 ## Client Secret to authorize (optional depending on flow)
-@export_storage var client_secret: String
+@export_storage var client_secret: String:
+	set(val): 
+		client_secret = val
+		emit_changed()
 
 var _crypto: Crypto = Crypto.new()
 
@@ -69,27 +76,23 @@ func get_client_secret() -> String:
 
 
 func _validate_property(property: Dictionary) -> void:
-	match authorization_flow:
-		OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
-			if property.name == "client_id":
-				property.usage &= ~PROPERTY_USAGE_READ_ONLY
-			if property.name == "client_secret":
-				property.usage &= ~PROPERTY_USAGE_READ_ONLY
+	if property.name == "client_secret":
+		if _is_client_secret_need():
+			property.usage |= PROPERTY_USAGE_READ_ONLY
+		else:
+			property.usage &= ~PROPERTY_USAGE_READ_ONLY
 
-		OAuth.AuthorizationFlow.IMPLICIT_FLOW:
-			if property.name == "client_id":
-				property.usage &= ~PROPERTY_USAGE_READ_ONLY
-			if property.name == "client_secret":
-				property.usage |= PROPERTY_USAGE_READ_ONLY
 
-		OAuth.AuthorizationFlow.DEVICE_CODE_FLOW:
-			if property.name == "client_id":
-				property.usage &= ~PROPERTY_USAGE_READ_ONLY
-			if property.name == "client_secret":
-				property.usage |= PROPERTY_USAGE_READ_ONLY
+func _is_client_secret_need() -> bool:
+	return authorization_flow == OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW || \
+		authorization_flow == OAuth.AuthorizationFlow.CLIENT_CREDENTIALS
 
-		OAuth.AuthorizationFlow.CLIENT_CREDENTIALS:
-			if property.name == "client_id":
-				property.usage &= ~PROPERTY_USAGE_READ_ONLY
-			if property.name == "client_secret":
-				property.usage &= ~PROPERTY_USAGE_READ_ONLY
+
+func is_valid() -> PackedStringArray:
+	var result: PackedStringArray = []
+	if client_id == "" || client_id == null:
+		result.append("Client ID is missing")
+	if _is_client_secret_need() && (client_secret == "" || client_secret == null):
+		result.append("Client Secret is missing")
+	return result
+	

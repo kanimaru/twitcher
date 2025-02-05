@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://djicbmxnkil7r"]
+[gd_scene load_steps=11 format=3 uid="uid://djicbmxnkil7r"]
 
 [ext_resource type="Script" uid="uid://c4vxnmsvwsytd" path="res://example/eventsub.gd" id="1_xhllw"]
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="2_rsm4n"]
@@ -12,6 +12,10 @@
 [sub_resource type="Resource" id="Resource_5khjo"]
 script = ExtResource("7_ewdek")
 used_scopes = Array[StringName]([&"moderator:read:followers", &"chat:read", &"chat:edit", &"user:write:chat", &"user:read:chat", &"user:bot"])
+
+[sub_resource type="LabelSettings" id="LabelSettings_ixhl3"]
+font_size = 64
+font_color = Color(1, 1, 1, 0)
 
 [node name="EventSub" type="Control"]
 layout_mode = 3
@@ -47,3 +51,20 @@ unique_name_in_owner = true
 script = ExtResource("12_4m14a")
 eventsub = NodePath("../TwitchService/Eventsub")
 subscription = 5
+
+[node name="Thx" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -281.0
+offset_top = -44.0
+offset_right = 281.0
+offset_bottom = 44.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Thx for the follow!"
+label_settings = SubResource("LabelSettings_ixhl3")

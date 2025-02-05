@@ -10,6 +10,7 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 @export var oauth_setting: OAuthSetting = OAuthSetting.new():
 	set(val):
 		oauth_setting = val
+		oauth_setting.changed.connect(update_configuration_warnings)
 		update_configuration_warnings()
 @export var scopes: OAuthScopes:
 	set(val):
@@ -41,6 +42,7 @@ func _ready() -> void:
 func _ensure_required_nodes() -> void:
 	if auth == null:
 		auth = TwitchAuth.new()
+		auth.oauth_setting = oauth_setting
 		add_child(auth)
 
 
@@ -66,6 +68,7 @@ func _on_child_exiting(node: Node) -> void:
 	if node.has_signal(&"unauthenticated"):
 		node.unauthenticated.disconnect(_on_unauthenticated)
 
+
 ## Call this to setup the complete Twitch integration whenever you need.
 ## It boots everything up this Lib supports.
 func setup() -> void:
@@ -76,6 +79,11 @@ func setup() -> void:
 			await child.wait_setup()
 
 	_log.i("TwitchService setup")
+
+
+## Checks if the correctly setup
+func is_configured() -> bool:
+	return _get_configuration_warnings().is_empty()
 
 
 func _on_unauthenticated() -> void:
@@ -247,8 +255,14 @@ func get_cheermotes(definition: TwitchCheermoteDefinition) -> Dictionary:
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
+	
 	if oauth_setting == null:
 		result.append("OAuthSetting is missing")
+	else:
+		var oauth_setting_problems : PackedStringArray = oauth_setting.is_valid()
+		if not oauth_setting_problems.is_empty():
+			result.append("OAuthSetting is invalid")
+			result.append_array(oauth_setting_problems)
 	if scopes == null:
 		result.append("OAuthScopes is missing")
 	if token == null:

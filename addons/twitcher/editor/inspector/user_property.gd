@@ -1,3 +1,4 @@
+@tool
 extends EditorProperty
 class_name UserProperty
 
@@ -20,7 +21,6 @@ func _init(user_property_name: StringName):
 func _update_property() -> void:
 	var object = get_edited_object()
 	var user: TwitchUser = object[_user_property_name]
-	print("User: ", user)
 	if user == null:
 		_converter.user_id = ""
 		_converter.user_login = ""

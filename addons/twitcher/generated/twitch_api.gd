@@ -22,10 +22,9 @@ signal unauthorized
 	set(username):
 		default_broadcaster_login = username
 		_update_default_broadcaster_login(username)
+		update_configuration_warnings()
 	get():
 		if default_broadcaster_login == null || default_broadcaster_login == "":
-			# TODO Make better
-			_log.e("Please setup a 'default_broadcaster_login' within %s" % get_tree_string())
 			return ""
 		return default_broadcaster_login
 ## To authorize against the Twitch API
@@ -61,6 +60,12 @@ func _update_default_broadcaster_login(username: String) -> void:
 		return
 	broadcaster_user = user_data.data[0]
 
+
+func _get_configuration_warnings() -> PackedStringArray:
+	if default_broadcaster_login == null || default_broadcaster_login == "":
+		return ["Please set default broadcaster that is used when no broadcaster was explicitly given"]
+	return []
+	
 
 func request(path: String, method: int, body: Variant = "", content_type: String = "", error_count: int = 0) -> BufferedHTTPClient.ResponseData:
 	var header : Dictionary = {

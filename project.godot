@@ -24,6 +24,11 @@ gdscript/warnings/unsafe_method_access=1
 gdscript/warnings/unsafe_cast=1
 gdscript/warnings/unsafe_call_argument=1
 
+[display]
+
+window/size/transparent=true
+window/per_pixel_transparency/allowed=true
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/twitcher/plugin.cfg")

@@ -98,9 +98,7 @@ class WellKnownUriProperty extends EditorProperty:
 
 
 	func load_from_wellknown(wellknow_url: String) -> void:
-		var matches = _url_regex.search(wellknow_url)
-		var url = matches.get_string(1)
-		var request = _client.request(url, HTTPClient.METHOD_GET, {}, "")
+		var request = _client.request(wellknow_url, HTTPClient.METHOD_GET, {}, "")
 		var response = await _client.wait_for_request(request) as BufferedHttpClient.ResponseData
 		var json = JSON.parse_string(response.response_data.get_string_from_utf8())
 
