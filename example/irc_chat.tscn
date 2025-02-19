@@ -1,23 +1,22 @@
-[gd_scene load_steps=16 format=3 uid="uid://5qw2frq187io"]
+[gd_scene load_steps=15 format=3 uid="uid://5qw2frq187io"]
 
-[ext_resource type="Script" path="res://example/irc_chat.gd" id="1_bjj8u"]
-[ext_resource type="Script" path="res://addons/twitcher/twitch_service.gd" id="1_jw6hb"]
+[ext_resource type="Script" uid="uid://bxtr3pfc1xjel" path="res://example/irc_chat.gd" id="1_bjj8u"]
+[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="1_jw6hb"]
 [ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/default_oauth_setting.tres" id="2_egirf"]
 [ext_resource type="Resource" uid="uid://hqh5x62qipk8" path="res://example/chat_scopes.tres" id="3_yp6d3"]
-[ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc.gd" id="4_llwbm"]
+[ext_resource type="Script" uid="uid://wkh0l2xsyapj" path="res://addons/twitcher/irc/twitch_irc.gd" id="4_llwbm"]
 [ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="4_ydhdv"]
-[ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc_setting.gd" id="5_1si3o"]
-[ext_resource type="Script" path="res://addons/twitcher/twitch_auth.gd" id="8_bv4ru"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/http/http_client_manager.gd" id="8_ffqxp"]
-[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_api.gd" id="10_nmebx"]
-[ext_resource type="Script" path="res://addons/twitcher/twitch_media_loader.gd" id="11_le525"]
+[ext_resource type="Script" uid="uid://c8mv0lq0a2l8f" path="res://addons/twitcher/irc/twitch_irc_setting.gd" id="5_1si3o"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/twitch_auth.gd" id="8_bv4ru"]
+[ext_resource type="Script" uid="uid://bxl76jxx3xlgd" path="res://addons/twitcher/generated/twitch_api.gd" id="10_nmebx"]
+[ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/twitch_media_loader.gd" id="11_le525"]
 [ext_resource type="PackedScene" uid="uid://b0ebhuv2yaow0" path="res://addons/twitcher/lib/http/DebugBufferedHttpClient.tscn" id="11_ugwlt"]
-[ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc_channel.gd" id="11_y0yp4"]
+[ext_resource type="Script" uid="uid://cva5e053boj4u" path="res://addons/twitcher/irc/twitch_irc_channel.gd" id="11_y0yp4"]
 
 [sub_resource type="Resource" id="Resource_qbki8"]
 script = ExtResource("5_1si3o")
-username = "kani_dev"
-auto_join_channels = Array[StringName]([&"kani_dev"])
+username = ""
+auto_join_channels = Array[StringName]([])
 server = "wss://irc-ws.chat.twitch.tv:443"
 send_message_delay_ms = 320
 capabilities = 7
@@ -54,20 +53,17 @@ oauth_setting = ExtResource("2_egirf")
 token = ExtResource("4_ydhdv")
 scopes = ExtResource("3_yp6d3")
 
-[node name="HttpClientManager" type="Node" parent="TwitchService"]
-script = ExtResource("8_ffqxp")
-
-[node name="Rest" type="Node" parent="TwitchService" node_paths=PackedStringArray("http_client_manager")]
+[node name="Rest" type="Node" parent="TwitchService"]
 unique_name_in_owner = true
 script = ExtResource("10_nmebx")
+default_broadcaster_login = "kani_dev"
 token = ExtResource("4_ydhdv")
 oauth_setting = ExtResource("2_egirf")
-http_client_manager = NodePath("../HttpClientManager")
 
-[node name="TwitchMediaLoader" type="Node" parent="TwitchService" node_paths=PackedStringArray("api", "http_client_manager")]
+[node name="TwitchMediaLoader" type="Node" parent="TwitchService"]
 script = ExtResource("11_le525")
-api = NodePath("../Rest")
-http_client_manager = NodePath("../HttpClientManager")
+image_transformer = "MagicImageTransformer"
+image_magic_path = "magick"
 
 [node name="TwitchIrcChannel" type="Node" parent="." node_paths=PackedStringArray("twitch_service")]
 unique_name_in_owner = true
@@ -143,8 +139,5 @@ text = "Send"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DebugBufferedHttpClient" parent="HBoxContainer/VBoxContainer" node_paths=PackedStringArray("http_client_manager") instance=ExtResource("11_ugwlt")]
+[node name="DebugBufferedHttpClient" parent="HBoxContainer/VBoxContainer" instance=ExtResource("11_ugwlt")]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-http_client_manager = NodePath("../../../TwitchService/HttpClientManager")
