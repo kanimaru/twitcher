@@ -1,7 +1,6 @@
 !!!! TODOS:
-- Making request available in web builds
 - Check download of emojis in a chat message
-- Changing eventsub inspector, API default_broadcaster to support username -> user id conversion
+- Implement Clips 
 - Making Icons for Nodes
 - Updating documentation
 - rework Command Handling

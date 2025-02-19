@@ -51,6 +51,7 @@ func _ready() -> void:
 	_client.name = "TwitchMediaLoaderClient"
 	add_child(_client)
 	_load_cache()
+	update_image_transformer(image_transformer)
 
 
 ## Loading all images from the directory into the memory cache
@@ -105,7 +106,6 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
 		var cache_path: String = _get_emote_cache_path(emote_definition)
 		var spriteframe_path: String = _get_emote_cache_path_spriteframe(emote_definition)
-		print("Loaded: ", spriteframe_path)
 		if ResourceLoader.has_cached(cache_path):
 			response[emote_definition] = ResourceLoader.load(spriteframe_path)
 			continue
@@ -262,7 +262,7 @@ class CheerResult extends RefCounted:
 
 func preload_cheemote() -> void:
 	if not _cached_cheermotes.is_empty(): return
-	var cheermote_response: TwitchGetCheermotesResponse = await api.get_cheermotes()
+	var cheermote_response: TwitchGetCheermotesResponse = await api.get_cheermotes(null)
 	for data: TwitchCheermote in cheermote_response.data:
 		_cached_cheermotes[data.prefix] = data
 
@@ -352,7 +352,7 @@ func _request_cheermote(cheer_tier: TwitchCheermote.Tiers, cheermote: TwitchChee
 #region Utilities
 
 func _get_configuration_warnings() -> PackedStringArray:
-	if not image_transformer_implementation.is_supported():
+	if image_transformer_implementation == null || not image_transformer_implementation.is_supported():
 		return ["Image transformer is misconfigured"]
 	return []
 
@@ -376,6 +376,16 @@ func update_image_magic_path(path: String) -> void:
 	if image_transformer_implementation is MagicImageTransformer:
 		image_transformer_implementation.imagemagic_path = path
 	update_configuration_warnings()
+
+
+func load_image(url: String) -> Image:
+	var request : BufferedHTTPClient.RequestData = _client.request(url, HTTPClient.METHOD_GET, {}, "")
+	var response : BufferedHTTPClient.ResponseData = await _client.wait_for_request(request)
+	var temp_file : FileAccess = FileAccess.create_temp(FileAccess.ModeFlags.WRITE_READ, "image_", url.get_extension(), true)
+	temp_file.store_buffer(response.response_data)
+	temp_file.flush()
+	var image : Image = Image.load_from_file(temp_file.get_path())
+	return image
 
 
 ## Get the image of an user

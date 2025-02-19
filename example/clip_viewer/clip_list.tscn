@@ -1,0 +1,64 @@
+[gd_scene load_steps=9 format=3 uid="uid://c6d1ul2eklm43"]
+
+[ext_resource type="Script" uid="uid://cylmiv78ot7x1" path="res://example/clip_viewer/clip_list.gd" id="1_8c30q"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/twitch_auth.gd" id="2_vwnax"]
+[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/default_oauth_setting.tres" id="3_rl7ni"]
+[ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="4_mm8r3"]
+[ext_resource type="Script" uid="uid://dexweyb521tu0" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="5_u00p2"]
+[ext_resource type="Script" uid="uid://bxl76jxx3xlgd" path="res://addons/twitcher/generated/twitch_api.gd" id="6_rtxo2"]
+[ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/twitch_media_loader.gd" id="7_0jpfl"]
+
+[sub_resource type="Resource" id="Resource_r0ljb"]
+script = ExtResource("5_u00p2")
+used_scopes = Array[StringName]([])
+metadata/_custom_type_script = ExtResource("5_u00p2")
+
+[node name="ClipList" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8c30q")
+
+[node name="TwitchAuth" type="Node" parent="."]
+script = ExtResource("2_vwnax")
+oauth_setting = ExtResource("3_rl7ni")
+token = ExtResource("4_mm8r3")
+scopes = SubResource("Resource_r0ljb")
+metadata/_custom_type_script = ExtResource("2_vwnax")
+
+[node name="TwitchAPI" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_rtxo2")
+default_broadcaster_login = "kani_dev"
+token = ExtResource("4_mm8r3")
+oauth_setting = ExtResource("3_rl7ni")
+metadata/_custom_type_script = ExtResource("6_rtxo2")
+
+[node name="TwitchMediaLoader" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("7_0jpfl")
+metadata/_custom_type_script = ExtResource("7_0jpfl")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="LabelUsername" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "User"
+
+[node name="Username" type="LineEdit" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Username"
+
+[node name="Debounce" type="Timer" parent="HBoxContainer/Username"]
+unique_name_in_owner = true
+
+[node name="ClipContainer" type="GridContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 6

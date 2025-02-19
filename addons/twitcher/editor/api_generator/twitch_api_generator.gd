@@ -5,202 +5,378 @@ extends Node
 
 class_name TwitchAPIGenerator
 
-const SWAGGER_API = "https://raw.githubusercontent.com"
+const SWAGGER_API = "https://raw.githubusercontent.com/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json"
 const api_output_path = "res://addons/twitcher/generated/twitch_api.gd"
 
-var client: BufferedHTTPClient
+var client: BufferedHTTPClient = BufferedHTTPClient.new()
 var definition: Dictionary = {}
 
+#region Definition
+class Method extends RefCounted:
+	var _http_verb: String
+	var _name: String
+	var _summary: String
+	var _description: String
+	var _path: String
+	var _doc_url: String
+	var _parameters: Array[Parameter] = []
+	var _required_parameters: Array[Parameter]: 
+		get(): return _parameters.filter(func(p): return p._required)
+	var _optional_parameters: Array[Parameter]: 
+		get(): return _parameters.filter(func(p): return not p._required)
+	var _body_type: String
+	var _result_type: String
+	var _content_type: String
+	
+	var _contains_optional: bool
+	var _contains_body: bool:
+		get(): return _body_type != null and _body_type != ""
+		
+		
+	func add_parameter(parameter: Parameter) -> void:
+		_parameters.append(parameter)
+		_contains_optional = _contains_optional || not parameter._required
+
+
+	func get_optional_type() -> String:
+		if _result_type == "BufferedHTTPClient.ResponseData":
+			return _name.capitalize().replace(" ", "") + "Opt"
+		return _result_type.trim_suffix("Response") + "Opt"
+
+
+	func get_optional_class() -> String:
+		var body = "class %s extends TrackedData:" % get_optional_type()
+		for parameter: Parameter in _optional_parameters:
+			body += """
+	## {documentation}
+	var {property}""".format({
+		'documentation': parameter._documention.replace("\n", "\n\t## "),
+		'property': parameter.get_code(true)
+	})
+		return body + "\n"
+
+
+	func get_parameter_doc() -> String:
+		if _parameters.is_empty():
+			return "## [no query parameters to describe]"
+		var doc : String = ""
+		for parameter: Parameter in _required_parameters:
+			doc += "## {name} - {documentation} \n".format({
+				'name': parameter._name,
+				'documentation': parameter._documention.replace("\n", "\n##   ")
+			})
+		return doc.rstrip("\n")
+
+	func get_parameter_code() -> String:
+		var parameter_code : String = ""
+		if _contains_body: parameter_code += "body: %s, " % _body_type
+		if _contains_optional: parameter_code += "opt: %s, " % get_optional_type()
+					
+		_parameters.sort_custom(Parameter.sort)
+		for parameter: Parameter in _required_parameters:
+			parameter_code += parameter.get_code() + ", "
+		return parameter_code.rstrip(", ")
+		
+		
+	func get_path_code() -> String:
+		var body_code : String = "var path = \"%s?\"\n" % _path
+		if _contains_optional:
+			body_code += "\tvar optionals: Dictionary[StringName, Variant] = {}\n"
+			body_code += "\tif opt != null: optionals = opt.updated_values()\n"
+			
+		for parameter: Parameter in _parameters:
+			if parameter._required:
+				body_code += "\t" + parameter.get_body() + "\n"
+			else:
+				body_code += "\tif optionals.has(\"%s\"):\n" % parameter._name
+				body_code += "\t\t%s\n" % parameter.get_body("optionals.").replace("\n", "\n\t")
+		return body_code
+
+
+	func get_response_code() -> String:
+		if _result_type != "BufferedHTTPClient.ResponseData":
+			return """
+	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
+	var parsed_result: {result_type} = {result_type}.from_json(result)
+	return parsed_result""".format({
+				'result_type': _result_type
+			})
+		else:
+			return "return response"
+
+
+	func get_code() -> String:
+		var code : String = "\n\n"
+		if _contains_optional:
+			code += get_optional_class() + "\n"
+		
+		code += """
+## {summary}
+## 
+{parameter_doc}
+##
+## {doc_url}
+func {name}({parameters}) -> {result_type}:
+	{path_code}
+	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_{method}, {body_variable}, "{content_type}")
+	{response_code}
+""".format({
+			'summary': _summary,
+			'parameter_doc': get_parameter_doc(),
+			'doc_url': _doc_url,
+			'name': _name,
+			'parameters': get_parameter_code(),
+			'result_type': _result_type,
+			'path_code': get_path_code(),
+			'content_type': _content_type,
+			'method': _http_verb.to_upper(),
+			'body_variable': "body" if _contains_body else "\"\"",
+			'response_code': get_response_code(),
+		})
+		return code
+
+
+class Parameter extends RefCounted:
+	var _name: String
+	var _required: bool
+	var _type: String
+	var _is_time: bool
+	var _is_array: bool
+	var _documention: String
+	
+	func get_code(plain: bool = false) -> String:
+		if _name == "broadcaster_id" && not plain:
+			var default_value = "default_broadcaster_login" if _type == "String" else "[default_broadcaster_login]"
+			return "%s: %s = %s" % [_name, _type, default_value]
+		return "%s: %s" % [_name, _type]
+
+		
+	func get_body(prefix: String = "") -> String:
+		var body: String
+		if _is_time:
+			body = "path += \"{key}=\" + get_rfc_3339_date_format({value}) + \"&\"" \
+				.format({ 
+					'value': prefix + _name,
+					'key': _name 
+				})
+			
+		elif _is_array:
+			body = """
+	for param in {value}:
+		path += "{key}=" + str(param) + "&" """ \
+					.format({ 
+						'value': prefix + _name,
+						'key': _name 
+					}) \
+					.trim_prefix("\n\t")
+		else:
+			body = "path += \"{key}=\" + str({value}) + \"&\"" \
+				.format({ 
+					'value': prefix + _name,
+					'key': _name 
+				})
+					
+		return body
+	
+	static func sort(p1: Parameter, p2: Parameter) -> bool:
+		if p1._name == "broadcaster_id":
+			return false
+		if p2._name == "broadcaster_id":
+			return true
+		if p1._required && not p2._required:
+			return true
+		if not p1._required && p2._required:
+			return false
+		return p1._name < p2._name
+		
+	
+#endregion
+
 func _ready() -> void:
-	client = BufferedHTTPClient.new()
 	client.name = "APIGeneratorClient"
-	add_child(client)
+
 
 func generate_api() -> void:
 	print("start generating API")
 	if definition == {}:
 		print("load Twitch definition")
 		definition = await _load_swagger_definition()
-	_generate_repositories()
-	_generate_components()
+	_generate_api()
+	#_generate_repositories()
+	#_generate_components()
 	print("API regenerated you can find it under: res://addons/twitcher/generated/")
 
 #region Repository
 
-
 func _load_swagger_definition() -> Dictionary:
-	EditorInterface.get_base_control().add_child(client)
+	add_child(client)
 	client.max_error_count = 3
-	var request = client.request("/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json", HTTPClient.METHOD_GET, {}, "")
+	var request = client.request(SWAGGER_API, HTTPClient.METHOD_GET, {}, "")
 	var response_data = await client.wait_for_request(request)
 
 	if response_data.error:
 		printerr("Cant generate API")
 	var response_str = response_data.response_data.get_string_from_utf8()
 	var response = JSON.parse_string(response_str)
-	EditorInterface.get_base_control().remove_child(client)
+	remove_child(client)
 	return response
 
 
-func _generate_repositories():
-	var template = SimpleTemplate.new()
-	var template_method = template.read_template_file("res://addons/twitcher/editor/api_generator/template_method.txt")
-	var template_parameter_optional = template.read_template_file("res://addons/twitcher/editor/api_generator/template_method_parameters_optional.txt")
-	var template_body_optional = template.read_template_file("res://addons/twitcher/editor/api_generator/template_method_body_optional.txt")
-	var gdscript_code := ""
+func _generate_api() -> void:
 	var paths = definition.get("paths", {})
-	var data = []
+	var methods: Array[Method] = []
 	for path in paths:
-		var methods = paths[path]
-		for http_method: String in methods:
-			var method_spec = methods[http_method] as Dictionary
-			var method_name = method_spec.get("operationId", "method_" + http_method).replace("-", "_")
-			var summary = method_spec.get("summary", "No summary provided.")
-			var description = method_spec.get("description", "No description provided.")
-			var url = method_spec.get("externalDocs", {}).get("url", "No link provided")
-			var parameters = _parse_parameters(method_spec)
-			var has_body = parameters["has_body"]
-			var header_code = "{}"
-			var responses = method_spec.get("responses", {})
-			var result_type = "BufferedHTTPClient.ResponseData"
-			var content_type = ""
-			http_method = http_method.to_upper()
-			if responses.has("200"):
-				var content =  responses["200"].get("content", {})
+		var method_specs = paths[path]
+		for http_verb: String in method_specs:
+			var method_spec = method_specs[http_verb] as Dictionary
+			var method = _parse_method(http_verb, method_spec)
+			method._path = path
+			methods.append(method)
+	
+	generate_methods(methods)
+	
 
-				# Assuming the successful response is a JSON object
-				result_type = "Dictionary"
+func _parse_method(http_verb: String, method_spec: Dictionary) -> Method:
+	var method: Method = Method.new()
+	method._http_verb = http_verb
+	method._name = method_spec.get("operationId", "method_" + http_verb).replace("-", "_")
+	method._summary = method_spec.get("summary", "No summary provided.")
+	method._description = method_spec.get("description", "No description provided.")
+	method._doc_url = method_spec.get("externalDocs", {}).get("url", "No link provided")
+	_parse_parameters(method, method_spec)
 
-				# Special case for /schedule/icalendar
-				if content.has("text/calendar"):
-					result_type = "BufferedHTTPClient.ResponseData"
-
-				# Try to resolve the component references
-				var ref = content.get("application/json", {}).get("schema", {}).get("$ref", "")
-				if ref != "":
-					result_type = _resolve_ref(ref)
-
-			if method_spec.has("requestBody"):
-				var requestBody = method_spec.get("requestBody")
-				var content = requestBody.get("content")
-				content_type = content.keys()[0]
-			elif http_method == "POST":
-				content_type = "application/x-www-form-urlencoded"
-
-			var method_data = {
-				"summary": summary,
-				"description": description,
-				"url": url,
-				"name": method_name,
-				"parameters": parameters["parameters"],
-				"all_parameters": parameters["all_parameters"],
-				"optional_body_parameters_code": parameters["optional_body_parameters_code"],
-				"result_type": result_type,
-				"content_type": content_type,
-				"request_path": "/helix" + path + "?",
-				"method": http_method,
-				"header": header_code,
-				"body": "body" if has_body else "\"\"",
-				"has_return_value": result_type != "BufferedHTTPClient.ResponseData",
-				"has_optional": parameters["has_optional"],
-				"time_parameters": parameters["time_parameters"],
-				"array_parameters": parameters["array_parameters"],
-				"query_parameters": parameters["query_params"],
-				"time_parameters_opt": parameters["time_parameters_opt"],
-				"array_parameters_opt": parameters["array_parameters_opt"],
-				"query_parameters_opt": parameters["query_params_opt"],
-				"has_broadcaster": parameters["has_broadcaster"]
-			}
-			data.append(template.parse_template(template_method, method_data))
-			if parameters["has_optional"]:
-				data.append(template.parse_template(template_parameter_optional, method_data))
-			if parameters["has_optional_body"]:
-				data.append(template.parse_template(template_body_optional, method_data))
-
-	template.process_template("res://addons/twitcher/editor/api_generator/template_api.txt", {"methods": data}, api_output_path)
-	print("Twitch API got generated succesfully into ", api_output_path)
-
-
-func _parse_parameters(method_spec: Dictionary) -> Dictionary:
-	var query_params: Array[String] = []
-	var time_parameters = []
-	var array_parameters = []
-	var query_params_opt: Array[String] = []
-	var time_parameters_opt = []
-	var array_parameters_opt = []
-	var parameters_code = ""
-	var all_parameters_code = ""
-	var optional_body_parameters_code = ""
-	var parameters = method_spec.get("parameters", [])
-	var append_broadcaster = false
-	var has_body = false
-	for param in parameters:
-		if param.name == "broadcaster_id":
-			query_params.append(param.name)
-			append_broadcaster = true
-		elif param.in == "query":
-			var type = _get_param_type(param["schema"])
-			all_parameters_code += "%s: %s, " % [param.name, type]
-			if param.get("required", false):
-				parameters_code += "%s: %s, " % [param.name, type]
-			var schema = param["schema"]
-			if schema.get("format", "") == "date-time":
-				if param.get("required", false):
-					time_parameters.append(param.name)
-				else:
-					time_parameters_opt.append(param.name)
-			if schema.get("type", "") == "array":
-				if param.get("required", false):
-					array_parameters.append(param.name)
-				else:
-					array_parameters_opt.append(param.name)
-			else:
-				if param.get("required", false):
-					query_params.append(param.name)
-				else:
-					query_params_opt.append(param.name)
-
-	optional_body_parameters_code = parameters_code
+	# Body Type
 	if method_spec.has("requestBody"):
-		var type = "Dictionary"
+		method._body_type = "Dictionary"
 		var ref = method_spec.get("requestBody").get("content", {}).get("application/json", {}).get("schema", {}).get("$ref", "")
 		if ref != "":
-			type = _resolve_ref(ref)
-		parameters_code += "body: %s, " % type
-		all_parameters_code += "body: %s, " % type
-		optional_body_parameters_code += "body: Dictionary, "
-		has_body = true
+			method._body_type = _resolve_ref(ref)
+	
+	# Result Type
+	method._result_type = "BufferedHTTPClient.ResponseData"
+	var responses = method_spec.get("responses", {})
+	if responses.has("200") || responses.has("202"):
+		var content: Dictionary = {}
+		if responses.has("200"):
+			content = responses["200"].get("content", {})
+		elif content == {}:
+			content = responses["202"].get("content", {})
+
+		# Assuming the successful response is a JSON object
+		method._result_type = "Dictionary"
+
+		# Special case for /schedule/icalendar
+		if content.has("text/calendar"):
+			method._result_type = "BufferedHTTPClient.ResponseData"
 
 
-	var has_optional: bool = false
-	if not query_params_opt.is_empty() || not time_parameters_opt.is_empty() || not array_parameters_opt.is_empty():
-		parameters_code += "optional: Dictionary, "
-		optional_body_parameters_code += "optional: Dictionary, "
-		has_optional = true
+		# Try to resolve the component references
+		var ref = content.get("application/json", {}).get("schema", {}).get("$ref", "")
+		if ref != "":
+			method._result_type = _resolve_ref(ref)
 
-	# Has to be last or atleast within the default parameters at the end
-	if append_broadcaster:
-		parameters_code += "broadcaster_id: String = \"\", "
-		all_parameters_code += "broadcaster_id: String = \"\", "
-		optional_body_parameters_code += "broadcaster_id: String = \"\", "
+	# Content Type
+	if method_spec.has("requestBody"):
+		var requestBody = method_spec.get("requestBody")
+		var content = requestBody.get("content")
+		method._content_type = content.keys()[0]
+	elif http_verb == "POST":
+		method._content_type = "application/x-www-form-urlencoded"
 
-	return {
-		"parameters": parameters_code.rstrip(", "),
-		"all_parameters": all_parameters_code.rstrip(", "),
-		"optional_body_parameters_code": optional_body_parameters_code.rstrip(", "),
-		"has_optional": has_optional,
-		"has_body": has_body,
-		"has_optional_body": has_body,
-		"query_params": query_params,
-		"time_parameters": time_parameters,
-		"array_parameters": array_parameters,
-		"query_params_opt": query_params_opt,
-		"time_parameters_opt": time_parameters_opt,
-		"array_parameters_opt": array_parameters_opt,
-		"has_broadcaster": append_broadcaster
-	}
+	return method
+
+	
+func generate_methods(methods: Array[Method]) -> void:
+	var result : String = """@tool
+extends "res://addons/twitcher/editor/api_generator/twitch_base_api.gd"
+
+# CLASS GOT AUTOGENERATED DON'T CHANGE MANUALLY. CHANGES CAN BE OVERWRITTEN EASILY.
+
+## Interaction with the Twitch REST API.
+class_name TwitchAPI
+
+## Broadcaster ID that will be used when no Broadcaster ID was given
+@export var default_broadcaster_login: String:
+	set(username):
+		default_broadcaster_login = username
+		_update_default_broadcaster_login(username)
+		update_configuration_warnings()
+	get():
+		if default_broadcaster_login == null || default_broadcaster_login == "":
+			return ""
+		return default_broadcaster_login
+
+var broadcaster_user: TwitchUser:
+	set(val):
+		broadcaster_user = val
+		notify_property_list_changed()
+
+func _ready() -> void:
+	client = BufferedHTTPClient.new()
+	client.name = "ApiClient"
+	add_child(client)
+	if default_broadcaster_login == "" && token.is_token_valid():
+		var opt = TwitchGetUsersOpt.new()
+		var current_user : TwitchGetUsersResponse = await get_users(opt)
+		var user: TwitchUser = current_user.data[0]
+		default_broadcaster_login = user.id
+
+
+func _update_default_broadcaster_login(username: String) -> void:
+	if not is_node_ready(): await ready
+	var opt = TwitchGetUsersOpt.new()
+	opt.login = [username] as Array[String]
+	var user_data : TwitchGetUsersResponse = await get_users(opt)
+	if user_data.data.is_empty():
+		printerr("Username was not found: %s" % username)
+		return
+	broadcaster_user = user_data.data[0]
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	if default_broadcaster_login == null || default_broadcaster_login == "":
+		return ["Please set default broadcaster that is used when no broadcaster was explicitly given"]
+	return []
+	
+	"""
+	for method: Method in methods:
+		result += method.get_code()
+	result += """
+## Converts unix timestamp to RFC 3339 (example: 2021-10-27T00:00:00Z) when passed a string uses as is
+static func get_rfc_3339_date_format(time: Variant) -> String:
+	if typeof(time) == TYPE_INT:
+		var date_time = Time.get_datetime_dict_from_unix_time(time)
+		return "%s-%02d-%02dT%02d:%02d:%02dZ" % [date_time['year'], date_time['month'], date_time['day'], date_time['hour'], date_time['minute'], date_time['second']]
+	return str(time)
+	"""
+	write_output_file("res://addons/twitcher/generated/twitch_api.gd", result)
+		
+
+func _parse_parameters(method: Method, method_spec: Dictionary) -> void:
+	var parameter_specs = method_spec.get("parameters", [])
+	for parameter_spec in parameter_specs:
+		var parameter: Parameter = Parameter.new()
+		var schema = parameter_spec["schema"]
+		parameter._name = parameter_spec.get("name", "")
+		parameter._documention = parameter_spec.get("description", "")
+		parameter._type = _get_param_type(schema)
+		parameter._required = parameter_spec.get("required", false)
+		parameter._is_time = schema.get("format", "") == "date-time"
+		parameter._is_array = schema.get("type", "") == "array"
+		method.add_parameter(parameter)
 
 #endregion
+
+# Writes the processed content to the output file.
+func write_output_file(file_output: String, content: String) -> void:
+	var file = FileAccess.open(file_output, FileAccess.WRITE);
+	if file == null:
+		var error_message = error_string(FileAccess.get_open_error());
+		push_error("Failed to open output file: %s\n%s" % [file_output, error_message])
+		return
+	file.store_string(content)
+	file.flush()
+	file.close()
 
 
 func _resolve_ref(ref: String) -> String:

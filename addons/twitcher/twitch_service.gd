@@ -101,7 +101,9 @@ func get_user_by_id(user_id: String) -> TwitchUser:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 	if user_id == null || user_id == "": return null
-	var user_data : TwitchGetUsersResponse = await api.get_users([user_id], [])
+	var opt = TwitchAPI.TwitchGetUsersOpt.new()
+	opt.id = [user_id] as Array[String]
+	var user_data : TwitchGetUsersResponse = await api.get_users(opt)
 	if user_data.data.is_empty(): return null
 	return user_data.data[0]
 
@@ -111,8 +113,9 @@ func get_user(username: String) -> TwitchUser:
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
-
-	var user_data : TwitchGetUsersResponse = await api.get_users([], [username])
+	var opt = TwitchAPI.TwitchGetUsersOpt.new()
+	opt.login = [username] as Array[String]
+	var user_data : TwitchGetUsersResponse = await api.get_users(opt)
 	if user_data.data.is_empty():
 		_log.e("Username was not found: %s" % username)
 		return null
@@ -124,8 +127,7 @@ func get_current_user() -> TwitchUser:
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
-
-	var user_data : TwitchGetUsersResponse = await api.get_users([], [])
+	var user_data : TwitchGetUsersResponse = await api.get_users(null)
 	return user_data.data[0]
 
 
