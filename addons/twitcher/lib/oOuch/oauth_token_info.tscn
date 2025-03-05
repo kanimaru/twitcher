@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://6d2jst8ga4le"]
 
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_token_info.gd" id="1_xfn6u"]
+[ext_resource type="Script" uid="uid://cht8c01quk1mb" path="res://addons/twitcher/lib/oOuch/oauth_token_info.gd" id="1_xfn6u"]
 
 [node name="TokenInfo" type="MarginContainer"]
 anchors_preset = 15

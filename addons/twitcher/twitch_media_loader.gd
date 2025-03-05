@@ -262,7 +262,7 @@ class CheerResult extends RefCounted:
 
 func preload_cheemote() -> void:
 	if not _cached_cheermotes.is_empty(): return
-	var cheermote_response: TwitchGetCheermotesResponse = await api.get_cheermotes(null)
+	var cheermote_response: TwitchGetCheermotes.Response = await api.get_cheermotes(null)
 	for data: TwitchCheermote in cheermote_response.data:
 		_cached_cheermotes[data.prefix] = data
 

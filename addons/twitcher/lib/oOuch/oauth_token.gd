@@ -20,15 +20,15 @@ static var CRYPTO: Crypto = Crypto.new()
 		_cache_path = val
 		_load_tokens()
 
-var _scopes: PackedStringArray = [];
-var _expire_date: int;
+var _scopes: PackedStringArray = []
+var _expire_date: int
 var _config_file: ConfigFile = ConfigFile.new()
 
 var _access_token: String = "":
 	set(val):
 		_access_token = val
 		if val != "": authorized.emit()
-var _refresh_token: String = "";
+var _refresh_token: String = ""
 
 
 ## Called when the token was resolved / accesstoken got refreshed
@@ -36,11 +36,12 @@ signal authorized
 
 
 func update_values(access_token: String, refresh_token: String, expire_in: int, scopes: Array[String]):
-	_expire_date = roundi(Time.get_unix_time_from_system() + expire_in);
-	_access_token = access_token;
-	_refresh_token = refresh_token;
-	_scopes = scopes;
-	_persist_tokens();
+	_expire_date = roundi(Time.get_unix_time_from_system() + expire_in)
+	_access_token = access_token
+	_refresh_token = refresh_token
+	_scopes = scopes
+	_persist_tokens()
+	emit_changed()
 
 
 ## Persists the tokesn with the expire date
@@ -48,25 +49,26 @@ func _persist_tokens():
 	var encrypted_access_token = CRYPTO.encrypt(_crypto_key_provider.key, _access_token.to_utf8_buffer())
 	var encrypted_refresh_token = CRYPTO.encrypt(_crypto_key_provider.key, _refresh_token.to_utf8_buffer())
 	_config_file.load(_cache_path)
-	_config_file.set_value(_identifier, "expire_date", _expire_date);
-	_config_file.set_value(_identifier, "access_token", Marshalls.raw_to_base64(encrypted_access_token));
-	_config_file.set_value(_identifier, "refresh_token", Marshalls.raw_to_base64(encrypted_refresh_token));
-	_config_file.set_value(_identifier, "scopes", ",".join(_scopes));
-	_config_file.save(_cache_path);
+	_config_file.set_value(_identifier, "expire_date", _expire_date)
+	_config_file.set_value(_identifier, "access_token", Marshalls.raw_to_base64(encrypted_access_token))
+	_config_file.set_value(_identifier, "refresh_token", Marshalls.raw_to_base64(encrypted_refresh_token))
+	_config_file.set_value(_identifier, "scopes", ",".join(_scopes))
+	_config_file.save(_cache_path)
 
 
 ## Loads the tokens and returns the information if the file got created
 func _load_tokens() -> bool:
 	var status = _config_file.load(_cache_path)
 	if status == OK && _config_file.has_section(_identifier):
-		_expire_date = _config_file.get_value(_identifier, "expire_date", 0);
-		var encrypted_access_token = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "access_token"));
-		var encrypted_refresh_token = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "refresh_token"));
+		_expire_date = _config_file.get_value(_identifier, "expire_date", 0)
+		var encrypted_access_token = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "access_token"))
+		var encrypted_refresh_token = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "refresh_token"))
 		_access_token = CRYPTO.decrypt(_crypto_key_provider.key, encrypted_access_token).get_string_from_utf8()
 		_refresh_token = CRYPTO.decrypt(_crypto_key_provider.key, encrypted_refresh_token).get_string_from_utf8()
-		_scopes = _config_file.get_value(_identifier, "scopes", "").split(",");
-		return true;
-	return false;
+		_scopes = _config_file.get_value(_identifier, "scopes", "").split(",")
+		emit_changed()
+		return true
+	return false
 
 
 func remove_tokens() -> void:
@@ -80,21 +82,22 @@ func remove_tokens() -> void:
 
 		_config_file.erase_section(_identifier)
 		_config_file.save(_cache_path)
+		emit_changed()
 		print("%s got revoked" % _identifier)
 	else:
 		print("%s not found" % _identifier)
 
 
 func get_refresh_token() -> String:
-	return _refresh_token;
+	return _refresh_token
 
 
 func get_access_token() -> String:
-	return _access_token;
+	return _access_token
 
 
 func get_scopes() -> PackedStringArray:
-	return _scopes;
+	return _scopes
 
 
 ## The unix timestamp when the token is expiring
@@ -107,26 +110,27 @@ func get_expiration_readable() -> String:
 
 
 func invalidate() -> void:
-	_expire_date = 0;
-	_refresh_token = "";
+	_expire_date = 0
+	_refresh_token = ""
 	_access_token = ""
-	_scopes = [];
+	_scopes = []
+	emit_changed()
 
 
 ## Does this accesstoken has a refresh token
 func has_refresh_token() -> bool:
-	return _refresh_token != "";
+	return _refresh_token != ""
 
 
 ## Checks if the access token is still valid
 func is_token_valid() -> bool:
-	var current_time = Time.get_unix_time_from_system();
-	return current_time < _expire_date;
+	var current_time = Time.get_unix_time_from_system()
+	return current_time < _expire_date
 
 
 ## Get all token names within a config file
 static func get_identifiers(cache_file: String) -> PackedStringArray:
-	var _config_file: ConfigFile = ConfigFile.new();
+	var _config_file: ConfigFile = ConfigFile.new()
 	var status = _config_file.load(cache_file)
 	if status != OK: return []
 	return _config_file.get_sections()

@@ -1,21 +1,20 @@
-[gd_scene load_steps=15 format=3 uid="uid://djt5lvmwxbq4a"]
+[gd_scene load_steps=14 format=3 uid="uid://djt5lvmwxbq4a"]
 
-[ext_resource type="Script" path="res://addons/twitcher/twitch_service.gd" id="1_6jm7q"]
-[ext_resource type="Script" path="res://addons/twitcher/generated/twitch_api.gd" id="1_yq54x"]
+[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="1_6jm7q"]
+[ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="1_yq54x"]
 [ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/default_oauth_setting.tres" id="2_r7i0d"]
-[ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc.gd" id="2_vps2i"]
-[ext_resource type="Script" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="3_x3t7l"]
+[ext_resource type="Script" uid="uid://wkh0l2xsyapj" path="res://addons/twitcher/irc/twitch_irc.gd" id="2_vps2i"]
+[ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="3_x3t7l"]
 [ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="4_6nyyi"]
-[ext_resource type="Script" path="res://addons/twitcher/irc/twitch_irc_setting.gd" id="4_vtbx8"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="5_0dc02"]
-[ext_resource type="Script" path="res://addons/twitcher/twitch_command_handler.gd" id="6_38otf"]
-[ext_resource type="Script" path="res://addons/twitcher/lib/http/http_client_manager.gd" id="8_i5x6s"]
-[ext_resource type="Script" path="res://addons/twitcher/twitch_auth.gd" id="10_bqnqx"]
-[ext_resource type="Script" path="res://addons/twitcher/twitch_media_loader.gd" id="12_2tq2g"]
+[ext_resource type="Script" uid="uid://c8mv0lq0a2l8f" path="res://addons/twitcher/irc/twitch_irc_setting.gd" id="4_vtbx8"]
+[ext_resource type="Script" uid="uid://dexweyb521tu0" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="5_0dc02"]
+[ext_resource type="Script" uid="uid://fnanrpx00j4u" path="res://addons/twitcher/twitch_command_handler.gd" id="6_38otf"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/twitch_auth.gd" id="10_bqnqx"]
+[ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/twitch_media_loader.gd" id="12_2tq2g"]
 
 [sub_resource type="Resource" id="Resource_n1p3y"]
 script = ExtResource("5_0dc02")
-used_scopes = Array[StringName]([&"bits:read"])
+used_scopes = Array[StringName]([&"chat:edit", &"chat:read"])
 
 [sub_resource type="Resource" id="Resource_ei1b3"]
 script = ExtResource("4_vtbx8")
@@ -41,12 +40,10 @@ script = ExtResource("3_x3t7l")
 api = NodePath("../API")
 scopes = SubResource("Resource_n1p3y")
 
-[node name="API" type="Node" parent="." node_paths=PackedStringArray("http_client_manager")]
+[node name="API" type="Node" parent="."]
 script = ExtResource("1_yq54x")
-default_broadcaster_id = ""
 token = ExtResource("4_6nyyi")
 oauth_setting = ExtResource("2_r7i0d")
-http_client_manager = NodePath("../HttpClientManager")
 api_host = "https://api.twitch.tv"
 
 [node name="CommandHandler" type="Node" parent="." node_paths=PackedStringArray("irc")]
@@ -59,11 +56,7 @@ oauth_setting = ExtResource("2_r7i0d")
 token = ExtResource("4_6nyyi")
 scopes = SubResource("Resource_n1p3y")
 
-[node name="HttpClientManager" type="Node" parent="."]
-script = ExtResource("8_i5x6s")
-
-[node name="MediaLoader" type="Node" parent="." node_paths=PackedStringArray("api", "http_client_manager")]
+[node name="MediaLoader" type="Node" parent="." node_paths=PackedStringArray("api")]
 script = ExtResource("12_2tq2g")
 api = NodePath("../API")
-http_client_manager = NodePath("../HttpClientManager")
 image_transformer = "NativeImageTransformer"

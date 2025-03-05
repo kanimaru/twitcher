@@ -95,4 +95,5 @@ func is_valid() -> PackedStringArray:
 	if _is_client_secret_need() && (client_secret == "" || client_secret == null):
 		result.append("Client Secret is missing")
 	return result
+
 	

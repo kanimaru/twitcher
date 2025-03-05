@@ -19,3 +19,4 @@ documentation/*.import
 
 # Jetbrains specific ignores
 .idea/
+*.tmp

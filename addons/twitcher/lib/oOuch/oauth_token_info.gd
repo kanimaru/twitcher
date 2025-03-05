@@ -13,10 +13,17 @@ signal revoked
 @onready var token_scope_value: Node = %TokenScopeValue
 @onready var revoke_button: Button = %RevokeButton
 
+
 func _ready() -> void:
 	if token == null:
 		_reset_token()
 		return
+	token.changed.connect(_on_token_changed)
+	update_token_view()
+	revoke_button.pressed.connect(_on_revoke_pressed)
+
+	
+func update_token_view() -> void:
 	title.text = token._identifier
 	token_valid_value.text = token.get_expiration_readable()
 	if token.is_token_valid():
@@ -36,11 +43,13 @@ func _ready() -> void:
 		scope_name.text = scope
 		token_scope_value.add_child(scope_name)
 	revoke_button.disabled = false
-	revoke_button.pressed.connect(_on_revoke_pressed)
+	
+
 
 func _on_revoke_pressed() -> void:
 	token.remove_tokens()
 	_reset_token()
+
 
 func _reset_token() -> void:
 	title.text = ""
@@ -49,3 +58,7 @@ func _reset_token() -> void:
 	revoke_button.disabled = true
 	for child in token_scope_value.get_children():
 		child.queue_free()
+	
+		
+func _on_token_changed() -> void:
+	update_token_view()

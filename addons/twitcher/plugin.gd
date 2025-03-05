@@ -15,6 +15,7 @@ const TokenInspector = preload("res://addons/twitcher/lib/oOuch/oauth_token_insp
 const TwitchApiInspector = preload("res://addons/twitcher/editor/inspector/twitch_api_inspector.gd")
 const TwitchChatInspector = preload("res://addons/twitcher/editor/inspector/twitch_chat_inspector.gd")
 const TwitchMediaLoaderInspector = preload("res://addons/twitcher/editor/inspector/twitch_media_loader_inspector.gd")
+const TwitchAuthInspector = preload("res://addons/twitcher/editor/inspector/twitch_auth_inspector.gd")
 
 var gif_importer_imagemagick: GifImporterImagemagick = GifImporterImagemagick.new()
 var gif_importer_native: GifImporterNative = GifImporterNative.new()
@@ -28,6 +29,7 @@ var token_inspector: TokenInspector = TokenInspector.new()
 var chat_inspector: TwitchChatInspector = TwitchChatInspector.new()
 var api_inspector: TwitchApiInspector = TwitchApiInspector.new()
 var media_loader_inspector: TwitchMediaLoaderInspector = TwitchMediaLoaderInspector.new()
+var auth_inspector: TwitchAuthInspector = TwitchAuthInspector.new()
 
 
 static func _static_init() -> void:
@@ -52,6 +54,7 @@ func _enter_tree():
 	add_inspector_plugin(chat_inspector)
 	add_inspector_plugin(api_inspector)
 	add_inspector_plugin(media_loader_inspector)
+	add_inspector_plugin(auth_inspector)
 	add_import_plugin(gif_importer_native)
 	if is_magick_available():
 		add_import_plugin(gif_importer_imagemagick)
@@ -72,6 +75,7 @@ func _exit_tree():
 	remove_inspector_plugin(chat_inspector)
 	remove_inspector_plugin(api_inspector)
 	remove_inspector_plugin(media_loader_inspector)
+	remove_inspector_plugin(auth_inspector)
 	if Engine.is_editor_hint():
 		remove_tool_menu_item(REGENERATE_API_LABEL)
 		

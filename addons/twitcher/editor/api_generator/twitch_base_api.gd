@@ -2,7 +2,6 @@
 extends Node
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchAPI")
-const TrackedData = preload("res://addons/twitcher/tracked_data.gd")
 
 ## Maximal tries to reauthrorize before giving up the request.
 const MAX_AUTH_ERRORS = 3
@@ -14,16 +13,36 @@ signal unauthenticated
 signal unauthorized
 
 ## To authorize against the Twitch API
-@export var token: OAuthToken
+@export var token: OAuthToken:
+	set(val): 
+		token = val
+		update_configuration_warnings()
 ## OAuth settings needed for client information
-@export var oauth_setting: OAuthSetting
+@export var oauth_setting: OAuthSetting:
+	set(val):
+		oauth_setting = val
+		update_configuration_warnings()
 ## URI to the Twitch API
 @export var api_host: String = "https://api.twitch.tv/helix"
 
 ## Client to make HTTP requests
 var client: BufferedHTTPClient
-	
 
+
+func _ready() -> void:
+	client = BufferedHTTPClient.new()
+	client.name = "ApiClient"
+	add_child(client)
+	
+	
+func _get_configuration_warnings() -> PackedStringArray:
+	var result: PackedStringArray = []
+	if token == null:
+		result.append("Please set a token to use")
+	if oauth_setting == null:
+		result.append("Please set the correct oauth settings")
+	return result
+		
 func request(path: String, method: int, body: Variant = "", content_type: String = "", error_count: int = 0) -> BufferedHTTPClient.ResponseData:
 	var header : Dictionary = {
 		"Authorization": "Bearer %s" % [await token.get_access_token()],
@@ -60,3 +79,11 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 			empty_response.response_code = response.response_code
 			return empty_response
 	return response
+
+
+## Converts unix timestamp to RFC 3339 (example: 2021-10-27T00:00:00Z) when passed a string uses as is
+static func get_rfc_3339_date_format(time: Variant) -> String:
+	if typeof(time) == TYPE_INT:
+		var date_time = Time.get_datetime_dict_from_unix_time(time)
+		return "%s-%02d-%02dT%02d:%02d:%02dZ" % [date_time['year'], date_time['month'], date_time['day'], date_time['hour'], date_time['minute'], date_time['second']]
+	return str(time)

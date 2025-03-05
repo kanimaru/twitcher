@@ -6,137 +6,66 @@ extends "res://addons/twitcher/editor/api_generator/twitch_base_api.gd"
 ## Interaction with the Twitch REST API.
 class_name TwitchAPI
 
-## Broadcaster ID that will be used when no Broadcaster ID was given
-@export var default_broadcaster_login: String:
-	set(username):
-		default_broadcaster_login = username
-		_update_default_broadcaster_login(username)
-		update_configuration_warnings()
-	get():
-		if default_broadcaster_login == null || default_broadcaster_login == "":
-			return ""
-		return default_broadcaster_login
-
-var broadcaster_user: TwitchUser:
-	set(val):
-		broadcaster_user = val
-		notify_property_list_changed()
-
-func _ready() -> void:
-	client = BufferedHTTPClient.new()
-	client.name = "ApiClient"
-	add_child(client)
-	if default_broadcaster_login == "" && token.is_token_valid():
-		var opt = TwitchGetUsersOpt.new()
-		var current_user : TwitchGetUsersResponse = await get_users(opt)
-		var user: TwitchUser = current_user.data[0]
-		default_broadcaster_login = user.id
-
-
-func _update_default_broadcaster_login(username: String) -> void:
-	if not is_node_ready(): await ready
-	var opt = TwitchGetUsersOpt.new()
-	opt.login = [username] as Array[String]
-	var user_data : TwitchGetUsersResponse = await get_users(opt)
-	if user_data.data.is_empty():
-		printerr("Username was not found: %s" % username)
-		return
-	broadcaster_user = user_data.data[0]
-
-
-func _get_configuration_warnings() -> PackedStringArray:
-	if default_broadcaster_login == null || default_broadcaster_login == "":
-		return ["Please set default broadcaster that is used when no broadcaster was explicitly given"]
-	return []
 	
-	
-
-
 ## Starts a commercial on the specified channel.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#start-commercial
-func start_commercial(body: TwitchStartCommercialBody) -> TwitchStartCommercialResponse:
+func start_commercial(body: TwitchStartCommercial.Body) -> TwitchStartCommercial.Response:
 	var path = "/channels/commercial?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchStartCommercialResponse = TwitchStartCommercialResponse.from_json(result)
+	var parsed_result: TwitchStartCommercial.Response = TwitchStartCommercial.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Returns ad schedule related information.
 ## 
 ## broadcaster_id - Provided `broadcaster_id` must match the `user_id` in the auth token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-ad-schedule
-func get_ad_schedule(broadcaster_id: String = default_broadcaster_login) -> TwitchGetAdScheduleResponse:
+func get_ad_schedule(broadcaster_id: String) -> TwitchGetAdSchedule.Response:
 	var path = "/channels/ads?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetAdScheduleResponse = TwitchGetAdScheduleResponse.from_json(result)
+	var parsed_result: TwitchGetAdSchedule.Response = TwitchGetAdSchedule.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Pushes back the timestamp of the upcoming automatic mid-roll ad by 5 minutes.
 ## 
 ## broadcaster_id - Provided `broadcaster_id` must match the `user_id` in the auth token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#snooze-next-ad
-func snooze_next_ad(broadcaster_id: String = default_broadcaster_login) -> TwitchSnoozeNextAdResponse:
+func snooze_next_ad(broadcaster_id: String) -> TwitchSnoozeNextAd.Response:
 	var path = "/channels/ads/schedule/snooze?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchSnoozeNextAdResponse = TwitchSnoozeNextAdResponse.from_json(result)
+	var parsed_result: TwitchSnoozeNextAd.Response = TwitchSnoozeNextAd.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetExtensionAnalyticsOpt extends TrackedData:
-	## The extension's client ID. If specified, the response contains a report for the specified extension. If not specified, the response includes a report for each extension that the authenticated user owns.
-	var extension_id: String
-	## The type of analytics report to get. Possible values are:  
-	##   
-	## * overview\_v2
-	var type: String
-	## The reporting window's start date, in RFC3339 format. Set the time portion to zeroes (for example, 2021-10-22T00:00:00Z).  
-	##   
-	## The start date must be on or after January 31, 2018\. If you specify an earlier date, the API ignores it and uses January 31, 2018\. If you specify a start date, you must specify an end date. If you don't specify a start and end date, the report includes all available data since January 31, 2018.  
-	##   
-	## The report contains one row of data for each day in the reporting window.
-	var started_at: Variant
-	## The reporting window's end date, in RFC3339 format. Set the time portion to zeroes (for example, 2021-10-27T00:00:00Z). The report is inclusive of the end date.  
-	##   
-	## Specify an end date only if you provide a start date. Because it can take up to two days for the data to be available, you must specify an end date that's earlier than today minus one to two days. If not, the API ignores your end date and uses an end date that is today minus one to two days.
-	var ended_at: Variant
-	## The maximum number of report URLs to return per page in the response. The minimum page size is 1 URL per page and the maximum is 100 URLs per page. The default is 20.  
-	##   
-	## **NOTE**: While you may specify a maximum value of 100, the response will contain at most 20 URLs per page.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)  
-	##   
-	## This parameter is ignored if the _extension\_id_ parameter is set.
-	var after: String
-
-
+	
 ## Gets an analytics report for one or more extensions.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-analytics
-func get_extension_analytics(opt: TwitchGetExtensionAnalyticsOpt) -> TwitchGetExtensionAnalyticsResponse:
+func get_extension_analytics(opt: TwitchGetExtensionAnalytics.Opt) -> TwitchGetExtensionAnalytics.Response:
 	var path = "/analytics/extensions?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("ended_at"):
@@ -149,50 +78,28 @@ func get_extension_analytics(opt: TwitchGetExtensionAnalyticsOpt) -> TwitchGetEx
 		path += "started_at=" + get_rfc_3339_date_format(optionals.started_at) + "&"
 	if optionals.has("type"):
 		path += "type=" + str(optionals.type) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetExtensionAnalyticsResponse = TwitchGetExtensionAnalyticsResponse.from_json(result)
+	var parsed_result: TwitchGetExtensionAnalytics.Response = TwitchGetExtensionAnalytics.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_extension_analytics.bind(opt)
 	return parsed_result
 
-
-class TwitchGetGameAnalyticsOpt extends TrackedData:
-	## The game’s client ID. If specified, the response contains a report for the specified game. If not specified, the response includes a report for each of the authenticated user’s games.
-	var game_id: String
-	## The type of analytics report to get. Possible values are:  
-	##   
-	## * overview\_v2
-	var type: String
-	## The reporting window’s start date, in RFC3339 format. Set the time portion to zeroes (for example, 2021-10-22T00:00:00Z). If you specify a start date, you must specify an end date.  
-	##   
-	## The start date must be within one year of today’s date. If you specify an earlier date, the API ignores it and uses a date that’s one year prior to today’s date. If you don’t specify a start and end date, the report includes all available data for the last 365 days from today.  
-	##   
-	## The report contains one row of data for each day in the reporting window.
-	var started_at: Variant
-	## The reporting window’s end date, in RFC3339 format. Set the time portion to zeroes (for example, 2021-10-22T00:00:00Z). The report is inclusive of the end date.  
-	##   
-	## Specify an end date only if you provide a start date. Because it can take up to two days for the data to be available, you must specify an end date that’s earlier than today minus one to two days. If not, the API ignores your end date and uses an end date that is today minus one to two days.
-	var ended_at: Variant
-	## The maximum number of report URLs to return per page in the response. The minimum page size is 1 URL per page and the maximum is 100 URLs per page. The default is 20.  
-	##   
-	## **NOTE**: While you may specify a maximum value of 100, the response will contain at most 20 URLs per page.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)  
-	##   
-	## This parameter is ignored if _game\_id_ parameter is set.
-	var after: String
-
-
+	
 ## Gets an analytics report for one or more games.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-game-analytics
-func get_game_analytics(opt: TwitchGetGameAnalyticsOpt) -> TwitchGetGameAnalyticsResponse:
+func get_game_analytics(opt: TwitchGetGameAnalytics.Opt) -> TwitchGetGameAnalytics.Response:
 	var path = "/analytics/games?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("ended_at"):
@@ -205,44 +112,28 @@ func get_game_analytics(opt: TwitchGetGameAnalyticsOpt) -> TwitchGetGameAnalytic
 		path += "started_at=" + get_rfc_3339_date_format(optionals.started_at) + "&"
 	if optionals.has("type"):
 		path += "type=" + str(optionals.type) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetGameAnalyticsResponse = TwitchGetGameAnalyticsResponse.from_json(result)
+	var parsed_result: TwitchGetGameAnalytics.Response = TwitchGetGameAnalytics.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_game_analytics.bind(opt)
 	return parsed_result
 
-
-class TwitchGetBitsLeaderboardOpt extends TrackedData:
-	## The number of results to return. The minimum count is 1 and the maximum is 100\. The default is 10.
-	var count: int
-	## The time period over which data is aggregated (uses the PST time zone). Possible values are:  
-	##   
-	## * day — A day spans from 00:00:00 on the day specified in _started\_at_ and runs through 00:00:00 of the next day.
-	## * week — A week spans from 00:00:00 on the Monday of the week specified in _started\_at_ and runs through 00:00:00 of the next Monday.
-	## * month — A month spans from 00:00:00 on the first day of the month specified in _started\_at_ and runs through 00:00:00 of the first day of the next month.
-	## * year — A year spans from 00:00:00 on the first day of the year specified in _started\_at_ and runs through 00:00:00 of the first day of the next year.
-	## * all — Default. The lifetime of the broadcaster's channel.
-	var period: String
-	## The start date, in RFC3339 format, used for determining the aggregation period. Specify this parameter only if you specify the _period_ query parameter. The start date is ignored if _period_ is all.  
-	##   
-	## Note that the date is converted to PST before being used, so if you set the start time to `2022-01-01T00:00:00.0Z` and _period_ to month, the actual reporting period is December 2021, not January 2022\. If you want the reporting period to be January 2022, you must set the start time to `2022-01-01T08:00:00.0Z` or `2022-01-01T00:00:00.0-08:00`.  
-	##   
-	## If your start date uses the ‘+’ offset operator (for example, `2022-01-01T00:00:00.0+05:00`), you must URL encode the start date.
-	var started_at: Variant
-	## An ID that identifies a user that cheered bits in the channel. If _count_ is greater than 1, the response may include users ranked above and below the specified user. To get the leaderboard’s top leaders, don’t specify a user ID.
-	var user_id: String
-
-
+	
 ## Gets the Bits leaderboard for the authenticated broadcaster.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-bits-leaderboard
-func get_bits_leaderboard(opt: TwitchGetBitsLeaderboardOpt) -> TwitchGetBitsLeaderboardResponse:
+func get_bits_leaderboard(opt: TwitchGetBitsLeaderboard.Opt) -> TwitchGetBitsLeaderboard.Response:
 	var path = "/bits/leaderboard?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("count"):
 		path += "count=" + str(optionals.count) + "&"
 	if optionals.has("period"):
@@ -251,141 +142,124 @@ func get_bits_leaderboard(opt: TwitchGetBitsLeaderboardOpt) -> TwitchGetBitsLead
 		path += "started_at=" + get_rfc_3339_date_format(optionals.started_at) + "&"
 	if optionals.has("user_id"):
 		path += "user_id=" + str(optionals.user_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetBitsLeaderboardResponse = TwitchGetBitsLeaderboardResponse.from_json(result)
+	var parsed_result: TwitchGetBitsLeaderboard.Response = TwitchGetBitsLeaderboard.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetCheermotesOpt extends TrackedData:
-	## The ID of the broadcaster whose custom Cheermotes you want to get. Specify the broadcaster’s ID if you want to include the broadcaster’s Cheermotes in the response (not all broadcasters upload Cheermotes). If not specified, the response contains only global Cheermotes.  
-	##   
-	## If the broadcaster uploaded Cheermotes, the `type` field in the response is set to **channel\_custom**.
-	var broadcaster_id: String
-
-
+	
 ## Gets a list of Cheermotes that users can use to cheer Bits.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-cheermotes
-func get_cheermotes(opt: TwitchGetCheermotesOpt) -> TwitchGetCheermotesResponse:
+func get_cheermotes(opt: TwitchGetCheermotes.Opt) -> TwitchGetCheermotes.Response:
 	var path = "/bits/cheermotes?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("broadcaster_id"):
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetCheermotesResponse = TwitchGetCheermotesResponse.from_json(result)
+	var parsed_result: TwitchGetCheermotes.Response = TwitchGetCheermotes.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetExtensionTransactionsOpt extends TrackedData:
-	## A transaction ID used to filter the list of transactions. Specify this parameter for each transaction you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 100 IDs.
-	var id: Array[String]
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets an extension’s list of transactions.
 ## 
 ## extension_id - The ID of the extension whose list of transactions you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-transactions
-func get_extension_transactions(opt: TwitchGetExtensionTransactionsOpt, extension_id: String) -> TwitchGetExtensionTransactionsResponse:
+func get_extension_transactions(opt: TwitchGetExtensionTransactions.Opt, extension_id: String) -> TwitchGetExtensionTransactions.Response:
 	var path = "/extensions/transactions?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetExtensionTransactionsResponse = TwitchGetExtensionTransactionsResponse.from_json(result)
+	var parsed_result: TwitchGetExtensionTransactions.Response = TwitchGetExtensionTransactions.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_extension_transactions.bind(opt, extension_id)
 	return parsed_result
 
-
-
+	
 ## Gets information about one or more channels.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose channel you want to get. To specify more than one ID, include this parameter for each broadcaster you want to get. For example, `broadcaster_id=1234&broadcaster_id=5678`. You may specify a maximum of 100 IDs. The API ignores duplicate IDs and IDs that are not found. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-information
-func get_channel_information(broadcaster_id: Array[String] = [default_broadcaster_login]) -> TwitchGetChannelInformationResponse:
+func get_channel_information(broadcaster_id: Array[String]) -> TwitchGetChannelInformation.Response:
 	var path = "/channels?"
+	
 	for param in broadcaster_id:
 		path += "broadcaster_id=" + str(param) + "&" 
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChannelInformationResponse = TwitchGetChannelInformationResponse.from_json(result)
+	var parsed_result: TwitchGetChannelInformation.Response = TwitchGetChannelInformation.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Updates a channel’s properties.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose channel you want to update. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#modify-channel-information
-func modify_channel_information(body: TwitchModifyChannelInformationBody, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func modify_channel_information(body: TwitchModifyChannelInformation.Body, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/channels?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	return response
 
-
-
+	
 ## Gets the broadcaster’s list editors.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the channel. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-editors
-func get_channel_editors(broadcaster_id: String = default_broadcaster_login) -> TwitchGetChannelEditorsResponse:
+func get_channel_editors(broadcaster_id: String) -> TwitchGetChannelEditors.Response:
 	var path = "/channels/editors?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChannelEditorsResponse = TwitchGetChannelEditorsResponse.from_json(result)
+	var parsed_result: TwitchGetChannelEditors.Response = TwitchGetChannelEditors.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetFollowedChannelsOpt extends TrackedData:
-	## A broadcaster’s ID. Use this parameter to see whether the user follows this broadcaster. If specified, the response contains this broadcaster if the user follows them. If not specified, the response contains all broadcasters that the user follows.
-	var broadcaster_id: String
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
-	var after: String
-
-
+	
 ## Gets a list of broadcasters that the specified user follows. You can also use this endpoint to see whether a user follows a specific broadcaster.
 ## 
 ## user_id - A user’s ID. Returns the list of broadcasters that this user follows. This ID must match the user ID in the user OAuth token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-followed-channels
-func get_followed_channels(opt: TwitchGetFollowedChannelsOpt, user_id: String) -> TwitchGetFollowedChannelsResponse:
+func get_followed_channels(opt: TwitchGetFollowedChannels.Opt, user_id: String) -> TwitchGetFollowedChannels.Response:
 	var path = "/channels/followed?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "user_id=" + str(user_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
@@ -393,34 +267,28 @@ func get_followed_channels(opt: TwitchGetFollowedChannelsOpt, user_id: String) -
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("broadcaster_id"):
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetFollowedChannelsResponse = TwitchGetFollowedChannelsResponse.from_json(result)
+	var parsed_result: TwitchGetFollowedChannels.Response = TwitchGetFollowedChannels.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_followed_channels.bind(opt, user_id)
 	return parsed_result
 
-
-class TwitchGetChannelFollowersOpt extends TrackedData:
-	## A user’s ID. Use this parameter to see whether the user follows this broadcaster. If specified, the response contains this user if they follow the broadcaster. If not specified, the response contains all users that follow the broadcaster.  
-	##   
-	## Using this parameter requires both a user access token with the **moderator:read:followers** scope and the user ID in the access token match the broadcaster\_id or be the user ID for a moderator of the specified broadcaster.
-	var user_id: String
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
-	var after: String
-
-
+	
 ## Gets a list of users that follow the specified broadcaster. You can also use this endpoint to see whether a specific user follows the broadcaster.
 ## 
 ## broadcaster_id - The broadcaster’s ID. Returns the list of users that follow this broadcaster. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-followers
-func get_channel_followers(opt: TwitchGetChannelFollowersOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetChannelFollowersResponse:
+func get_channel_followers(opt: TwitchGetChannelFollowers.Opt, broadcaster_id: String) -> TwitchGetChannelFollowers.Response:
 	var path = "/channels/followers?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
@@ -428,142 +296,112 @@ func get_channel_followers(opt: TwitchGetChannelFollowersOpt, broadcaster_id: St
 	if optionals.has("user_id"):
 		path += "user_id=" + str(optionals.user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChannelFollowersResponse = TwitchGetChannelFollowersResponse.from_json(result)
+	var parsed_result: TwitchGetChannelFollowers.Response = TwitchGetChannelFollowers.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_channel_followers.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Creates a Custom Reward in the broadcaster’s channel.
 ## 
 ## broadcaster_id - The ID of the broadcaster to add the custom reward to. This ID must match the user ID found in the OAuth token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-custom-rewards
-func create_custom_rewards(body: TwitchCreateCustomRewardsBody, broadcaster_id: String = default_broadcaster_login) -> TwitchCreateCustomRewardsResponse:
+func create_custom_rewards(body: TwitchCreateCustomRewards.Body, broadcaster_id: String) -> TwitchCreateCustomRewards.Response:
 	var path = "/channel_points/custom_rewards?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreateCustomRewardsResponse = TwitchCreateCustomRewardsResponse.from_json(result)
+	var parsed_result: TwitchCreateCustomRewards.Response = TwitchCreateCustomRewards.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Deletes a custom reward that the broadcaster created.
 ## 
 ## broadcaster_id - The ID of the broadcaster that created the custom reward. This ID must match the user ID found in the OAuth token. 
 ## id - The ID of the custom reward to delete. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-custom-reward
-func delete_custom_reward(id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func delete_custom_reward(id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/channel_points/custom_rewards?"
 	path += "id=" + str(id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class TwitchGetCustomRewardOpt extends TrackedData:
-	## A list of IDs to filter the rewards by. To specify more than one ID, include this parameter for each reward you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 50 IDs.  
-	##   
-	## Duplicate IDs are ignored. The response contains only the IDs that were found. If none of the IDs were found, the response is 404 Not Found.
-	var id: Array[String]
-	## A Boolean value that determines whether the response contains only the custom rewards that the app may manage (the app is identified by the ID in the Client-Id header). Set to **true** to get only the custom rewards that the app may manage. The default is **false**.
-	var only_manageable_rewards: bool
-
-
+	
 ## Gets a list of custom rewards that the specified broadcaster created.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose custom rewards you want to get. This ID must match the user ID found in the OAuth token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-custom-reward
-func get_custom_reward(opt: TwitchGetCustomRewardOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetCustomRewardResponse:
+func get_custom_reward(opt: TwitchGetCustomReward.Opt, broadcaster_id: String) -> TwitchGetCustomReward.Response:
 	var path = "/channel_points/custom_rewards?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	if optionals.has("only_manageable_rewards"):
 		path += "only_manageable_rewards=" + str(optionals.only_manageable_rewards) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetCustomRewardResponse = TwitchGetCustomRewardResponse.from_json(result)
+	var parsed_result: TwitchGetCustomReward.Response = TwitchGetCustomReward.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Updates a custom reward.
 ## 
 ## broadcaster_id - The ID of the broadcaster that’s updating the reward. This ID must match the user ID found in the OAuth token. 
 ## id - The ID of the reward to update. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-custom-reward
-func update_custom_reward(body: TwitchUpdateCustomRewardBody, id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchUpdateCustomRewardResponse:
+func update_custom_reward(body: TwitchUpdateCustomReward.Body, id: String, broadcaster_id: String) -> TwitchUpdateCustomReward.Response:
 	var path = "/channel_points/custom_rewards?"
 	path += "id=" + str(id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateCustomRewardResponse = TwitchUpdateCustomRewardResponse.from_json(result)
+	var parsed_result: TwitchUpdateCustomReward.Response = TwitchUpdateCustomReward.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetCustomRewardRedemptionOpt extends TrackedData:
-	## The status of the redemptions to return. The possible case-sensitive values are:  
-	##   
-	## * CANCELED
-	## * FULFILLED
-	## * UNFULFILLED
-	##   
-	## **NOTE**: This field is required only if you don’t specify the _id_ query parameter.  
-	##   
-	## **NOTE**: Canceled and fulfilled redemptions are returned for only a few days after they’re canceled or fulfilled.
-	var status: String
-	## A list of IDs to filter the redemptions by. To specify more than one ID, include this parameter for each redemption you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 50 IDs.  
-	##   
-	## Duplicate IDs are ignored. The response contains only the IDs that were found. If none of the IDs were found, the response is 404 Not Found.
-	var id: Array[String]
-	## The order to sort redemptions by. The possible case-sensitive values are:  
-	##   
-	## * OLDEST
-	## * NEWEST
-	##   
-	## The default is OLDEST.
-	var sort: String
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read more](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-	## The maximum number of redemptions to return per page in the response. The minimum page size is 1 redemption per page and the maximum is 50\. The default is 20.
-	var first: int
-
-
+	
 ## Gets a list of redemptions for a custom reward.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the custom reward. This ID must match the user ID found in the user OAuth token. 
 ## reward_id - The ID that identifies the custom reward whose redemptions you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-custom-reward-redemption
-func get_custom_reward_redemption(opt: TwitchGetCustomRewardRedemptionOpt, reward_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchGetCustomRewardRedemptionResponse:
+func get_custom_reward_redemption(opt: TwitchGetCustomRewardRedemption.Opt, reward_id: String, broadcaster_id: String) -> TwitchGetCustomRewardRedemption.Response:
 	var path = "/channel_points/custom_rewards/redemptions?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "reward_id=" + str(reward_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	if optionals.has("sort"):
@@ -571,15 +409,19 @@ func get_custom_reward_redemption(opt: TwitchGetCustomRewardRedemptionOpt, rewar
 	if optionals.has("status"):
 		path += "status=" + str(optionals.status) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetCustomRewardRedemptionResponse = TwitchGetCustomRewardRedemptionResponse.from_json(result)
+	var parsed_result: TwitchGetCustomRewardRedemption.Response = TwitchGetCustomRewardRedemption.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_custom_reward_redemption.bind(opt, reward_id, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Updates a redemption’s status.
 ## 
 ## id - A list of IDs that identify the redemptions to update. To specify more than one ID, include this parameter for each redemption you want to update. For example, `id=1234&id=5678`. You may specify a maximum of 50 IDs. 
@@ -587,296 +429,281 @@ func get_custom_reward_redemption(opt: TwitchGetCustomRewardRedemptionOpt, rewar
 ## reward_id - The ID that identifies the reward that’s been redeemed. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-redemption-status
-func update_redemption_status(body: TwitchUpdateRedemptionStatusBody, id: Array[String], reward_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchUpdateRedemptionStatusResponse:
+func update_redemption_status(body: TwitchUpdateRedemptionStatus.Body, id: Array[String], reward_id: String, broadcaster_id: String) -> TwitchUpdateRedemptionStatus.Response:
 	var path = "/channel_points/custom_rewards/redemptions?"
+	
 	for param in id:
 		path += "id=" + str(param) + "&" 
 	path += "reward_id=" + str(reward_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateRedemptionStatusResponse = TwitchUpdateRedemptionStatusResponse.from_json(result)
+	var parsed_result: TwitchUpdateRedemptionStatus.Response = TwitchUpdateRedemptionStatus.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Gets information about the broadcaster’s active charity campaign.
 ## 
 ## broadcaster_id - The ID of the broadcaster that’s currently running a charity campaign. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-charity-campaign
-func get_charity_campaign(broadcaster_id: String = default_broadcaster_login) -> TwitchGetCharityCampaignResponse:
+func get_charity_campaign(broadcaster_id: String) -> TwitchGetCharityCampaign.Response:
 	var path = "/charity/campaigns?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetCharityCampaignResponse = TwitchGetCharityCampaignResponse.from_json(result)
+	var parsed_result: TwitchGetCharityCampaign.Response = TwitchGetCharityCampaign.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetCharityCampaignDonationsOpt extends TrackedData:
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets the list of donations that users have made to the broadcaster’s active charity campaign.
 ## 
 ## broadcaster_id - The ID of the broadcaster that’s currently running a charity campaign. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-charity-campaign-donations
-func get_charity_campaign_donations(opt: TwitchGetCharityCampaignDonationsOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetCharityCampaignDonationsResponse:
+func get_charity_campaign_donations(opt: TwitchGetCharityCampaignDonations.Opt, broadcaster_id: String) -> TwitchGetCharityCampaignDonations.Response:
 	var path = "/charity/donations?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetCharityCampaignDonationsResponse = TwitchGetCharityCampaignDonationsResponse.from_json(result)
+	var parsed_result: TwitchGetCharityCampaignDonations.Response = TwitchGetCharityCampaignDonations.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_charity_campaign_donations.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-class TwitchGetChattersOpt extends TrackedData:
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 1,000\. The default is 100.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets the list of users that are connected to the broadcaster’s chat session.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose list of chatters you want to get. 
 ## moderator_id - The ID of the broadcaster or one of the broadcaster’s moderators. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-chatters
-func get_chatters(opt: TwitchGetChattersOpt, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchGetChattersResponse:
+func get_chatters(opt: TwitchGetChatters.Opt, moderator_id: String, broadcaster_id: String) -> TwitchGetChatters.Response:
 	var path = "/chat/chatters?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChattersResponse = TwitchGetChattersResponse.from_json(result)
+	var parsed_result: TwitchGetChatters.Response = TwitchGetChatters.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_chatters.bind(opt, moderator_id, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Gets the broadcaster’s list of custom emotes.
 ## 
 ## broadcaster_id - An ID that identifies the broadcaster whose emotes you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-emotes
-func get_channel_emotes(broadcaster_id: String = default_broadcaster_login) -> TwitchGetChannelEmotesResponse:
+func get_channel_emotes(broadcaster_id: String) -> TwitchGetChannelEmotes.Response:
 	var path = "/chat/emotes?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChannelEmotesResponse = TwitchGetChannelEmotesResponse.from_json(result)
+	var parsed_result: TwitchGetChannelEmotes.Response = TwitchGetChannelEmotes.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Gets all global emotes.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-global-emotes
-func get_global_emotes() -> TwitchGetGlobalEmotesResponse:
+func get_global_emotes() -> TwitchGetGlobalEmotes.Response:
 	var path = "/chat/emotes/global?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetGlobalEmotesResponse = TwitchGetGlobalEmotesResponse.from_json(result)
+	var parsed_result: TwitchGetGlobalEmotes.Response = TwitchGetGlobalEmotes.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Gets emotes for one or more specified emote sets.
 ## 
 ## emote_set_id - An ID that identifies the emote set to get. Include this parameter for each emote set you want to get. For example, `emote_set_id=1234&emote_set_id=5678`. You may specify a maximum of 25 IDs. The response contains only the IDs that were found and ignores duplicate IDs.  
-##     
-##   To get emote set IDs, use the [Get Channel Emotes](https://dev.twitch.tv/docs/api/reference#get-channel-emotes) API. 
+##      
+##    To get emote set IDs, use the [Get Channel Emotes](https://dev.twitch.tv/docs/api/reference#get-channel-emotes) API. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-emote-sets
-func get_emote_sets(emote_set_id: Array[String]) -> TwitchGetEmoteSetsResponse:
+func get_emote_sets(emote_set_id: Array[String]) -> TwitchGetEmoteSets.Response:
 	var path = "/chat/emotes/set?"
+	
 	for param in emote_set_id:
 		path += "emote_set_id=" + str(param) + "&" 
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetEmoteSetsResponse = TwitchGetEmoteSetsResponse.from_json(result)
+	var parsed_result: TwitchGetEmoteSets.Response = TwitchGetEmoteSets.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Gets the broadcaster’s list of custom chat badges.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose chat badges you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-chat-badges
-func get_channel_chat_badges(broadcaster_id: String = default_broadcaster_login) -> TwitchGetChannelChatBadgesResponse:
+func get_channel_chat_badges(broadcaster_id: String) -> TwitchGetChannelChatBadges.Response:
 	var path = "/chat/badges?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChannelChatBadgesResponse = TwitchGetChannelChatBadgesResponse.from_json(result)
+	var parsed_result: TwitchGetChannelChatBadges.Response = TwitchGetChannelChatBadges.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Gets Twitch’s list of chat badges.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-global-chat-badges
-func get_global_chat_badges() -> TwitchGetGlobalChatBadgesResponse:
+func get_global_chat_badges() -> TwitchGetGlobalChatBadges.Response:
 	var path = "/chat/badges/global?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetGlobalChatBadgesResponse = TwitchGetGlobalChatBadgesResponse.from_json(result)
+	var parsed_result: TwitchGetGlobalChatBadges.Response = TwitchGetGlobalChatBadges.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetChatSettingsOpt extends TrackedData:
-	## The ID of the broadcaster or one of the broadcaster’s moderators.  
-	##   
-	## This field is required only if you want to include the `non_moderator_chat_delay` and `non_moderator_chat_delay_duration` settings in the response.  
-	##   
-	## If you specify this field, this ID must match the user ID in the user access token.
-	var moderator_id: String
-
-
+	
 ## Gets the broadcaster’s chat settings.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose chat settings you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-chat-settings
-func get_chat_settings(opt: TwitchGetChatSettingsOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetChatSettingsResponse:
+func get_chat_settings(opt: TwitchGetChatSettings.Opt, broadcaster_id: String) -> TwitchGetChatSettings.Response:
 	var path = "/chat/settings?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("moderator_id"):
 		path += "moderator_id=" + str(optionals.moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChatSettingsResponse = TwitchGetChatSettingsResponse.from_json(result)
+	var parsed_result: TwitchGetChatSettings.Response = TwitchGetChatSettings.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Updates the broadcaster’s chat settings.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose chat settings you want to update. 
 ## moderator_id - The ID of a user that has permission to moderate the broadcaster’s chat room, or the broadcaster’s ID if they’re making the update. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-chat-settings
-func update_chat_settings(body: TwitchUpdateChatSettingsBody, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchUpdateChatSettingsResponse:
+func update_chat_settings(body: TwitchUpdateChatSettings.Body, moderator_id: String, broadcaster_id: String) -> TwitchUpdateChatSettings.Response:
 	var path = "/chat/settings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateChatSettingsResponse = TwitchUpdateChatSettingsResponse.from_json(result)
+	var parsed_result: TwitchUpdateChatSettings.Response = TwitchUpdateChatSettings.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## NEW Retrieves the active shared chat session for a channel.
 ## 
 ## broadcaster_id - The User ID of the channel broadcaster. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-shared-chat-session
-func get_shared_chat_session(broadcaster_id: String = default_broadcaster_login) -> TwitchGetSharedChatSessionResponse:
+func get_shared_chat_session(broadcaster_id: String) -> TwitchGetSharedChatSession.Response:
 	var path = "/shared_chat/session?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetSharedChatSessionResponse = TwitchGetSharedChatSessionResponse.from_json(result)
+	var parsed_result: TwitchGetSharedChatSession.Response = TwitchGetSharedChatSession.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetUserEmotesOpt extends TrackedData:
-	## The cursor used to get the next page of results. The Pagination object in the response contains the cursor’s value.
-	var after: String
-	## The User ID of a broadcaster you wish to get follower emotes of. Using this query parameter will guarantee inclusion of the broadcaster’s follower emotes in the response body.   
-	##   
-	## **Note:** If the user specified in `user_id` is subscribed to the broadcaster specified, their follower emotes will appear in the response body regardless if this query parameter is used.
-	var broadcaster_id: String
-
-
+	
 ## NEW Retrieves emotes available to the user across all channels.
 ## 
 ## user_id - The ID of the user. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-emotes
-func get_user_emotes(opt: TwitchGetUserEmotesOpt, user_id: String) -> TwitchGetUserEmotesResponse:
+func get_user_emotes(opt: TwitchGetUserEmotes.Opt, user_id: String) -> TwitchGetUserEmotes.Response:
 	var path = "/chat/emotes/user?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "user_id=" + str(user_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("broadcaster_id"):
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetUserEmotesResponse = TwitchGetUserEmotesResponse.from_json(result)
+	var parsed_result: TwitchGetUserEmotes.Response = TwitchGetUserEmotes.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_user_emotes.bind(opt, user_id)
 	return parsed_result
 
-
-
+	
 ## Sends an announcement to the broadcaster’s chat room.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the chat room to send the announcement to. 
 ## moderator_id - The ID of a user who has permission to moderate the broadcaster’s chat room, or the broadcaster’s ID if they’re sending the announcement. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-chat-announcement
-func send_chat_announcement(body: TwitchSendChatAnnouncementBody, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func send_chat_announcement(body: TwitchSendChatAnnouncement.Body, moderator_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/chat/announcements?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	return response
 
-
-
+	
 ## Sends a Shoutout to the specified broadcaster.
 ## 
 ## from_broadcaster_id - The ID of the broadcaster that’s sending the Shoutout. 
@@ -889,136 +716,111 @@ func send_a_shoutout(from_broadcaster_id: String, moderator_id: String, to_broad
 	path += "from_broadcaster_id=" + str(from_broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "to_broadcaster_id=" + str(to_broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	return response
 
-
-
+	
 ## NEW Sends a message to the broadcaster’s chat room.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-chat-message
-func send_chat_message(body: TwitchSendChatMessageBody) -> TwitchSendChatMessageResponse:
+func send_chat_message(body: TwitchSendChatMessage.Body) -> TwitchSendChatMessage.Response:
 	var path = "/chat/messages?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchSendChatMessageResponse = TwitchSendChatMessageResponse.from_json(result)
+	var parsed_result: TwitchSendChatMessage.Response = TwitchSendChatMessage.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Gets the color used for the user’s name in chat.
 ## 
 ## user_id - The ID of the user whose username color you want to get. To specify more than one user, include the _user\_id_ parameter for each user to get. For example, `&user_id=1234&user_id=5678`. The maximum number of IDs that you may specify is 100.  
-##     
-##   The API ignores duplicate IDs and IDs that weren’t found. 
+##      
+##    The API ignores duplicate IDs and IDs that weren’t found. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-chat-color
-func get_user_chat_color(user_id: Array[String]) -> TwitchGetUserChatColorResponse:
+func get_user_chat_color(user_id: Array[String]) -> TwitchGetUserChatColor.Response:
 	var path = "/chat/color?"
+	
 	for param in user_id:
 		path += "user_id=" + str(param) + "&" 
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetUserChatColorResponse = TwitchGetUserChatColorResponse.from_json(result)
+	var parsed_result: TwitchGetUserChatColor.Response = TwitchGetUserChatColor.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Updates the color used for the user’s name in chat.
 ## 
 ## user_id - The ID of the user whose chat color you want to update. This ID must match the user ID in the access token. 
 ## color - The color to use for the user's name in chat. All users may specify one of the following named color values.  
-##     
-##   * blue
-##   * blue\_violet
-##   * cadet\_blue
-##   * chocolate
-##   * coral
-##   * dodger\_blue
-##   * firebrick
-##   * golden\_rod
-##   * green
-##   * hot\_pink
-##   * orange\_red
-##   * red
-##   * sea\_green
-##   * spring\_green
-##   * yellow\_green
-##     
-##   Turbo and Prime users may specify a named color or a Hex color code like #9146FF. If you use a Hex color code, remember to URL encode it. 
+##      
+##    * blue
+##    * blue\_violet
+##    * cadet\_blue
+##    * chocolate
+##    * coral
+##    * dodger\_blue
+##    * firebrick
+##    * golden\_rod
+##    * green
+##    * hot\_pink
+##    * orange\_red
+##    * red
+##    * sea\_green
+##    * spring\_green
+##    * yellow\_green
+##      
+##    Turbo and Prime users may specify a named color or a Hex color code like #9146FF. If you use a Hex color code, remember to URL encode it. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-user-chat-color
 func update_user_chat_color(color: String, user_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/chat/color?"
 	path += "color=" + str(color) + "&"
 	path += "user_id=" + str(user_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, "", "")
 	return response
 
-
-class TwitchCreateClipOpt extends TrackedData:
-	## A Boolean value that determines whether the API captures the clip at the moment the viewer requests it or after a delay. If **false** (default), Twitch captures the clip at the moment the viewer requests it (this is the same clip experience as the Twitch UX). If **true**, Twitch adds a delay before capturing the clip (this basically shifts the capture window to the right slightly).
-	var has_delay: bool
-
-
+	
 ## Creates a clip from the broadcaster’s stream.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose stream you want to create a clip from. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-clip
-func create_clip(opt: TwitchCreateClipOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchCreateClipResponse:
+func create_clip(opt: TwitchCreateClip.Opt, broadcaster_id: String) -> TwitchCreateClip.Response:
 	var path = "/clips?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("has_delay"):
 		path += "has_delay=" + str(optionals.has_delay) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreateClipResponse = TwitchCreateClipResponse.from_json(result)
+	var parsed_result: TwitchCreateClip.Response = TwitchCreateClip.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetClipsOpt extends TrackedData:
-	## An ID that identifies the broadcaster whose video clips you want to get. Use this parameter to get clips that were captured from the broadcaster’s streams.
-	var broadcaster_id: String
-	## An ID that identifies the game whose clips you want to get. Use this parameter to get clips that were captured from streams that were playing this game.
-	var game_id: String
-	## An ID that identifies the clip to get. To specify more than one ID, include this parameter for each clip you want to get. For example, `id=foo&id=bar`. You may specify a maximum of 100 IDs. The API ignores duplicate IDs and IDs that aren’t found.
-	var id: Array[String]
-	## The start date used to filter clips. The API returns only clips within the start and end date window. Specify the date and time in RFC3339 format.
-	var started_at: Variant
-	## The end date used to filter clips. If not specified, the time window is the start date plus one week. Specify the date and time in RFC3339 format.
-	var ended_at: Variant
-	## The maximum number of clips to return per page in the response. The minimum page size is 1 clip per page and the maximum is 100\. The default is 20.
-	var first: int
-	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var before: String
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-	## A Boolean value that determines whether the response includes featured clips. If **true**, returns only clips that are featured. If **false**, returns only clips that aren’t featured. All clips are returned if this parameter is not present.
-	var is_featured: bool
-
-
+	
 ## Gets one or more video clips.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-clips
-func get_clips(opt: TwitchGetClipsOpt) -> TwitchGetClipsResponse:
+func get_clips(opt: TwitchGetClips.Opt) -> TwitchGetClips.Response:
 	var path = "/clips?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("before"):
@@ -1030,6 +832,7 @@ func get_clips(opt: TwitchGetClipsOpt) -> TwitchGetClipsResponse:
 	if optionals.has("game_id"):
 		path += "game_id=" + str(optionals.game_id) + "&"
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	if optionals.has("is_featured"):
@@ -1038,63 +841,67 @@ func get_clips(opt: TwitchGetClipsOpt) -> TwitchGetClipsResponse:
 		path += "started_at=" + get_rfc_3339_date_format(optionals.started_at) + "&"
 	if optionals.has("broadcaster_id"):
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetClipsResponse = TwitchGetClipsResponse.from_json(result)
+	var parsed_result: TwitchGetClips.Response = TwitchGetClips.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_clips.bind(opt)
 	return parsed_result
 
-
-
+	
 ## NEW  Gets the conduits for a client ID.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-conduits
-func get_conduits() -> TwitchGetConduitsResponse:
+func get_conduits() -> TwitchGetConduits.Response:
 	var path = "/eventsub/conduits?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetConduitsResponse = TwitchGetConduitsResponse.from_json(result)
+	var parsed_result: TwitchGetConduits.Response = TwitchGetConduits.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## NEW Creates a new conduit.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-conduits
-func create_conduits(body: TwitchCreateConduitsBody) -> TwitchCreateConduitsResponse:
+func create_conduits(body: TwitchCreateConduits.Body) -> TwitchCreateConduits.Response:
 	var path = "/eventsub/conduits?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreateConduitsResponse = TwitchCreateConduitsResponse.from_json(result)
+	var parsed_result: TwitchCreateConduits.Response = TwitchCreateConduits.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## NEW Updates a conduit’s shard count.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-conduits
-func update_conduits(body: TwitchUpdateConduitsBody) -> TwitchUpdateConduitsResponse:
+func update_conduits(body: TwitchUpdateConduits.Body) -> TwitchUpdateConduits.Response:
 	var path = "/eventsub/conduits?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateConduitsResponse = TwitchUpdateConduitsResponse.from_json(result)
+	var parsed_result: TwitchUpdateConduits.Response = TwitchUpdateConduits.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## NEW Deletes a specified conduit.
 ## 
 ## id - Conduit ID. 
@@ -1103,108 +910,83 @@ func update_conduits(body: TwitchUpdateConduitsBody) -> TwitchUpdateConduitsResp
 func delete_conduit(id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/eventsub/conduits?"
 	path += "id=" + str(id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class TwitchGetConduitShardsOpt extends TrackedData:
-	## Status to filter by.
-	var status: String
-	## The cursor used to get the next page of results. The pagination object in the response contains the cursor’s value.
-	var after: String
-
-
+	
 ## NEW Gets a lists of all shards for a conduit.
 ## 
 ## conduit_id - Conduit ID. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-conduit-shards
-func get_conduit_shards(opt: TwitchGetConduitShardsOpt, conduit_id: String) -> TwitchGetConduitShardsResponse:
+func get_conduit_shards(opt: TwitchGetConduitShards.Opt, conduit_id: String) -> TwitchGetConduitShards.Response:
 	var path = "/eventsub/conduits/shards?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "conduit_id=" + str(conduit_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("status"):
 		path += "status=" + str(optionals.status) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetConduitShardsResponse = TwitchGetConduitShardsResponse.from_json(result)
+	var parsed_result: TwitchGetConduitShards.Response = TwitchGetConduitShards.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_conduit_shards.bind(opt, conduit_id)
 	return parsed_result
 
-
-
+	
 ## NEW Updates shard(s) for a conduit.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-conduit-shards
-func update_conduit_shards(body: TwitchUpdateConduitShardsBody) -> TwitchUpdateConduitShardsResponse:
+func update_conduit_shards(body: TwitchUpdateConduitShards.Body) -> TwitchUpdateConduitShards.Response:
 	var path = "/eventsub/conduits/shards?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateConduitShardsResponse = TwitchUpdateConduitShardsResponse.from_json(result)
+	var parsed_result: TwitchUpdateConduitShards.Response = TwitchUpdateConduitShards.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetContentClassificationLabelsOpt extends TrackedData:
-	## Locale for the Content Classification Labels. You may specify a maximum of 1 locale. Default: `“en-US”`  
-	## Supported locales: `"bg-BG", "cs-CZ", "da-DK", "da-DK", "de-DE", "el-GR", "en-GB", "en-US", "es-ES", "es-MX", "fi-FI", "fr-FR", "hu-HU", "it-IT", "ja-JP", "ko-KR", "nl-NL", "no-NO", "pl-PL", "pt-BT", "pt-PT", "ro-RO", "ru-RU", "sk-SK", "sv-SE", "th-TH", "tr-TR", "vi-VN", "zh-CN", "zh-TW"`
-	var locale: String
-
-
+	
 ## Gets information about Twitch content classification labels.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-content-classification-labels
-func get_content_classification_labels(opt: TwitchGetContentClassificationLabelsOpt) -> TwitchGetContentClassificationLabelsResponse:
+func get_content_classification_labels(opt: TwitchGetContentClassificationLabels.Opt) -> TwitchGetContentClassificationLabels.Response:
 	var path = "/content_classification_labels?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("locale"):
 		path += "locale=" + str(optionals.locale) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetContentClassificationLabelsResponse = TwitchGetContentClassificationLabelsResponse.from_json(result)
+	var parsed_result: TwitchGetContentClassificationLabels.Response = TwitchGetContentClassificationLabels.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetDropsEntitlementsOpt extends TrackedData:
-	## An ID that identifies the entitlement to get. Include this parameter for each entitlement you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 100 IDs.
-	var id: Array[String]
-	## An ID that identifies a user that was granted entitlements.
-	var user_id: String
-	## An ID that identifies a game that offered entitlements.
-	var game_id: String
-	## The entitlement’s fulfillment status. Used to filter the list to only those with the specified status. Possible values are:   
-	##   
-	## * CLAIMED
-	## * FULFILLED
-	var fulfillment_status: String
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-	## The maximum number of entitlements to return per page in the response. The minimum page size is 1 entitlement per page and the maximum is 1000\. The default is 20.
-	var first: int
-
-
+	
 ## Gets an organization’s list of entitlements that have been granted to a game, a user, or both.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-drops-entitlements
-func get_drops_entitlements(opt: TwitchGetDropsEntitlementsOpt) -> TwitchGetDropsEntitlementsResponse:
+func get_drops_entitlements(opt: TwitchGetDropsEntitlements.Opt) -> TwitchGetDropsEntitlements.Response:
 	var path = "/entitlements/drops?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
@@ -1214,298 +996,277 @@ func get_drops_entitlements(opt: TwitchGetDropsEntitlementsOpt) -> TwitchGetDrop
 	if optionals.has("game_id"):
 		path += "game_id=" + str(optionals.game_id) + "&"
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	if optionals.has("user_id"):
 		path += "user_id=" + str(optionals.user_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetDropsEntitlementsResponse = TwitchGetDropsEntitlementsResponse.from_json(result)
+	var parsed_result: TwitchGetDropsEntitlements.Response = TwitchGetDropsEntitlements.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_drops_entitlements.bind(opt)
 	return parsed_result
 
-
-
+	
 ## Updates the Drop entitlement’s fulfillment status.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-drops-entitlements
-func update_drops_entitlements(body: TwitchUpdateDropsEntitlementsBody) -> TwitchUpdateDropsEntitlementsResponse:
+func update_drops_entitlements(body: TwitchUpdateDropsEntitlements.Body) -> TwitchUpdateDropsEntitlements.Response:
 	var path = "/entitlements/drops?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateDropsEntitlementsResponse = TwitchUpdateDropsEntitlementsResponse.from_json(result)
+	var parsed_result: TwitchUpdateDropsEntitlements.Response = TwitchUpdateDropsEntitlements.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetExtensionConfigurationSegmentOpt extends TrackedData:
-	## The ID of the broadcaster that installed the extension. This parameter is required if you set the _segment_ parameter to broadcaster or developer. Do not specify this parameter if you set _segment_ to global.
-	var broadcaster_id: String
-
-
+	
 ## Gets the specified configuration segment from the specified extension.
 ## 
 ## extension_id - The ID of the extension that contains the configuration segment you want to get. 
 ## segment - The type of configuration segment to get. Possible case-sensitive values are:   
-##     
-##   * broadcaster
-##   * developer
-##   * global
-##     
-##   You may specify one or more segments. To specify multiple segments, include the `segment` parameter for each segment to get. For example, `segment=broadcaster&segment=developer`. Ignores duplicate segments. 
+##      
+##    * broadcaster
+##    * developer
+##    * global
+##      
+##    You may specify one or more segments. To specify multiple segments, include the `segment` parameter for each segment to get. For example, `segment=broadcaster&segment=developer`. Ignores duplicate segments. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-configuration-segment
-func get_extension_configuration_segment(opt: TwitchGetExtensionConfigurationSegmentOpt, extension_id: String, segment: String) -> TwitchGetExtensionConfigurationSegmentResponse:
+func get_extension_configuration_segment(opt: TwitchGetExtensionConfigurationSegment.Opt, extension_id: String, segment: String) -> TwitchGetExtensionConfigurationSegment.Response:
 	var path = "/extensions/configurations?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
 	path += "segment=" + str(segment) + "&"
 	if optionals.has("broadcaster_id"):
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetExtensionConfigurationSegmentResponse = TwitchGetExtensionConfigurationSegmentResponse.from_json(result)
+	var parsed_result: TwitchGetExtensionConfigurationSegment.Response = TwitchGetExtensionConfigurationSegment.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Updates a configuration segment.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#set-extension-configuration-segment
-func set_extension_configuration_segment(body: TwitchSetExtensionConfigurationSegmentBody) -> BufferedHTTPClient.ResponseData:
+func set_extension_configuration_segment(body: TwitchSetExtensionConfigurationSegment.Body) -> BufferedHTTPClient.ResponseData:
 	var path = "/extensions/configurations?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 	return response
 
-
-
+	
 ## Updates the extension’s required_configuration string.
 ## 
 ## broadcaster_id - The ID of the broadcaster that installed the extension on their channel. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#set-extension-required-configuration
-func set_extension_required_configuration(body: TwitchSetExtensionRequiredConfigurationBody, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func set_extension_required_configuration(body: TwitchSetExtensionRequiredConfiguration.Body, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/extensions/required_configuration?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 	return response
 
-
-
+	
 ## Sends a message to one or more viewers.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-extension-pubsub-message
-func send_extension_pubsub_message(body: TwitchSendExtensionPubSubMessageBody) -> BufferedHTTPClient.ResponseData:
+func send_extension_pubsub_message(body: TwitchSendExtensionPubSubMessage.Body) -> BufferedHTTPClient.ResponseData:
 	var path = "/extensions/pubsub?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	return response
 
-
-class TwitchGetExtensionLiveChannelsOpt extends TrackedData:
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The `pagination` field in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets a list of broadcasters that are streaming live and have installed or activated the extension.
 ## 
 ## extension_id - The ID of the extension to get. Returns the list of broadcasters that are live and that have installed or activated this extension. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-live-channels
-func get_extension_live_channels(opt: TwitchGetExtensionLiveChannelsOpt, extension_id: String) -> TwitchGetExtensionLiveChannelsResponse:
+func get_extension_live_channels(opt: TwitchGetExtensionLiveChannels.Opt, extension_id: String) -> TwitchGetExtensionLiveChannels.Response:
 	var path = "/extensions/live?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetExtensionLiveChannelsResponse = TwitchGetExtensionLiveChannelsResponse.from_json(result)
+	var parsed_result: TwitchGetExtensionLiveChannels.Response = TwitchGetExtensionLiveChannels.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination
+		opt.after = cursor
+		parsed_result._next_page = get_extension_live_channels.bind(opt, extension_id)
 	return parsed_result
 
-
-
+	
 ## Gets an extension’s list of shared secrets.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-secrets
-func get_extension_secrets() -> TwitchGetExtensionSecretsResponse:
+func get_extension_secrets() -> TwitchGetExtensionSecrets.Response:
 	var path = "/extensions/jwt/secrets?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetExtensionSecretsResponse = TwitchGetExtensionSecretsResponse.from_json(result)
+	var parsed_result: TwitchGetExtensionSecrets.Response = TwitchGetExtensionSecrets.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchCreateExtensionSecretOpt extends TrackedData:
-	## The amount of time, in seconds, to delay activating the secret. The delay should provide enough time for instances of the extension to gracefully switch over to the new secret. The minimum delay is 300 seconds (5 minutes). The default is 300 seconds.
-	var delay: int
-
-
+	
 ## Creates a shared secret used to sign and verify JWT tokens.
 ## 
 ## extension_id - The ID of the extension to apply the shared secret to. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-extension-secret
-func create_extension_secret(opt: TwitchCreateExtensionSecretOpt, extension_id: String) -> TwitchCreateExtensionSecretResponse:
+func create_extension_secret(opt: TwitchCreateExtensionSecret.Opt, extension_id: String) -> TwitchCreateExtensionSecret.Response:
 	var path = "/extensions/jwt/secrets?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
 	if optionals.has("delay"):
 		path += "delay=" + str(optionals.delay) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreateExtensionSecretResponse = TwitchCreateExtensionSecretResponse.from_json(result)
+	var parsed_result: TwitchCreateExtensionSecret.Response = TwitchCreateExtensionSecret.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Sends a message to the specified broadcaster’s chat room.
 ## 
 ## broadcaster_id - The ID of the broadcaster that has activated the extension. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-extension-chat-message
-func send_extension_chat_message(body: TwitchSendExtensionChatMessageBody, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func send_extension_chat_message(body: TwitchSendExtensionChatMessage.Body, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/extensions/chat?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	return response
 
-
-class TwitchGetExtensionsOpt extends TrackedData:
-	## The version of the extension to get. If not specified, it returns the latest, released version. If you don’t have a released version, you must specify a version; otherwise, the list is empty.
-	var extension_version: String
-
-
+	
 ## Gets information about an extension.
 ## 
 ## extension_id - The ID of the extension to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extensions
-func get_extensions(opt: TwitchGetExtensionsOpt, extension_id: String) -> TwitchGetExtensionsResponse:
+func get_extensions(opt: TwitchGetExtensions.Opt, extension_id: String) -> TwitchGetExtensions.Response:
 	var path = "/extensions?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
 	if optionals.has("extension_version"):
 		path += "extension_version=" + str(optionals.extension_version) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetExtensionsResponse = TwitchGetExtensionsResponse.from_json(result)
+	var parsed_result: TwitchGetExtensions.Response = TwitchGetExtensions.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetReleasedExtensionsOpt extends TrackedData:
-	## The version of the extension to get. If not specified, it returns the latest version.
-	var extension_version: String
-
-
+	
 ## Gets information about a released extension.
 ## 
 ## extension_id - The ID of the extension to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-released-extensions
-func get_released_extensions(opt: TwitchGetReleasedExtensionsOpt, extension_id: String) -> TwitchGetReleasedExtensionsResponse:
+func get_released_extensions(opt: TwitchGetReleasedExtensions.Opt, extension_id: String) -> TwitchGetReleasedExtensions.Response:
 	var path = "/extensions/released?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
 	if optionals.has("extension_version"):
 		path += "extension_version=" + str(optionals.extension_version) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetReleasedExtensionsResponse = TwitchGetReleasedExtensionsResponse.from_json(result)
+	var parsed_result: TwitchGetReleasedExtensions.Response = TwitchGetReleasedExtensions.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetExtensionBitsProductsOpt extends TrackedData:
-	## A Boolean value that determines whether to include disabled or expired Bits products in the response. The default is **false**.
-	var should_include_all: bool
-
-
+	
 ## Gets the list of Bits products that belongs to the extension.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-bits-products
-func get_extension_bits_products(opt: TwitchGetExtensionBitsProductsOpt) -> TwitchGetExtensionBitsProductsResponse:
+func get_extension_bits_products(opt: TwitchGetExtensionBitsProducts.Opt) -> TwitchGetExtensionBitsProducts.Response:
 	var path = "/bits/extensions?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("should_include_all"):
 		path += "should_include_all=" + str(optionals.should_include_all) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetExtensionBitsProductsResponse = TwitchGetExtensionBitsProductsResponse.from_json(result)
+	var parsed_result: TwitchGetExtensionBitsProducts.Response = TwitchGetExtensionBitsProducts.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Adds or updates a Bits product that the extension created.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-extension-bits-product
-func update_extension_bits_product(body: TwitchUpdateExtensionBitsProductBody) -> TwitchUpdateExtensionBitsProductResponse:
+func update_extension_bits_product(body: TwitchUpdateExtensionBitsProduct.Body) -> TwitchUpdateExtensionBitsProduct.Response:
 	var path = "/bits/extensions?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateExtensionBitsProductResponse = TwitchUpdateExtensionBitsProductResponse.from_json(result)
+	var parsed_result: TwitchUpdateExtensionBitsProduct.Response = TwitchUpdateExtensionBitsProduct.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Creates an EventSub subscription.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-eventsub-subscription
-func create_eventsub_subscription(body: TwitchCreateEventSubSubscriptionBody) -> TwitchCreateEventSubSubscriptionResponse:
+func create_eventsub_subscription(body: TwitchCreateEventSubSubscription.Body) -> TwitchCreateEventSubSubscription.Response:
 	var path = "/eventsub/subscriptions?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreateEventSubSubscriptionResponse = TwitchCreateEventSubSubscriptionResponse.from_json(result)
+	var parsed_result: TwitchCreateEventSubSubscription.Response = TwitchCreateEventSubSubscription.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Deletes an EventSub subscription.
 ## 
 ## id - The ID of the subscription to delete. 
@@ -1514,50 +1275,20 @@ func create_eventsub_subscription(body: TwitchCreateEventSubSubscriptionBody) ->
 func delete_eventsub_subscription(id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/eventsub/subscriptions?"
 	path += "id=" + str(id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class TwitchGetEventSubSubscriptionsOpt extends TrackedData:
-	## Filter subscriptions by its status. Possible values are:  
-	##   
-	## * enabled — The subscription is enabled.
-	## * webhook\_callback\_verification\_pending — The subscription is pending verification of the specified callback URL.
-	## * webhook\_callback\_verification\_failed — The specified callback URL failed verification.
-	## * notification\_failures\_exceeded — The notification delivery failure rate was too high.
-	## * authorization\_revoked — The authorization was revoked for one or more users specified in the **Condition** object.
-	## * moderator\_removed — The moderator that authorized the subscription is no longer one of the broadcaster's moderators.
-	## * user\_removed — One of the users specified in the **Condition** object was removed.
-	## * chat\_user\_banned - The user specified in the **Condition** object was banned from the broadcaster's chat.
-	## * version\_removed — The subscription to subscription type and version is no longer supported.
-	## * beta\_maintenance — The subscription to the beta subscription type was removed due to maintenance.
-	## * websocket\_disconnected — The client closed the connection.
-	## * websocket\_failed\_ping\_pong — The client failed to respond to a ping message.
-	## * websocket\_received\_inbound\_traffic — The client sent a non-pong message. Clients may only send pong messages (and only in response to a ping message).
-	## * websocket\_connection\_unused — The client failed to subscribe to events within the required time.
-	## * websocket\_internal\_error — The Twitch WebSocket server experienced an unexpected error.
-	## * websocket\_network\_timeout — The Twitch WebSocket server timed out writing the message to the client.
-	## * websocket\_network\_error — The Twitch WebSocket server experienced a network error writing the message to the client.
-	## * websocket\_failed\_to\_reconnect - The client failed to reconnect to the Twitch WebSocket server within the required time after a Reconnect Message.
-	var status: String
-	## Filter subscriptions by subscription type. For a list of subscription types, see [Subscription Types](https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#subscription-types).
-	var type: String
-	## Filter subscriptions by user ID. The response contains subscriptions where this ID matches a user ID that you specified in the **Condition** object when you [created the subscription](https://dev.twitch.tv/docs/api/reference#create-eventsub-subscription).
-	var user_id: String
-	## The cursor used to get the next page of results. The `pagination` object in the response contains the cursor's value.
-	var after: String
-
-
+	
 ## Gets a list of EventSub subscriptions that the client in the access token created.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-eventsub-subscriptions
-func get_eventsub_subscriptions(opt: TwitchGetEventSubSubscriptionsOpt) -> TwitchGetEventSubSubscriptionsResponse:
+func get_eventsub_subscriptions(opt: TwitchGetEventsubSubscriptions.Opt) -> TwitchGetEventSubSubscriptions.Response:
 	var path = "/eventsub/subscriptions?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("status"):
@@ -1566,184 +1297,177 @@ func get_eventsub_subscriptions(opt: TwitchGetEventSubSubscriptionsOpt) -> Twitc
 		path += "type=" + str(optionals.type) + "&"
 	if optionals.has("user_id"):
 		path += "user_id=" + str(optionals.user_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetEventSubSubscriptionsResponse = TwitchGetEventSubSubscriptionsResponse.from_json(result)
+	var parsed_result: TwitchGetEventSubSubscriptions.Response = TwitchGetEventSubSubscriptions.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_eventsub_subscriptions.bind(opt)
 	return parsed_result
 
-
-class TwitchGetTopGamesOpt extends TrackedData:
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var before: String
-
-
+	
 ## Gets information about all broadcasts on Twitch.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-top-games
-func get_top_games(opt: TwitchGetTopGamesOpt) -> TwitchGetTopGamesResponse:
+func get_top_games(opt: TwitchGetTopGames.Opt) -> TwitchGetTopGames.Response:
 	var path = "/games/top?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("before"):
 		path += "before=" + str(optionals.before) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetTopGamesResponse = TwitchGetTopGamesResponse.from_json(result)
+	var parsed_result: TwitchGetTopGames.Response = TwitchGetTopGames.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_top_games.bind(opt)
 	return parsed_result
 
-
-class TwitchGetGamesOpt extends TrackedData:
-	## The ID of the category or game to get. Include this parameter for each category or game you want to get. For example, `&id=1234&id=5678`. You may specify a maximum of 100 IDs. The endpoint ignores duplicate and invalid IDs or IDs that weren’t found.
-	var id: Array[String]
-	## The name of the category or game to get. The name must exactly match the category’s or game’s title. Include this parameter for each category or game you want to get. For example, `&name=foo&name=bar`. You may specify a maximum of 100 names. The endpoint ignores duplicate names and names that weren’t found.
-	var name: Array[String]
-	## The [IGDB](https://www.igdb.com/) ID of the game to get. Include this parameter for each game you want to get. For example, `&igdb_id=1234&igdb_id=5678`. You may specify a maximum of 100 IDs. The endpoint ignores duplicate and invalid IDs or IDs that weren’t found.
-	var igdb_id: Array[String]
-
-
+	
 ## Gets information about specified games.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-games
-func get_games(opt: TwitchGetGamesOpt) -> TwitchGetGamesResponse:
+func get_games(opt: TwitchGetGames.Opt) -> TwitchGetGames.Response:
 	var path = "/games?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	if optionals.has("igdb_id"):
+		
 		for param in optionals.igdb_id:
 			path += "igdb_id=" + str(param) + "&" 
 	if optionals.has("name"):
+		
 		for param in optionals.name:
 			path += "name=" + str(param) + "&" 
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetGamesResponse = TwitchGetGamesResponse.from_json(result)
+	var parsed_result: TwitchGetGames.Response = TwitchGetGames.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Gets the broadcaster’s list of active goals.
 ## 
 ## broadcaster_id - The ID of the broadcaster that created the goals. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-creator-goals
-func get_creator_goals(broadcaster_id: String = default_broadcaster_login) -> TwitchGetCreatorGoalsResponse:
+func get_creator_goals(broadcaster_id: String) -> TwitchGetCreatorGoals.Response:
 	var path = "/goals?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetCreatorGoalsResponse = TwitchGetCreatorGoalsResponse.from_json(result)
+	var parsed_result: TwitchGetCreatorGoals.Response = TwitchGetCreatorGoals.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## BETA Gets the channel settings for configuration of the Guest Star feature for a particular host.
 ## 
 ## broadcaster_id - The ID of the broadcaster you want to get guest star settings for. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s chat room. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-guest-star-settings
-func get_channel_guest_star_settings(moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchGetChannelGuestStarSettingsResponse:
+func get_channel_guest_star_settings(moderator_id: String, broadcaster_id: String) -> TwitchGetChannelGuestStarSettings.Response:
 	var path = "/guest_star/channel_settings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChannelGuestStarSettingsResponse = TwitchGetChannelGuestStarSettingsResponse.from_json(result)
+	var parsed_result: TwitchGetChannelGuestStarSettings.Response = TwitchGetChannelGuestStarSettings.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## BETA Mutates the channel settings for configuration of the Guest Star feature for a particular host.
 ## 
 ## broadcaster_id - The ID of the broadcaster you want to update Guest Star settings for. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-channel-guest-star-settings
-func update_channel_guest_star_settings(body: TwitchUpdateChannelGuestStarSettingsBody, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func update_channel_guest_star_settings(body: TwitchUpdateChannelGuestStarSettings.Body, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/guest_star/channel_settings?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 	return response
 
-
-
+	
 ## BETA Gets information about an ongoing Guest Star session for a particular channel.
 ## 
 ## broadcaster_id - ID for the user hosting the Guest Star session. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s chat room. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-guest-star-session
-func get_guest_star_session(moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchGetGuestStarSessionResponse:
+func get_guest_star_session(moderator_id: String, broadcaster_id: String) -> TwitchGetGuestStarSession.Response:
 	var path = "/guest_star/session?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetGuestStarSessionResponse = TwitchGetGuestStarSessionResponse.from_json(result)
+	var parsed_result: TwitchGetGuestStarSession.Response = TwitchGetGuestStarSession.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## BETA Programmatically creates a Guest Star session on behalf of the broadcaster.
 ## 
 ## broadcaster_id - The ID of the broadcaster you want to create a Guest Star session for. Provided `broadcaster_id` must match the `user_id` in the auth token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-guest-star-session
-func create_guest_star_session(broadcaster_id: String = default_broadcaster_login) -> TwitchCreateGuestStarSessionResponse:
+func create_guest_star_session(broadcaster_id: String) -> TwitchCreateGuestStarSession.Response:
 	var path = "/guest_star/session?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreateGuestStarSessionResponse = TwitchCreateGuestStarSessionResponse.from_json(result)
+	var parsed_result: TwitchCreateGuestStarSession.Response = TwitchCreateGuestStarSession.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## BETA Programmatically ends a Guest Star session on behalf of the broadcaster.
 ## 
 ## broadcaster_id - The ID of the broadcaster you want to end a Guest Star session for. Provided `broadcaster_id` must match the `user_id` in the auth token. 
 ## session_id - ID for the session to end on behalf of the broadcaster. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#end-guest-star-session
-func end_guest_star_session(session_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func end_guest_star_session(session_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/guest_star/session?"
 	path += "session_id=" + str(session_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-
+	
 ## BETA Provides the caller with a list of pending invites to a Guest Star session.
 ## 
 ## broadcaster_id - The ID of the broadcaster running the Guest Star session. 
@@ -1751,20 +1475,20 @@ func end_guest_star_session(session_id: String, broadcaster_id: String = default
 ## session_id - The session ID to query for invite status. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-guest-star-invites
-func get_guest_star_invites(moderator_id: String, session_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchGetGuestStarInvitesResponse:
+func get_guest_star_invites(moderator_id: String, session_id: String, broadcaster_id: String) -> TwitchGetGuestStarInvites.Response:
 	var path = "/guest_star/invites?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetGuestStarInvitesResponse = TwitchGetGuestStarInvitesResponse.from_json(result)
+	var parsed_result: TwitchGetGuestStarInvites.Response = TwitchGetGuestStarInvites.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## BETA Sends an invite to a specified guest on behalf of the broadcaster for a Guest Star session in progress.
 ## 
 ## broadcaster_id - The ID of the broadcaster running the Guest Star session. 
@@ -1773,18 +1497,17 @@ func get_guest_star_invites(moderator_id: String, session_id: String, broadcaste
 ## guest_id - Twitch User ID for the guest to invite to the Guest Star session. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-guest-star-invite
-func send_guest_star_invite(guest_id: String, moderator_id: String, session_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func send_guest_star_invite(guest_id: String, moderator_id: String, session_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/guest_star/invites?"
 	path += "guest_id=" + str(guest_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	return response
 
-
-
+	
 ## BETA Revokes a previously sent invite for a Guest Star session.
 ## 
 ## broadcaster_id - The ID of the broadcaster running the Guest Star session. 
@@ -1793,18 +1516,17 @@ func send_guest_star_invite(guest_id: String, moderator_id: String, session_id: 
 ## guest_id - Twitch User ID for the guest to revoke the Guest Star session invite from. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-guest-star-invite
-func delete_guest_star_invite(guest_id: String, moderator_id: String, session_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func delete_guest_star_invite(guest_id: String, moderator_id: String, session_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/guest_star/invites?"
 	path += "guest_id=" + str(guest_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-
+	
 ## BETA Allows a previously invited user to be assigned a slot within the active Guest Star session.
 ## 
 ## broadcaster_id - The ID of the broadcaster running the Guest Star session. 
@@ -1814,23 +1536,18 @@ func delete_guest_star_invite(guest_id: String, moderator_id: String, session_id
 ## slot_id - The slot assignment to give to the user. Must be a numeric identifier between “1” and “N” where N is the max number of slots for the session. Max number of slots allowed for the session is reported by [Get Channel Guest Star Settings](https://dev.twitch.tv/docs/api/reference#get-channel-guest-star-settings). 
 ##
 ## https://dev.twitch.tv/docs/api/reference#assign-guest-star-slot
-func assign_guest_star_slot(guest_id: String, moderator_id: String, session_id: String, slot_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func assign_guest_star_slot(guest_id: String, moderator_id: String, session_id: String, slot_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/guest_star/slot?"
 	path += "guest_id=" + str(guest_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
 	path += "slot_id=" + str(slot_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	return response
 
-
-class UpdateGuestStarSlotOpt extends TrackedData:
-	## The slot to move this user assignment to. If the destination slot is occupied, the user assigned will be swapped into `source_slot_id`.
-	var destination_slot_id: String
-
-
+	
 ## BETA Allows a user to update the assigned slot for a particular user within the active Guest Star session.
 ## 
 ## broadcaster_id - The ID of the broadcaster running the Guest Star session. 
@@ -1839,26 +1556,21 @@ class UpdateGuestStarSlotOpt extends TrackedData:
 ## source_slot_id - The slot assignment previously assigned to a user. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-guest-star-slot
-func update_guest_star_slot(opt: UpdateGuestStarSlotOpt, moderator_id: String, session_id: String, source_slot_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func update_guest_star_slot(opt: TwitchUpdateGuestStarSlot.Opt, moderator_id: String, session_id: String, source_slot_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/guest_star/slot?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
 	path += "source_slot_id=" + str(source_slot_id) + "&"
 	if optionals.has("destination_slot_id"):
 		path += "destination_slot_id=" + str(optionals.destination_slot_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, "", "")
 	return response
 
-
-class DeleteGuestStarSlotOpt extends TrackedData:
-	## Flag signaling that the guest should be reinvited to the session, sending them back to the invite queue.
-	var should_reinvite_guest: String
-
-
+	
 ## BETA Allows a caller to remove a slot assignment from a user participating in an active Guest Star session.
 ## 
 ## broadcaster_id - The ID of the broadcaster running the Guest Star session. 
@@ -1868,10 +1580,10 @@ class DeleteGuestStarSlotOpt extends TrackedData:
 ## slot_id - The slot ID representing the slot assignment to remove from the session. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-guest-star-slot
-func delete_guest_star_slot(opt: DeleteGuestStarSlotOpt, guest_id: String, moderator_id: String, session_id: String, slot_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func delete_guest_star_slot(opt: TwitchDeleteGuestStarSlot.Opt, guest_id: String, moderator_id: String, session_id: String, slot_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/guest_star/slot?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "guest_id=" + str(guest_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
@@ -1879,22 +1591,11 @@ func delete_guest_star_slot(opt: DeleteGuestStarSlotOpt, guest_id: String, moder
 	if optionals.has("should_reinvite_guest"):
 		path += "should_reinvite_guest=" + str(optionals.should_reinvite_guest) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class UpdateGuestStarSlotSettingsOpt extends TrackedData:
-	## Flag indicating whether the slot is allowed to share their audio with the rest of the session. If false, the slot will be muted in any views containing the slot.
-	var is_audio_enabled: bool
-	## Flag indicating whether the slot is allowed to share their video with the rest of the session. If false, the slot will have no video shared in any views containing the slot.
-	var is_video_enabled: bool
-	## Flag indicating whether the user assigned to this slot is visible/can be heard from any public subscriptions. Generally, this determines whether or not the slot is enabled in any broadcasting software integrations.
-	var is_live: bool
-	## Value from 0-100 that controls the audio volume for shared views containing the slot.
-	var volume: int
-
-
+	
 ## BETA Allows a user to update slot settings for a particular guest within a Guest Star session.
 ## 
 ## broadcaster_id - The ID of the broadcaster running the Guest Star session. 
@@ -1903,10 +1604,10 @@ class UpdateGuestStarSlotSettingsOpt extends TrackedData:
 ## slot_id - The slot assignment that has previously been assigned to a user. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-guest-star-slot-settings
-func update_guest_star_slot_settings(opt: UpdateGuestStarSlotSettingsOpt, moderator_id: String, session_id: String, slot_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func update_guest_star_slot_settings(opt: TwitchUpdateGuestStarSlotSettings.Opt, moderator_id: String, session_id: String, slot_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/guest_star/slot_settings?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
 	path += "slot_id=" + str(slot_id) + "&"
@@ -1919,130 +1620,114 @@ func update_guest_star_slot_settings(opt: UpdateGuestStarSlotSettingsOpt, modera
 	if optionals.has("volume"):
 		path += "volume=" + str(optionals.volume) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, "", "")
 	return response
 
-
-class TwitchGetHypeTrainEventsOpt extends TrackedData:
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 1.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets information about the broadcaster’s current or most recent Hype Train event.
 ## 
 ## broadcaster_id - The ID of the broadcaster that’s running the Hype Train. This ID must match the User ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-hype-train-events
-func get_hype_train_events(opt: TwitchGetHypeTrainEventsOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetHypeTrainEventsResponse:
+func get_hype_train_events(opt: TwitchGetHypeTrainEvents.Opt, broadcaster_id: String) -> TwitchGetHypeTrainEvents.Response:
 	var path = "/hypetrain/events?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetHypeTrainEventsResponse = TwitchGetHypeTrainEventsResponse.from_json(result)
+	var parsed_result: TwitchGetHypeTrainEvents.Response = TwitchGetHypeTrainEvents.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_hype_train_events.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Checks whether AutoMod would flag the specified message for review.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose AutoMod settings and list of blocked terms are used to check the message. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#check-automod-status
-func check_automod_status(body: TwitchCheckAutoModStatusBody, broadcaster_id: String = default_broadcaster_login) -> TwitchCheckAutoModStatusResponse:
+func check_automod_status(body: TwitchCheckAutoModStatus.Body, broadcaster_id: String) -> TwitchCheckAutoModStatus.Response:
 	var path = "/moderation/enforcements/status?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCheckAutoModStatusResponse = TwitchCheckAutoModStatusResponse.from_json(result)
+	var parsed_result: TwitchCheckAutoModStatus.Response = TwitchCheckAutoModStatus.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Allow or deny the message that AutoMod flagged for review.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#manage-held-automod-messages
-func manage_held_automod_messages(body: TwitchManageHeldAutoModMessagesBody) -> BufferedHTTPClient.ResponseData:
+func manage_held_automod_messages(body: TwitchManageHeldAutoModMessages.Body) -> BufferedHTTPClient.ResponseData:
 	var path = "/moderation/automod/message?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	return response
 
-
-
+	
 ## Gets the broadcaster’s AutoMod settings.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose AutoMod settings you want to get. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s chat room. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-automod-settings
-func get_automod_settings(moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchGetAutoModSettingsResponse:
+func get_automod_settings(moderator_id: String, broadcaster_id: String) -> TwitchGetAutoModSettings.Response:
 	var path = "/moderation/automod/settings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetAutoModSettingsResponse = TwitchGetAutoModSettingsResponse.from_json(result)
+	var parsed_result: TwitchGetAutoModSettings.Response = TwitchGetAutoModSettings.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Updates the broadcaster’s AutoMod settings.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose AutoMod settings you want to update. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s chat room. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-automod-settings
-func update_automod_settings(body: TwitchUpdateAutoModSettingsBody, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchUpdateAutoModSettingsResponse:
+func update_automod_settings(body: TwitchUpdateAutoModSettings.Body, moderator_id: String, broadcaster_id: String) -> TwitchUpdateAutoModSettings.Response:
 	var path = "/moderation/automod/settings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateAutoModSettingsResponse = TwitchUpdateAutoModSettingsResponse.from_json(result)
+	var parsed_result: TwitchUpdateAutoModSettings.Response = TwitchUpdateAutoModSettings.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetBannedUsersOpt extends TrackedData:
-	## A list of user IDs used to filter the results. To specify more than one ID, include this parameter for each user you want to get. For example, `user_id=1234&user_id=5678`. You may specify a maximum of 100 IDs.  
-	##   
-	## The returned list includes only those users that were banned or put in a timeout. The list is returned in the same order that you specified the IDs.
-	var user_id: Array[String]
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var before: String
-
-
+	
 ## Gets all users that the broadcaster banned or put in a timeout.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose list of banned users you want to get. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-banned-users
-func get_banned_users(opt: TwitchGetBannedUsersOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetBannedUsersResponse:
+func get_banned_users(opt: TwitchGetBannedUsers.Opt, broadcaster_id: String) -> TwitchGetBannedUsers.Response:
 	var path = "/moderation/banned?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("before"):
@@ -2050,37 +1735,42 @@ func get_banned_users(opt: TwitchGetBannedUsersOpt, broadcaster_id: String = def
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("user_id"):
+		
 		for param in optionals.user_id:
 			path += "user_id=" + str(param) + "&" 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetBannedUsersResponse = TwitchGetBannedUsersResponse.from_json(result)
+	var parsed_result: TwitchGetBannedUsers.Response = TwitchGetBannedUsers.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_banned_users.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Bans a user from participating in a broadcaster’s chat room or puts them in a timeout.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose chat room the user is being banned from. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s chat room. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#ban-user
-func ban_user(body: TwitchBanUserBody, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchBanUserResponse:
+func ban_user(body: TwitchBanUser.Body, moderator_id: String, broadcaster_id: String) -> TwitchBanUser.Response:
 	var path = "/moderation/bans?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchBanUserResponse = TwitchBanUserResponse.from_json(result)
+	var parsed_result: TwitchBanUser.Response = TwitchBanUser.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Removes the ban or timeout that was placed on the specified user.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose chat room the user is banned from chatting in. 
@@ -2088,42 +1778,33 @@ func ban_user(body: TwitchBanUserBody, moderator_id: String, broadcaster_id: Str
 ## user_id - The ID of the user to remove the ban or timeout from. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#unban-user
-func unban_user(moderator_id: String, user_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func unban_user(moderator_id: String, user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/moderation/bans?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class TwitchGetUnbanRequestsOpt extends TrackedData:
-	## The ID used to filter what unban requests are returned.
-	var user_id: String
-	## Cursor used to get next page of results. Pagination object in response contains cursor value.
-	var after: String
-	## The maximum number of items to return per page in response
-	var first: int
-
-
+	
 ## NEW Gets a list of unban requests for a broadcaster’s channel.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose channel is receiving unban requests. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s unban requests. This ID must match the user ID in the user access token. 
 ## status - Filter by a status.  
-##     
-##   * pending
-##   * approved
-##   * denied
-##   * acknowledged
-##   * canceled 
+##      
+##    * pending
+##    * approved
+##    * denied
+##    * acknowledged
+##    * canceled 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-unban-requests
-func get_unban_requests(opt: TwitchGetUnbanRequestsOpt, moderator_id: String, status: String, broadcaster_id: String = default_broadcaster_login) -> TwitchGetUnbanRequestsResponse:
+func get_unban_requests(opt: TwitchGetUnbanRequests.Opt, moderator_id: String, status: String, broadcaster_id: String) -> TwitchGetUnbanRequests.Response:
 	var path = "/moderation/unban_requests?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "status=" + str(status) + "&"
 	if optionals.has("after"):
@@ -2133,99 +1814,97 @@ func get_unban_requests(opt: TwitchGetUnbanRequestsOpt, moderator_id: String, st
 	if optionals.has("user_id"):
 		path += "user_id=" + str(optionals.user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetUnbanRequestsResponse = TwitchGetUnbanRequestsResponse.from_json(result)
+	var parsed_result: TwitchGetUnbanRequests.Response = TwitchGetUnbanRequests.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_unban_requests.bind(opt, moderator_id, status, broadcaster_id)
 	return parsed_result
 
-
-class TwitchResolveUnbanRequestsOpt extends TrackedData:
-	## Message supplied by the unban request resolver. The message is limited to a maximum of 500 characters.
-	var resolution_text: String
-
-
+	
 ## NEW Resolves an unban request by approving or denying it.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose channel is approving or denying the unban request. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s unban requests. This ID must match the user ID in the user access token. 
 ## unban_request_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s unban requests. This ID must match the user ID in the user access token. 
 ## status - Resolution status.   
-##     
-##   * approved
-##   * denied 
+##      
+##    * approved
+##    * denied 
 ##
 ## https://dev.twitch.tv/docs/api/reference#resolve-unban-requests
-func resolve_unban_requests(opt: TwitchResolveUnbanRequestsOpt, moderator_id: String, status: String, unban_request_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchResolveUnbanRequestsResponse:
+func resolve_unban_requests(opt: TwitchResolveUnbanRequests.Opt, moderator_id: String, status: String, unban_request_id: String, broadcaster_id: String) -> TwitchResolveUnbanRequests.Response:
 	var path = "/moderation/unban_requests?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "status=" + str(status) + "&"
 	path += "unban_request_id=" + str(unban_request_id) + "&"
 	if optionals.has("resolution_text"):
 		path += "resolution_text=" + str(optionals.resolution_text) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchResolveUnbanRequestsResponse = TwitchResolveUnbanRequestsResponse.from_json(result)
+	var parsed_result: TwitchResolveUnbanRequests.Response = TwitchResolveUnbanRequests.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetBlockedTermsOpt extends TrackedData:
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value.
-	var after: String
-
-
+	
 ## Gets the broadcaster’s list of non-private, blocked words or phrases.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose blocked terms you’re getting. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s chat room. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-blocked-terms
-func get_blocked_terms(opt: TwitchGetBlockedTermsOpt, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchGetBlockedTermsResponse:
+func get_blocked_terms(opt: TwitchGetBlockedTerms.Opt, moderator_id: String, broadcaster_id: String) -> TwitchGetBlockedTerms.Response:
 	var path = "/moderation/blocked_terms?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetBlockedTermsResponse = TwitchGetBlockedTermsResponse.from_json(result)
+	var parsed_result: TwitchGetBlockedTerms.Response = TwitchGetBlockedTerms.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_blocked_terms.bind(opt, moderator_id, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Adds a word or phrase to the broadcaster’s list of blocked terms.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the list of blocked terms. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s chat room. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#add-blocked-term
-func add_blocked_term(body: TwitchAddBlockedTermBody, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchAddBlockedTermResponse:
+func add_blocked_term(body: TwitchAddBlockedTerm.Body, moderator_id: String, broadcaster_id: String) -> TwitchAddBlockedTerm.Response:
 	var path = "/moderation/blocked_terms?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchAddBlockedTermResponse = TwitchAddBlockedTermResponse.from_json(result)
+	var parsed_result: TwitchAddBlockedTerm.Response = TwitchAddBlockedTerm.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Removes the word or phrase from the broadcaster’s list of blocked terms.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the list of blocked terms. 
@@ -2233,471 +1912,417 @@ func add_blocked_term(body: TwitchAddBlockedTermBody, moderator_id: String, broa
 ## id - The ID of the blocked term to remove from the broadcaster’s list of blocked terms. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#remove-blocked-term
-func remove_blocked_term(id: String, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func remove_blocked_term(id: String, moderator_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/moderation/blocked_terms?"
 	path += "id=" + str(id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class DeleteChatMessagesOpt extends TrackedData:
-	## The ID of the message to remove. The `id` tag in the [PRIVMSG](https://dev.twitch.tv/docs/irc/tags#privmsg-tags) tag contains the message’s ID. Restrictions:  
-	##   
-	## * The message must have been created within the last 6 hours.
-	## * The message must not belong to the broadcaster.
-	## * The message must not belong to another moderator.
-	##   
-	## If not specified, the request removes all messages in the broadcaster’s chat room.
-	var message_id: String
-
-
+	
 ## Removes a single chat message or all chat messages from the broadcaster’s chat room.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the chat room to remove messages from. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s chat room. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-chat-messages
-func delete_chat_messages(opt: DeleteChatMessagesOpt, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func delete_chat_messages(opt: TwitchDeleteChatMessages.Opt, moderator_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/moderation/chat?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
 	if optionals.has("message_id"):
 		path += "message_id=" + str(optionals.message_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class TwitchGetModeratedChannelsOpt extends TrackedData:
-	## The cursor used to get the next page of results. The Pagination object in the response contains the cursor’s value.
-	var after: String
-	## The maximum number of items to return per page in the response.  
-	##   
-	## Minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int
-
-
+	
 ## Gets a list of channels that the specified user has moderator privileges in.
 ## 
 ## user_id - A user’s ID. Returns the list of channels that this user has moderator privileges in. This ID must match the user ID in the user OAuth token 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-moderated-channels
-func get_moderated_channels(opt: TwitchGetModeratedChannelsOpt, user_id: String) -> TwitchGetModeratedChannelsResponse:
+func get_moderated_channels(opt: TwitchGetModeratedChannels.Opt, user_id: String) -> TwitchGetModeratedChannels.Response:
 	var path = "/moderation/channels?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "user_id=" + str(user_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetModeratedChannelsResponse = TwitchGetModeratedChannelsResponse.from_json(result)
+	var parsed_result: TwitchGetModeratedChannels.Response = TwitchGetModeratedChannels.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_moderated_channels.bind(opt, user_id)
 	return parsed_result
 
-
-class TwitchGetModeratorsOpt extends TrackedData:
-	## A list of user IDs used to filter the results. To specify more than one ID, include this parameter for each moderator you want to get. For example, `user_id=1234&user_id=5678`. You may specify a maximum of 100 IDs.  
-	##   
-	## The returned list includes only the users from the list who are moderators in the broadcaster’s channel. The list is returned in the same order as you specified the IDs.
-	var user_id: Array[String]
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: String
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets all users allowed to moderate the broadcaster’s chat room.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose list of moderators you want to get. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-moderators
-func get_moderators(opt: TwitchGetModeratorsOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetModeratorsResponse:
+func get_moderators(opt: TwitchGetModerators.Opt, broadcaster_id: String) -> TwitchGetModerators.Response:
 	var path = "/moderation/moderators?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("user_id"):
+		
 		for param in optionals.user_id:
 			path += "user_id=" + str(param) + "&" 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetModeratorsResponse = TwitchGetModeratorsResponse.from_json(result)
+	var parsed_result: TwitchGetModerators.Response = TwitchGetModerators.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_moderators.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Adds a moderator to the broadcaster’s chat room.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the chat room. This ID must match the user ID in the access token. 
 ## user_id - The ID of the user to add as a moderator in the broadcaster’s chat room. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#add-channel-moderator
-func add_channel_moderator(user_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func add_channel_moderator(user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/moderation/moderators?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	return response
 
-
-
+	
 ## Removes a moderator from the broadcaster’s chat room.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the chat room. This ID must match the user ID in the access token. 
 ## user_id - The ID of the user to remove as a moderator from the broadcaster’s chat room. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#remove-channel-moderator
-func remove_channel_moderator(user_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func remove_channel_moderator(user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/moderation/moderators?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class TwitchGetVIPsOpt extends TrackedData:
-	## Filters the list for specific VIPs. To specify more than one user, include the _user\_id_ parameter for each user to get. For example, `&user_id=1234&user_id=5678`. The maximum number of IDs that you may specify is 100\. Ignores the ID of those users in the list that aren’t VIPs.
-	var user_id: Array[String]
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets a list of the broadcaster’s VIPs.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose list of VIPs you want to get. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-vips
-func get_vips(opt: TwitchGetVIPsOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetVIPsResponse:
+func get_vips(opt: TwitchGetVips.Opt, broadcaster_id: String) -> TwitchGetVIPs.Response:
 	var path = "/channels/vips?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("user_id"):
+		
 		for param in optionals.user_id:
 			path += "user_id=" + str(param) + "&" 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetVIPsResponse = TwitchGetVIPsResponse.from_json(result)
+	var parsed_result: TwitchGetVIPs.Response = TwitchGetVIPs.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_vips.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Adds the specified user as a VIP in the broadcaster’s channel.
 ## 
 ## user_id - The ID of the user to give VIP status to. 
 ## broadcaster_id - The ID of the broadcaster that’s adding the user as a VIP. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#add-channel-vip
-func add_channel_vip(user_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func add_channel_vip(user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/channels/vips?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	return response
 
-
-
+	
 ## Removes the specified user as a VIP in the broadcaster’s channel.
 ## 
 ## user_id - The ID of the user to remove VIP status from. 
 ## broadcaster_id - The ID of the broadcaster who owns the channel where the user has VIP status. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#remove-channel-vip
-func remove_channel_vip(user_id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func remove_channel_vip(user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/channels/vips?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-
+	
 ## Activates or deactivates the broadcaster’s Shield Mode.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose Shield Mode you want to activate or deactivate. 
 ## moderator_id - The ID of the broadcaster or a user that is one of the broadcaster’s moderators. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-shield-mode-status
-func update_shield_mode_status(body: TwitchUpdateShieldModeStatusBody, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchUpdateShieldModeStatusResponse:
+func update_shield_mode_status(body: TwitchUpdateShieldModeStatus.Body, moderator_id: String, broadcaster_id: String) -> TwitchUpdateShieldModeStatus.Response:
 	var path = "/moderation/shield_mode?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateShieldModeStatusResponse = TwitchUpdateShieldModeStatusResponse.from_json(result)
+	var parsed_result: TwitchUpdateShieldModeStatus.Response = TwitchUpdateShieldModeStatus.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Gets the broadcaster’s Shield Mode activation status.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose Shield Mode activation status you want to get. 
 ## moderator_id - The ID of the broadcaster or a user that is one of the broadcaster’s moderators. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-shield-mode-status
-func get_shield_mode_status(moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchGetShieldModeStatusResponse:
+func get_shield_mode_status(moderator_id: String, broadcaster_id: String) -> TwitchGetShieldModeStatus.Response:
 	var path = "/moderation/shield_mode?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetShieldModeStatusResponse = TwitchGetShieldModeStatusResponse.from_json(result)
+	var parsed_result: TwitchGetShieldModeStatus.Response = TwitchGetShieldModeStatus.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## NEW Warns a user in the specified broadcaster’s chat room, preventing them from chat interaction until the warning is acknowledged.
 ## 
 ## broadcaster_id - The ID of the channel in which the warning will take effect. 
 ## moderator_id - The ID of the twitch user who requested the warning. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#warn-chat-user
-func warn_chat_user(body: TwitchWarnChatUserBody, moderator_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchWarnChatUserResponse:
+func warn_chat_user(body: TwitchWarnChatUser.Body, moderator_id: String, broadcaster_id: String) -> TwitchWarnChatUser.Response:
 	var path = "/moderation/warnings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchWarnChatUserResponse = TwitchWarnChatUserResponse.from_json(result)
+	var parsed_result: TwitchWarnChatUser.Response = TwitchWarnChatUser.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetPollsOpt extends TrackedData:
-	## A list of IDs that identify the polls to return. To specify more than one ID, include this parameter for each poll you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 20 IDs.  
-	##   
-	## Specify this parameter only if you want to filter the list that the request returns. The endpoint ignores duplicate IDs and those not owned by this broadcaster.
-	var id: Array[String]
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 20 items per page. The default is 20.
-	var first: String
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets a list of polls that the broadcaster created.
 ## 
 ## broadcaster_id - The ID of the broadcaster that created the polls. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-polls
-func get_polls(opt: TwitchGetPollsOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetPollsResponse:
+func get_polls(opt: TwitchGetPolls.Opt, broadcaster_id: String) -> TwitchGetPolls.Response:
 	var path = "/polls?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetPollsResponse = TwitchGetPollsResponse.from_json(result)
+	var parsed_result: TwitchGetPolls.Response = TwitchGetPolls.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_polls.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Creates a poll that viewers in the broadcaster’s channel can vote on.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-poll
-func create_poll(body: TwitchCreatePollBody) -> TwitchCreatePollResponse:
+func create_poll(body: TwitchCreatePoll.Body) -> TwitchCreatePoll.Response:
 	var path = "/polls?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreatePollResponse = TwitchCreatePollResponse.from_json(result)
+	var parsed_result: TwitchCreatePoll.Response = TwitchCreatePoll.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## End an active poll.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#end-poll
-func end_poll(body: TwitchEndPollBody) -> TwitchEndPollResponse:
+func end_poll(body: TwitchEndPoll.Body) -> TwitchEndPoll.Response:
 	var path = "/polls?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchEndPollResponse = TwitchEndPollResponse.from_json(result)
+	var parsed_result: TwitchEndPoll.Response = TwitchEndPoll.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetPredictionsOpt extends TrackedData:
-	## The ID of the prediction to get. To specify more than one ID, include this parameter for each prediction you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 25 IDs. The endpoint ignores duplicate IDs and those not owned by the broadcaster.
-	var id: Array[String]
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 25 items per page. The default is 20.
-	var first: String
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets a list of Channel Points Predictions that the broadcaster created.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose predictions you want to get. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-predictions
-func get_predictions(opt: TwitchGetPredictionsOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetPredictionsResponse:
+func get_predictions(opt: TwitchGetPredictions.Opt, broadcaster_id: String) -> TwitchGetPredictions.Response:
 	var path = "/predictions?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetPredictionsResponse = TwitchGetPredictionsResponse.from_json(result)
+	var parsed_result: TwitchGetPredictions.Response = TwitchGetPredictions.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_predictions.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Create a Channel Points Prediction.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-prediction
-func create_prediction(body: TwitchCreatePredictionBody) -> TwitchCreatePredictionResponse:
+func create_prediction(body: TwitchCreatePrediction.Body) -> TwitchCreatePrediction.Response:
 	var path = "/predictions?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreatePredictionResponse = TwitchCreatePredictionResponse.from_json(result)
+	var parsed_result: TwitchCreatePrediction.Response = TwitchCreatePrediction.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Locks, resolves, or cancels a Channel Points Prediction.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#end-prediction
-func end_prediction(body: TwitchEndPredictionBody) -> TwitchEndPredictionResponse:
+func end_prediction(body: TwitchEndPrediction.Body) -> TwitchEndPrediction.Response:
 	var path = "/predictions?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchEndPredictionResponse = TwitchEndPredictionResponse.from_json(result)
+	var parsed_result: TwitchEndPrediction.Response = TwitchEndPrediction.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchStartRaidOpt extends TrackedData:
-	## The ID of the broadcaster that’s sending the raiding party. This ID must match the user ID in the user access token.
-	var from_broadcaster_id: String
-	## The ID of the broadcaster to raid.
-	var to_broadcaster_id: String
-
-
+	
 ## Raid another channel by sending the broadcaster’s viewers to the targeted channel.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#start-a-raid
-func start_a_raid(opt: TwitchStartRaidOpt) -> TwitchStartRaidResponse:
+func start_a_raid(opt: TwitchStartARaid.Opt) -> TwitchStartRaid.Response:
 	var path = "/raids?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("from_broadcaster_id"):
 		path += "from_broadcaster_id=" + str(optionals.from_broadcaster_id) + "&"
 	if optionals.has("to_broadcaster_id"):
 		path += "to_broadcaster_id=" + str(optionals.to_broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchStartRaidResponse = TwitchStartRaidResponse.from_json(result)
+	var parsed_result: TwitchStartRaid.Response = TwitchStartRaid.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Cancel a pending raid.
 ## 
 ## broadcaster_id - The ID of the broadcaster that initiated the raid. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#cancel-a-raid
-func cancel_a_raid(broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func cancel_a_raid(broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/raids?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class TwitchGetChannelStreamScheduleOpt extends TrackedData:
-	## The ID of the scheduled segment to return. To specify more than one segment, include the ID of each segment you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 100 IDs.
-	var id: Array[String]
-	## The UTC date and time that identifies when in the broadcaster’s schedule to start returning segments. If not specified, the request returns segments starting after the current UTC date and time. Specify the date and time in RFC3339 format (for example, `2022-09-01T00:00:00Z`).
-	var start_time: Variant
-	## Not supported.
-	var utc_offset: String
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 25 items per page. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets the broadcaster’s streaming schedule.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the streaming schedule you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-stream-schedule
-func get_channel_stream_schedule(opt: TwitchGetChannelStreamScheduleOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetChannelStreamScheduleResponse:
+func get_channel_stream_schedule(opt: TwitchGetChannelStreamSchedule.Opt, broadcaster_id: String) -> TwitchGetChannelStreamSchedule.Response:
 	var path = "/schedule?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	if optionals.has("start_time"):
@@ -2705,48 +2330,41 @@ func get_channel_stream_schedule(opt: TwitchGetChannelStreamScheduleOpt, broadca
 	if optionals.has("utc_offset"):
 		path += "utc_offset=" + str(optionals.utc_offset) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChannelStreamScheduleResponse = TwitchGetChannelStreamScheduleResponse.from_json(result)
+	var parsed_result: TwitchGetChannelStreamSchedule.Response = TwitchGetChannelStreamSchedule.Response.from_json(result)
+	parsed_result.response = response
+	
+	if parsed_result.data.pagination != null:
+		opt.after = parsed_result.data.pagination.cursor
+		parsed_result.data._next_page = get_channel_stream_schedule.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Gets the broadcaster’s streaming schedule as an iCalendar.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the streaming schedule you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-icalendar
-func get_channel_icalendar(broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func get_channel_icalendar(broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/schedule/icalendar?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	return response
 
-
-class UpdateChannelStreamScheduleOpt extends TrackedData:
-	## A Boolean value that indicates whether the broadcaster has scheduled a vacation. Set to **true** to enable Vacation Mode and add vacation dates, or **false** to cancel a previously scheduled vacation.
-	var is_vacation_enabled: bool
-	## The UTC date and time of when the broadcaster’s vacation starts. Specify the date and time in RFC3339 format (for example, 2021-05-16T00:00:00Z). Required if _is\_vacation\_enabled_ is **true**.
-	var vacation_start_time: Variant
-	## The UTC date and time of when the broadcaster’s vacation ends. Specify the date and time in RFC3339 format (for example, 2021-05-30T23:59:59Z). Required if _is\_vacation\_enabled_ is **true**.
-	var vacation_end_time: Variant
-	## The time zone that the broadcaster broadcasts from. Specify the time zone using [IANA time zone database](https://www.iana.org/time-zones) format (for example, America/New\_York). Required if _is\_vacation\_enabled_ is **true**.
-	var timezone: String
-
-
+	
 ## Updates the broadcaster’s schedule settings, such as scheduling a vacation.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose schedule settings you want to update. The ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-channel-stream-schedule
-func update_channel_stream_schedule(opt: UpdateChannelStreamScheduleOpt, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func update_channel_stream_schedule(opt: TwitchUpdateChannelStreamSchedule.Opt, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/schedule/settings?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("is_vacation_enabled"):
 		path += "is_vacation_enabled=" + str(optionals.is_vacation_enabled) + "&"
 	if optionals.has("timezone"):
@@ -2756,110 +2374,98 @@ func update_channel_stream_schedule(opt: UpdateChannelStreamScheduleOpt, broadca
 	if optionals.has("vacation_start_time"):
 		path += "vacation_start_time=" + get_rfc_3339_date_format(optionals.vacation_start_time) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, "", "")
 	return response
 
-
-
+	
 ## Adds a single or recurring broadcast to the broadcaster’s streaming schedule.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the schedule to add the broadcast segment to. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-channel-stream-schedule-segment
-func create_channel_stream_schedule_segment(body: TwitchCreateChannelStreamScheduleSegmentBody, broadcaster_id: String = default_broadcaster_login) -> TwitchCreateChannelStreamScheduleSegmentResponse:
+func create_channel_stream_schedule_segment(body: TwitchCreateChannelStreamScheduleSegment.Body, broadcaster_id: String) -> TwitchCreateChannelStreamScheduleSegment.Response:
 	var path = "/schedule/segment?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreateChannelStreamScheduleSegmentResponse = TwitchCreateChannelStreamScheduleSegmentResponse.from_json(result)
+	var parsed_result: TwitchCreateChannelStreamScheduleSegment.Response = TwitchCreateChannelStreamScheduleSegment.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Updates a scheduled broadcast segment.
 ## 
 ## broadcaster_id - The ID of the broadcaster who owns the broadcast segment to update. This ID must match the user ID in the user access token. 
 ## id - The ID of the broadcast segment to update. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-channel-stream-schedule-segment
-func update_channel_stream_schedule_segment(body: TwitchUpdateChannelStreamScheduleSegmentBody, id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchUpdateChannelStreamScheduleSegmentResponse:
+func update_channel_stream_schedule_segment(body: TwitchUpdateChannelStreamScheduleSegment.Body, id: String, broadcaster_id: String) -> TwitchUpdateChannelStreamScheduleSegment.Response:
 	var path = "/schedule/segment?"
 	path += "id=" + str(id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateChannelStreamScheduleSegmentResponse = TwitchUpdateChannelStreamScheduleSegmentResponse.from_json(result)
+	var parsed_result: TwitchUpdateChannelStreamScheduleSegment.Response = TwitchUpdateChannelStreamScheduleSegment.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Deletes a broadcast from the broadcaster’s streaming schedule.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the streaming schedule. This ID must match the user ID in the user access token. 
 ## id - The ID of the broadcast segment to remove. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-channel-stream-schedule-segment
-func delete_channel_stream_schedule_segment(id: String, broadcaster_id: String = default_broadcaster_login) -> BufferedHTTPClient.ResponseData:
+func delete_channel_stream_schedule_segment(id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/schedule/segment?"
 	path += "id=" + str(id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-class TwitchSearchCategoriesOpt extends TrackedData:
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets the games or categories that match the specified query.
 ## 
 ## query - The URI-encoded search string. For example, encode _#archery_ as `%23archery` and search strings like _angel of death_ as `angel%20of%20death`. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#search-categories
-func search_categories(opt: TwitchSearchCategoriesOpt, query: String) -> TwitchSearchCategoriesResponse:
+func search_categories(opt: TwitchSearchCategories.Opt, query: String) -> TwitchSearchCategories.Response:
 	var path = "/search/categories?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "query=" + str(query) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchSearchCategoriesResponse = TwitchSearchCategoriesResponse.from_json(result)
+	var parsed_result: TwitchSearchCategories.Response = TwitchSearchCategories.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = search_categories.bind(opt, query)
 	return parsed_result
 
-
-class TwitchSearchChannelsOpt extends TrackedData:
-	## A Boolean value that determines whether the response includes only channels that are currently streaming live. Set to **true** to get only channels that are streaming live; otherwise, **false** to get live and offline channels. The default is **false**.
-	var live_only: bool
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets the channels that match the specified query and have streamed content within the past 6 months.
 ## 
 ## query - The URI-encoded search string. For example, encode search strings like _angel of death_ as `angel%20of%20death`. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#search-channels
-func search_channels(opt: TwitchSearchChannelsOpt, query: String) -> TwitchSearchChannelsResponse:
+func search_channels(opt: TwitchSearchChannels.Opt, query: String) -> TwitchSearchChannels.Response:
 	var path = "/search/channels?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "query=" + str(query) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
@@ -2867,66 +2473,45 @@ func search_channels(opt: TwitchSearchChannelsOpt, query: String) -> TwitchSearc
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("live_only"):
 		path += "live_only=" + str(optionals.live_only) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchSearchChannelsResponse = TwitchSearchChannelsResponse.from_json(result)
+	var parsed_result: TwitchSearchChannels.Response = TwitchSearchChannels.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = search_channels.bind(opt, query)
 	return parsed_result
 
-
-
+	
 ## Gets the channel’s stream key.
 ## 
 ## broadcaster_id - The ID of the broadcaster that owns the channel. The ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-stream-key
-func get_stream_key(broadcaster_id: String = default_broadcaster_login) -> TwitchGetStreamKeyResponse:
+func get_stream_key(broadcaster_id: String) -> TwitchGetStreamKey.Response:
 	var path = "/streams/key?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetStreamKeyResponse = TwitchGetStreamKeyResponse.from_json(result)
+	var parsed_result: TwitchGetStreamKey.Response = TwitchGetStreamKey.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetStreamsOpt extends TrackedData:
-	## A user ID used to filter the list of streams. Returns only the streams of those users that are broadcasting. You may specify a maximum of 100 IDs. To specify multiple IDs, include the _user\_id_ parameter for each user. For example, `&user_id=1234&user_id=5678`.
-	var user_id: Array[String]
-	## A user login name used to filter the list of streams. Returns only the streams of those users that are broadcasting. You may specify a maximum of 100 login names. To specify multiple names, include the _user\_login_ parameter for each user. For example, `&user_login=foo&user_login=bar`.
-	var user_login: Array[String]
-	## A game (category) ID used to filter the list of streams. Returns only the streams that are broadcasting the game (category). You may specify a maximum of 100 IDs. To specify multiple IDs, include the _game\_id_ parameter for each game. For example, `&game_id=9876&game_id=5432`.
-	var game_id: Array[String]
-	## The type of stream to filter the list of streams by. Possible values are:  
-	##   
-	## * all
-	## * live
-	##   
-	## The default is _all_.
-	var type: String
-	## A language code used to filter the list of streams. Returns only streams that broadcast in the specified language. Specify the language using an ISO 639-1 two-letter language code or _other_ if the broadcast uses a language not in the list of [supported stream languages](https://help.twitch.tv/s/article/languages-on-twitch#streamlang).  
-	##   
-	## You may specify a maximum of 100 language codes. To specify multiple languages, include the _language_ parameter for each language. For example, `&language=de&language=fr`.
-	var language: Array[String]
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: int
-	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var before: String
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets a list of all streams.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-streams
-func get_streams(opt: TwitchGetStreamsOpt) -> TwitchGetStreamsResponse:
+func get_streams(opt: TwitchGetStreams.Opt) -> TwitchGetStreams.Response:
 	var path = "/streams?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("before"):
@@ -2934,98 +2519,88 @@ func get_streams(opt: TwitchGetStreamsOpt) -> TwitchGetStreamsResponse:
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("game_id"):
+		
 		for param in optionals.game_id:
 			path += "game_id=" + str(param) + "&" 
 	if optionals.has("language"):
+		
 		for param in optionals.language:
 			path += "language=" + str(param) + "&" 
 	if optionals.has("type"):
 		path += "type=" + str(optionals.type) + "&"
 	if optionals.has("user_id"):
+		
 		for param in optionals.user_id:
 			path += "user_id=" + str(param) + "&" 
 	if optionals.has("user_login"):
+		
 		for param in optionals.user_login:
 			path += "user_login=" + str(param) + "&" 
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetStreamsResponse = TwitchGetStreamsResponse.from_json(result)
+	var parsed_result: TwitchGetStreams.Response = TwitchGetStreams.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_streams.bind(opt)
 	return parsed_result
 
-
-class TwitchGetFollowedStreamsOpt extends TrackedData:
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 100.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets the list of broadcasters that the user follows and that are streaming live.
 ## 
 ## user_id - The ID of the user whose list of followed streams you want to get. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-followed-streams
-func get_followed_streams(opt: TwitchGetFollowedStreamsOpt, user_id: String) -> TwitchGetFollowedStreamsResponse:
+func get_followed_streams(opt: TwitchGetFollowedStreams.Opt, user_id: String) -> TwitchGetFollowedStreams.Response:
 	var path = "/streams/followed?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "user_id=" + str(user_id) + "&"
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetFollowedStreamsResponse = TwitchGetFollowedStreamsResponse.from_json(result)
+	var parsed_result: TwitchGetFollowedStreams.Response = TwitchGetFollowedStreams.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_followed_streams.bind(opt, user_id)
 	return parsed_result
 
-
-
+	
 ## Adds a marker to a live stream.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-stream-marker
-func create_stream_marker(body: TwitchCreateStreamMarkerBody) -> TwitchCreateStreamMarkerResponse:
+func create_stream_marker(body: TwitchCreateStreamMarker.Body) -> TwitchCreateStreamMarker.Response:
 	var path = "/streams/markers?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCreateStreamMarkerResponse = TwitchCreateStreamMarkerResponse.from_json(result)
+	var parsed_result: TwitchCreateStreamMarker.Response = TwitchCreateStreamMarker.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetStreamMarkersOpt extends TrackedData:
-	## A user ID. The request returns the markers from this user’s most recent video. This ID must match the user ID in the access token or the user in the access token must be one of the broadcaster’s editors.  
-	##   
-	## This parameter and the _video\_id_ query parameter are mutually exclusive.
-	var user_id: String
-	## A video on demand (VOD)/video ID. The request returns the markers from this VOD/video. The user in the access token must own the video or the user must be one of the broadcaster’s editors.  
-	##   
-	## This parameter and the _user\_id_ query parameter are mutually exclusive.
-	var video_id: String
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: String
-	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var before: String
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets a list of markers from the user’s most recent stream or from the specified VOD/video.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-stream-markers
-func get_stream_markers(opt: TwitchGetStreamMarkersOpt) -> TwitchGetStreamMarkersResponse:
+func get_stream_markers(opt: TwitchGetStreamMarkers.Opt) -> TwitchGetStreamMarkers.Response:
 	var path = "/streams/markers?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("before"):
@@ -3036,34 +2611,28 @@ func get_stream_markers(opt: TwitchGetStreamMarkersOpt) -> TwitchGetStreamMarker
 		path += "user_id=" + str(optionals.user_id) + "&"
 	if optionals.has("video_id"):
 		path += "video_id=" + str(optionals.video_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetStreamMarkersResponse = TwitchGetStreamMarkersResponse.from_json(result)
+	var parsed_result: TwitchGetStreamMarkers.Response = TwitchGetStreamMarkers.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_stream_markers.bind(opt)
 	return parsed_result
 
-
-class TwitchGetBroadcasterSubscriptionsOpt extends TrackedData:
-	## Filters the list to include only the specified subscribers. To specify more than one subscriber, include this parameter for each subscriber. For example, `&user_id=1234&user_id=5678`. You may specify a maximum of 100 subscribers.
-	var user_id: Array[String]
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: String
-	## The cursor used to get the next page of results. Do not specify if you set the _user\_id_ query parameter. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-	## The cursor used to get the previous page of results. Do not specify if you set the _user\_id_ query parameter. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var before: String
-
-
+	
 ## Gets a list of users that subscribe to the specified broadcaster.
 ## 
 ## broadcaster_id - The broadcaster’s ID. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-broadcaster-subscriptions
-func get_broadcaster_subscriptions(opt: TwitchGetBroadcasterSubscriptionsOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetBroadcasterSubscriptionsResponse:
+func get_broadcaster_subscriptions(opt: TwitchGetBroadcasterSubscriptions.Opt, broadcaster_id: String) -> TwitchGetBroadcasterSubscriptions.Response:
 	var path = "/subscriptions?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("before"):
@@ -3071,252 +2640,220 @@ func get_broadcaster_subscriptions(opt: TwitchGetBroadcasterSubscriptionsOpt, br
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("user_id"):
+		
 		for param in optionals.user_id:
 			path += "user_id=" + str(param) + "&" 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetBroadcasterSubscriptionsResponse = TwitchGetBroadcasterSubscriptionsResponse.from_json(result)
+	var parsed_result: TwitchGetBroadcasterSubscriptions.Response = TwitchGetBroadcasterSubscriptions.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_broadcaster_subscriptions.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-
+	
 ## Checks whether the user subscribes to the broadcaster’s channel.
 ## 
 ## broadcaster_id - The ID of a partner or affiliate broadcaster. 
 ## user_id - The ID of the user that you’re checking to see whether they subscribe to the broadcaster in _broadcaster\_id_. This ID must match the user ID in the access Token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#check-user-subscription
-func check_user_subscription(user_id: String, broadcaster_id: String = default_broadcaster_login) -> TwitchCheckUserSubscriptionResponse:
+func check_user_subscription(user_id: String, broadcaster_id: String) -> TwitchCheckUserSubscription.Response:
 	var path = "/subscriptions/user?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchCheckUserSubscriptionResponse = TwitchCheckUserSubscriptionResponse.from_json(result)
+	var parsed_result: TwitchCheckUserSubscription.Response = TwitchCheckUserSubscription.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetAllStreamTagsOpt extends TrackedData:
-	## The ID of the tag to get. Used to filter the list of tags. To specify more than one tag, include the _tag\_id_ parameter for each tag to get. For example, `tag_id=1234&tag_id=5678`. The maximum number of IDs you may specify is 100\. Ignores invalid IDs but not duplicate IDs.
-	var tag_id: Array[String]
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets the list of all stream tags that Twitch defines. You can also filter the list by one or more tag IDs.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-all-stream-tags
-func get_all_stream_tags(opt: TwitchGetAllStreamTagsOpt) -> TwitchGetAllStreamTagsResponse:
+func get_all_stream_tags(opt: TwitchGetAllStreamTags.Opt) -> TwitchGetAllStreamTags.Response:
 	var path = "/tags/streams?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	if optionals.has("tag_id"):
+		
 		for param in optionals.tag_id:
 			path += "tag_id=" + str(param) + "&" 
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetAllStreamTagsResponse = TwitchGetAllStreamTagsResponse.from_json(result)
+	var parsed_result: TwitchGetAllStreamTags.Response = TwitchGetAllStreamTags.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_all_stream_tags.bind(opt)
 	return parsed_result
 
-
-
+	
 ## Gets the list of stream tags that the broadcaster or Twitch added to their channel.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose stream tags you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-stream-tags
-func get_stream_tags(broadcaster_id: String = default_broadcaster_login) -> TwitchGetStreamTagsResponse:
+func get_stream_tags(broadcaster_id: String) -> TwitchGetStreamTags.Response:
 	var path = "/streams/tags?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetStreamTagsResponse = TwitchGetStreamTagsResponse.from_json(result)
+	var parsed_result: TwitchGetStreamTags.Response = TwitchGetStreamTags.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Gets the list of Twitch teams that the broadcaster is a member of.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose teams you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-teams
-func get_channel_teams(broadcaster_id: String = default_broadcaster_login) -> TwitchGetChannelTeamsResponse:
+func get_channel_teams(broadcaster_id: String) -> TwitchGetChannelTeams.Response:
 	var path = "/teams/channel?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetChannelTeamsResponse = TwitchGetChannelTeamsResponse.from_json(result)
+	var parsed_result: TwitchGetChannelTeams.Response = TwitchGetChannelTeams.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetTeamsOpt extends TrackedData:
-	## The name of the team to get. This parameter and the _id_ parameter are mutually exclusive; you must specify the team’s name or ID but not both.
-	var name: String
-	## The ID of the team to get. This parameter and the _name_ parameter are mutually exclusive; you must specify the team’s name or ID but not both.
-	var id: String
-
-
+	
 ## Gets information about the specified Twitch team.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-teams
-func get_teams(opt: TwitchGetTeamsOpt) -> TwitchGetTeamsResponse:
+func get_teams(opt: TwitchGetTeams.Opt) -> TwitchGetTeams.Response:
 	var path = "/teams?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("id"):
 		path += "id=" + str(optionals.id) + "&"
 	if optionals.has("name"):
 		path += "name=" + str(optionals.name) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetTeamsResponse = TwitchGetTeamsResponse.from_json(result)
+	var parsed_result: TwitchGetTeams.Response = TwitchGetTeams.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetUsersOpt extends TrackedData:
-	## The ID of the user to get. To specify more than one user, include the _id_ parameter for each user to get. For example, `id=1234&id=5678`. The maximum number of IDs you may specify is 100.
-	var id: Array[String]
-	## The login name of the user to get. To specify more than one user, include the _login_ parameter for each user to get. For example, `login=foo&login=bar`. The maximum number of login names you may specify is 100.
-	var login: Array[String]
-
-
+	
 ## Gets information about one or more users.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-users
-func get_users(opt: TwitchGetUsersOpt) -> TwitchGetUsersResponse:
+func get_users(opt: TwitchGetUsers.Opt) -> TwitchGetUsers.Response:
 	var path = "/users?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	if optionals.has("login"):
+		
 		for param in optionals.login:
 			path += "login=" + str(param) + "&" 
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetUsersResponse = TwitchGetUsersResponse.from_json(result)
+	var parsed_result: TwitchGetUsers.Response = TwitchGetUsers.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchUpdateUserOpt extends TrackedData:
-	## The string to update the channel’s description to. The description is limited to a maximum of 300 characters.  
-	##   
-	## To remove the description, specify this parameter but don’t set it’s value (for example, `?description=`).
-	var description: String
-
-
+	
 ## Updates the user’s information.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-user
-func update_user(opt: TwitchUpdateUserOpt) -> TwitchUpdateUserResponse:
+func update_user(opt: TwitchUpdateUser.Opt) -> TwitchUpdateUser.Response:
 	var path = "/users?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("description"):
 		path += "description=" + str(optionals.description) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateUserResponse = TwitchUpdateUserResponse.from_json(result)
+	var parsed_result: TwitchUpdateUser.Response = TwitchUpdateUser.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetUserBlockListOpt extends TrackedData:
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String
-
-
+	
 ## Gets the list of users that the broadcaster has blocked.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose list of blocked users you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-block-list
-func get_user_block_list(opt: TwitchGetUserBlockListOpt, broadcaster_id: String = default_broadcaster_login) -> TwitchGetUserBlockListResponse:
+func get_user_block_list(opt: TwitchGetUserBlockList.Opt, broadcaster_id: String) -> TwitchGetUserBlockList.Response:
 	var path = "/users/blocks?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("first"):
 		path += "first=" + str(optionals.first) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetUserBlockListResponse = TwitchGetUserBlockListResponse.from_json(result)
+	var parsed_result: TwitchGetUserBlockList.Response = TwitchGetUserBlockList.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_user_block_list.bind(opt, broadcaster_id)
 	return parsed_result
 
-
-class BlockUserOpt extends TrackedData:
-	## The location where the harassment took place that is causing the brodcaster to block the user. Possible values are:  
-	##   
-	## * chat
-	## * whisper
-	##   
-	## .
-	var source_context: String
-	## The reason that the broadcaster is blocking the user. Possible values are:  
-	##   
-	## * harassment
-	## * spam
-	## * other
-	var reason: String
-
-
+	
 ## Blocks the specified user from interacting with or having contact with the broadcaster.
 ## 
 ## target_user_id - The ID of the user to block. The API ignores the request if the broadcaster has already blocked the user. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#block-user
-func block_user(opt: BlockUserOpt, target_user_id: String) -> BufferedHTTPClient.ResponseData:
+func block_user(opt: TwitchBlockUser.Opt, target_user_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/users/blocks?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	path += "target_user_id=" + str(target_user_id) + "&"
 	if optionals.has("reason"):
 		path += "reason=" + str(optionals.reason) + "&"
 	if optionals.has("source_context"):
 		path += "source_context=" + str(optionals.source_context) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, "", "")
 	return response
 
-
-
+	
 ## Removes the user from the broadcaster’s list of blocked users.
 ## 
 ## target_user_id - The ID of the user to remove from the broadcaster’s list of blocked users. The API ignores the request if the broadcaster hasn’t blocked the user. 
@@ -3325,141 +2862,72 @@ func block_user(opt: BlockUserOpt, target_user_id: String) -> BufferedHTTPClient
 func unblock_user(target_user_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/users/blocks?"
 	path += "target_user_id=" + str(target_user_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	return response
 
-
-
+	
 ## Gets a list of all extensions (both active and inactive) that the broadcaster has installed.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-extensions
-func get_user_extensions() -> TwitchGetUserExtensionsResponse:
+func get_user_extensions() -> TwitchGetUserExtensions.Response:
 	var path = "/users/extensions/list?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetUserExtensionsResponse = TwitchGetUserExtensionsResponse.from_json(result)
+	var parsed_result: TwitchGetUserExtensions.Response = TwitchGetUserExtensions.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetUserActiveExtensionsOpt extends TrackedData:
-	## The ID of the broadcaster whose active extensions you want to get.  
-	##   
-	## This parameter is required if you specify an app access token and is optional if you specify a user access token. If you specify a user access token and don’t specify this parameter, the API uses the user ID from the access token.
-	var user_id: String
-
-
+	
 ## Gets the active extensions that the broadcaster has installed for each configuration.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-active-extensions
-func get_user_active_extensions(opt: TwitchGetUserActiveExtensionsOpt) -> TwitchGetUserActiveExtensionsResponse:
+func get_user_active_extensions(opt: TwitchGetUserActiveExtensions.Opt) -> TwitchGetUserActiveExtensions.Response:
 	var path = "/users/extensions?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("user_id"):
 		path += "user_id=" + str(optionals.user_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetUserActiveExtensionsResponse = TwitchGetUserActiveExtensionsResponse.from_json(result)
+	var parsed_result: TwitchGetUserActiveExtensions.Response = TwitchGetUserActiveExtensions.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Updates an installed extension’s information.
 ## 
-## [no query parameters to describe]
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-user-extensions
-func update_user_extensions(body: TwitchUpdateUserExtensionsBody) -> TwitchUpdateUserExtensionsResponse:
+func update_user_extensions(body: TwitchUpdateUserExtensions.Body) -> TwitchUpdateUserExtensions.Response:
 	var path = "/users/extensions?"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchUpdateUserExtensionsResponse = TwitchUpdateUserExtensionsResponse.from_json(result)
+	var parsed_result: TwitchUpdateUserExtensions.Response = TwitchUpdateUserExtensions.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-class TwitchGetVideosOpt extends TrackedData:
-	## A list of IDs that identify the videos you want to get. To get more than one video, include this parameter for each video you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 100 IDs. The endpoint ignores duplicate IDs and IDs that weren't found (if there's at least one valid ID).  
-	##   
-	## The _id_, _user\_id_, and _game\_id_ parameters are mutually exclusive.
-	var id: Array[String]
-	## The ID of the user whose list of videos you want to get.  
-	##   
-	## The _id_, _user\_id_, and _game\_id_ parameters are mutually exclusive.
-	var user_id: String
-	## A category or game ID. The response contains a maximum of 500 videos that show this content. To get category/game IDs, use the [Search Categories](https://dev.twitch.tv/docs/api/reference#search-categories) endpoint.  
-	##   
-	## The _id_, _user\_id_, and _game\_id_ parameters are mutually exclusive.
-	var game_id: String
-	## A filter used to filter the list of videos by the language that the video owner broadcasts in. For example, to get videos that were broadcast in German, set this parameter to the ISO 639-1 two-letter code for German (i.e., DE). For a list of supported languages, see [Supported Stream Language](https://help.twitch.tv/s/article/languages-on-twitch#streamlang). If the language is not supported, use “other.”  
-	##   
-	## Specify this parameter only if you specify the _game\_id_ query parameter.
-	var language: String
-	## A filter used to filter the list of videos by when they were published. For example, videos published in the last week. Possible values are:  
-	##   
-	## * all
-	## * day
-	## * month
-	## * week
-	##   
-	## The default is "all," which returns videos published in all periods.  
-	##   
-	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
-	var period: String
-	## The order to sort the returned videos in. Possible values are:  
-	##   
-	## * time — Sort the results in descending order by when they were created (i.e., latest video first).
-	## * trending — Sort the results in descending order by biggest gains in viewership (i.e., highest trending video first).
-	## * views — Sort the results in descending order by most views (i.e., highest number of views first).
-	##   
-	## The default is "time."  
-	##   
-	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
-	var sort: String
-	## A filter used to filter the list of videos by the video's type. Possible case-sensitive values are:  
-	##   
-	## * all
-	## * archive — On-demand videos (VODs) of past streams.
-	## * highlight — Highlight reels of past streams.
-	## * upload — External videos that the broadcaster uploaded using the Video Producer.
-	##   
-	## The default is "all," which returns all video types.  
-	##   
-	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
-	var type: String
-	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.  
-	##   
-	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
-	var first: String
-	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)  
-	##   
-	## Specify this parameter only if you specify the _user\_id_ query parameter.
-	var after: String
-	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)  
-	##   
-	## Specify this parameter only if you specify the _user\_id_ query parameter.
-	var before: String
-
-
+	
 ## Gets information about one or more published videos.
 ## 
-
+## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-videos
-func get_videos(opt: TwitchGetVideosOpt) -> TwitchGetVideosResponse:
+func get_videos(opt: TwitchGetVideos.Opt) -> TwitchGetVideos.Response:
 	var path = "/videos?"
 	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.updated_values()
+	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("before"):
@@ -3469,6 +2937,7 @@ func get_videos(opt: TwitchGetVideosOpt) -> TwitchGetVideosResponse:
 	if optionals.has("game_id"):
 		path += "game_id=" + str(optionals.game_id) + "&"
 	if optionals.has("id"):
+		
 		for param in optionals.id:
 			path += "id=" + str(param) + "&" 
 	if optionals.has("language"):
@@ -3481,53 +2950,50 @@ func get_videos(opt: TwitchGetVideosOpt) -> TwitchGetVideosResponse:
 		path += "type=" + str(optionals.type) + "&"
 	if optionals.has("user_id"):
 		path += "user_id=" + str(optionals.user_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchGetVideosResponse = TwitchGetVideosResponse.from_json(result)
+	var parsed_result: TwitchGetVideos.Response = TwitchGetVideos.Response.from_json(result)
+	parsed_result.response = response
+	if parsed_result.pagination != null:
+		var cursor: String = parsed_result.pagination.cursor
+		opt.after = cursor
+		parsed_result._next_page = get_videos.bind(opt)
 	return parsed_result
 
-
-
+	
 ## Deletes one or more videos.
 ## 
 ## id - The list of videos to delete. To specify more than one video, include the _id_ parameter for each video to delete. For example, `id=1234&id=5678`. You can delete a maximum of 5 videos per request. Ignores invalid video IDs.  
-##     
-##   If the user doesn’t have permission to delete one of the videos in the list, none of the videos are deleted. 
+##      
+##    If the user doesn’t have permission to delete one of the videos in the list, none of the videos are deleted. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-videos
-func delete_videos(id: Array[String]) -> TwitchDeleteVideosResponse:
+func delete_videos(id: Array[String]) -> TwitchDeleteVideos.Response:
 	var path = "/videos?"
+	
 	for param in id:
 		path += "id=" + str(param) + "&" 
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-	var parsed_result: TwitchDeleteVideosResponse = TwitchDeleteVideosResponse.from_json(result)
+	var parsed_result: TwitchDeleteVideos.Response = TwitchDeleteVideos.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
-
-
+	
 ## Sends a whisper message to the specified user.
 ## 
 ## from_user_id - The ID of the user sending the whisper. This user must have a verified phone number. This ID must match the user ID in the user access token. 
 ## to_user_id - The ID of the user to receive the whisper. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-whisper
-func send_whisper(body: TwitchSendWhisperBody, from_user_id: String, to_user_id: String) -> BufferedHTTPClient.ResponseData:
+func send_whisper(body: TwitchSendWhisper.Body, from_user_id: String, to_user_id: String) -> BufferedHTTPClient.ResponseData:
 	var path = "/whispers?"
 	path += "from_user_id=" + str(from_user_id) + "&"
 	path += "to_user_id=" + str(to_user_id) + "&"
-
+	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 	return response
-
-## Converts unix timestamp to RFC 3339 (example: 2021-10-27T00:00:00Z) when passed a string uses as is
-static func get_rfc_3339_date_format(time: Variant) -> String:
-	if typeof(time) == TYPE_INT:
-		var date_time = Time.get_datetime_dict_from_unix_time(time)
-		return "%s-%02d-%02dT%02d:%02d:%02dZ" % [date_time['year'], date_time['month'], date_time['day'], date_time['hour'], date_time['minute'], date_time['second']]
-	return str(time)
-	

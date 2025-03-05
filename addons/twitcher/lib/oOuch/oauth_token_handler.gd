@@ -171,7 +171,6 @@ func get_token_expiration() -> String:
 func is_token_valid() -> bool:
 	var current_time = Time.get_datetime_string_from_system(true)
 	var expire_data = get_token_expiration()
-	logDebug("check expiration: " + current_time + " < " + expire_data)
 	return token.is_token_valid()
 
 

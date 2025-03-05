@@ -78,13 +78,13 @@ func _on_event_received(data: Dictionary) -> void:
 		message_received.emit(message)
 
 
-func send_message(message: String, reply_parent_message_id: String = "") -> Array[TwitchSendChatMessageResponse.Data]:
+func send_message(message: String, reply_parent_message_id: String = "") -> Array[TwitchSendChatMessage.ResponseData]:
 	if not _sender_user_loading && sender_user == null:
 		_sender_user_loading = true
 		await _load_sender_user()
 	await _wait_for_sender_user()
 
-	var message_body = TwitchSendChatMessageBody.new()
+	var message_body = TwitchSendChatMessage.Body.new()
 	message_body.broadcaster_id = broadcaster_user.id
 	message_body.sender_id = sender_user.id
 	message_body.message = message
@@ -93,7 +93,7 @@ func send_message(message: String, reply_parent_message_id: String = "") -> Arra
 
 	var response = await twitch_service.api.send_chat_message(message_body)
 	if _log.enabled:
-		for message_data: TwitchSendChatMessageResponse.Data in response.data:
+		for message_data: TwitchSendChatMessage.ResponseData in response.data:
 			if not message_data.is_sent:
 				_log.w(message_data.drop_reason)
 

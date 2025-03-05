@@ -1,0 +1,63 @@
+[gd_scene load_steps=4 format=3 uid="uid://dv5tn00eptanx"]
+
+[ext_resource type="Script" uid="uid://bw5x033fuxtfc" path="res://example/api_generator/generate_api.gd" id="1_0mr4e"]
+[ext_resource type="Script" uid="uid://cetl2un34bjb1" path="res://addons/twitcher/editor/api_generator/twitch_api_generator.gd" id="2_ompdd"]
+[ext_resource type="Script" uid="uid://o7q04krfh33l" path="res://addons/twitcher/editor/api_generator/twitch_api_parser.gd" id="3_gdrv2"]
+
+[node name="GenerateApi" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0mr4e")
+
+[node name="Generate" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ActionButton"
+text = "Generate"
+
+[node name="Request" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ActionButton"
+text = "Request"
+
+[node name="TwitchAPIGenerator" type="Node" parent="." node_paths=PackedStringArray("parser")]
+unique_name_in_owner = true
+script = ExtResource("2_ompdd")
+parser = NodePath("../TwitchAPIParser")
+metadata/_custom_type_script = "uid://cetl2un34bjb1"
+
+[node name="TwitchAPIParser" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_gdrv2")
+metadata/_custom_type_script = "uid://o7q04krfh33l"
+
+[node name="Show" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Show"
+
+[node name="MethodSearch" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Method Name"
+
+[node name="Methods" type="Tree" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 4
+
+[node name="ComponentSearch" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Ref or Classname"
+
+[node name="Components" type="Tree" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 5

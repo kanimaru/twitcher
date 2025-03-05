@@ -10,13 +10,22 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchAuth")
 signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
 
 ## Where and how to authorize.
-@export var oauth_setting: OAuthSetting
+@export var oauth_setting: OAuthSetting:
+	set(val): 
+		oauth_setting = val
+		update_configuration_warnings()
 ## Shows the what to authorize page of twitch again. (for example you need to relogin with a different account aka bot account)
 @export var force_verify: bool
 ## Where should the tokens be saved into
-@export var token: OAuthToken
+@export var token: OAuthToken:
+	set(val):
+		token = val
+		update_configuration_warnings()
 ## Scopes for the token that should be requested
-@export var scopes: OAuthScopes
+@export var scopes: OAuthScopes:
+	set(val):
+		scopes = val
+		update_configuration_warnings()
 
 @onready var auth: OAuth
 @onready var token_handler: TwitchTokenHandler
@@ -41,13 +50,14 @@ func _ready() -> void:
 	_ensure_children()
 
 
-
 func _ensure_children() -> void:
 	if token_handler == null:
 		token_handler = TwitchTokenHandler.new()
+		token_handler.name = "TokenHandler"
 
 	if auth == null:
 		auth = OAuth.new()
+		auth.name = "OAuth"
 
 	auth.token_handler = token_handler
 	auth.scopes = scopes
@@ -63,20 +73,38 @@ func _ensure_children() -> void:
 
 
 func authorize() -> void:
-	await auth.login();
+	await auth.login()
 	token_handler.process_mode = Node.PROCESS_MODE_INHERIT
 
 
 func refresh_token() -> void:
-	auth.refresh_token();
+	auth.refresh_token()
 
 
 func _get_oauth_setting() -> OAuthSetting:
-	var oauth_setting = OAuthSetting.new();
-	oauth_setting.authorization_flow = OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW;
-	oauth_setting.device_authorization_url = "https://id.twitch.tv/oauth2/device";
-	oauth_setting.token_url = "https://id.twitch.tv/oauth2/token";
-	oauth_setting.authorization_url = "https://id.twitch.tv/oauth2/authorize";
-	oauth_setting.cache_file = "user://auth.conf";
-	oauth_setting.redirect_url = "http://localhost:7170";
-	return oauth_setting;
+	var oauth_setting = OAuthSetting.new()
+	oauth_setting.authorization_flow = OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW
+	oauth_setting.device_authorization_url = "https://id.twitch.tv/oauth2/device"
+	oauth_setting.token_url = "https://id.twitch.tv/oauth2/token"
+	oauth_setting.authorization_url = "https://id.twitch.tv/oauth2/authorize"
+	oauth_setting.cache_file = "user://auth.conf"
+	oauth_setting.redirect_url = "http://localhost:7170"
+	return oauth_setting
+	
+
+## Checks if the correctly setup
+func is_configured() -> bool:
+	return _get_configuration_warnings().is_empty()
+	
+	
+func _get_configuration_warnings() -> PackedStringArray:
+	var result: PackedStringArray = []
+	var oauth_setting_problems : PackedStringArray = oauth_setting.is_valid()
+	if not oauth_setting_problems.is_empty():
+		result.append("OAuthSetting is invalid")
+		result.append_array(oauth_setting_problems)
+	if scopes == null:
+		result.append("OAuthScopes is missing")
+	if token == null:
+		result.append("OAuthToken is missing")
+	return result

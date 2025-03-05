@@ -86,6 +86,23 @@ func is_configured() -> bool:
 	return _get_configuration_warnings().is_empty()
 
 
+func _get_configuration_warnings() -> PackedStringArray:
+	var result: PackedStringArray = []
+	
+	if oauth_setting == null:
+		result.append("OAuthSetting is missing")
+	else:
+		var oauth_setting_problems : PackedStringArray = oauth_setting.is_valid()
+		if not oauth_setting_problems.is_empty():
+			result.append("OAuthSetting is invalid")
+			result.append_array(oauth_setting_problems)
+	if scopes == null:
+		result.append("OAuthScopes is missing")
+	if token == null:
+		result.append("OAuthToken is missing")
+	return result
+
+
 func _on_unauthenticated() -> void:
 	auth.authorize()
 
@@ -101,9 +118,9 @@ func get_user_by_id(user_id: String) -> TwitchUser:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 	if user_id == null || user_id == "": return null
-	var opt = TwitchAPI.TwitchGetUsersOpt.new()
+	var opt = TwitchGetUsers.Opt.new()
 	opt.id = [user_id] as Array[String]
-	var user_data : TwitchGetUsersResponse = await api.get_users(opt)
+	var user_data : TwitchGetUsers.Response = await api.get_users(opt)
 	if user_data.data.is_empty(): return null
 	return user_data.data[0]
 
@@ -113,9 +130,9 @@ func get_user(username: String) -> TwitchUser:
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
-	var opt = TwitchAPI.TwitchGetUsersOpt.new()
+	var opt = TwitchGetUsers.Opt.new()
 	opt.login = [username] as Array[String]
-	var user_data : TwitchGetUsersResponse = await api.get_users(opt)
+	var user_data : TwitchGetUsers.Response = await api.get_users(opt)
 	if user_data.data.is_empty():
 		_log.e("Username was not found: %s" % username)
 		return null
@@ -127,7 +144,7 @@ func get_current_user() -> TwitchUser:
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
-	var user_data : TwitchGetUsersResponse = await api.get_users(null)
+	var user_data : TwitchGetUsers.Response = await api.get_users(null)
 	return user_data.data[0]
 
 
@@ -181,10 +198,10 @@ func shoutout(user: TwitchUser) -> void:
 func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY):
 	var broadcaster_id = api.default_broadcaster_login
 	if broadcaster_id == "": return
-	var body = TwitchSendChatAnnouncementBody.new()
+	var body = TwitchSendChatAnnouncement.Body.new()
 	body.message = message
 	body.color = color.value
-	api.send_chat_announcement(broadcaster_id, body)
+	api.send_chat_announcement(body, broadcaster_id, broadcaster_id)
 
 
 ## Add a new command handler and register it for a command.
@@ -254,19 +271,3 @@ func get_cheermotes(definition: TwitchCheermoteDefinition) -> Dictionary:
 	return await media_loader.get_cheermotes(definition)
 
 #endregion
-
-func _get_configuration_warnings() -> PackedStringArray:
-	var result: PackedStringArray = []
-	
-	if oauth_setting == null:
-		result.append("OAuthSetting is missing")
-	else:
-		var oauth_setting_problems : PackedStringArray = oauth_setting.is_valid()
-		if not oauth_setting_problems.is_empty():
-			result.append("OAuthSetting is invalid")
-			result.append_array(oauth_setting_problems)
-	if scopes == null:
-		result.append("OAuthScopes is missing")
-	if token == null:
-		result.append("OAuthToken is missing")
-	return result

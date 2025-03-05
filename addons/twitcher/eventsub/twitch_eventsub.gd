@@ -5,6 +5,7 @@ extends Node
 class_name TwitchEventsub
 static var _log: TwitchLogger = TwitchLogger.new("TwitchEventsub")
 
+
 ## An object that identifies the message.
 class Metadata extends RefCounted:
 	## An ID that uniquely identifies the message. Twitch sends messages at least once, but if Twitch is unsure of whether you received a notification, it’ll resend the message. This means you may receive a notification twice. If Twitch resends the message, the message ID is the same.
@@ -18,6 +19,7 @@ class Metadata extends RefCounted:
 		message_id = d['message_id']
 		message_type = d['message_type']
 		message_timestamp = d['message_timestamp']
+
 
 ## An object that contains information about the connection.
 class Session extends RefCounted:
@@ -41,6 +43,7 @@ class Session extends RefCounted:
 			reconnect_url = d["reconnect_url"]
 		connected_at = d["connected_at"]
 
+
 ## Will be send as soon as the websocket connection is up and running you can use it to subscribe to events
 signal session_id_received(id: String)
 
@@ -52,6 +55,7 @@ signal events_revoked(type: String, status: String)
 
 ## Called when any eventsub message is received for low level access
 signal message_received(message: Variant)
+
 
 @export var api: TwitchAPI
 @export var _subscriptions: Array[TwitchEventsubConfig] = []
@@ -83,6 +87,7 @@ var _swap_over_process: bool
 ## queues the actions that should be executed when the connection is established
 var _action_stack: Array[SubscriptionAction]
 var _executing_action_stack: bool
+
 
 ## Determines the action that the subscription should do
 class SubscriptionAction extends RefCounted:
@@ -188,8 +193,8 @@ func _subscribe(subscription: TwitchEventsubConfig) -> String:
 	var version = subscription.definition.version
 	var conditions = subscription.condition
 
-	var data : TwitchCreateEventSubSubscriptionBody = TwitchCreateEventSubSubscriptionBody.new()
-	var transport : TwitchCreateEventSubSubscriptionBody.Transport = TwitchCreateEventSubSubscriptionBody.Transport.new()
+	var data : TwitchCreateEventSubSubscription.Body = TwitchCreateEventSubSubscription.Body.new()
+	var transport : TwitchCreateEventSubSubscription.BodyTransport = TwitchCreateEventSubSubscription.BodyTransport.new()
 	data.type = event_name
 	data.version = version
 	data.condition = conditions
@@ -199,24 +204,24 @@ func _subscribe(subscription: TwitchEventsubConfig) -> String:
 
 	_log.d("Do subscribe: %s" % event_name)
 
-	var response = await api.create_eventsub_subscription(data)
+	var eventsub_response = await api.create_eventsub_subscription(data)
 
-	if response.response_code == 401:
+	if eventsub_response.response.response_code == 401:
 		_log.e("Subscription failed for '%s': Missing authentication for eventsub. The token got not authenticated yet. Please login!" % data.type)
 		_client.close(3000, "Missing Authentication")
 		return ""
-	elif response.response_code == 403:
+	elif eventsub_response.response.response_code == 403:
 		_log.e("Subscription failed for '%s': The token is missing proper scopes. [url='%s']Please check documentation[/url]!" % [data.type, subscription.definition.documentation_link])
 		_client.close(3003, "Missing Authorization")
 		return ""
-	if response.response_code < 200 || response.response_code >= 300:
-		_log.e("Subscription failed for '%s'. Unknown error %s: %s" % [data.type, response.response_code, response.response_data.get_string_from_utf8()])
+	if eventsub_response.response.response_code < 200 || eventsub_response.response.response_code >= 300:
+		_log.e("Subscription failed for '%s'. Unknown error %s: %s" % [data.type, eventsub_response.response.response_code, eventsub_response.response.response_data.get_string_from_utf8()])
 		return ""
-	elif (response.response_data.is_empty()):
+	elif (eventsub_response.response.response_data.is_empty()):
 		return ""
 	_log.i("Now listening to '%s' events." % data.type)
 
-	var result = JSON.parse_string(response.response_data.get_string_from_utf8())
+	var result = JSON.parse_string(eventsub_response.response.response_data.get_string_from_utf8())
 	return result.data[0].id
 
 
