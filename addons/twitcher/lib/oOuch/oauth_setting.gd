@@ -1,3 +1,4 @@
+@icon("./security-icon.svg")
 @tool
 extends Resource
 class_name OAuthSetting

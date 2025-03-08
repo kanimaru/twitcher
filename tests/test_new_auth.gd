@@ -13,10 +13,11 @@ func _ready() -> void:
 	await twitch_auth_user1.authorize()
 	await twitch_auth_user2.authorize()
 	api.token = twitch_auth_user1.token
-	var user1 = await api.get_users([], [])
+	var opt = TwitchGetUsers.Opt.new()
+	var user1 = await api.get_users(opt)
 
 	api.token = twitch_auth_user2.token
-	var user2 = await api.get_users([], [])
+	var user2 = await api.get_users(opt)
 
 	print("User 1 token belongs to: %s" % user1.data[0].display_name)
 	print("User 2 token belongs to: %s" % user2.data[0].display_name)

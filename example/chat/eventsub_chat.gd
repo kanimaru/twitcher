@@ -24,7 +24,7 @@ extends Control
 @export var token: OAuthToken
 
 
-func _ready() -> void:	
+func _ready() -> void:
 	configuration_warning.hide()
 	if twitch_service.oauth_setting.client_id == "":
 		configuration_warning.show()
@@ -99,6 +99,8 @@ func _on_chat_message(message: TwitchChatMessage) -> void:
 
 ## Prepares the message so that all fragments will be shown correctly
 func show_text(message: TwitchChatMessage, current_text: String, emote_scale: int = 1) -> String:
+	# Load emotes and badges in parallel to improve the speed
+	await message.load_emotes_from_fragment()
 	# Unique Id for the spriteframes to identify them
 	var fragment_id : int = 0
 	for fragment : TwitchChatMessage.Fragment in message.message.fragments:
@@ -131,7 +133,7 @@ func _send_message() -> void:
 
 
 ## Callback when user pressed enter in text input
-func _on_text_submitted(new_text: String) -> void:
+func _on_text_submitted(_new_text: String) -> void:
 	_send_message()
 	
 

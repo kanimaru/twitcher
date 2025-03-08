@@ -1,3 +1,4 @@
+@icon("./security-icon.svg")
 @tool
 extends Node
 
@@ -42,6 +43,7 @@ enum AuthorizationFlow {
 
 func _ready() -> void:
 	_client = OAuthHTTPClient.new()
+	_client.name = "OAuthClient"
 	add_child(_client)
 	_auth_http_server = OAuthHTTPServer.new(oauth_setting.redirect_port)
 	if token_handler == null:

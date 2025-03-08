@@ -1,5 +1,6 @@
+@icon("res://addons/twitcher/assets/chat-icon.svg")
 @tool
-extends Node
+extends Twitcher
 
 class_name TwitchIRC
 
@@ -126,7 +127,10 @@ class EmoteLocation extends RefCounted:
 
 
 @export var setting: TwitchIrcSetting = TwitchIrcSetting.new():
-	set = _update_setting
+	set(val):
+		setting = val
+		_client.connection_url = setting.server
+		update_configuration_warnings()
 @export var token: OAuthToken:
 	set(val):
 		token = val
@@ -150,15 +154,11 @@ var _chat_queue : Array[String] = []
 
 
 func _init() -> void:
+	_client.name = "Websocket"
 	_client.message_received.connect(_data_received)
 	_client.connection_established.connect(_on_connection_established)
 	_client.connection_closed.connect(_on_connection_closed)
-
-
-func _update_setting(twitch_irc_setting: TwitchIrcSetting) -> void:
-	setting = twitch_irc_setting
-	_client.connection_url = setting.server
-
+	
 
 func _ready() -> void:
 	token.authorized.connect(_on_authorized)
@@ -450,8 +450,11 @@ func _handle_cmd_notice(info: String) -> bool:
 func get_client() -> WebsocketClient:
 	return _client
 
+
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: Array[String] = []
 	if token == null:
 		result.append("Token is missing")
+	if setting == null:
+		result.append("IRC Settings are missing")
 	return result

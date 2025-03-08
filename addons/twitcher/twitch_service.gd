@@ -1,5 +1,6 @@
+@icon("res://addons/twitcher/assets/service-icon.svg")
 @tool
-extends Node
+extends Twitcher
 
 ## Access to the Twitch API. Combines all the stuff the library provides.
 ## Makes some actions easier to use.
@@ -28,6 +29,8 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 @onready var media_loader: TwitchMediaLoader
 @onready var command_handler: TwitchCommandHandler
 
+## Cache for the current user so that no roundtrip has to be done every time get_current_user will be called
+var _current_user: TwitchUser
 
 func _init() -> void:
 	child_entered_tree.connect(_on_child_entered)
@@ -141,11 +144,16 @@ func get_user(username: String) -> TwitchUser:
 
 ## Get data about a currently authenticated user
 func get_current_user() -> TwitchUser:
+	if _current_user != null:
+		return _current_user
+		
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
+		
 	var user_data : TwitchGetUsers.Response = await api.get_users(null)
-	return user_data.data[0]
+	_current_user = user_data.data[0]
+	return _current_user
 
 
 ## Get the image of an user
@@ -186,6 +194,13 @@ func get_subscriptions() -> Array[TwitchEventsubConfig]:
 #endregion
 
 #region Chat
+
+func chat(message: String, target_broadcaster_id: String, sender_id: String = "") -> void:
+	if sender_id == null:
+		var current_user = await get_current_user()
+		sender_id = current_user.id
+	var body = TwitchSendChatMessage.Body.create(target_broadcaster_id, sender_id, message)
+	api.send_chat_message(body)
 
 ## Sends out a shoutout to a specific user
 func shoutout(user: TwitchUser) -> void:
@@ -236,20 +251,20 @@ func get_emotes_data(channel_id: String = "global") -> Dictionary:
 
 ## Returns the definition of badges for given channel or for the global bages.
 ## Key: category / versions / badge_id | Value: TwitchChatBadge
-func get_badges_data(channel_id: String = "global") -> Dictionary:
+func get_badges_data(channel_id: String = "global") -> Dictionary[String, TwitchChatBadge]:
 	return await media_loader.get_cached_badges(channel_id)
 
 
 ## Gets the requested emotes.
 ## Key: EmoteID as String | Value: SpriteFrame
-func get_emotes(ids: Array[String]) -> Dictionary:
+func get_emotes(ids: Array[String]) -> Dictionary[String, SpriteFrames]:
 	return await media_loader.get_emotes(ids)
 
 
 ## Gets the requested emotes in the specified theme, scale and type.
 ## Loads from cache if possible otherwise downloads and transforms them.
 ## Key: TwitchEmoteDefinition | Value SpriteFrames
-func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionary:
+func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionary[TwitchEmoteDefinition, SpriteFrames]:
 	return await media_loader.get_emotes_by_definition(emotes)
 
 

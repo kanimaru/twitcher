@@ -1,6 +1,6 @@
 @icon("../assets/chat-icon.svg")
 @tool
-extends Node
+extends Twitcher
 
 ## Grants access to read and write to a chat
 class_name TwitchChat
@@ -44,17 +44,20 @@ func _update_target_user_channel(val: String) -> void:
 	if val != null && val != "":
 		_log.d("change channel to %s" % val)
 		broadcaster_user = await twitch_service.get_user(val)
+	else:
+		broadcaster_user = null
 		
 		
 func _update_broadcaster_user(val: TwitchUser) -> void:
 		broadcaster_user = val
 		update_configuration_warnings()
 		notify_property_list_changed()
-		twitch_service.media_loader.preload_badges(broadcaster_user.id)
-		twitch_service.media_loader.preload_emotes(broadcaster_user.id)
-		_subscribe_to_channel()
-		
-		
+		if broadcaster_user != null:
+			twitch_service.media_loader.preload_badges(broadcaster_user.id)
+			twitch_service.media_loader.preload_emotes(broadcaster_user.id)
+			_subscribe_to_channel()
+
+
 func _subscribe_to_channel() -> void:
 	var subscriptions = twitch_service.eventsub.get_subscriptions()
 	for subscription: TwitchEventsubConfig in subscriptions:
@@ -63,17 +66,19 @@ func _subscribe_to_channel() -> void:
 				# it is already subscribed
 				return
 		
+	var current_user = await twitch_service.get_current_user()
+		
 	var config = TwitchEventsubConfig.new()
 	config.type = TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE
 	config.condition = {
 		"broadcaster_user_id": broadcaster_user.id,
-		"user_id": broadcaster_user.id
+		"user_id": current_user.id
 	}
 	twitch_service.eventsub.subscribe(config)
 
 
 func _on_event_received(data: Dictionary) -> void:
-	var message = TwitchChatMessage.from_json(data, twitch_service)
+	var message = TwitchChatMessage.from_json(data, twitch_service.media_loader)
 	if message.broadcaster_user_id == broadcaster_user.id:
 		message_received.emit(message)
 

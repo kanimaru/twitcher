@@ -1,6 +1,6 @@
 @tool
 @icon("../assets/event-icon.svg")
-extends Node
+extends Twitcher
 
 ## Listens to an event and publishes it as signal.
 ## Usage for easy access of events on test and normal eventsub makes it more obvious what a scene

@@ -28,5 +28,8 @@ func scale_4() -> TwitchCheermoteDefinition: scale = "4"; return self;
 func scale_1_5() -> TwitchCheermoteDefinition: scale = "1.5"; return self;
 
 
+func _to_string() -> String:
+	return "Cheer[%s/%s]" % [prefix, tier]
+
 func get_id() -> String:
 	return "/" + "/".join([ prefix, tier, theme, type, scale ])

@@ -1,3 +1,4 @@
+@icon("./security-icon.svg")
 @tool
 extends Node
 
@@ -35,7 +36,7 @@ var _requesting_token: bool = false
 func _ready() -> void:
 	if token == null: token = OAuthToken.new()
 	_http_client = OAuthHTTPClient.new()
-	_http_client.name = "OAuthClient"
+	_http_client.name = "OAuthTokenClient"
 	add_child(_http_client)
 
 

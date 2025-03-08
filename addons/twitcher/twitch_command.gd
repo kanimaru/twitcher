@@ -1,5 +1,5 @@
 @icon("./assets/command-icon.svg")
-extends Node
+extends Twitcher
 
 class_name TwitchCommand
 

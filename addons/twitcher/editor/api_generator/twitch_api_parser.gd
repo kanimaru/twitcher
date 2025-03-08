@@ -1,5 +1,6 @@
+@icon("res://addons/twitcher/assets/api-icon.svg")
 @tool
-extends Node
+extends Twitcher
 
 class_name TwitchAPIParser
 

@@ -13,13 +13,13 @@
 [ext_resource type="PackedScene" uid="uid://b0ebhuv2yaow0" path="res://addons/twitcher/lib/http/DebugBufferedHttpClient.tscn" id="11_ugwlt"]
 [ext_resource type="Script" uid="uid://cva5e053boj4u" path="res://addons/twitcher/irc/twitch_irc_channel.gd" id="11_y0yp4"]
 
-[sub_resource type="Resource" id="Resource_qbki8"]
+[sub_resource type="Resource" id="Resource_8andf"]
 script = ExtResource("5_1si3o")
 username = ""
 auto_join_channels = Array[StringName]([])
 server = "wss://irc-ws.chat.twitch.tv:443"
 send_message_delay_ms = 320
-capabilities = 7
+capabilities = 5
 
 [sub_resource type="LabelSettings" id="LabelSettings_pqdv6"]
 font_size = 36
@@ -41,34 +41,36 @@ oauth_setting = ExtResource("2_egirf")
 scopes = ExtResource("3_yp6d3")
 token = ExtResource("4_ydhdv")
 
-[node name="IRC" type="Node" parent="TwitchService"]
-unique_name_in_owner = true
-script = ExtResource("4_llwbm")
-setting = SubResource("Resource_qbki8")
+[node name="TwitchAPI" type="Node" parent="TwitchService"]
+script = ExtResource("10_nmebx")
 token = ExtResource("4_ydhdv")
+oauth_setting = ExtResource("2_egirf")
+metadata/_custom_type_script = "uid://cw30cwveway65"
 
-[node name="Auth" type="Node" parent="TwitchService"]
+[node name="TwitchMediaLoader" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+script = ExtResource("11_le525")
+api = NodePath("../TwitchAPI")
+metadata/_custom_type_script = "uid://d4lyup0vy1wtu"
+
+[node name="TwitchAuth" type="Node" parent="TwitchService"]
 script = ExtResource("8_bv4ru")
 oauth_setting = ExtResource("2_egirf")
 token = ExtResource("4_ydhdv")
 scopes = ExtResource("3_yp6d3")
+metadata/_custom_type_script = "uid://iv0mgv0lu8b0"
 
-[node name="Rest" type="Node" parent="TwitchService"]
+[node name="TwitchIRC" type="Node" parent="TwitchService"]
 unique_name_in_owner = true
-script = ExtResource("10_nmebx")
-default_broadcaster_login = "kani_dev"
+script = ExtResource("4_llwbm")
+setting = SubResource("Resource_8andf")
 token = ExtResource("4_ydhdv")
-oauth_setting = ExtResource("2_egirf")
-
-[node name="TwitchMediaLoader" type="Node" parent="TwitchService"]
-script = ExtResource("11_le525")
-image_transformer = "MagicImageTransformer"
-image_magic_path = "magick"
+metadata/_custom_type_script = "uid://wkh0l2xsyapj"
 
 [node name="TwitchIrcChannel" type="Node" parent="." node_paths=PackedStringArray("twitch_service")]
 unique_name_in_owner = true
 script = ExtResource("11_y0yp4")
 twitch_service = NodePath("../TwitchService")
+metadata/_custom_type_script = "uid://cva5e053boj4u"
 
 [node name="ConfigurationWarning" type="Label" parent="."]
 unique_name_in_owner = true

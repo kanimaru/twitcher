@@ -1,5 +1,6 @@
+@icon("res://addons/twitcher/assets/eventsub-icon.svg")
 @tool
-extends Node
+extends Twitcher
 
 ## Handles the evensub part of twitch. Returns the event data when receives it.
 class_name TwitchEventsub
@@ -212,6 +213,7 @@ func _subscribe(subscription: TwitchEventsubConfig) -> String:
 		return ""
 	elif eventsub_response.response.response_code == 403:
 		_log.e("Subscription failed for '%s': The token is missing proper scopes. [url='%s']Please check documentation[/url]!" % [data.type, subscription.definition.documentation_link])
+		_log.d(eventsub_response.response.response_data.get_string_from_utf8())
 		_client.close(3003, "Missing Authorization")
 		return ""
 	if eventsub_response.response.response_code < 200 || eventsub_response.response.response_code >= 300:

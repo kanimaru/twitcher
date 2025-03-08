@@ -31,5 +31,5 @@ func _update_property() -> void:
 
 func _on_user_login_changed(new_user_login: String) -> void:
 	var current_user_login = get_edited_object()[get_edited_property()]
-	if new_user_login != current_user_login:
+	if new_user_login != current_user_login || new_user_login == "":
 		emit_changed(get_edited_property(), new_user_login, &"", true)

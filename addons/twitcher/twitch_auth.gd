@@ -1,5 +1,6 @@
+@icon("res://addons/twitcher/assets/auth-icon.svg")
 @tool
-extends Node
+extends Twitcher
 
 ## Delegate class for the oOuch Library.
 class_name TwitchAuth

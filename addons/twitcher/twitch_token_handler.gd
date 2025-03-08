@@ -1,3 +1,4 @@
+@icon("res://addons/twitcher/assets/auth-icon.svg")
 @tool
 extends OAuthTokenHandler
 

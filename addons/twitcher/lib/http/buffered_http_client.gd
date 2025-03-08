@@ -1,5 +1,6 @@
+@icon("./buffered-http-icon.svg")
 @tool
-extends Node
+extends Twitcher
 
 ## Http client that bufferes the requests and sends them sequentialy
 class_name BufferedHTTPClient

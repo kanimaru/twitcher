@@ -23,6 +23,8 @@ func type_animated() -> TwitchEmoteDefinition: _type = "animated"; return self;
 func theme_dark() -> TwitchEmoteDefinition: _theme = "dark"; return self;
 func theme_light() -> TwitchEmoteDefinition: _theme = "light"; return self;
 
+func _to_string() -> String:
+	return "Emote[%s]" % id
 
 ## Returns its unique filename
 func get_file_name() -> String:

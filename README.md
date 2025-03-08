@@ -1,8 +1,5 @@
 !!!! TODOS:
-- Check download of emojis in a chat message
-- Making Icons for Nodes
 - Updating documentation
-- rework Command Handling
 - Setup Client Credentials on running app
 
 

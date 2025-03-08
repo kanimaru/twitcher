@@ -1,4 +1,4 @@
-extends Node
+extends Twitcher
 
 ## Command handler to add custom commands like !lurk
 class_name TwitchCommandHandler
@@ -27,19 +27,24 @@ enum WhereFlag {
 	ANYWHERE = 3
 }
 
-@export var irc: TwitchIRC
-
 var _commands: Dictionary = {}
+
+var eventsub: TwitchEventsub:
+	set(val):
+		eventsub = val
+		update_configuration_warnings()
+
 
 ## Registers a command on an object with a func to call, similar to connect(signal, instance, func).
 func add_command(cmd_name : String, callable : Callable, min_args : int = 0, max_args : int = 0, permission_level : int = PermissionFlag.EVERYONE, where : int = WhereFlag.CHAT) -> void:
-	if irc == null:
-		push_error("Need IRC to add commands. Skip command %s" % cmd_name)
+	if eventsub == null:
+		push_error("Need eventsub to listen for commands. Skip command %s" % cmd_name)
 		return
 
-	var command = TwitchCommand.create(irc, cmd_name, callable, min_args, max_args, permission_level, where)
-	_commands[cmd_name] = command
-	add_child(command)
+# TODO	
+	#var command = TwitchCommand.create(irc, cmd_name, callable, min_args, max_args, permission_level, where)
+	#_commands[cmd_name] = command
+	#add_child(command)
 
 
 ## Removes a single command or alias.
@@ -74,3 +79,10 @@ func add_alias(cmd_name : String, alias : String) -> void:
 func add_aliases(cmd_name : String, aliases : PackedStringArray) -> void:
 	for alias in aliases:
 		add_alias(cmd_name, alias);
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var result : PackedStringArray = []
+	if eventsub == null:
+		result.append("Eventsub")
+	return result

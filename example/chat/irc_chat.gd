@@ -17,7 +17,7 @@ extends Control
 ## Warning in case you missed the confugration part above
 @onready var configuration_warning: Label = %ConfigurationWarning
 ## Direct IRC Access / old chat access
-@onready var irc: TwitchIRC = %IRC
+@onready var irc: TwitchIRC = %TwitchIRC
 ## A simplification for IRC channel access
 @onready var channel: TwitchIrcChannel = %TwitchIrcChannel
 
@@ -42,7 +42,8 @@ func _ready() -> void:
 	channel.message_received.connect(_on_chat_message)
 
 	# When the send button is pressed send the message
-	send.pressed.connect(_send_message)
+	send.pressed.connect(_on_send_pressed)
+	input_line.text_submitted.connect(_on_text_submitted)
 
 
 func _on_chat_message(from_user: String, message: String, tags: TwitchTags.Message) -> void:
@@ -108,9 +109,16 @@ func _get_time() -> String:
 
 
 func _send_message() -> void:
-	# Get the message from the input
-	var message : String = input_line.text
-	# clean the input
-	input_line.text = ""
-	# send the message to channel
-	channel.chat(message)
+	var message : String = input_line.text # Get the message from the input
+	await channel.chat(message) # send the message to channel
+	input_line.text = "" # clean the input
+
+
+## Callback when user pressed enter in text input
+func _on_text_submitted(new_text: String) -> void:
+	_send_message()
+	
+
+## Callback when user pressed send button
+func _on_send_pressed() -> void:
+	_send_message()

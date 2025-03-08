@@ -1,10 +1,12 @@
-@icon("./assets/chat-icon.svg")
-extends Node
+@icon("res://addons/twitcher/assets/chat-icon.svg")
+extends Twitcher
 
 ## Direct access to the chat for one specific channel
+##
 ## Usefull when using multiple channels otherwise TwitchIRC has everything you need
 ## Deprecated Eventsub solution is prefred with `TwitchChat` Node!
 ## This one exists only for tracking user join and leave events.
+
 class_name TwitchIrcChannel
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchIrcChannel")

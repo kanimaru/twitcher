@@ -36,15 +36,18 @@ class ClearCacheEditor extends EditorProperty:
 		add_child(_button)
 
 
-	func _clear(path: String) -> Dictionary:
-		var dir = DirAccess.open(path)
-		for file in dir.get_files():
+	func _clear(path: String) -> void:
+		var dir: DirAccess = DirAccess.open(path)
+		for file: String in dir.get_files():
 			if file.ends_with(".res"):
-				var err = dir.remove(file)
+				var err: Error = dir.remove(file)
 				if err != OK:
-					return { "result": err, "folder": dir, "file": file }
-		return { "result": OK }
-
+					push_error("Can't delete %s/%s cause of %s" % [dir, file, error_string(err)])
+		var tween = create_tween()
+		var _button_color = _button.modulate
+		tween.tween_property(_button, "modulate", Color.GREEN, .25)
+		tween.tween_property(_button, "modulate", _button_color, .25)
+		tween.play()
 
 class MagicPathEditor extends EditorProperty:
 	var path_line: LineEdit
