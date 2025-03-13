@@ -6,8 +6,9 @@ func _can_handle(object: Object) -> bool:
 
 
 func _parse_property(object: Object, type: Variant.Type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
-	if name == "scopes":
-		add_property_editor("scope_validation", ScopeValidation.new(), true, "Scope Validation")
+	if name == &"scopes" && object.get_class() != &"EditorDebuggerRemoteObject":
+		if (object is TwitchService && object.eventsub != null) || object is TwitchEventsub:
+			add_property_editor(&"scope_validation", ScopeValidation.new(), true, "Scope Validation")
 	return false
 
 
