@@ -1,0 +1,111 @@
+[gd_scene load_steps=13 format=3 uid="uid://cyni4hy8v8f5c"]
+
+[ext_resource type="Script" uid="uid://baeg2dog7gy6g" path="res://example/credentials_on_demand/setup.gd" id="1_neslu"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/twitch_auth.gd" id="2_0sosk"]
+[ext_resource type="Script" uid="uid://dm3xt5ctaxtcy" path="res://example/credentials_on_demand/auth.gd" id="2_7cjj4"]
+[ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://example/chat_view.tscn" id="3_inbm6"]
+[ext_resource type="Script" uid="uid://dcq1bvfrqimqq" path="res://addons/twitcher/chat/twitch_chat.gd" id="4_fd88c"]
+[ext_resource type="Resource" uid="uid://c2f0n0dkpc7wl" path="res://example/credentials_on_demand/example_credentials_on_demand_settings.tres" id="4_qtop2"]
+[ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="5_lx3gj"]
+[ext_resource type="Resource" uid="uid://hqh5x62qipk8" path="res://example/chat/chat_scopes.tres" id="6_guqgg"]
+[ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="7_guqgg"]
+[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="8_7cjj4"]
+[ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/twitch_media_loader.gd" id="8_fd88c"]
+[ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="9_inbm6"]
+
+[node name="Setup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_neslu")
+
+[node name="Auth" type="GridContainer" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -33.0
+offset_right = 150.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2
+script = ExtResource("2_7cjj4")
+
+[node name="ClientIdLabel" type="Label" parent="Auth"]
+layout_mode = 2
+text = "Client ID:"
+
+[node name="ClientId" type="LineEdit" parent="Auth"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ClientSecretLabel" type="Label" parent="Auth"]
+layout_mode = 2
+text = "Client Secret:"
+
+[node name="ClientSecret" type="LineEdit" parent="Auth"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+secret = true
+
+[node name="Control" type="Control" parent="Auth"]
+layout_mode = 2
+
+[node name="GetToken" type="Button" parent="Auth"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Get Token"
+
+[node name="ChatView" parent="." instance=ExtResource("3_inbm6")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="TwitchChat" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4_fd88c")
+metadata/_custom_type_script = "uid://dcq1bvfrqimqq"
+
+[node name="TwitchService" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("8_7cjj4")
+oauth_setting = ExtResource("4_qtop2")
+scopes = ExtResource("6_guqgg")
+token = ExtResource("5_lx3gj")
+metadata/_custom_type_script = "uid://i8st3lv0lidh"
+
+[node name="TwitchEventsub" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+unique_name_in_owner = true
+script = ExtResource("7_guqgg")
+api = NodePath("../TwitchAPI")
+scopes = ExtResource("6_guqgg")
+metadata/_custom_type_script = "uid://blmhj3j00yk45"
+
+[node name="TwitchMediaLoader" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+script = ExtResource("8_fd88c")
+api = NodePath("../TwitchAPI")
+metadata/_custom_type_script = "uid://d4lyup0vy1wtu"
+
+[node name="TwitchAPI" type="Node" parent="TwitchService"]
+script = ExtResource("9_inbm6")
+token = ExtResource("5_lx3gj")
+oauth_setting = ExtResource("4_qtop2")
+metadata/_custom_type_script = "uid://cw30cwveway65"
+
+[node name="TwitchAuth" type="Node" parent="TwitchService"]
+unique_name_in_owner = true
+script = ExtResource("2_0sosk")
+oauth_setting = ExtResource("4_qtop2")
+token = ExtResource("5_lx3gj")
+scopes = ExtResource("6_guqgg")
+metadata/_custom_type_script = "uid://iv0mgv0lu8b0"

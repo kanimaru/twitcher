@@ -1,4 +1,4 @@
-@icon("./security-icon.svg")
+@icon("./scope-icon.svg")
 @tool
 extends Resource
 

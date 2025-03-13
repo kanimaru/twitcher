@@ -1,4 +1,4 @@
-@icon("./security-icon.svg")
+@icon("./scope-icon.svg")
 @tool
 extends Resource
 class_name OAuthSetting
@@ -44,8 +44,9 @@ var redirect_port: int:
 ## Client Secret to authorize (optional depending on flow)
 @export_storage var client_secret: String:
 	set(val): 
-		client_secret = val
+		client_secret = val if val != null || val != "" else ""
 		emit_changed()
+		
 
 var _crypto: Crypto = Crypto.new()
 
@@ -71,9 +72,15 @@ func _update_redirect_url(value: String) -> void:
 
 
 func get_client_secret() -> String:
+	if client_secret == "" || client_secret == null: return ""
 	var value_raw = Marshalls.base64_to_raw(client_secret)
 	var value_bytes := _crypto.decrypt(_encryption_key_provider.key, value_raw)
 	return value_bytes.get_string_from_utf8()
+	
+	
+func set_client_secret(plain_secret: String) -> void:
+	var encrypted_value := _crypto.encrypt(_encryption_key_provider.key, plain_secret.to_utf8_buffer())
+	client_secret = Marshalls.raw_to_base64(encrypted_value)
 
 
 func _validate_property(property: Dictionary) -> void:
@@ -89,7 +96,12 @@ func _is_client_secret_need() -> bool:
 		authorization_flow == OAuth.AuthorizationFlow.CLIENT_CREDENTIALS
 
 
-func is_valid() -> PackedStringArray:
+func is_valid() -> bool:
+	var problems = get_valididation_problems()
+	return problems.is_empty()
+
+
+func get_valididation_problems() -> PackedStringArray:
 	var result: PackedStringArray = []
 	if client_id == "" || client_id == null:
 		result.append("Client ID is missing")

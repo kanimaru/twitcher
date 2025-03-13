@@ -35,12 +35,12 @@ class SecretProperty extends EditorProperty:
 
 	func _update_property() -> void:
 		var secret = get_edited_object()[get_edited_property()]
-		var value := ""
-		if secret != "":
-			var value_raw := Marshalls.base64_to_raw(secret)
-			var value_bytes := CRYPTO.decrypt(_crypto_key, value_raw)
-			value = value_bytes.get_string_from_utf8()
-		_line_edit.text = value
+		
+		if secret == "": _line_edit.text = ""
+		var value_raw := Marshalls.base64_to_raw(secret)
+		var value_bytes := CRYPTO.decrypt(_crypto_key, value_raw)
+		_line_edit.text = value_bytes.get_string_from_utf8()
+		print("UPADTE PROP")
 
 
 	func _on_focus_exited() -> void:
@@ -57,8 +57,8 @@ class SecretProperty extends EditorProperty:
 			emit_changed(get_edited_property(), "")
 			return
 		var encrypted_value := CRYPTO.encrypt(_crypto_key, plain_value.to_utf8_buffer())
-		var secret = Marshalls.raw_to_base64(encrypted_value)
-		emit_changed(get_edited_property(), secret)
+		emit_changed(get_edited_property(), Marshalls.raw_to_base64(encrypted_value))
+		print("SAVE PROP")
 
 
 class WellKnownUriProperty extends EditorProperty:

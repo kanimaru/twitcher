@@ -53,7 +53,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RevokeButton" type="Button" parent="VBoxContainer"]
+[node name="ReloadButton" type="Button" parent="VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Reloads the token from file use to update the infos when the token was fetched by an application run."
+text = "Reload Info"
+
+[node name="RevokeButton" type="Button" parent="VBoxContainer/GridContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Will remove the cached access token / refresh token to fetch a new one"

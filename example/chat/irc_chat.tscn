@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://5qw2frq187io"]
+[gd_scene load_steps=14 format=3 uid="uid://5qw2frq187io"]
 
 [ext_resource type="Script" uid="uid://bxtr3pfc1xjel" path="res://example/chat/irc_chat.gd" id="1_bjj8u"]
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="1_jw6hb"]
@@ -10,8 +10,8 @@
 [ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/twitch_auth.gd" id="8_bv4ru"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="10_nmebx"]
 [ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/twitch_media_loader.gd" id="11_le525"]
-[ext_resource type="PackedScene" uid="uid://b0ebhuv2yaow0" path="res://addons/twitcher/lib/http/DebugBufferedHttpClient.tscn" id="11_ugwlt"]
 [ext_resource type="Script" uid="uid://cva5e053boj4u" path="res://addons/twitcher/irc/twitch_irc_channel.gd" id="11_y0yp4"]
+[ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://example/chat_view.tscn" id="12_8andf"]
 
 [sub_resource type="Resource" id="Resource_8andf"]
 script = ExtResource("5_1si3o")
@@ -20,10 +20,6 @@ auto_join_channels = Array[StringName]([])
 server = "wss://irc-ws.chat.twitch.tv:443"
 send_message_delay_ms = 320
 capabilities = 5
-
-[sub_resource type="LabelSettings" id="LabelSettings_pqdv6"]
-font_size = 36
-font_color = Color(0.956209, 0, 0.289367, 1)
 
 [node name="IrcChat" type="Control"]
 layout_mode = 3
@@ -72,74 +68,6 @@ script = ExtResource("11_y0yp4")
 twitch_service = NodePath("../TwitchService")
 metadata/_custom_type_script = "uid://cva5e053boj4u"
 
-[node name="ConfigurationWarning" type="Label" parent="."]
+[node name="ChatView" parent="." instance=ExtResource("12_8andf")]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -514.5
-offset_top = -25.0
-offset_right = 514.5
-offset_bottom = 25.0
-grow_horizontal = 2
-grow_vertical = 2
-rotation = 0.359557
-pivot_offset = Vector2(514, 25)
-text = "Please configure client credentials according to the readme"
-label_settings = SubResource("LabelSettings_pqdv6")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Control" type="Control" parent="HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 2.0
-
-[node name="ChatContainer" type="VBoxContainer" parent="HBoxContainer/Control"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Control/ChatContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ChatContainer" type="VBoxContainer" parent="HBoxContainer/Control/ChatContainer/ScrollContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="InputContainer" type="HBoxContainer" parent="HBoxContainer/Control/ChatContainer"]
-layout_mode = 2
-
-[node name="InputLine" type="LineEdit" parent="HBoxContainer/Control/ChatContainer/InputContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Send" type="Button" parent="HBoxContainer/Control/ChatContainer/InputContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Send"
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="DebugBufferedHttpClient" parent="HBoxContainer/VBoxContainer" instance=ExtResource("11_ugwlt")]
-layout_mode = 2

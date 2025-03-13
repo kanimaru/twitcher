@@ -7,28 +7,21 @@ extends Control
 # - ClientID / ClientSecret
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+const ChatView = preload("res://example/chat_view.gd")
 
-## Container where the messages get added
-@onready var chat_container: VBoxContainer = %ChatContainer
-## Text to send
-@onready var input_line: LineEdit = %InputLine
-## Button to send a message
-@onready var send: Button = %Send
+## View to display everything
+@onready var chat_view: ChatView = %ChatView
 ## Channel to send / receive the messages
 @onready var twitch_chat: TwitchChat = %TwitchChat
 ## A wrapper to the Twitch services
 @onready var twitch_service: TwitchService = %TwitchService
-## Warning in case you missed the confugration part above
-@onready var configuration_warning: Label = %ConfigurationWarning
 
 @export var token: OAuthToken
 
 
 func _ready() -> void:
-	configuration_warning.hide()
 	if twitch_service.oauth_setting.client_id == "":
-		configuration_warning.show()
-		push_error("Please configure client credentials according to the readme")
+		chat_view.show_configuration_warning()
 		return
 
 	# Setup the library
@@ -38,9 +31,7 @@ func _ready() -> void:
 
 	# Listen to the message received of the chat
 	twitch_chat.message_received.connect(_on_chat_message)
-	# When the send button or enter was pressed send the message
-	send.pressed.connect(_on_send_pressed)
-	input_line.text_submitted.connect(_on_text_submitted)
+	chat_view.message_sent.connect(_on_sent_message)
 
 
 func _on_chat_message(message: TwitchChatMessage) -> void:
@@ -49,18 +40,8 @@ func _on_chat_message(message: TwitchChatMessage) -> void:
 	var badges : Array[SpriteFrames] = []
 	badges.assign(badges_dict.values())
 
-	# Create the message container
-	var chat_message : RichTextLabel = RichTextLabel.new()
-	chat_message.bbcode_enabled = true # Enable BBCode for color and sprites etc.
-	chat_message.fit_content = true # Message should stretch to its content
-	
-	# Prepare the emojis handler
-	var sprite_effect : SpriteFrameEffect = SpriteFrameEffect.new()
-	chat_message.install_effect(sprite_effect) # Install the emojihandler into the richtext label
-	chat_container.add_child(chat_message) # Add the complete message to the container
-
 	# Start creating the message to show
-	var result_message : String = _get_time() + " " # adds time
+	var result_message : String = ""
 	# The sprite effect needs unique ids for every sprite that it manages
 	var badge_id : int = 0
 	# Add all badges to the message
@@ -93,8 +74,7 @@ func _on_chat_message(message: TwitchChatMessage) -> void:
 			result_message += "[/shake]"
 
 	# Perpare all the sprites for the richtext label
-	result_message = sprite_effect.prepare_message(result_message, chat_message)
-	chat_message.text = result_message
+	chat_view.show_message(result_message)
 
 
 ## Prepares the message so that all fragments will be shown correctly
@@ -120,23 +100,5 @@ func show_text(message: TwitchChatMessage, current_text: String, emote_scale: in
 	return current_text
 
 
-# Formats the time to 02:03
-func _get_time() -> String:
-	var time_data : Dictionary = Time.get_time_dict_from_system()
-	return "%02d:%02d" % [time_data["hour"], time_data["minute"]]
-
-
-func _send_message() -> void:
-	var message : String = input_line.text # Get the message from the input
-	input_line.text = "" # clean the input
+func _on_sent_message(message: String) -> void:
 	twitch_chat.send_message(message) # send the message to channel
-
-
-## Callback when user pressed enter in text input
-func _on_text_submitted(_new_text: String) -> void:
-	_send_message()
-	
-
-## Callback when user pressed send button
-func _on_send_pressed() -> void:
-	_send_message()

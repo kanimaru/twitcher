@@ -30,5 +30,4 @@ func _on_authorize() -> void:
 	if not twitch_auth.is_configured():
 		printerr("%s is not configured correctly please fix the warnings." % obj.get_script())
 	else:
-		print("Do authorize the editor...")
 		await twitch_auth.authorize()

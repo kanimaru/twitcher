@@ -49,10 +49,10 @@ class Session extends RefCounted:
 signal session_id_received(id: String)
 
 ## Will be called when an event is sent from Twitch.
-signal event(type: String, data: Dictionary)
+signal event(type: StringName, data: Dictionary)
 
 ## Will be called when an event got revoked from your subscription by Twitch.
-signal events_revoked(type: String, status: String)
+signal events_revoked(type: StringName, status: String)
 
 ## Called when any eventsub message is received for low level access
 signal message_received(message: Variant)

@@ -5,25 +5,31 @@ extends Twitcher
 ## Grants access to read and write to a chat
 class_name TwitchChat
 
-@export var twitch_service: TwitchService:
-	set(val):
-		twitch_service = val
-		update_configuration_warnings()
+static var _log: TwitchLogger = TwitchLogger.new("TwitchChat")
 
+@export var eventsub: TwitchEventsub:
+	set(val):
+		eventsub = val
+		update_configuration_warnings()
+@export var media_loader: TwitchMediaLoader:
+	set(val):
+		media_loader = val
+		update_configuration_warnings()
+@export var api: TwitchAPI:
+	set(val):
+		api = val
+		update_configuration_warnings()
+		
+## Channel of the chat that this node should listen too
 @export var target_user_channel: String = "":
 	set = _update_target_user_channel
 
-@onready var twitch_event_listener: TwitchEventListener = %TwitchEventListener
-
-
-static var _log: TwitchLogger = TwitchLogger.new("TwitchChat")
+var twitch_event_listener: TwitchEventListener = TwitchEventListener.new()
 
 var broadcaster_user: TwitchUser:
 	set = _update_broadcaster_user
 
 var sender_user: TwitchUser
-var _sender_user_loading: bool
-signal _sender_user_loaded
 
 ## Triggered when a chat message got received
 signal message_received(message: TwitchChatMessage)
@@ -33,70 +39,69 @@ signal rest_updated(rest: TwitchAPI)
 
 func _ready() -> void:
 	_log.d("is ready")
-	twitch_event_listener.eventsub = twitch_service.eventsub
-	twitch_event_listener.received.connect(_on_event_received)
+	eventsub.event.connect(_on_event_received)
 	_update_target_user_channel(target_user_channel)
 
-
+## Resolves username to TwitchUser
 func _update_target_user_channel(val: String) -> void:
 	target_user_channel = val
 	if not is_inside_tree(): return
 	if val != null && val != "":
 		_log.d("change channel to %s" % val)
-		broadcaster_user = await twitch_service.get_user(val)
+		var opt : TwitchGetUsers.Opt = TwitchGetUsers.Opt.create()
+		opt.login = [ val ] as Array[String]
+		broadcaster_user = await api.get_user(opt)
 	else:
 		broadcaster_user = null
 		
-		
+
+## Perepares the user preloads badges and emojis
 func _update_broadcaster_user(val: TwitchUser) -> void:
 		broadcaster_user = val
 		update_configuration_warnings()
 		notify_property_list_changed()
 		if broadcaster_user != null:
-			twitch_service.media_loader.preload_badges(broadcaster_user.id)
-			twitch_service.media_loader.preload_emotes(broadcaster_user.id)
+			media_loader.preload_badges(broadcaster_user.id)
+			media_loader.preload_emotes(broadcaster_user.id)
 			_subscribe_to_channel()
 
-
+## Subscribe to eventsub if not happend yet
 func _subscribe_to_channel() -> void:
-	var subscriptions = twitch_service.eventsub.get_subscriptions()
+	var subscriptions: Array[TwitchEventsubConfig] = eventsub.get_subscriptions()
 	for subscription: TwitchEventsubConfig in subscriptions:
 		if subscription.type == TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE and \
 			subscription.condition.broadcaster_user_id == broadcaster_user.id:
 				# it is already subscribed
 				return
 		
-	var current_user = await twitch_service.get_current_user()
-		
-	var config = TwitchEventsubConfig.new()
+	var current_user: TwitchGetUsers.Response = await api.get_users(null)
+	sender_user = current_user.data[0]
+	
+	var config: TwitchEventsubConfig = TwitchEventsubConfig.new()
 	config.type = TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE
 	config.condition = {
 		"broadcaster_user_id": broadcaster_user.id,
-		"user_id": current_user.id
+		"user_id": sender_user.id
 	}
-	twitch_service.eventsub.subscribe(config)
+	eventsub.subscribe(config)
 
 
-func _on_event_received(data: Dictionary) -> void:
-	var message = TwitchChatMessage.from_json(data, twitch_service.media_loader)
+func _on_event_received(type: StringName, data: Dictionary) -> void:
+	if type != TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE.value: return
+	var message: TwitchChatMessage = TwitchChatMessage.from_json(data, media_loader)
 	if message.broadcaster_user_id == broadcaster_user.id:
 		message_received.emit(message)
 
 
 func send_message(message: String, reply_parent_message_id: String = "") -> Array[TwitchSendChatMessage.ResponseData]:
-	if not _sender_user_loading && sender_user == null:
-		_sender_user_loading = true
-		await _load_sender_user()
-	await _wait_for_sender_user()
-
-	var message_body = TwitchSendChatMessage.Body.new()
+	var message_body: TwitchSendChatMessage.Body = TwitchSendChatMessage.Body.new()
 	message_body.broadcaster_id = broadcaster_user.id
 	message_body.sender_id = sender_user.id
 	message_body.message = message
 	if reply_parent_message_id:
 		message_body.reply_parent_message_id = reply_parent_message_id
 
-	var response = await twitch_service.api.send_chat_message(message_body)
+	var response: TwitchSendChatMessage.Response = await api.send_chat_message(message_body)
 	if _log.enabled:
 		for message_data: TwitchSendChatMessage.ResponseData in response.data:
 			if not message_data.is_sent:
@@ -105,25 +110,14 @@ func send_message(message: String, reply_parent_message_id: String = "") -> Arra
 	return response.data
 
 
-func _wait_for_sender_user() -> void:
-	if sender_user == null: await _sender_user_loaded
-
-
-func _load_sender_user() -> void:
-	if sender_user != null:
-		_sender_user_loaded.emit()
-		return
-	sender_user = await twitch_service.get_current_user()
-	if sender_user == null:
-		push_error("Current Twitch User can't be loaded. (Can't send chat messages)")
-		return
-	_sender_user_loaded.emit()
-
-
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
-	if twitch_service == null:
-		result.append("TwitchService not assgined")
+	if eventsub == null:
+		result.append("TwitchEventsub not assgined")
+	if media_loader == null:
+		result.append("TwitchMediaLoader not assgined")
+	if api == null:
+		result.append("TwitchAPI not assgined")
 	if broadcaster_user == null:
 		result.append("Target broadcaster not specified")
 	return result

@@ -129,7 +129,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 	response_data.response_code = response_code
 	response_data.response_header = _get_response_headers_as_dictionary(headers)
 	responses[request_data] = response_data
-	logInfo("[%s] request done with result %s " % [ request_data.path, result ])
+	logInfo("[%s] request done with result HTTPRequest.Result[%s] " % [ request_data.path, result])
 	request_done.emit(response_data)
 
 

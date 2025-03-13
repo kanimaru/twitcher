@@ -5,6 +5,8 @@ extends Twitcher
 ## Delegate class for the oOuch Library.
 class_name TwitchAuth
 
+const HttpUtil = preload("res://addons/twitcher/lib/http/http_util.gd")
+
 static var _log: TwitchLogger = TwitchLogger.new("TwitchAuth")
 
 ## The requested devicecode to show to the user for authorization
@@ -14,6 +16,8 @@ signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
 @export var oauth_setting: OAuthSetting:
 	set(val): 
 		oauth_setting = val
+		if auth != null: auth.oauth_setting = oauth_setting
+		if token_handler != null: token_handler.oauth_setting = oauth_setting
 		update_configuration_warnings()
 ## Shows the what to authorize page of twitch again. (for example you need to relogin with a different account aka bot account)
 @export var force_verify: bool
@@ -21,11 +25,13 @@ signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
 @export var token: OAuthToken:
 	set(val):
 		token = val
+		if token_handler != null: token_handler.token = token
 		update_configuration_warnings()
 ## Scopes for the token that should be requested
 @export var scopes: OAuthScopes:
 	set(val):
 		scopes = val
+		if auth != null: auth.scopes = scopes
 		update_configuration_warnings()
 
 @onready var auth: OAuth
@@ -38,6 +44,10 @@ var is_authenticated: bool:
 
 func _init() -> void:
 	child_entered_tree.connect(_on_enter_child)
+	# There could be better locations but this ensures that its there when an 
+	# auth is needed.
+	var http_logger = TwitchLogger.new("Http")
+	HttpUtil.set_logger(http_logger.e, http_logger.i, http_logger.d)
 
 
 func _on_enter_child(node: Node) -> void:
@@ -47,7 +57,7 @@ func _on_enter_child(node: Node) -> void:
 
 func _ready() -> void:
 	OAuth.set_logger(_log.e, _log.i, _log.d);
-	if oauth_setting == null: oauth_setting = _get_oauth_setting()
+	if oauth_setting == null: oauth_setting = create_default_oauth_setting()
 	_ensure_children()
 
 
@@ -82,7 +92,7 @@ func refresh_token() -> void:
 	auth.refresh_token()
 
 
-func _get_oauth_setting() -> OAuthSetting:
+func create_default_oauth_setting() -> OAuthSetting:
 	var oauth_setting = OAuthSetting.new()
 	oauth_setting.authorization_flow = OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW
 	oauth_setting.device_authorization_url = "https://id.twitch.tv/oauth2/device"
@@ -100,7 +110,7 @@ func is_configured() -> bool:
 	
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
-	var oauth_setting_problems : PackedStringArray = oauth_setting.is_valid()
+	var oauth_setting_problems : PackedStringArray = oauth_setting.get_valididation_problems()
 	if not oauth_setting_problems.is_empty():
 		result.append("OAuthSetting is invalid")
 		result.append_array(oauth_setting_problems)

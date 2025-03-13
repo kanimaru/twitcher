@@ -74,7 +74,6 @@ func _load_tokens() -> bool:
 
 func remove_tokens() -> void:
 	var status = _config_file.load(_cache_path)
-	print(status, _config_file.get_sections())
 	if status == OK && _config_file.has_section(_identifier):
 		_access_token = ""
 		_refresh_token = ""
@@ -107,6 +106,8 @@ func get_expiration() -> int:
 
 
 func get_expiration_readable() -> String:
+	if _expire_date == 0:
+		return "Not available"
 	return Time.get_datetime_string_from_unix_time(_expire_date, true)
 
 
@@ -120,7 +121,7 @@ func invalidate() -> void:
 
 ## Does this accesstoken has a refresh token
 func has_refresh_token() -> bool:
-	return _refresh_token != ""
+	return _refresh_token != "" && _refresh_token != null
 
 
 ## Checks if the access token is still valid

@@ -111,6 +111,7 @@ func login() -> void:
 			await _start_device_login_process()
 
 	login_in_process = false
+	
 
 func _got_scopes_changed() -> bool:
 	var existing_scopes = token_handler.get_scopes()
@@ -123,6 +124,7 @@ func _got_scopes_changed() -> bool:
 			return true
 
 	return false
+
 
 func _start_login_process(response_type: String) -> void:
 	if scopes == null: scopes = OAuthScopes.new()
@@ -160,6 +162,7 @@ func _start_login_process(response_type: String) -> void:
 
 #region DeviceCodeFlow
 
+
 ## Starts the device flow.
 func _start_device_login_process():
 	var scopes = scopes.used_scopes
@@ -172,12 +175,13 @@ func _start_device_login_process():
 	print("Visit %s and enter the code %s for authorization." % [device_code_response.verification_uri, device_code_response.user_code])
 	await token_handler.request_device_token(device_code_response, scopes)
 
+
 func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 	logInfo("Start device code flow")
 	logDebug("Request Scopes: %s" % scopes)
 	var body = "client_id=%s&scopes=%s" % [oauth_setting.client_id, scopes.uri_encode()]
 	if oauth_setting.client_secret != "":
-		body += "&client_secret=%s" % oauth_setting.client_secret
+		body += "&client_secret=%s" % oauth_setting.get_client_secret()
 	var request = _client.request(oauth_setting.device_authorization_url, HTTPClient.METHOD_POST, {
 		"Content-Type": "application/x-www-form-urlencoded"
 	}, body)
@@ -256,6 +260,7 @@ func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServ
 		_handle_error(server, client, query_params)
 	client.peer.disconnect_from_host()
 
+
 ## Returns the response for the given auth request back to the browser also emits the auth code
 func _handle_success(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, query_params : Dictionary) -> void:
 	logInfo("Authentication success. Send auth code.")
@@ -263,7 +268,9 @@ func _handle_success(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, qu
 	if query_params.has("code"):
 		_auth_succeed.emit(query_params['code'])
 	else:
+		server.send_response(client, "200 OK", "<html><head><title>Login</title></head><body>Authentication failed!</body></html>".to_utf8_buffer())
 		logError("Auth code expected wasn't send!")
+
 
 ## Handles the error in case that Auth API has a problem
 func _handle_error(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, query_params : Dictionary) -> void:

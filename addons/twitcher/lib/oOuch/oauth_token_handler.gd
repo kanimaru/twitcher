@@ -13,6 +13,7 @@ const HEADERS = {
 	"Accept": "*/*",
 	"Content-Type": "application/x-www-form-urlencoded"
 }
+const SECONDS_TO_CHECK_EARLIER = 60
 
 ## Called when new access token is available
 signal token_resolved(tokens: OAuthToken)
@@ -32,23 +33,41 @@ var _http_client : OAuthHTTPClient
 ## Is currently requesting tokens
 var _requesting_token: bool = false
 
+## Timer to refresh tokens
+var _expiration_check_timer: Timer
 
 func _ready() -> void:
 	if token == null: token = OAuthToken.new()
+	
 	_http_client = OAuthHTTPClient.new()
 	_http_client.name = "OAuthTokenClient"
 	add_child(_http_client)
+	
+	_expiration_check_timer = Timer.new()
+	_expiration_check_timer.name = "ExpirationCheck"
+	_expiration_check_timer.timeout.connect(refresh_tokens)
+	add_child(_expiration_check_timer)
+	update_expiration_check()
+	
+	# When the token changed externally it need's to update the refresh timeout
+	token.changed.connect(update_expiration_check)
 
 
-func _process(_delta: float) -> void:
-	_check_token_refresh()
+func update_expiration_check() -> void:
+	var current_time = Time.get_unix_time_from_system()
+	var expiration = token.get_expiration()
+	if expiration == 0: 
+		_expiration_check_timer.stop()
+		return
+	_expiration_check_timer.start(expiration - current_time - SECONDS_TO_CHECK_EARLIER)
+	logDebug("Refresh token in %s seconds" % roundf(_expiration_check_timer.wait_time))
 
 
-## Checks if tokens runs up and starts refreshing it. (called often hold footprint small)
+## Checks if tokens expires and starts refreshing it. (called often hold footprint small)
 func _check_token_refresh() -> void:
 	if _requesting_token: return
 
-	if !token.is_token_valid() && token.has_refresh_token():
+	if token_needs_refresh():
 		logInfo("Token needs refresh")
 		refresh_tokens()
 
@@ -117,9 +136,13 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 
 ## Uses the refresh token if possible to refresh all tokens
 func refresh_tokens() -> void:
+	if not oauth_setting.is_valid(): 
+		logDebug("Try to refresh token but oauth settings are invalid. Can't refresh token.")
+		return
+
 	if _requesting_token: return
 	_requesting_token = true
-	logInfo("refresh token")
+	logInfo("use refresh token")
 	if token.has_refresh_token():
 		var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
 		var request = _http_client.request(oauth_setting.token_url, HTTPClient.METHOD_POST, HEADERS, request_body)
@@ -170,9 +193,12 @@ func get_token_expiration() -> String:
 
 ## Checks if the token are valud
 func is_token_valid() -> bool:
-	var current_time = Time.get_datetime_string_from_system(true)
-	var expire_data = get_token_expiration()
 	return token.is_token_valid()
+
+
+## Checks if the token is expired and can be refreshed
+func token_needs_refresh() -> bool:
+	return !token.is_token_valid() && token.has_refresh_token()
 
 
 func get_access_token() -> String: return token.get_access_token()

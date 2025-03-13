@@ -12,14 +12,17 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 	set(val):
 		oauth_setting = val
 		oauth_setting.changed.connect(update_configuration_warnings)
+		_set_in_child("oauth_setting", val)
 		update_configuration_warnings()
 @export var scopes: OAuthScopes:
 	set(val):
 		scopes = val
+		_set_in_child("scopes", val)
 		update_configuration_warnings()
 @export var token: OAuthToken:
 	set(val):
 		token = val
+		_set_in_child("token", val)
 		update_configuration_warnings()
 
 @onready var auth: TwitchAuth
@@ -32,21 +35,14 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 ## Cache for the current user so that no roundtrip has to be done every time get_current_user will be called
 var _current_user: TwitchUser
 
+
 func _init() -> void:
 	child_entered_tree.connect(_on_child_entered)
 	child_exiting_tree.connect(_on_child_exiting)
 
 
 func _ready() -> void:
-	_ensure_required_nodes()
 	_log.d("is ready")
-	
-
-func _ensure_required_nodes() -> void:
-	if auth == null:
-		auth = TwitchAuth.new()
-		auth.oauth_setting = oauth_setting
-		add_child(auth)
 
 
 func _on_child_entered(node: Node) -> void:
@@ -65,11 +61,25 @@ func _on_child_entered(node: Node) -> void:
 		node.oauth_setting = oauth_setting
 	if node.has_signal(&"unauthenticated"):
 		node.unauthenticated.connect(_on_unauthenticated)
+	update_configuration_warnings()
+
+
+func _set_in_child(property: String, value: Variant) -> void:
+	for child in get_children():
+		if property in child: child[property] = value
 
 
 func _on_child_exiting(node: Node) -> void:
+	if node is TwitchAuth: auth = null
+	if node is TwitchAPI: api = null
+	if node is TwitchEventsub: eventsub = null
+	if node is TwitchIRC: irc = null
+	if node is TwitchMediaLoader: media_loader = null
+	if node is TwitchCommandHandler: command_handler = null
+	
 	if node.has_signal(&"unauthenticated"):
 		node.unauthenticated.disconnect(_on_unauthenticated)
+	update_configuration_warnings()
 
 
 ## Call this to setup the complete Twitch integration whenever you need.
@@ -91,18 +101,19 @@ func is_configured() -> bool:
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
-	
+	if auth == null:
+		result.append("TwitchAuth Node is missing")
 	if oauth_setting == null:
-		result.append("OAuthSetting is missing")
+		result.append("OAuthSetting Resource is missing")
 	else:
-		var oauth_setting_problems : PackedStringArray = oauth_setting.is_valid()
+		var oauth_setting_problems : PackedStringArray = oauth_setting.get_valididation_problems()
 		if not oauth_setting_problems.is_empty():
-			result.append("OAuthSetting is invalid")
+			result.append("OAuthSetting Resource is invalid")
 			result.append_array(oauth_setting_problems)
 	if scopes == null:
-		result.append("OAuthScopes is missing")
+		result.append("OAuthScopes Resource is missing")
 	if token == null:
-		result.append("OAuthToken is missing")
+		result.append("OAuthToken Resource is missing")
 	return result
 
 
