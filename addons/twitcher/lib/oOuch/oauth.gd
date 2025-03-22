@@ -31,7 +31,10 @@ var force_verify: String
 var _query_parser = RegEx.create_from_string("GET (.*?/?)\\??(.*?)? HTTP/1\\.1.*?")
 var _auth_http_server: OAuthHTTPServer
 var _last_login_attempt: int
+## State for the current authcode request to compare with
+var _current_state: String
 var _client: OAuthHTTPClient
+var _crypto = Crypto.new()
 
 enum AuthorizationFlow {
 	AUTHORIZATION_CODE_FLOW,
@@ -45,7 +48,8 @@ func _ready() -> void:
 	_client = OAuthHTTPClient.new()
 	_client.name = "OAuthClient"
 	add_child(_client)
-	_auth_http_server = OAuthHTTPServer.new(oauth_setting.redirect_port)
+	_auth_http_server = OAuthHTTPServer.create(oauth_setting.redirect_port)
+	add_child(_auth_http_server)
 	if token_handler == null:
 		token_handler = OAuthTokenHandler.new()
 		add_child(token_handler)
@@ -129,19 +133,21 @@ func _got_scopes_changed() -> bool:
 func _start_login_process(response_type: String) -> void:
 	if scopes == null: scopes = OAuthScopes.new()
 
-	_auth_http_server.start()
+	_auth_http_server.start_listening()
 
 	if response_type == "code":
 		_auth_http_server.request_received.connect(_process_code_request.bind(_auth_http_server))
 	elif response_type == "token":
 		_auth_http_server.request_received.connect(_process_implicit_request.bind(_auth_http_server))
 
+	_current_state = _crypto.generate_random_bytes(16).hex_encode()
 	var query_param = "&".join([
 			"force_verify=%s" % force_verify.uri_encode(),
 			"response_type=%s" % response_type.uri_encode(),
 			"client_id=%s" % oauth_setting.client_id.uri_encode(),
 			"scope=%s" % scopes.ssv_scopes().uri_encode(),
-			"redirect_uri=%s" % oauth_setting.redirect_url.uri_encode()
+			"redirect_uri=%s" % oauth_setting.redirect_url.uri_encode(),
+			"state=%s" % _current_state
 		])
 
 	var url = oauth_setting.authorization_url + "?" + query_param
@@ -158,7 +164,7 @@ func _start_login_process(response_type: String) -> void:
 		await token_handler.token_resolved
 		_auth_http_server.request_received.disconnect(_process_implicit_request.bind(_auth_http_server))
 	logInfo("authorization is done stop server")
-	_auth_http_server.stop()
+	_auth_http_server.stop_listening()
 
 #region DeviceCodeFlow
 
@@ -237,6 +243,10 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 #region AuthCodeFlow
 ## Handles the response after auth endpoint redirects to our server with the response
 func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServer) -> void:
+	if client.peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+		logError("Client not connected can't process code response.")
+		return
+
 	var request = client.peer.get_utf8_string(client.peer.get_available_bytes())
 	if request == "":
 		logError("Empty response. Check if your redirect URL is set to %s." % oauth_setting.redirect_url)
@@ -254,21 +264,26 @@ func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServ
 	var query_params_str = matcher.get_string(2)
 	var query_params = parse_query(query_params_str)
 
-	if not query_params.has("error"):
+	var state = query_params.get("state")
+	if query_params.has("error"):
+		_handle_error(server, client, query_params)
+	elif state == _current_state:
 		_handle_success(server, client, query_params)
 	else:
-		_handle_error(server, client, query_params)
+		_handle_other_requests(server, client, first_line)
 	client.peer.disconnect_from_host()
 
 
 ## Returns the response for the given auth request back to the browser also emits the auth code
 func _handle_success(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, query_params : Dictionary) -> void:
 	logInfo("Authentication success. Send auth code.")
-	server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success!</body></html>".to_utf8_buffer())
 	if query_params.has("code"):
+		var succes_page = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/success-page.txt")
+		server.send_response(client, "200 OK", succes_page)
 		_auth_succeed.emit(query_params['code'])
 	else:
-		server.send_response(client, "200 OK", "<html><head><title>Login</title></head><body>Authentication failed!</body></html>".to_utf8_buffer())
+		var error_page = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/error-page.txt")
+		server.send_response(client, "200 OK", error_page)
 		logError("Auth code expected wasn't send!")
 
 
@@ -279,6 +294,11 @@ func _handle_error(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, quer
 	server.send_response(client, "400 BAD REQUEST",  msg.to_utf8_buffer())
 
 #endregion
+
+func _handle_other_requests(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, fist_line: String) -> void:
+	if fist_line.contains("favicon.ico"):
+		var favicon: PackedByteArray = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/favicon.ico")
+		server.send_response(client, "200", favicon)
 
 
 ## Parses a query string and returns a dictionary with the parameters.

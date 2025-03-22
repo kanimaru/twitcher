@@ -3,24 +3,23 @@ extends RefCounted
 ## Meta information about the command sender
 class_name TwitchCommandInfo
 
-var command_name : String
+
 var command : TwitchCommand
-var message : String
 var channel_name : String
 var username : String
-var tags : Variant
-var args: Array[String]
+var arguments : Array[String]
+## Depending on the type it's either a TwitchChatMessage or a Dictionary of the whisper message data
+var original_message : Variant
 
-func _init(cmd_name: String,
-	cmd: TwitchCommand,
-	msg: String,
-	channel: String,
-	user: String,
-	tag: Variant,
-	arguments: Array[String]):
-	command = cmd;
-	command_name = cmd_name;
-	channel_name = channel;
-	username = user;
-	tags = tag;
-	args = arguments;
+
+func _init(
+	_command: TwitchCommand,
+	_channel_name: String,
+	_username: String,
+	_arguments: Array[String],
+	_original_message: Variant):
+	command = _command
+	channel_name = _channel_name
+	username = _username
+	arguments = _arguments
+	original_message = _original_message

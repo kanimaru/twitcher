@@ -1,81 +1,151 @@
 @tool
-extends RefCounted
+extends Node
 
 ## Provides a simple HTTP Service to serve web stuff
 class_name HTTPServer
 
-var _server : TCPServer
+## Key: int | Value: WeakRef(Server)
+static var _servers : Dictionary = {}
 
+
+class Server extends TCPServer:
+	var _bind_address: String
+	var _port: int
+	var _clients: Array[Client] = []
+	var _listeners: int
+
+	signal request_received(client: Client)
+	signal client_connected(client: Client)
+	signal client_disconnected(client: Client)
+	signal client_error_occured(client: Client, error: Error)
+	
+	
+	func _init(bind_address: String, port: int) -> void:
+		_bind_address = bind_address
+		_port = port
+		HTTPServer._servers[_port] = weakref(self)
+	
+	
+	func start_listening() -> void:
+		_listeners += 1
+		if !is_listening(): 
+			var status: Error = listen(_port, _bind_address)
+			Engine.get_main_loop().process_frame.connect(_process)
+			if status != OK:
+				HTTPServer.logError("Could not listen to port %d: %s" % [_port, error_string(status)])
+			else:
+				HTTPServer.logInfo("{%s:%s} listening" % [ _bind_address, _port ])
+		else:
+			HTTPServer.logDebug("{%s:%s} already listening" % [ _bind_address, _port ])
+	
+	
+	func stop_listening() -> void:
+		_listeners -= 1
+		if _listeners <= 0:
+			_stop_server()
+
+	
+	func _stop_server() -> void:
+		HTTPServer.logInfo("{%s:%s} stop" % [ _bind_address, _port ])
+		Engine.get_main_loop().process_frame.disconnect(_process)
+		for client in _clients:
+			client.peer.disconnect_from_host()
+		stop()
+		
+		
+	func _notification(what: int) -> void:
+		if what == NOTIFICATION_PREDELETE:
+			HTTPServer.logInfo("{%s:%s} removed" % [ _bind_address, _port ])
+			HTTPServer._servers.erase(_port)
+
+
+	func _process() -> void:
+		if !is_listening(): return
+
+		if is_connection_available():
+			_handle_connect()
+
+		for client in _clients:
+			_process_request(client)
+			_handle_disconnect(client)
+	
+	
+	func _process_request(client: Client) -> void:
+		var peer := client.peer
+		if peer.get_status() == StreamPeerTCP.STATUS_CONNECTED:
+			var error = peer.poll()
+			if error != OK:
+				HTTPServer.logError("Could not poll client %d: %s" % [_port, error_string(error)])
+				client_error_occured.emit(client, error)
+			elif peer.get_available_bytes() > 0:
+				request_received.emit(client)
+	
+	
+	func _handle_connect() -> void:
+		var peer := take_connection()
+		var client := Client.new()
+		client.peer = peer
+		_clients.append(client)
+		client_connected.emit(client)
+		HTTPServer.logInfo("{%s:%s} client connected" % [ _bind_address, _port ])
+		
+		
+	func _handle_disconnect(client: Client) -> void:
+		if client.peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+			client_disconnected.emit(client)
+			HTTPServer.logInfo("{%s:%s} client disconnected" % [ _bind_address, _port ])
+			_clients.erase(client)
+	
+	
 class Client extends RefCounted:
 	var peer: StreamPeerTCP
+
 
 ## Called when a new request was made
 signal request_received(client: Client)
 
-var _clients: Array[Client] = []
-var _port: int
-var _bind_address: String
+
+@export var _port: int
+@export var _bind_address: String
+
+var _server : Server
+var _listening: bool
 
 
-func _init(port: int, bind_address: String = "*") -> void:
-	_server = TCPServer.new()
-	_bind_address = bind_address
-	_port = port
-	Engine.get_main_loop().process_frame.connect(poll)
+static func create(port: int, bind_address: String = "*") -> HTTPServer:
+	var server = HTTPServer.new()
+	server._bind_address = bind_address
+	server._port = port
+	return server
 
+
+func _ready() -> void:
+	if _servers.has(_port) && _servers[_port] != null:
+		_server = _servers[_port].get_ref()
+	else:
+		_server = Server.new(_bind_address, _port)
+	_server.request_received.connect(_on_request_received)
+	logInfo("{%s:%s} start" % [ _bind_address, _port ])
+
+
+func _on_request_received(client: Client) -> void:
+	request_received.emit(client)
+	
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_PREDELETE and self != null:
-		Engine.get_main_loop().process_frame.disconnect(poll)
+	if what == NOTIFICATION_PREDELETE:
+		stop_listening()
 
 
-func poll() -> void:
-	if(!_server.is_listening()): return
-
-	if(_server.is_connection_available()):
-		_handle_connect()
-
-	for client in _clients:
-		_process_request(client)
-		_handle_disconnect(client)
-
-
-func start():
-	logInfo("{%s:%s} start" % [ _bind_address, _port ])
-	var status = _server.listen(_port, _bind_address)
-	if status != OK:
-		logError("Could not listen to port %d: %s" % [_port, error_string(status)])
-
-
-func stop():
-	logInfo("{%s:%s} stop" % [ _bind_address, _port ])
-	for client in _clients:
-		client.peer.disconnect_from_host()
-	_server.stop()
-
-
-func _handle_connect() -> void:
-	var peer := _server.take_connection()
-	var client := Client.new()
-	client.peer = peer
-	_clients.append(client)
-	logInfo("{%s:%s} client connected" % [ _bind_address, _port ])
-
-
-func _process_request(client: Client) -> void:
-	var peer := client.peer
-	if(peer.get_status() == StreamPeerTCP.STATUS_CONNECTED):
-		var error = peer.poll()
-		if(error != OK):
-			logError("{%s:%s} can't poll data: %s" % [ _bind_address, _port, error_string(error)])
-		elif (peer.get_available_bytes() > 0):
-			request_received.emit(client);
-
-
-func _handle_disconnect(client: Client) -> void:
-	if(client.peer.get_status() != StreamPeerTCP.STATUS_CONNECTED):
-		logInfo("{%s:%s} client disconnected" % [ _bind_address, _port ])
-		_clients.erase(client)
+func start_listening() -> void:
+	_listening = true
+	_server.start_listening()
+	
+	
+func stop_listening() -> void:
+	if _listening:
+		_listening = false
+		_server.stop_listening()
 
 
 func send_response(client: Client, response_code : String, body : PackedByteArray) -> void:

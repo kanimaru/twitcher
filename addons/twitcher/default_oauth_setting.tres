@@ -11,7 +11,6 @@ token_url = "https://id.twitch.tv/oauth2/token"
 authorization_url = "https://id.twitch.tv/oauth2/authorize"
 device_authorization_url = ""
 cache_file = "res://auth.key"
-client_id = "1ae0idgxbvn6vi97ls7d89cyd919oq"
+client_id = ""
 authorization_flow = 0
 _encryption_key_provider = ExtResource("1_4134i")
-client_secret = "F4nduKyPI5cKv/GSPJ1twYWHFYpPwPO7xtbRvBIPY0HojznsBL4gOIjWSCZm5o3PWbUgMRtsp/L3AMwsHiWAu9t3h7qZW0BqhpSc8nm2RGJqQU1xkoooVg5K4DTfWFbP5S937FvgQr2UxqlKTqJRx1f81ythQy0ASe4Qb1HFXUMsN5db6TTRM+9tjwUGVM/ba6lzNlC9MvgTexQHquQp8ibnZKXh4P2HRHGEd5CmC3cMaeskpRAlXivyh4/g2EKJmKUmIJvXgUOggxSyj/qJc1poaGusBXfRPnJ6JCqN9qqnySnIi/FpR3p4qro5j69ETt/WawT/kpLzSZqclcAuXyjZsk4wKFCz7WzP8YIjpKddzqxlcXyKchAJv4BzoLJk8oYJZ+Ml2EUFF4ejG4zeXfNBTuhJsSZ/Lfh7GTvFaR1uV6jUBWotBS389iGWgoJD66PRio95mC160EnboMaylKQFzM3yewvOwhUj1Mab5nH84+6eoSCp7w54+Tq3AZ+0/phBi82IErrBBEl4FEc/i3s5cBo394z/k15ygJRWURSRIeQZQONJeulMvOQp/Zg4o9dlzzsIwFnyvpaURBwFCZjjV6fc2O4V0gMOkU/52hjQeiVISPCYnVYdbZUxDgJr5YBrSSFnNLCQwKXRQAUU86NnQqJpU251KpGs2Q5njT4="

@@ -153,7 +153,7 @@ func get_user(username: String) -> TwitchUser:
 	return user_data.data[0]
 
 
-## Get data about a currently authenticated user
+## Get data about a currently authenticated user (caches the value)
 func get_current_user() -> TwitchUser:
 	if _current_user != null:
 		return _current_user
@@ -206,8 +206,11 @@ func get_subscriptions() -> Array[TwitchEventsubConfig]:
 
 #region Chat
 
-func chat(message: String, target_broadcaster_id: String, sender_id: String = "") -> void:
-	if sender_id == null:
+func chat(message: String, target_broadcaster_id: String = "", sender_id: String = "") -> void:
+	if sender_id == "":
+		var current_user = await get_current_user()
+		sender_id = current_user.id
+	if target_broadcaster_id == "": 
 		var current_user = await get_current_user()
 		sender_id = current_user.id
 	var body = TwitchSendChatMessage.Body.create(target_broadcaster_id, sender_id, message)

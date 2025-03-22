@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Twitcher - Login Failed</title>
+  <script>setTimeout(() => window.close(), 5000);</script>
+  <style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	background: linear-gradient(135deg, #2d2d2d, #1e1e1e);
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	color: white;
+}
+
+.error-container {
+	background: rgba(255, 255, 255, 0.1);
+	padding: 30px;
+	border-radius: 15px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+	backdrop-filter: blur(10px);
+	max-width: 400px;
+}
+
+.error-icon {
+	font-size: 60px;
+	margin-bottom: 15px;
+	color: #e63946;
+}
+
+.error-message {
+	font-size: 24px;
+	font-weight: bold;
+	color: #ff6b6b;
+}
+
+.error-description {
+	font-size: 18px;
+	margin-top: 10px;
+	text-align: justify;
+	color: #e0e0e0;
+}
+
+.button {
+	display: inline-block;
+	cursor: pointer;
+	margin-top: 20px;
+	padding: 12px 25px;
+	background-color: #e63946;
+	color: white;
+	text-decoration: none;
+	font-weight: bold;
+	border-radius: 5px;
+	transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+	background-color: #d62839;
+	transform: scale(1.05);
+}
+  </style>
+</head>
+
+<body>
+  <div class="error-container">
+	<div class="error-message">Login Failed</div>
+	<div class="error-description">Login attempt was unsuccessful. Page should automatically close when it doesn't happen close it manually.</div>
+	<a onclick="window.close()" class="button">Close Page</a>
+  </div>
+</body>
+</html>

@@ -69,10 +69,10 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 	var response = await client.wait_for_request(request)
 
 	# Token expired / or missing permissions
-	if response.response_code == 403:
+	if response.response_code == 401:
 		_log.e("'%s' is unauthorized. It is probably your scopes." % path)
 		unauthorized.emit()
-	if response.response_code == 401:
+	if response.response_code == 403:
 		_log.i("'%s' is unauthenticated. Refresh token." % path)
 		unauthenticated.emit()
 		await token.authorized

@@ -88,7 +88,7 @@ func _subscribe_to_channel() -> void:
 
 func _on_event_received(type: StringName, data: Dictionary) -> void:
 	if type != TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE.value: return
-	var message: TwitchChatMessage = TwitchChatMessage.from_json(data, media_loader)
+	var message: TwitchChatMessage = TwitchChatMessage.from_json(data)
 	if message.broadcaster_user_id == broadcaster_user.id:
 		message_received.emit(message)
 

@@ -1,7 +1,7 @@
 @tool
 extends RefCounted
 
-## Logger class that can be enabled and disabled.
+## Logger class that can be enabled and disabled. (Works best with tool scripts)
 class_name TwitchLogger
 
 ## Name of the logger that will be shown in the logs

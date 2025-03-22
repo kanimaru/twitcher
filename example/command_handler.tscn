@@ -33,7 +33,6 @@ metadata/_custom_type_script = "uid://iv0mgv0lu8b0"
 script = ExtResource("7_u6u6a")
 metadata/_custom_type_script = "uid://fnanrpx00j4u"
 
-[node name="TwitchChat" type="Node" parent="TwitchService" node_paths=PackedStringArray("twitch_service")]
+[node name="TwitchChat" type="Node" parent="TwitchService"]
 script = ExtResource("7_ojmxk")
-twitch_service = NodePath("..")
 metadata/_custom_type_script = "uid://dcq1bvfrqimqq"
