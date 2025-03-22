@@ -1,11 +1,14 @@
+@icon("res://addons/twitcher/assets/media-loader-icon.svg")
 @tool
-extends RefCounted
+extends Resource
 
+## Most simple image transformer that doesn't support GIF's uses builtin functionalities of godot.
 class_name TwitchImageTransformer
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchImageTransformer")
 
-var fallback_texture: Texture2D = preload("res://addons/twitcher/assets/fallback_texture.tres")
+## Used when the image can't be transformed
+@export var fallback_texture: Texture2D = preload("res://addons/twitcher/assets/fallback_texture.tres")
 
 
 func is_supporting_animation() -> bool:

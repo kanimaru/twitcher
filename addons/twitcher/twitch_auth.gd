@@ -34,9 +34,15 @@ signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
 		if auth != null: auth.scopes = scopes
 		update_configuration_warnings()
 
+## Takes care to authorize the user
 @onready var auth: OAuth
+## Takes care to fetch and refresh oauth tokens
 @onready var token_handler: TwitchTokenHandler
-
+## Customize how you want to open the authorization page (for example: multi user authentication)
+@export var shell_command: String:
+	set(val): 
+		shell_command = val
+		if auth != null: auth.shell_command = val
 
 var is_authenticated: bool:
 	get(): return auth.is_authenticated()
@@ -74,6 +80,7 @@ func _ensure_children() -> void:
 	auth.scopes = scopes
 	auth.force_verify = &"true" if force_verify else &"false"
 	auth.oauth_setting = oauth_setting
+	auth.shell_command = shell_command
 	token_handler.oauth_setting = oauth_setting
 	token_handler.token = token
 

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bxtr3pfc1xjel" path="res://example/chat/irc_chat.gd" id="1_bjj8u"]
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="1_jw6hb"]
-[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/default_oauth_setting.tres" id="2_egirf"]
+[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/twitch_oauth_setting.tres" id="2_egirf"]
 [ext_resource type="Resource" uid="uid://hqh5x62qipk8" path="res://example/chat/chat_scopes.tres" id="3_yp6d3"]
 [ext_resource type="Script" uid="uid://wkh0l2xsyapj" path="res://addons/twitcher/irc/twitch_irc.gd" id="4_llwbm"]
 [ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="4_ydhdv"]

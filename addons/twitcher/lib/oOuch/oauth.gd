@@ -24,6 +24,8 @@ signal token_changed(access_token: String)
 @export var oauth_setting: OAuthSetting
 @export var scopes: OAuthScopes
 @export var token_handler: OAuthTokenHandler
+## Customize how you want to open the authorization page (for example: multi user authentication)
+@export var shell_command: String
 
 var login_in_process: bool
 ## Special solution just for twitch ignore it in all other providers
@@ -153,7 +155,7 @@ func _start_login_process(response_type: String) -> void:
 	var url = oauth_setting.authorization_url + "?" + query_param
 	logInfo("start login process to get token for scopes %s" % (",".join(scopes.used_scopes)))
 	logDebug("login to %s" % url)
-	OS.shell_open(url)
+	OS.shell_open(shell_command + url)
 	logDebug("waiting for user to login.")
 	if response_type == "code":
 		var auth_code = await _auth_succeed

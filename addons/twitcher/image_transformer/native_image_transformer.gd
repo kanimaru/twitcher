@@ -1,6 +1,9 @@
+@icon("res://addons/twitcher/assets/media-loader-icon.svg")
 @tool
 extends TwitchImageTransformer
 
+## Native GIF parser written in GDScript and ported to Godot 4. Most of the time stable but there 
+## are GIF's that may not work cause the file didn't follow the GIF specification.
 class_name NativeImageTransformer
 
 

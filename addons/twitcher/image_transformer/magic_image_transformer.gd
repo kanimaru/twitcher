@@ -1,19 +1,26 @@
+@icon("res://addons/twitcher/assets/media-loader-icon.svg")
 @tool
 extends TwitchImageTransformer
 
+## A image transformer that uses a thirdparty program called ImageMagick 
+## (https://imagemagick.org/script/download.php) to transform GIF's and similar files into 
+## SpriteFrames. Battleproof very stable but uses an external program.
 class_name MagicImageTransformer
 
-var converter: ImageMagickConverter
-var imagemagic_path: String:
-	set = update_imagemagic_path
-var supported: bool
 
+## Path to the imagemagick program on windows its normally just 'magick' when it is available in the PATH
+@export_global_file var imagemagic_path: String:
+	set = update_imagemagic_path
+	
+var supported: bool
+var converter: ImageMagickConverter
 
 func is_supporting_animation() -> bool:
 	return true
 
 
 func update_imagemagic_path(path: String) -> void:
+	if imagemagic_path == path: return
 	imagemagic_path = path
 	if imagemagic_path != "":
 		var out = []

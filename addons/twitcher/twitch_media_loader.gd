@@ -5,11 +5,6 @@ extends Twitcher
 ## Will load badges, icons and profile images
 class_name TwitchMediaLoader
 
-var _image_transformers: Dictionary = {
-	"NativeImageTransformer": NativeImageTransformer,
-	"MagicImageTransformer": MagicImageTransformer,
-	"TwitchImageTransformer": TwitchImageTransformer,
-}
 
 ## Called when an emoji was succesfully loaded
 signal emoji_loaded(definition: TwitchEmoteDefinition)
@@ -20,10 +15,10 @@ const FALLBACK_PROFILE = preload("res://addons/twitcher/assets/no_profile.png")
 var _log: TwitchLogger  = TwitchLogger.new("TwitchMediaLoader")
 
 @export var api: TwitchAPI
-@export_enum("NativeImageTransformer", "MagicImageTransformer", "TwitchImageTransformer") var image_transformer: String = "TwitchImageTransformer":
-	set = update_image_transformer
-@export var image_magic_path: String = "":
-	set = update_image_magic_path
+@export var image_transformer: TwitchImageTransformer = TwitchImageTransformer.new(): 
+	set(val):
+		image_transformer = val
+		update_configuration_warnings()
 @export var fallback_texture: Texture2D = FALLBACK_TEXTURE
 @export var fallback_profile: Texture2D = FALLBACK_PROFILE
 @export var image_cdn_host: String = "https://static-cdn.jtvnw.net"
@@ -55,7 +50,6 @@ func _ready() -> void:
 	_client.name = "TwitchMediaLoaderClient"
 	add_child(_client)
 	_load_cache()
-	update_image_transformer(image_transformer)
 
 
 ## Loading all images from the directory into the memory cache
@@ -377,27 +371,6 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if image_transformer_implementation == null || not image_transformer_implementation.is_supported():
 		return ["Image transformer is misconfigured"]
 	return []
-
-
-func update_image_transformer(transformer_name: String) -> void:
-	if transformer_name == "" || transformer_name == null:
-		image_transformer = "TwitchImageTransformer"
-		image_transformer_implementation = TwitchImageTransformer.new()
-	else:
-		image_transformer = transformer_name
-		image_transformer_implementation = _image_transformers[transformer_name].new()
-		update_image_magic_path(image_magic_path)
-		if "fallback_texture" in image_transformer_implementation:
-			image_transformer_implementation.fallback_texture = fallback_texture
-	update_configuration_warnings()
-	notify_property_list_changed()
-
-
-func update_image_magic_path(path: String) -> void:
-	image_magic_path = path
-	if image_transformer_implementation is MagicImageTransformer:
-		image_transformer_implementation.imagemagic_path = path
-	update_configuration_warnings()
 
 
 func load_image(url: String) -> Image:
