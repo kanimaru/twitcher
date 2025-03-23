@@ -47,8 +47,8 @@ func update_values(access_token: String, refresh_token: String, expire_in: int, 
 
 ## Persists the tokesn with the expire date
 func _persist_tokens():
-	var encrypted_access_token = CRYPTO.encrypt(_crypto_key_provider.key, _access_token.to_utf8_buffer())
-	var encrypted_refresh_token = CRYPTO.encrypt(_crypto_key_provider.key, _refresh_token.to_utf8_buffer())
+	var encrypted_access_token = _crypto_key_provider.encrypt(_access_token.to_utf8_buffer())
+	var encrypted_refresh_token = _crypto_key_provider.encrypt(_refresh_token.to_utf8_buffer())
 	_config_file.load(_cache_path)
 	_config_file.set_value(_identifier, "expire_date", _expire_date)
 	_config_file.set_value(_identifier, "access_token", Marshalls.raw_to_base64(encrypted_access_token))
@@ -62,10 +62,10 @@ func _load_tokens() -> bool:
 	var status = _config_file.load(_cache_path)
 	if status == OK && _config_file.has_section(_identifier):
 		_expire_date = _config_file.get_value(_identifier, "expire_date", 0)
-		var encrypted_access_token = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "access_token"))
-		var encrypted_refresh_token = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "refresh_token"))
-		_access_token = CRYPTO.decrypt(_crypto_key_provider.key, encrypted_access_token).get_string_from_utf8()
-		_refresh_token = CRYPTO.decrypt(_crypto_key_provider.key, encrypted_refresh_token).get_string_from_utf8()
+		var encrypted_access_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "access_token"))
+		var encrypted_refresh_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "refresh_token"))
+		_access_token = _crypto_key_provider.decrypt(encrypted_access_token).get_string_from_utf8()
+		_refresh_token = _crypto_key_provider.decrypt(encrypted_refresh_token).get_string_from_utf8()
 		_scopes = _config_file.get_value(_identifier, "scopes", "").split(",")
 		emit_changed()
 		return true

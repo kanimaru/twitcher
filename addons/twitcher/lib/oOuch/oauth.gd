@@ -24,8 +24,12 @@ signal token_changed(access_token: String)
 @export var oauth_setting: OAuthSetting
 @export var scopes: OAuthScopes
 @export var token_handler: OAuthTokenHandler
-## Customize how you want to open the authorization page (for example: multi user authentication)
+## Customize how you want to open the authorization page (advanced usage for example multi user authentication)
 @export var shell_command: String
+## Parameters for the shell command (advanced usage for example multi user authentication)
+@export var shell_parameter: Array[String] = []
+## Some oauth provide doesn't return the provided scopes so you can disable the scope check
+@export var check_scope_changed: bool = true
 
 var login_in_process: bool
 ## Special solution just for twitch ignore it in all other providers
@@ -51,6 +55,7 @@ func _ready() -> void:
 	_client.name = "OAuthClient"
 	add_child(_client)
 	_auth_http_server = OAuthHTTPServer.create(oauth_setting.redirect_port)
+	_auth_http_server.name = "OAuthServer"
 	add_child(_auth_http_server)
 	if token_handler == null:
 		token_handler = OAuthTokenHandler.new()
@@ -120,6 +125,8 @@ func login() -> void:
 	
 
 func _got_scopes_changed() -> bool:
+	if not check_scope_changed: return false
+	
 	var existing_scopes = token_handler.get_scopes()
 	var requested_scopes = scopes.used_scopes
 	if existing_scopes.size() != requested_scopes.size():
@@ -155,7 +162,13 @@ func _start_login_process(response_type: String) -> void:
 	var url = oauth_setting.authorization_url + "?" + query_param
 	logInfo("start login process to get token for scopes %s" % (",".join(scopes.used_scopes)))
 	logDebug("login to %s" % url)
-	OS.shell_open(shell_command + url)
+	if not shell_command.is_empty():
+		var parameters: PackedStringArray = shell_parameter.duplicate() \
+			.map(func(param: String): return param.format({"url": url}))
+		OS.create_process(shell_command, parameters)
+	else:
+		OS.shell_open(url)
+		
 	logDebug("waiting for user to login.")
 	if response_type == "code":
 		var auth_code = await _auth_succeed

@@ -9,16 +9,15 @@
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="7_itbs2"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="9_otx6d"]
 [ext_resource type="Texture2D" uid="uid://g1dbcjksbotw" path="res://addons/twitcher/assets/fallback_texture.tres" id="10_1iusd"]
-[ext_resource type="Script" uid="uid://dqd4kovdhhy8o" path="res://addons/twitcher/image_transformer/magic_image_transformer.gd" id="11_4x3fm"]
+[ext_resource type="Script" uid="uid://6v8jnfjwbnhm" path="res://addons/twitcher/image_transformer/twitch_image_transformer.gd" id="11_1iusd"]
 [ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://example/chat_view.tscn" id="11_5c0by"]
 [ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/twitch_media_loader.gd" id="11_aprrr"]
 [ext_resource type="PackedScene" uid="uid://cinvytmtixgwu" path="res://addons/twitcher/chat/twitch_chat.tscn" id="12_5f2sm"]
 
-[sub_resource type="Resource" id="Resource_y0pkj"]
-script = ExtResource("11_4x3fm")
-imagemagic_path = "magick"
+[sub_resource type="Resource" id="Resource_4x3fm"]
+script = ExtResource("11_1iusd")
 fallback_texture = ExtResource("10_1iusd")
-metadata/_custom_type_script = "uid://dqd4kovdhhy8o"
+metadata/_custom_type_script = "uid://6v8jnfjwbnhm"
 
 [node name="Chat" type="Control"]
 layout_mode = 3
@@ -41,7 +40,6 @@ script = ExtResource("6_2pnhe")
 oauth_setting = ExtResource("3_d0q0w")
 token = ExtResource("5_cneyv")
 scopes = ExtResource("4_wpyv0")
-shell_command = null
 
 [node name="EventSub" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
 script = ExtResource("7_itbs2")
@@ -57,7 +55,7 @@ oauth_setting = ExtResource("3_d0q0w")
 unique_name_in_owner = true
 script = ExtResource("11_aprrr")
 api = NodePath("../API")
-image_transformer = SubResource("Resource_y0pkj")
+image_transformer = SubResource("Resource_4x3fm")
 
 [node name="TwitchChat" parent="." node_paths=PackedStringArray("eventsub", "media_loader", "api") instance=ExtResource("12_5f2sm")]
 unique_name_in_owner = true

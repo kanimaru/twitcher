@@ -14,18 +14,15 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		add_property_editor("well_known_url", WellKnownUriProperty.new())
 		return true
 	if name == "client_id":
-		add_property_editor("client_secret", SecretProperty.new(EncryptionKeyProvider.key), true, "Client Secret")
+		add_property_editor("client_secret", SecretProperty.new(), true, "Client Secret")
 	return false
 
 
 class SecretProperty extends EditorProperty:
-	static var CRYPTO: Crypto = Crypto.new()
-	var _crypto_key: CryptoKey
 	var _line_edit: LineEdit = LineEdit.new()
 
 
-	func _init(crypto_key: CryptoKey) -> void:
-		_crypto_key = crypto_key
+	func _init() -> void:
 		_line_edit.secret = true
 		_line_edit.text_submitted.connect(_on_text_changed)
 		_line_edit.focus_exited.connect(_on_focus_exited)
@@ -38,7 +35,7 @@ class SecretProperty extends EditorProperty:
 		
 		if secret == "": _line_edit.text = ""
 		var value_raw := Marshalls.base64_to_raw(secret)
-		var value_bytes := CRYPTO.decrypt(_crypto_key, value_raw)
+		var value_bytes := EncryptionKeyProvider.decrypt(value_raw)
 		_line_edit.text = value_bytes.get_string_from_utf8()
 
 
@@ -55,7 +52,7 @@ class SecretProperty extends EditorProperty:
 		if plain_value == "":
 			emit_changed(get_edited_property(), "")
 			return
-		var encrypted_value := CRYPTO.encrypt(_crypto_key, plain_value.to_utf8_buffer())
+		var encrypted_value := EncryptionKeyProvider.encrypt(plain_value.to_utf8_buffer())
 		emit_changed(get_edited_property(), Marshalls.raw_to_base64(encrypted_value))
 
 

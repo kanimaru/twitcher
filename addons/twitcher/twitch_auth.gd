@@ -38,11 +38,7 @@ signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
 @onready var auth: OAuth
 ## Takes care to fetch and refresh oauth tokens
 @onready var token_handler: TwitchTokenHandler
-## Customize how you want to open the authorization page (for example: multi user authentication)
-@export var shell_command: String:
-	set(val): 
-		shell_command = val
-		if auth != null: auth.shell_command = val
+
 
 var is_authenticated: bool:
 	get(): return auth.is_authenticated()
@@ -75,19 +71,21 @@ func _ensure_children() -> void:
 	if auth == null:
 		auth = OAuth.new()
 		auth.name = "OAuth"
+		
 
 	auth.token_handler = token_handler
 	auth.scopes = scopes
 	auth.force_verify = &"true" if force_verify else &"false"
 	auth.oauth_setting = oauth_setting
-	auth.shell_command = shell_command
 	token_handler.oauth_setting = oauth_setting
 	token_handler.token = token
 
 	if not auth.is_inside_tree():
 		add_child(auth)
+		auth.owner = owner
 	if not token_handler.is_inside_tree():
 		add_child(token_handler)
+		token_handler.owner = owner
 
 
 func authorize() -> void:

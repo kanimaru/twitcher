@@ -74,12 +74,12 @@ func _update_redirect_url(value: String) -> void:
 func get_client_secret() -> String:
 	if client_secret == "" || client_secret == null: return ""
 	var value_raw = Marshalls.base64_to_raw(client_secret)
-	var value_bytes := _crypto.decrypt(_encryption_key_provider.key, value_raw)
+	var value_bytes := _encryption_key_provider.decrypt(value_raw)
 	return value_bytes.get_string_from_utf8()
 	
 	
 func set_client_secret(plain_secret: String) -> void:
-	var encrypted_value := _crypto.encrypt(_encryption_key_provider.key, plain_secret.to_utf8_buffer())
+	var encrypted_value := _encryption_key_provider.encrypt(plain_secret.to_utf8_buffer())
 	client_secret = Marshalls.raw_to_base64(encrypted_value)
 
 

@@ -368,7 +368,7 @@ func _request_cheermote(cheer_tier: TwitchCheermote.Tiers, cheermote: TwitchChee
 #region Utilities
 
 func _get_configuration_warnings() -> PackedStringArray:
-	if image_transformer_implementation == null || not image_transformer_implementation.is_supported():
+	if image_transformer == null || not image_transformer.is_supported():
 		return ["Image transformer is misconfigured"]
 	return []
 

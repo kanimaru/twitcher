@@ -7,22 +7,75 @@ extends Resource
 ## otherwise your secrets may revealed easily!
 class_name CryptoKeyProvider
 
-static var CRYPTO: Crypto = Crypto.new()
+## Identify oOuch library specifics without collisions
+const _CONFIG_PACKAGE_KEY: String = "dev.kani.oouch"
+const _CONFIG_SECRET_KEY: String = "encryption"
+const _AES_BLOCK_SIZE : int = 16
 
-## Folder to the private and public keys
-@export_global_file(".key") var encryption_key_path: String = "user://token_encryption.key"
-## Godot object to encrypt
-var key: CryptoKey = CryptoKey.new()
+## Location of the encryption secrets
+@export_global_file var encrpytion_secret_location: String = "res://.godot/export_credentials.cfg"
 
+static var aes: AESContext = AESContext.new()
 
 func _init() -> void:
-	_ensure_encryption_key()
+	_get_encryption_secret()
+	
+	
+## Don't cache it so that you accidently leak your secret when you debug
+func _get_encryption_secret() -> String:
+	var config = ConfigFile.new()
+	var error = config.load(encrpytion_secret_location)
+	if error == ERR_FILE_NOT_FOUND:
+		_create_secret(config)
+	elif error != OK:
+		printerr("Can't open %s cause of %s" % [encrpytion_secret_location, error_string(error)])
+		return ""
+	
+	var key: String = config.get_value(_CONFIG_PACKAGE_KEY, _CONFIG_SECRET_KEY, "")
+	if key == "":
+		key = _create_secret(config)
+		
+	return key
 
 
-func _ensure_encryption_key() -> void:
-	if not FileAccess.file_exists(encryption_key_path):
-		key = CRYPTO.generate_rsa(4096)
-		key.save(encryption_key_path)
-		print("On first start a new encryption key was created at: %s \n It is used to encrypt access-, refresh-tokens and client credentials." % encryption_key_path)
-	else:
-		key.load(encryption_key_path)
+func _create_secret(config: ConfigFile) -> String:
+	print("Creating a new secret for encryption you can find it %s" % encrpytion_secret_location)
+	var crypto : Crypto = Crypto.new()
+
+	var secret_data : PackedByteArray = crypto.generate_random_bytes(16)
+	var secret : String = secret_data.hex_encode()
+	config.set_value(_CONFIG_PACKAGE_KEY, _CONFIG_SECRET_KEY, secret)
+	config.save(encrpytion_secret_location)
+	return secret
+	
+	
+func _pad(value: PackedByteArray) -> PackedByteArray:
+	var pad_len : int = _AES_BLOCK_SIZE - (value.size() % _AES_BLOCK_SIZE)
+	for i in range(pad_len):
+		value.append(pad_len)
+	return value
+
+
+func _unpad(value: PackedByteArray) -> PackedByteArray:
+	if value.is_empty():
+		return value
+	var pad_len : int = value[-1]
+	if pad_len <= 0 or pad_len > _AES_BLOCK_SIZE or value.size() < pad_len:
+		push_error("Invalid padding detected (%s)" % pad_len)
+		return PackedByteArray()
+	return value.slice(0, -pad_len)
+
+
+func encrypt(value: PackedByteArray) -> PackedByteArray:
+	var padded_value = _pad(value)
+	aes.start(AESContext.MODE_ECB_ENCRYPT, _get_encryption_secret().to_utf8_buffer())
+	var encrypted_value: PackedByteArray = aes.update(padded_value)
+	aes.finish()
+	return encrypted_value
+
+
+func decrypt(value: PackedByteArray) -> PackedByteArray:
+	aes.start(AESContext.MODE_ECB_DECRYPT, _get_encryption_secret().to_utf8_buffer())
+	var decrypted_value: PackedByteArray = aes.update(value)
+	aes.finish()
+	return _unpad(decrypted_value)
