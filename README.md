@@ -1,4 +1,22 @@
-# [Beta] Twitcher
+# Version 2 is going into Beta
+You can find a branch called v2. It breaks almost everything in v1 so only think about using v2 when you want to start a new project or some features are missing in v1.
+Features in v2 that v1 doesn't have:
+
+- All node based setup
+- Editor features like Scopes List, Tokeninfo, Eventsub helper
+- Support for Web builds
+- Multiple users support (yes you can have now bot account and broadcaster account)
+- Initialize only what you need and when you need it (don't forced to init everything in editor settings)
+- Better Rest API
+- Better encryption for secrets and tokens
+- Cleaner code (almost no statics anymore)
+
+Currently it is missing documentation you can see how it works in the examples. I will take care soon for a good documentation.
+
+## When does v2 will be the default version?
+As soon as I have battle tested it in my overlay and a game I will make the v2 branch to the leading branch and upload it to Godot Asset Lib. 
+
+# [Beta] Twitcher V1
 .. is a Godot Library for implementing Twitch functionality in Godot.
 The main purpose is to use this library for easier overlay development.
 The library can also be used to support Twitch game integration.
