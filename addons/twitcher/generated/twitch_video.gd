@@ -8,85 +8,85 @@ extends TwitchData
 class_name TwitchVideo
 	
 ## An ID that identifies the video.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The ID of the stream that the video originated from if the video's type is "archive;" otherwise, **null**.
-var stream_id: String:
+@export var stream_id: String:
 	set(val): 
 		stream_id = val
 		track_data(&"stream_id", val)
 
 ## The ID of the broadcaster that owns the video.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The broadcaster's login name.
-var user_login: String:
+@export var user_login: String:
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The broadcaster's display name.
-var user_name: String:
+@export var user_name: String:
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The video's title.
-var title: String:
+@export var title: String:
 	set(val): 
 		title = val
 		track_data(&"title", val)
 
 ## The video's description.
-var description: String:
+@export var description: String:
 	set(val): 
 		description = val
 		track_data(&"description", val)
 
 ## The date and time, in UTC, of when the video was created. The timestamp is in RFC3339 format.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The date and time, in UTC, of when the video was published. The timestamp is in RFC3339 format.
-var published_at: Variant:
+@export var published_at: String:
 	set(val): 
 		published_at = val
 		track_data(&"published_at", val)
 
 ## The video's URL.
-var url: String:
+@export var url: String:
 	set(val): 
 		url = val
 		track_data(&"url", val)
 
 ## A URL to a thumbnail image of the video. Before using the URL, you must replace the `%{width}` and `%{height}` placeholders with the width and height of the thumbnail you want returned. Due to current limitations, `${width}` must be 320 and `${height}` must be 180.
-var thumbnail_url: String:
+@export var thumbnail_url: String:
 	set(val): 
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
 
 ## The video's viewable state. Always set to **public**.
-var viewable: String:
+@export var viewable: String:
 	set(val): 
 		viewable = val
 		track_data(&"viewable", val)
 
 ## The number of times that users have watched the video.
-var view_count: int:
+@export var view_count: int:
 	set(val): 
 		view_count = val
 		track_data(&"view_count", val)
 
 ## The ISO 639-1 two-letter language code that the video was broadcast in. For example, the language code is DE if the video was broadcast in German. For a list of supported languages, see [Supported Stream Language](https://help.twitch.tv/s/article/languages-on-twitch#streamlang). The language value is "other" if the video was broadcast in a language not in the list of supported languages.
-var language: String:
+@export var language: String:
 	set(val): 
 		language = val
 		track_data(&"language", val)
@@ -96,19 +96,19 @@ var language: String:
 ## * archive — An on-demand video (VOD) of one of the broadcaster's past streams.
 ## * highlight — A highlight reel of one of the broadcaster's past streams. See [Creating Highlights](https://help.twitch.tv/s/article/creating-highlights-and-stream-markers).
 ## * upload — A video that the broadcaster uploaded to their video library. See Upload under [Video Producer](https://help.twitch.tv/s/article/video-on-demand?language=en%5FUS#videoproducer).
-var type: String:
+@export var type: String:
 	set(val): 
 		type = val
 		track_data(&"type", val)
 
 ## The video's length in ISO 8601 duration format. For example, 3m21s represents 3 minutes, 21 seconds.
-var duration: String:
+@export var duration: String:
 	set(val): 
 		duration = val
 		track_data(&"duration", val)
 
 ## The segments that Twitch Audio Recognition muted; otherwise, **null**.
-var muted_segments: Array[MutedSegments]:
+@export var muted_segments: Array[MutedSegments]:
 	set(val): 
 		muted_segments = val
 		track_data(&"muted_segments", val)
@@ -116,7 +116,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _stream_id: String, _user_id: String, _user_login: String, _user_name: String, _title: String, _description: String, _created_at: Variant, _published_at: Variant, _url: String, _thumbnail_url: String, _viewable: String, _view_count: int, _language: String, _type: String, _duration: String, _muted_segments: Array[MutedSegments]) -> TwitchVideo:
+static func create(_id: String, _stream_id: String, _user_id: String, _user_login: String, _user_name: String, _title: String, _description: String, _created_at: String, _published_at: String, _url: String, _thumbnail_url: String, _viewable: String, _view_count: int, _language: String, _type: String, _duration: String, _muted_segments: Array[MutedSegments]) -> TwitchVideo:
 	var twitch_video: TwitchVideo = TwitchVideo.new()
 	twitch_video.id = _id
 	twitch_video.stream_id = _stream_id
@@ -184,13 +184,13 @@ static func from_json(d: Dictionary) -> TwitchVideo:
 class MutedSegments extends TwitchData:
 
 	## The duration of the muted segment, in seconds.
-	var duration: int:
+	@export var duration: int:
 		set(val): 
 			duration = val
 			track_data(&"duration", val)
 	
 	## The offset, in seconds, from the beginning of the video to where the muted segment begins.
-	var offset: int:
+	@export var offset: int:
 		set(val): 
 			offset = val
 			track_data(&"offset", val)

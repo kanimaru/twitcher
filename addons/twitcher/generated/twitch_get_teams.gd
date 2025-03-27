@@ -12,7 +12,7 @@ class_name TwitchGetTeams
 class Response extends TwitchData:
 
 	## A list that contains the single team that you requested.
-	var data: Array[TwitchTeam]:
+	@export var data: Array[TwitchTeam]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,13 +40,13 @@ class Response extends TwitchData:
 class Opt extends TwitchData:
 
 	## The name of the team to get. This parameter and the _id_ parameter are mutually exclusive; you must specify the team’s name or ID but not both.
-	var name: String:
+	@export var name: String:
 		set(val): 
 			name = val
 			track_data(&"name", val)
 	
 	## The ID of the team to get. This parameter and the _name_ parameter are mutually exclusive; you must specify the team’s name or ID but not both.
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)

@@ -12,7 +12,7 @@ class_name TwitchUpdateShieldModeStatus
 class Body extends TwitchData:
 
 	## A Boolean value that determines whether to activate Shield Mode. Set to **true** to activate Shield Mode; otherwise, **false** to deactivate Shield Mode.
-	var is_active: bool:
+	@export var is_active: bool:
 		set(val): 
 			is_active = val
 			track_data(&"is_active", val)
@@ -39,7 +39,7 @@ class Body extends TwitchData:
 class Response extends TwitchData:
 
 	## A list that contains a single object with the broadcaster’s updated Shield Mode status.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -67,31 +67,31 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## A Boolean value that determines whether Shield Mode is active. Is **true** if Shield Mode is active; otherwise, **false**.
-	var is_active: bool:
+	@export var is_active: bool:
 		set(val): 
 			is_active = val
 			track_data(&"is_active", val)
 	
 	## An ID that identifies the moderator that last activated Shield Mode.
-	var moderator_id: String:
+	@export var moderator_id: String:
 		set(val): 
 			moderator_id = val
 			track_data(&"moderator_id", val)
 	
 	## The moderator’s login name.
-	var moderator_login: String:
+	@export var moderator_login: String:
 		set(val): 
 			moderator_login = val
 			track_data(&"moderator_login", val)
 	
 	## The moderator’s display name.
-	var moderator_name: String:
+	@export var moderator_name: String:
 		set(val): 
 			moderator_name = val
 			track_data(&"moderator_name", val)
 	
 	## The UTC timestamp (in RFC3339 format) of when Shield Mode was last activated.
-	var last_activated_at: Variant:
+	@export var last_activated_at: String:
 		set(val): 
 			last_activated_at = val
 			track_data(&"last_activated_at", val)
@@ -99,7 +99,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_is_active: bool, _moderator_id: String, _moderator_login: String, _moderator_name: String, _last_activated_at: Variant) -> ResponseData:
+	static func create(_is_active: bool, _moderator_id: String, _moderator_login: String, _moderator_name: String, _last_activated_at: String) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.is_active = _is_active
 		response_data.moderator_id = _moderator_id

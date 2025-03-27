@@ -14,13 +14,13 @@ class_name TwitchDropsEntitlementUpdated
 ## * SUCCESS — The status of the entitlements in the `ids` field were successfully updated.
 ## * UNAUTHORIZED — The user or organization identified by the user access token is not authorized to update the entitlements.
 ## * UPDATE\_FAILED — The update failed. These are considered transient errors and the request should be retried later.
-var status: String:
+@export var status: String:
 	set(val): 
 		status = val
 		track_data(&"status", val)
 
 ## The list of entitlements that the status in the `status` field applies to.
-var ids: Array[String]:
+@export var ids: Array[String]:
 	set(val): 
 		ids = val
 		track_data(&"ids", val)

@@ -12,7 +12,7 @@ class_name TwitchCreateClip
 class Response extends TwitchData:
 
 	## 
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -42,13 +42,13 @@ class ResponseData extends TwitchData:
 	## A URL that you can use to edit the clip’s title, identify the part of the clip to publish, and publish the clip. [Learn More](https://help.twitch.tv/s/article/how-to-use-clips)  
 	##   
 	## The URL is valid for up to 24 hours or until the clip is published, whichever comes first.
-	var edit_url: String:
+	@export var edit_url: String:
 		set(val): 
 			edit_url = val
 			track_data(&"edit_url", val)
 	
 	## An ID that uniquely identifies the clip.
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
@@ -78,7 +78,7 @@ class ResponseData extends TwitchData:
 class Opt extends TwitchData:
 
 	## A Boolean value that determines whether the API captures the clip at the moment the viewer requests it or after a delay. If **false** (default), Twitch captures the clip at the moment the viewer requests it (this is the same clip experience as the Twitch UX). If **true**, Twitch adds a delay before capturing the clip (this basically shifts the capture window to the right slightly).
-	var has_delay: bool:
+	@export var has_delay: bool:
 		set(val): 
 			has_delay = val
 			track_data(&"has_delay", val)

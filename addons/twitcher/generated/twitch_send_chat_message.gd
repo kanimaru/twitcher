@@ -12,25 +12,25 @@ class_name TwitchSendChatMessage
 class Body extends TwitchData:
 
 	## The ID of the broadcaster whose chat room the message will be sent to.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The ID of the user sending the message. This ID must match the user ID in the user access token.
-	var sender_id: String:
+	@export var sender_id: String:
 		set(val): 
 			sender_id = val
 			track_data(&"sender_id", val)
 	
 	## The message to send. The message is limited to a maximum of 500 characters. Chat messages can also include emoticons. To include emoticons, use the name of the emote. The names are case sensitive. Don’t include colons around the name (e.g., :bleedPurple:). If Twitch recognizes the name, Twitch converts the name to the emote before writing the chat message to the chat room
-	var message: String:
+	@export var message: String:
 		set(val): 
 			message = val
 			track_data(&"message", val)
 	
 	## The ID of the chat message being replied to.
-	var reply_parent_message_id: String:
+	@export var reply_parent_message_id: String:
 		set(val): 
 			reply_parent_message_id = val
 			track_data(&"reply_parent_message_id", val)
@@ -65,7 +65,7 @@ class Body extends TwitchData:
 class Response extends TwitchData:
 
 	## 
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -93,19 +93,19 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The message id for the message that was sent.
-	var message_id: String:
+	@export var message_id: String:
 		set(val): 
 			message_id = val
 			track_data(&"message_id", val)
 	
 	## If the message passed all checks and was sent.
-	var is_sent: bool:
+	@export var is_sent: bool:
 		set(val): 
 			is_sent = val
 			track_data(&"is_sent", val)
 	
 	## The reason the message was dropped, if any.
-	var drop_reason: ResponseDropReason:
+	@export var drop_reason: ResponseDropReason:
 		set(val): 
 			drop_reason = val
 			track_data(&"drop_reason", val)
@@ -137,13 +137,13 @@ class ResponseData extends TwitchData:
 class ResponseDropReason extends TwitchData:
 
 	## Code for why the message was dropped.
-	var code: String:
+	@export var code: String:
 		set(val): 
 			code = val
 			track_data(&"code", val)
 	
 	## Message for why the message was dropped.
-	var message: String:
+	@export var message: String:
 		set(val): 
 			message = val
 			track_data(&"message", val)

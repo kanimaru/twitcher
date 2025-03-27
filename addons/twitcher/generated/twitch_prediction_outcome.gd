@@ -8,31 +8,31 @@ extends TwitchData
 class_name TwitchPredictionOutcome
 	
 ## An ID that identifies this outcome.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The outcome’s text.
-var title: String:
+@export var title: String:
 	set(val): 
 		title = val
 		track_data(&"title", val)
 
 ## The number of unique viewers that chose this outcome.
-var users: int:
+@export var users: int:
 	set(val): 
 		users = val
 		track_data(&"users", val)
 
 ## The number of Channel Points spent by viewers on this outcome.
-var channel_points: int:
+@export var channel_points: int:
 	set(val): 
 		channel_points = val
 		track_data(&"channel_points", val)
 
 ## A list of viewers who were the top predictors; otherwise, **null** if none.
-var top_predictors: Array[TopPredictors]:
+@export var top_predictors: Array[TopPredictors]:
 	set(val): 
 		top_predictors = val
 		track_data(&"top_predictors", val)
@@ -43,7 +43,7 @@ var top_predictors: Array[TopPredictors]:
 ## * PINK
 ##   
 ## If the number of outcomes is two, the color is BLUE for the first outcome and PINK for the second outcome. If there are more than two outcomes, the color is BLUE for all outcomes.
-var color: String:
+@export var color: String:
 	set(val): 
 		color = val
 		track_data(&"color", val)
@@ -86,31 +86,31 @@ static func from_json(d: Dictionary) -> TwitchPredictionOutcome:
 class TopPredictors extends TwitchData:
 
 	## An ID that identifies the viewer.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The viewer’s display name.
-	var user_name: String:
+	@export var user_name: String:
 		set(val): 
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The viewer’s login name.
-	var user_login: String:
+	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The number of Channel Points the viewer spent.
-	var channel_points_used: int:
+	@export var channel_points_used: int:
 		set(val): 
 			channel_points_used = val
 			track_data(&"channel_points_used", val)
 	
 	## The number of Channel Points distributed to the viewer.
-	var channel_points_won: int:
+	@export var channel_points_won: int:
 		set(val): 
 			channel_points_won = val
 			track_data(&"channel_points_won", val)

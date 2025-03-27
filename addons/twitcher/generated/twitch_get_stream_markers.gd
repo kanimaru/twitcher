@@ -12,13 +12,13 @@ class_name TwitchGetStreamMarkers
 class Response extends TwitchData:
 
 	## The list of markers grouped by the user that created the marks.
-	var data: Array[TwitchStreamMarkers]:
+	@export var data: Array[TwitchStreamMarkers]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## The information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -88,7 +88,7 @@ class Response extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Set the request’s _after_ or _before_ query parameter to this value depending on whether you’re paging forwards or backwards.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -116,7 +116,7 @@ class Opt extends TwitchData:
 	## A user ID. The request returns the markers from this user’s most recent video. This ID must match the user ID in the access token or the user in the access token must be one of the broadcaster’s editors.  
 	##   
 	## This parameter and the _video\_id_ query parameter are mutually exclusive.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
@@ -124,25 +124,25 @@ class Opt extends TwitchData:
 	## A video on demand (VOD)/video ID. The request returns the markers from this VOD/video. The user in the access token must own the video or the user must be one of the broadcaster’s editors.  
 	##   
 	## This parameter and the _user\_id_ query parameter are mutually exclusive.
-	var video_id: String:
+	@export var video_id: String:
 		set(val): 
 			video_id = val
 			track_data(&"video_id", val)
 	
 	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: String:
+	@export var first: String:
 		set(val): 
 			first = val
 			track_data(&"first", val)
 	
 	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var before: String:
+	@export var before: String:
 		set(val): 
 			before = val
 			track_data(&"before", val)
 	
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)

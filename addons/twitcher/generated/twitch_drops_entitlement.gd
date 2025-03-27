@@ -8,31 +8,31 @@ extends TwitchData
 class_name TwitchDropsEntitlement
 	
 ## An ID that identifies the entitlement.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## An ID that identifies the benefit (reward).
-var benefit_id: String:
+@export var benefit_id: String:
 	set(val): 
 		benefit_id = val
 		track_data(&"benefit_id", val)
 
 ## The UTC date and time (in RFC3339 format) of when the entitlement was granted.
-var timestamp: Variant:
+@export var timestamp: String:
 	set(val): 
 		timestamp = val
 		track_data(&"timestamp", val)
 
 ## An ID that identifies the user who was granted the entitlement.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## An ID that identifies the game the user was playing when the reward was entitled.
-var game_id: String:
+@export var game_id: String:
 	set(val): 
 		game_id = val
 		track_data(&"game_id", val)
@@ -41,13 +41,13 @@ var game_id: String:
 ##   
 ## * CLAIMED
 ## * FULFILLED
-var fulfillment_status: String:
+@export var fulfillment_status: String:
 	set(val): 
 		fulfillment_status = val
 		track_data(&"fulfillment_status", val)
 
 ## The UTC date and time (in RFC3339 format) of when the entitlement was last updated.
-var last_updated: Variant:
+@export var last_updated: String:
 	set(val): 
 		last_updated = val
 		track_data(&"last_updated", val)
@@ -55,7 +55,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _benefit_id: String, _timestamp: Variant, _user_id: String, _game_id: String, _fulfillment_status: String, _last_updated: Variant) -> TwitchDropsEntitlement:
+static func create(_id: String, _benefit_id: String, _timestamp: String, _user_id: String, _game_id: String, _fulfillment_status: String, _last_updated: String) -> TwitchDropsEntitlement:
 	var twitch_drops_entitlement: TwitchDropsEntitlement = TwitchDropsEntitlement.new()
 	twitch_drops_entitlement.id = _id
 	twitch_drops_entitlement.benefit_id = _benefit_id

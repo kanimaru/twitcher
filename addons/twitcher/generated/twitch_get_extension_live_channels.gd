@@ -12,13 +12,13 @@ class_name TwitchGetExtensionLiveChannels
 class Response extends TwitchData:
 
 	## The list of broadcasters that are streaming live and that have installed or activated the extension.
-	var data: Array[TwitchExtensionLiveChannel]:
+	@export var data: Array[TwitchExtensionLiveChannel]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## This field contains the cursor used to page through the results. The field is empty if there are no more pages left to page through. Note that this field is a string compared to other endpoints that use a **Pagination** object. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var pagination: String:
+	@export var pagination: String:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -87,13 +87,13 @@ class Response extends TwitchData:
 class Opt extends TwitchData:
 
 	## The specific maximum number of items per page in the response. The actual number returned may be less than this limit. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var first: int:
+	@export var first: int:
 		set(val): 
 			first = val
 			track_data(&"first", val)
 	
 	## The cursor used to get the next page of results. The `pagination` field in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)

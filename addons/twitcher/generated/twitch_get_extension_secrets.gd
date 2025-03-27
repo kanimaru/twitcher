@@ -12,7 +12,7 @@ class_name TwitchGetExtensionSecrets
 class Response extends TwitchData:
 
 	## The list of shared secrets that the extension created.
-	var data: Array[TwitchExtensionSecret]:
+	@export var data: Array[TwitchExtensionSecret]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

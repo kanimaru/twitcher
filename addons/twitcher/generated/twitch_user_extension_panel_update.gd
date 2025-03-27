@@ -8,19 +8,19 @@ extends TwitchData
 class_name TwitchUserExtensionPanelUpdate
 	
 ## A Boolean value that determines the extension’s activation state. If **false**, the user has not configured a panel extension.
-var active: bool:
+@export var active: bool:
 	set(val): 
 		active = val
 		track_data(&"active", val)
 
 ## An ID that identifies the extension.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The extension’s version.
-var version: String:
+@export var version: String:
 	set(val): 
 		version = val
 		track_data(&"version", val)

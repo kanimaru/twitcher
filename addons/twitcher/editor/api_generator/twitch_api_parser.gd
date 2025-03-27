@@ -225,11 +225,15 @@ func _get_param_type(schema: Dictionary) -> String:
 				return _get_param_type(schema["additinalProperties"])
 			return "Dictionary"
 		"string":
-			if format == "date-time":
-				return "Variant"
+			# Why did I do this in the first place? 
+			# Lets disable and see if problems appear
+			#if format == "date-time":
+			#	return "Variant"
 			return "String"
 		"integer":
 			return "int"
+		"number":
+			return "float" if format == "float" else "int"
 		"boolean":
 			return "bool"
 		"array":

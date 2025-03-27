@@ -8,13 +8,13 @@ extends TwitchData
 class_name TwitchCheermote
 	
 ## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is “Cheer” and you want to cheer 100 Bits, the full Cheermote string is Cheer100\. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
-var prefix: String:
+@export var prefix: String:
 	set(val): 
 		prefix = val
 		track_data(&"prefix", val)
 
 ## A list of tier levels that the Cheermote supports. Each tier identifies the range of Bits that you can cheer at that tier level and an image that graphically identifies the tier level.
-var tiers: Array[Tiers]:
+@export var tiers: Array[Tiers]:
 	set(val): 
 		tiers = val
 		track_data(&"tiers", val)
@@ -26,25 +26,25 @@ var tiers: Array[Tiers]:
 ## * channel\_custom — A broadcaster-defined Cheermote.
 ## * display\_only — Do not use; for internal use only.
 ## * sponsored — A sponsor-defined Cheermote. When used, the sponsor adds additional Bits to the amount that the user cheered. For example, if the user cheered Terminator100, the broadcaster might receive 110 Bits, which includes the sponsor's 10 Bits contribution.
-var type: String:
+@export var type: String:
 	set(val): 
 		type = val
 		track_data(&"type", val)
 
 ## The order that the Cheermotes are shown in the Bits card. The numbers may not be consecutive. For example, the numbers may jump from 1 to 7 to 13\. The order numbers are unique within a Cheermote type (for example, global\_first\_party) but may not be unique amongst all Cheermotes in the response.
-var order: int:
+@export var order: int:
 	set(val): 
 		order = val
 		track_data(&"order", val)
 
 ## The date and time, in RFC3339 format, when this Cheermote was last updated.
-var last_updated: Variant:
+@export var last_updated: String:
 	set(val): 
 		last_updated = val
 		track_data(&"last_updated", val)
 
 ## A Boolean value that indicates whether this Cheermote provides a charitable contribution match during charity campaigns.
-var is_charitable: bool:
+@export var is_charitable: bool:
 	set(val): 
 		is_charitable = val
 		track_data(&"is_charitable", val)
@@ -52,7 +52,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_prefix: String, _tiers: Array[Tiers], _type: String, _order: int, _last_updated: Variant, _is_charitable: bool) -> TwitchCheermote:
+static func create(_prefix: String, _tiers: Array[Tiers], _type: String, _order: int, _last_updated: String, _is_charitable: bool) -> TwitchCheermote:
 	var twitch_cheermote: TwitchCheermote = TwitchCheermote.new()
 	twitch_cheermote.prefix = _prefix
 	twitch_cheermote.tiers = _tiers
@@ -87,7 +87,7 @@ static func from_json(d: Dictionary) -> TwitchCheermote:
 class Tiers extends TwitchData:
 
 	## The minimum number of Bits that you must cheer at this tier level. The maximum number of Bits that you can cheer at this level is determined by the required minimum Bits of the next tier level minus 1\. For example, if `min_bits` is 1 and `min_bits` for the next tier is 100, the Bits range for this tier level is 1 through 99\. The minimum Bits value of the last tier is the maximum number of Bits you can cheer using this Cheermote. For example, 10000.
-	var min_bits: int:
+	@export var min_bits: int:
 		set(val): 
 			min_bits = val
 			track_data(&"min_bits", val)
@@ -101,31 +101,31 @@ class Tiers extends TwitchData:
 	## * 5000
 	## * 10000
 	## * 100000
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## The hex code of the color associated with this tier level (for example, #979797).
-	var color: String:
+	@export var color: String:
 		set(val): 
 			color = val
 			track_data(&"color", val)
 	
 	## 
-	var images: TwitchCheermoteImages:
+	@export var images: TwitchCheermoteImages:
 		set(val): 
 			images = val
 			track_data(&"images", val)
 	
 	## A Boolean value that determines whether users can cheer at this tier level.
-	var can_cheer: bool:
+	@export var can_cheer: bool:
 		set(val): 
 			can_cheer = val
 			track_data(&"can_cheer", val)
 	
 	## A Boolean value that determines whether this tier level is shown in the Bits card. Is **true** if this tier level is shown in the Bits card.
-	var show_in_bits_card: bool:
+	@export var show_in_bits_card: bool:
 		set(val): 
 			show_in_bits_card = val
 			track_data(&"show_in_bits_card", val)

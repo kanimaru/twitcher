@@ -12,19 +12,19 @@ class_name TwitchGetFollowedChannels
 class Response extends TwitchData:
 
 	## The list of broadcasters that the user follows. The list is in descending order by `followed_at` (with the most recently followed broadcaster first). The list is empty if the user doesn’t follow anyone.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
 	
 	## The total number of broadcasters that the user follows. As someone pages through the list, the number may change as the user follows or unfollows broadcasters.
-	var total: int:
+	@export var total: int:
 		set(val): 
 			total = val
 			track_data(&"total", val)
@@ -98,25 +98,25 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## An ID that uniquely identifies the broadcaster that this user is following.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The broadcaster’s login name.
-	var broadcaster_login: String:
+	@export var broadcaster_login: String:
 		set(val): 
 			broadcaster_login = val
 			track_data(&"broadcaster_login", val)
 	
 	## The broadcaster’s display name.
-	var broadcaster_name: String:
+	@export var broadcaster_name: String:
 		set(val): 
 			broadcaster_name = val
 			track_data(&"broadcaster_name", val)
 	
 	## The UTC timestamp when the user started following the broadcaster.
-	var followed_at: Variant:
+	@export var followed_at: String:
 		set(val): 
 			followed_at = val
 			track_data(&"followed_at", val)
@@ -124,7 +124,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_broadcaster_id: String, _broadcaster_login: String, _broadcaster_name: String, _followed_at: Variant) -> ResponseData:
+	static func create(_broadcaster_id: String, _broadcaster_login: String, _broadcaster_name: String, _followed_at: String) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.broadcaster_id = _broadcaster_id
 		response_data.broadcaster_login = _broadcaster_login
@@ -152,7 +152,7 @@ class ResponseData extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -178,19 +178,19 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## A broadcaster’s ID. Use this parameter to see whether the user follows this broadcaster. If specified, the response contains this broadcaster if the user follows them. If not specified, the response contains all broadcasters that the user follows.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int:
+	@export var first: int:
 		set(val): 
 			first = val
 			track_data(&"first", val)
 	
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)

@@ -8,19 +8,19 @@ extends TwitchData
 class_name TwitchUserVip
 	
 ## An ID that uniquely identifies the VIP user.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s display name.
-var user_name: String:
+@export var user_name: String:
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The user’s login name.
-var user_login: String:
+@export var user_login: String:
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)

@@ -12,13 +12,13 @@ class_name TwitchGetVideos
 class Response extends TwitchData:
 
 	## The list of published videos that match the filter criteria.
-	var data: Array[TwitchVideo]:
+	@export var data: Array[TwitchVideo]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -88,7 +88,7 @@ class Response extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request's _after_ or _before_ query parameter depending on whether you're paging forwards or backwards through the results.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -116,7 +116,7 @@ class Opt extends TwitchData:
 	## A list of IDs that identify the videos you want to get. To get more than one video, include this parameter for each video you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 100 IDs. The endpoint ignores duplicate IDs and IDs that weren't found (if there's at least one valid ID).  
 	##   
 	## The _id_, _user\_id_, and _game\_id_ parameters are mutually exclusive.
-	var id: Array[String]:
+	@export var id: Array[String]:
 		set(val): 
 			id = val
 			track_data(&"id", val)
@@ -124,7 +124,7 @@ class Opt extends TwitchData:
 	## The ID of the user whose list of videos you want to get.  
 	##   
 	## The _id_, _user\_id_, and _game\_id_ parameters are mutually exclusive.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
@@ -132,7 +132,7 @@ class Opt extends TwitchData:
 	## A category or game ID. The response contains a maximum of 500 videos that show this content. To get category/game IDs, use the [Search Categories](https://dev.twitch.tv/docs/api/reference#search-categories) endpoint.  
 	##   
 	## The _id_, _user\_id_, and _game\_id_ parameters are mutually exclusive.
-	var game_id: String:
+	@export var game_id: String:
 		set(val): 
 			game_id = val
 			track_data(&"game_id", val)
@@ -140,7 +140,7 @@ class Opt extends TwitchData:
 	## A filter used to filter the list of videos by the language that the video owner broadcasts in. For example, to get videos that were broadcast in German, set this parameter to the ISO 639-1 two-letter code for German (i.e., DE). For a list of supported languages, see [Supported Stream Language](https://help.twitch.tv/s/article/languages-on-twitch#streamlang). If the language is not supported, use “other.”  
 	##   
 	## Specify this parameter only if you specify the _game\_id_ query parameter.
-	var language: String:
+	@export var language: String:
 		set(val): 
 			language = val
 			track_data(&"language", val)
@@ -155,7 +155,7 @@ class Opt extends TwitchData:
 	## The default is "all," which returns videos published in all periods.  
 	##   
 	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
-	var period: String:
+	@export var period: String:
 		set(val): 
 			period = val
 			track_data(&"period", val)
@@ -169,7 +169,7 @@ class Opt extends TwitchData:
 	## The default is "time."  
 	##   
 	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
-	var sort: String:
+	@export var sort: String:
 		set(val): 
 			sort = val
 			track_data(&"sort", val)
@@ -184,7 +184,7 @@ class Opt extends TwitchData:
 	## The default is "all," which returns all video types.  
 	##   
 	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
-	var type: String:
+	@export var type: String:
 		set(val): 
 			type = val
 			track_data(&"type", val)
@@ -192,7 +192,7 @@ class Opt extends TwitchData:
 	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.  
 	##   
 	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
-	var first: String:
+	@export var first: String:
 		set(val): 
 			first = val
 			track_data(&"first", val)
@@ -200,7 +200,7 @@ class Opt extends TwitchData:
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)  
 	##   
 	## Specify this parameter only if you specify the _user\_id_ query parameter.
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)
@@ -208,7 +208,7 @@ class Opt extends TwitchData:
 	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)  
 	##   
 	## Specify this parameter only if you specify the _user\_id_ query parameter.
-	var before: String:
+	@export var before: String:
 		set(val): 
 			before = val
 			track_data(&"before", val)

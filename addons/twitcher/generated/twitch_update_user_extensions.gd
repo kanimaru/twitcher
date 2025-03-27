@@ -16,7 +16,7 @@ class Body extends TwitchData:
 	## For the extension’s dictionary, the key is a sequential number beginning with 1\. For panel and overlay extensions, the key’s value is an object that contains the following fields: `active` (true/false), `id` (the extension’s ID), and `version` (the extension’s version).  
 	##   
 	## For component extensions, the key’s value includes the above fields plus the `x` and `y` fields, which identify the coordinate where the extension is placed.
-	var data: BodyData:
+	@export var data: BodyData:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -47,19 +47,19 @@ class Body extends TwitchData:
 class BodyData extends TwitchData:
 
 	## 
-	var panel: Dictionary:
+	@export var panel: Dictionary:
 		set(val): 
 			panel = val
 			track_data(&"panel", val)
 	
 	## 
-	var overlay: Dictionary:
+	@export var overlay: Dictionary:
 		set(val): 
 			overlay = val
 			track_data(&"overlay", val)
 	
 	## 
-	var component: Dictionary:
+	@export var component: Dictionary:
 		set(val): 
 			component = val
 			track_data(&"component", val)
@@ -89,7 +89,7 @@ class BodyData extends TwitchData:
 class Response extends TwitchData:
 
 	## The extensions that the broadcaster updated.
-	var data: ResponseData:
+	@export var data: ResponseData:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -116,19 +116,19 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## A dictionary that contains the data for a panel extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the panel’s data for each key.
-	var panel: Dictionary:
+	@export var panel: Dictionary:
 		set(val): 
 			panel = val
 			track_data(&"panel", val)
 	
 	## A dictionary that contains the data for a video-overlay extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the overlay’s data for each key.
-	var overlay: Dictionary:
+	@export var overlay: Dictionary:
 		set(val): 
 			overlay = val
 			track_data(&"overlay", val)
 	
 	## A dictionary that contains the data for a video-component extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the component’s data for each key.
-	var component: Dictionary:
+	@export var component: Dictionary:
 		set(val): 
 			component = val
 			track_data(&"component", val)

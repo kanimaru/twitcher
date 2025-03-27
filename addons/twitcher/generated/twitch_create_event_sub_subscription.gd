@@ -12,25 +12,25 @@ class_name TwitchCreateEventSubSubscription
 class Body extends TwitchData:
 
 	## The type of subscription to create. For a list of subscriptions that you can create, see [Subscription Types](https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#subscription-types). Set this field to the value in the **Name** column of the Subscription Types table.
-	var type: String:
+	@export var type: String:
 		set(val): 
 			type = val
 			track_data(&"type", val)
 	
 	## The version number that identifies the definition of the subscription type that you want the response to use.
-	var version: String:
+	@export var version: String:
 		set(val): 
 			version = val
 			track_data(&"version", val)
 	
 	## A JSON object that contains the parameter values that are specific to the specified subscription type. For the object’s required and optional fields, see the subscription type’s documentation.
-	var condition: Dictionary:
+	@export var condition: Dictionary:
 		set(val): 
 			condition = val
 			track_data(&"condition", val)
 	
 	## The transport details that you want Twitch to use when sending you notifications.
-	var transport: BodyTransport:
+	@export var transport: BodyTransport:
 		set(val): 
 			transport = val
 			track_data(&"transport", val)
@@ -70,7 +70,7 @@ class BodyTransport extends TwitchData:
 	## * webhook
 	## * websocket
 	## * conduit
-	var method: String:
+	@export var method: String:
 		set(val): 
 			method = val
 			track_data(&"method", val)
@@ -78,25 +78,25 @@ class BodyTransport extends TwitchData:
 	## The callback URL where the notifications are sent. The URL must use the HTTPS protocol and port 443\. See [Processing an event](https://dev.twitch.tv/docs/eventsub/handling-webhook-events#processing-an-event). Specify this field only if `method` is set to **webhook**.
 	## 
 	## **NOTE**: Redirects are not followed.
-	var callback: String:
+	@export var callback: String:
 		set(val): 
 			callback = val
 			track_data(&"callback", val)
 	
 	## The secret used to verify the signature. The secret must be an ASCII string that’s a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see [Verifying the event message](https://dev.twitch.tv/docs/eventsub/handling-webhook-events#verifying-the-event-message). Specify this field only if `method` is set to **webhook**.
-	var secret: String:
+	@export var secret: String:
 		set(val): 
 			secret = val
 			track_data(&"secret", val)
 	
 	## An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message. Specify this field only if `method` is set to **websocket**.
-	var session_id: String:
+	@export var session_id: String:
 		set(val): 
 			session_id = val
 			track_data(&"session_id", val)
 	
 	## An ID that identifies the conduit to send notifications to. When you create a conduit, the server returns the conduit ID. Specify this field only if `method` is set to **conduit**.
-	var conduit_id: String:
+	@export var conduit_id: String:
 		set(val): 
 			conduit_id = val
 			track_data(&"conduit_id", val)
@@ -131,25 +131,25 @@ class BodyTransport extends TwitchData:
 class Response extends TwitchData:
 
 	## A list that contains the single subscription that you created.
-	var data: Array[TwitchEventSubSubscription]:
+	@export var data: Array[TwitchEventSubSubscription]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## The total number of subscriptions you’ve created.
-	var total: int:
+	@export var total: int:
 		set(val): 
 			total = val
 			track_data(&"total", val)
 	
 	## The sum of all of your subscription costs. [Learn More](https://dev.twitch.tv/docs/eventsub/manage-subscriptions/#subscription-limits)
-	var total_cost: int:
+	@export var total_cost: int:
 		set(val): 
 			total_cost = val
 			track_data(&"total_cost", val)
 	
 	## The maximum total cost that you’re allowed to incur for all subscriptions you create.
-	var max_total_cost: int:
+	@export var max_total_cost: int:
 		set(val): 
 			max_total_cost = val
 			track_data(&"max_total_cost", val)

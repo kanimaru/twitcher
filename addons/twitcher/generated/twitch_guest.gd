@@ -13,55 +13,55 @@ class_name TwitchGuest
 ## * Guests are assigned the following consecutive IDs (e.g, "1", "2", "3", etc)
 ## * Screen Share is represented as a special guest with the ID "SCREENSHARE"
 ## * The identifier here matches the ID referenced in browser source links used in broadcasting software.
-var slot_id: String:
+@export var slot_id: String:
 	set(val): 
 		slot_id = val
 		track_data(&"slot_id", val)
 
 ## Flag determining whether or not the guest is visible in the browser source in the host’s streaming software.
-var is_live: bool:
+@export var is_live: bool:
 	set(val): 
 		is_live = val
 		track_data(&"is_live", val)
 
 ## User ID of the guest assigned to this slot.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## Display name of the guest assigned to this slot.
-var user_display_name: String:
+@export var user_display_name: String:
 	set(val): 
 		user_display_name = val
 		track_data(&"user_display_name", val)
 
 ## Login of the guest assigned to this slot.
-var user_login: String:
+@export var user_login: String:
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)
 
 ## Value from 0 to 100 representing the host’s volume setting for this guest.
-var volume: int:
+@export var volume: int:
 	set(val): 
 		volume = val
 		track_data(&"volume", val)
 
 ## Timestamp when this guest was assigned a slot in the session.
-var assigned_at: Variant:
+@export var assigned_at: String:
 	set(val): 
 		assigned_at = val
 		track_data(&"assigned_at", val)
 
 ## Information about the guest’s audio settings
-var audio_settings: AudioSettings:
+@export var audio_settings: AudioSettings:
 	set(val): 
 		audio_settings = val
 		track_data(&"audio_settings", val)
 
 ## Information about the guest’s video settings
-var video_settings: VideoSettings:
+@export var video_settings: VideoSettings:
 	set(val): 
 		video_settings = val
 		track_data(&"video_settings", val)
@@ -69,7 +69,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_slot_id: String, _is_live: bool, _user_id: String, _user_display_name: String, _user_login: String, _volume: int, _assigned_at: Variant, _audio_settings: AudioSettings, _video_settings: VideoSettings) -> TwitchGuest:
+static func create(_slot_id: String, _is_live: bool, _user_id: String, _user_display_name: String, _user_login: String, _volume: int, _assigned_at: String, _audio_settings: AudioSettings, _video_settings: VideoSettings) -> TwitchGuest:
 	var twitch_guest: TwitchGuest = TwitchGuest.new()
 	twitch_guest.slot_id = _slot_id
 	twitch_guest.is_live = _is_live
@@ -112,19 +112,19 @@ static func from_json(d: Dictionary) -> TwitchGuest:
 class AudioSettings extends TwitchData:
 
 	## Flag determining whether the host is allowing the guest’s audio to be seen or heard within the session.
-	var is_host_enabled: bool:
+	@export var is_host_enabled: bool:
 		set(val): 
 			is_host_enabled = val
 			track_data(&"is_host_enabled", val)
 	
 	## Flag determining whether the guest is allowing their audio to be transmitted to the session.
-	var is_guest_enabled: bool:
+	@export var is_guest_enabled: bool:
 		set(val): 
 			is_guest_enabled = val
 			track_data(&"is_guest_enabled", val)
 	
 	## Flag determining whether the guest has an appropriate audio device available to be transmitted to the session.
-	var is_available: bool:
+	@export var is_available: bool:
 		set(val): 
 			is_available = val
 			track_data(&"is_available", val)
@@ -157,19 +157,19 @@ class AudioSettings extends TwitchData:
 class VideoSettings extends TwitchData:
 
 	## Flag determining whether the host is allowing the guest’s video to be seen or heard within the session.
-	var is_host_enabled: bool:
+	@export var is_host_enabled: bool:
 		set(val): 
 			is_host_enabled = val
 			track_data(&"is_host_enabled", val)
 	
 	## Flag determining whether the guest is allowing their video to be transmitted to the session.
-	var is_guest_enabled: bool:
+	@export var is_guest_enabled: bool:
 		set(val): 
 			is_guest_enabled = val
 			track_data(&"is_guest_enabled", val)
 	
 	## Flag determining whether the guest has an appropriate video device available to be transmitted to the session.
-	var is_available: bool:
+	@export var is_available: bool:
 		set(val): 
 			is_available = val
 			track_data(&"is_available", val)

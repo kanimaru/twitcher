@@ -12,13 +12,13 @@ class_name TwitchEndPrediction
 class Body extends TwitchData:
 
 	## The ID of the broadcaster that’s running the prediction. This ID must match the user ID in the user access token.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The ID of the prediction to update.
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
@@ -32,13 +32,13 @@ class Body extends TwitchData:
 	## The broadcaster can update an active prediction to LOCKED, RESOLVED, or CANCELED; and update a locked prediction to RESOLVED or CANCELED.  
 	##   
 	## The broadcaster has up to 24 hours after the prediction window closes to resolve the prediction. If not, Twitch sets the status to CANCELED and returns the points.
-	var status: String:
+	@export var status: String:
 		set(val): 
 			status = val
 			track_data(&"status", val)
 	
 	## The ID of the winning outcome. You must set this parameter if you set `status` to RESOLVED.
-	var winning_outcome_id: String:
+	@export var winning_outcome_id: String:
 		set(val): 
 			winning_outcome_id = val
 			track_data(&"winning_outcome_id", val)
@@ -73,7 +73,7 @@ class Body extends TwitchData:
 class Response extends TwitchData:
 
 	## A list that contains the single prediction that you updated.
-	var data: Array[TwitchPrediction]:
+	@export var data: Array[TwitchPrediction]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

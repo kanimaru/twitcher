@@ -12,7 +12,7 @@ class_name TwitchGetChannelTeams
 class Response extends TwitchData:
 
 	## The list of teams that the broadcaster is a member of. Returns an empty array if the broadcaster is not a member of a team.
-	var data: Array[TwitchChannelTeam]:
+	@export var data: Array[TwitchChannelTeam]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

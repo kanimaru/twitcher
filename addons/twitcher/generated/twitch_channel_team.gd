@@ -8,73 +8,73 @@ extends TwitchData
 class_name TwitchChannelTeam
 	
 ## An ID that identifies the broadcaster.
-var broadcaster_id: String:
+@export var broadcaster_id: String:
 	set(val): 
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s login name.
-var broadcaster_login: String:
+@export var broadcaster_login: String:
 	set(val): 
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The broadcaster’s display name.
-var broadcaster_name: String:
+@export var broadcaster_name: String:
 	set(val): 
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## A URL to the team’s background image.
-var background_image_url: String:
+@export var background_image_url: String:
 	set(val): 
 		background_image_url = val
 		track_data(&"background_image_url", val)
 
 ## A URL to the team’s banner.
-var banner: String:
+@export var banner: String:
 	set(val): 
 		banner = val
 		track_data(&"banner", val)
 
 ## The UTC date and time (in RFC3339 format) of when the team was created.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The UTC date and time (in RFC3339 format) of the last time the team was updated.
-var updated_at: Variant:
+@export var updated_at: String:
 	set(val): 
 		updated_at = val
 		track_data(&"updated_at", val)
 
 ## The team’s description. The description may contain formatting such as Markdown, HTML, newline (\\n) characters, etc.
-var info: String:
+@export var info: String:
 	set(val): 
 		info = val
 		track_data(&"info", val)
 
 ## A URL to a thumbnail image of the team’s logo.
-var thumbnail_url: String:
+@export var thumbnail_url: String:
 	set(val): 
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
 
 ## The team’s name.
-var team_name: String:
+@export var team_name: String:
 	set(val): 
 		team_name = val
 		track_data(&"team_name", val)
 
 ## The team’s display name.
-var team_display_name: String:
+@export var team_display_name: String:
 	set(val): 
 		team_display_name = val
 		track_data(&"team_display_name", val)
 
 ## An ID that identifies the team.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
@@ -82,7 +82,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_broadcaster_id: String, _broadcaster_login: String, _broadcaster_name: String, _background_image_url: String, _banner: String, _created_at: Variant, _updated_at: Variant, _info: String, _thumbnail_url: String, _team_name: String, _team_display_name: String, _id: String) -> TwitchChannelTeam:
+static func create(_broadcaster_id: String, _broadcaster_login: String, _broadcaster_name: String, _background_image_url: String, _banner: String, _created_at: String, _updated_at: String, _info: String, _thumbnail_url: String, _team_name: String, _team_display_name: String, _id: String) -> TwitchChannelTeam:
 	var twitch_channel_team: TwitchChannelTeam = TwitchChannelTeam.new()
 	twitch_channel_team.broadcaster_id = _broadcaster_id
 	twitch_channel_team.broadcaster_login = _broadcaster_login

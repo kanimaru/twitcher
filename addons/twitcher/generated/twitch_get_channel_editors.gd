@@ -12,7 +12,7 @@ class_name TwitchGetChannelEditors
 class Response extends TwitchData:
 
 	## A list of users that are editors for the specified broadcaster. The list is empty if the broadcaster doesn’t have editors.
-	var data: Array[TwitchChannelEditor]:
+	@export var data: Array[TwitchChannelEditor]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

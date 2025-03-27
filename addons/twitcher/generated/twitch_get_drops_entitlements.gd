@@ -12,13 +12,13 @@ class_name TwitchGetDropsEntitlements
 class Response extends TwitchData:
 
 	## The list of entitlements.
-	var data: Array[TwitchDropsEntitlement]:
+	@export var data: Array[TwitchDropsEntitlement]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## The information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -88,7 +88,7 @@ class Response extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Set the request’s _after_ query parameter to this value to page forward through the results.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -114,19 +114,19 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## An ID that identifies the entitlement to get. Include this parameter for each entitlement you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 100 IDs.
-	var id: Array[String]:
+	@export var id: Array[String]:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## An ID that identifies a user that was granted entitlements.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## An ID that identifies a game that offered entitlements.
-	var game_id: String:
+	@export var game_id: String:
 		set(val): 
 			game_id = val
 			track_data(&"game_id", val)
@@ -135,19 +135,19 @@ class Opt extends TwitchData:
 	##   
 	## * CLAIMED
 	## * FULFILLED
-	var fulfillment_status: String:
+	@export var fulfillment_status: String:
 		set(val): 
 			fulfillment_status = val
 			track_data(&"fulfillment_status", val)
 	
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)
 	
 	## The maximum number of entitlements to return per page in the response. The minimum page size is 1 entitlement per page and the maximum is 1000\. The default is 20.
-	var first: int:
+	@export var first: int:
 		set(val): 
 			first = val
 			track_data(&"first", val)

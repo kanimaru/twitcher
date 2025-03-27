@@ -12,7 +12,7 @@ class_name TwitchGetUsers
 class Response extends TwitchData:
 
 	## The list of users.
-	var data: Array[TwitchUser]:
+	@export var data: Array[TwitchUser]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,13 +40,13 @@ class Response extends TwitchData:
 class Opt extends TwitchData:
 
 	## The ID of the user to get. To specify more than one user, include the _id_ parameter for each user to get. For example, `id=1234&id=5678`. The maximum number of IDs you may specify is 100.
-	var id: Array[String]:
+	@export var id: Array[String]:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## The login name of the user to get. To specify more than one user, include the _login_ parameter for each user to get. For example, `login=foo&login=bar`. The maximum number of login names you may specify is 100.
-	var login: Array[String]:
+	@export var login: Array[String]:
 		set(val): 
 			login = val
 			track_data(&"login", val)

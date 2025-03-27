@@ -8,61 +8,61 @@ extends TwitchData
 class_name TwitchTeam
 	
 ## The list of team members.
-var users: Array[Users]:
+@export var users: Array[Users]:
 	set(val): 
 		users = val
 		track_data(&"users", val)
 
 ## A URL to the team’s background image.
-var background_image_url: String:
+@export var background_image_url: String:
 	set(val): 
 		background_image_url = val
 		track_data(&"background_image_url", val)
 
 ## A URL to the team’s banner.
-var banner: String:
+@export var banner: String:
 	set(val): 
 		banner = val
 		track_data(&"banner", val)
 
 ## The UTC date and time (in RFC3339 format) of when the team was created.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The UTC date and time (in RFC3339 format) of the last time the team was updated.
-var updated_at: Variant:
+@export var updated_at: String:
 	set(val): 
 		updated_at = val
 		track_data(&"updated_at", val)
 
 ## The team’s description. The description may contain formatting such as Markdown, HTML, newline (\\n) characters, etc.
-var info: String:
+@export var info: String:
 	set(val): 
 		info = val
 		track_data(&"info", val)
 
 ## A URL to a thumbnail image of the team’s logo.
-var thumbnail_url: String:
+@export var thumbnail_url: String:
 	set(val): 
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
 
 ## The team’s name.
-var team_name: String:
+@export var team_name: String:
 	set(val): 
 		team_name = val
 		track_data(&"team_name", val)
 
 ## The team’s display name.
-var team_display_name: String:
+@export var team_display_name: String:
 	set(val): 
 		team_display_name = val
 		track_data(&"team_display_name", val)
 
 ## An ID that identifies the team.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
@@ -70,7 +70,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_users: Array[Users], _background_image_url: String, _banner: String, _created_at: Variant, _updated_at: Variant, _info: String, _thumbnail_url: String, _team_name: String, _team_display_name: String, _id: String) -> TwitchTeam:
+static func create(_users: Array[Users], _background_image_url: String, _banner: String, _created_at: String, _updated_at: String, _info: String, _thumbnail_url: String, _team_name: String, _team_display_name: String, _id: String) -> TwitchTeam:
 	var twitch_team: TwitchTeam = TwitchTeam.new()
 	twitch_team.users = _users
 	twitch_team.background_image_url = _background_image_url
@@ -117,19 +117,19 @@ static func from_json(d: Dictionary) -> TwitchTeam:
 class Users extends TwitchData:
 
 	## An ID that identifies the team member.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The team member’s login name.
-	var user_login: String:
+	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The team member’s display name.
-	var user_name: String:
+	@export var user_name: String:
 		set(val): 
 			user_name = val
 			track_data(&"user_name", val)

@@ -12,7 +12,7 @@ class_name TwitchGetChannelStreamSchedule
 class Response extends TwitchData:
 
 	## The broadcaster’s streaming schedule.
-	var data: ResponseData:
+	@export var data: ResponseData:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -39,37 +39,37 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The list of broadcasts in the broadcaster’s streaming schedule.
-	var segments: Array[TwitchChannelStreamScheduleSegment]:
+	@export var segments: Array[TwitchChannelStreamScheduleSegment]:
 		set(val): 
 			segments = val
 			track_data(&"segments", val)
 	
 	## The ID of the broadcaster that owns the broadcast schedule.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The broadcaster’s display name.
-	var broadcaster_name: String:
+	@export var broadcaster_name: String:
 		set(val): 
 			broadcaster_name = val
 			track_data(&"broadcaster_name", val)
 	
 	## The broadcaster’s login name.
-	var broadcaster_login: String:
+	@export var broadcaster_login: String:
 		set(val): 
 			broadcaster_login = val
 			track_data(&"broadcaster_login", val)
 	
 	## The dates when the broadcaster is on vacation and not streaming. Is set to **null** if vacation mode is not enabled.
-	var vacation: ResponseVacation:
+	@export var vacation: ResponseVacation:
 		set(val): 
 			vacation = val
 			track_data(&"vacation", val)
 	
 	## The information used to page through a list of results. The object is empty if there are no more pages left to page through. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -155,13 +155,13 @@ class ResponseData extends TwitchData:
 class ResponseVacation extends TwitchData:
 
 	## The UTC date and time (in RFC3339 format) of when the broadcaster’s vacation starts.
-	var start_time: Variant:
+	@export var start_time: String:
 		set(val): 
 			start_time = val
 			track_data(&"start_time", val)
 	
 	## The UTC date and time (in RFC3339 format) of when the broadcaster’s vacation ends.
-	var end_time: Variant:
+	@export var end_time: String:
 		set(val): 
 			end_time = val
 			track_data(&"end_time", val)
@@ -169,7 +169,7 @@ class ResponseVacation extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_start_time: Variant, _end_time: Variant) -> ResponseVacation:
+	static func create(_start_time: String, _end_time: String) -> ResponseVacation:
 		var response_vacation: ResponseVacation = ResponseVacation.new()
 		response_vacation.start_time = _start_time
 		response_vacation.end_time = _end_time
@@ -191,7 +191,7 @@ class ResponseVacation extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Set the request’s _after_ query parameter to this value.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -217,31 +217,31 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## The ID of the scheduled segment to return. To specify more than one segment, include the ID of each segment you want to get. For example, `id=1234&id=5678`. You may specify a maximum of 100 IDs.
-	var id: Array[String]:
+	@export var id: Array[String]:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## The UTC date and time that identifies when in the broadcaster’s schedule to start returning segments. If not specified, the request returns segments starting after the current UTC date and time. Specify the date and time in RFC3339 format (for example, `2022-09-01T00:00:00Z`).
-	var start_time: Variant:
+	@export var start_time: String:
 		set(val): 
 			start_time = val
 			track_data(&"start_time", val)
 	
 	## Not supported.
-	var utc_offset: String:
+	@export var utc_offset: String:
 		set(val): 
 			utc_offset = val
 			track_data(&"utc_offset", val)
 	
 	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 25 items per page. The default is 20.
-	var first: int:
+	@export var first: int:
 		set(val): 
 			first = val
 			track_data(&"first", val)
 	
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)

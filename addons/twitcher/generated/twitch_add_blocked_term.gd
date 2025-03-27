@@ -16,7 +16,7 @@ class Body extends TwitchData:
 	## Terms may include a wildcard character (\*). The wildcard character must appear at the beginning or end of a word or set of characters. For example, \*foo or foo\*.  
 	##   
 	## If the blocked term already exists, the response contains the existing blocked term.
-	var text: String:
+	@export var text: String:
 		set(val): 
 			text = val
 			track_data(&"text", val)
@@ -43,7 +43,7 @@ class Body extends TwitchData:
 class Response extends TwitchData:
 
 	## A list that contains the single blocked term that the broadcaster added.
-	var data: Array[TwitchBlockedTerm]:
+	@export var data: Array[TwitchBlockedTerm]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

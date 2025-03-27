@@ -12,7 +12,7 @@ class_name TwitchGetStreamTags
 class Response extends TwitchData:
 
 	## The list of stream tags. The list is empty if the broadcaster or Twitch hasn’t added tags to the broadcaster’s channel.
-	var data: Array[TwitchStreamTag]:
+	@export var data: Array[TwitchStreamTag]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

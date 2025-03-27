@@ -8,25 +8,25 @@ extends TwitchData
 class_name TwitchGameAnalytics
 	
 ## An ID that identifies the game that the report was generated for.
-var game_id: String:
+@export var game_id: String:
 	set(val): 
 		game_id = val
 		track_data(&"game_id", val)
 
 ## The URL that you use to download the report. The URL is valid for 5 minutes.
-var URL: String:
+@export var URL: String:
 	set(val): 
 		URL = val
 		track_data(&"URL", val)
 
 ## The type of report.
-var type: String:
+@export var type: String:
 	set(val): 
 		type = val
 		track_data(&"type", val)
 
 ## The reporting window’s start and end dates, in RFC3339 format.
-var date_range: DateRange:
+@export var date_range: DateRange:
 	set(val): 
 		date_range = val
 		track_data(&"date_range", val)
@@ -62,13 +62,13 @@ static func from_json(d: Dictionary) -> TwitchGameAnalytics:
 class DateRange extends TwitchData:
 
 	## The reporting window’s start date.
-	var started_at: Variant:
+	@export var started_at: String:
 		set(val): 
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The reporting window’s end date.
-	var ended_at: Variant:
+	@export var ended_at: String:
 		set(val): 
 			ended_at = val
 			track_data(&"ended_at", val)
@@ -76,7 +76,7 @@ class DateRange extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_started_at: Variant, _ended_at: Variant) -> DateRange:
+	static func create(_started_at: String, _ended_at: String) -> DateRange:
 		var date_range: DateRange = DateRange.new()
 		date_range.started_at = _started_at
 		date_range.ended_at = _ended_at

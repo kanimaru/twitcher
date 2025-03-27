@@ -12,7 +12,7 @@ class_name TwitchGetExtensionBitsProducts
 class Response extends TwitchData:
 
 	## A list of Bits products that the extension created. The list is in ascending SKU order. The list is empty if the extension hasn’t created any products or they’re all expired or disabled.
-	var data: Array[TwitchExtensionBitsProduct]:
+	@export var data: Array[TwitchExtensionBitsProduct]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,7 +40,7 @@ class Response extends TwitchData:
 class Opt extends TwitchData:
 
 	## A Boolean value that determines whether to include disabled or expired Bits products in the response. The default is **false**.
-	var should_include_all: bool:
+	@export var should_include_all: bool:
 		set(val): 
 			should_include_all = val
 			track_data(&"should_include_all", val)

@@ -12,19 +12,19 @@ class_name TwitchSetExtensionRequiredConfiguration
 class Body extends TwitchData:
 
 	## The ID of the extension to update.
-	var extension_id: String:
+	@export var extension_id: String:
 		set(val): 
 			extension_id = val
 			track_data(&"extension_id", val)
 	
 	## The version of the extension to update.
-	var extension_version: String:
+	@export var extension_version: String:
 		set(val): 
 			extension_version = val
 			track_data(&"extension_version", val)
 	
 	## The required\_configuration string to use with the extension.
-	var required_configuration: String:
+	@export var required_configuration: String:
 		set(val): 
 			required_configuration = val
 			track_data(&"required_configuration", val)

@@ -12,7 +12,7 @@ class_name TwitchGetAutoModSettings
 class Response extends TwitchData:
 
 	## The list of AutoMod settings. The list contains a single object that contains all the AutoMod settings.
-	var data: Array[TwitchAutoModSettings]:
+	@export var data: Array[TwitchAutoModSettings]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

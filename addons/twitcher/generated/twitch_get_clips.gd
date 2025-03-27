@@ -12,13 +12,13 @@ class_name TwitchGetClips
 class Response extends TwitchData:
 
 	## The list of video clips. For clips returned by _game\_id_ or _broadcaster\_id_, the list is in descending order by view count. For lists returned by _id_, the list is in the same order as the input IDs.
-	var data: Array[TwitchClip]:
+	@export var data: Array[TwitchClip]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## The information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -88,7 +88,7 @@ class Response extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Set the request’s _after_ or _before_ query parameter to this value depending on whether you’re paging forwards or backwards.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -114,55 +114,55 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## An ID that identifies the broadcaster whose video clips you want to get. Use this parameter to get clips that were captured from the broadcaster’s streams.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## An ID that identifies the game whose clips you want to get. Use this parameter to get clips that were captured from streams that were playing this game.
-	var game_id: String:
+	@export var game_id: String:
 		set(val): 
 			game_id = val
 			track_data(&"game_id", val)
 	
 	## An ID that identifies the clip to get. To specify more than one ID, include this parameter for each clip you want to get. For example, `id=foo&id=bar`. You may specify a maximum of 100 IDs. The API ignores duplicate IDs and IDs that aren’t found.
-	var id: Array[String]:
+	@export var id: Array[String]:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## The start date used to filter clips. The API returns only clips within the start and end date window. Specify the date and time in RFC3339 format.
-	var started_at: Variant:
+	@export var started_at: String:
 		set(val): 
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The end date used to filter clips. If not specified, the time window is the start date plus one week. Specify the date and time in RFC3339 format.
-	var ended_at: Variant:
+	@export var ended_at: String:
 		set(val): 
 			ended_at = val
 			track_data(&"ended_at", val)
 	
 	## The maximum number of clips to return per page in the response. The minimum page size is 1 clip per page and the maximum is 100\. The default is 20.
-	var first: int:
+	@export var first: int:
 		set(val): 
 			first = val
 			track_data(&"first", val)
 	
 	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var before: String:
+	@export var before: String:
 		set(val): 
 			before = val
 			track_data(&"before", val)
 	
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)
 	
 	## A Boolean value that determines whether the response includes featured clips. If **true**, returns only clips that are featured. If **false**, returns only clips that aren’t featured. All clips are returned if this parameter is not present.
-	var is_featured: bool:
+	@export var is_featured: bool:
 		set(val): 
 			is_featured = val
 			track_data(&"is_featured", val)

@@ -12,7 +12,7 @@ class_name TwitchSendChatAnnouncement
 class Body extends TwitchData:
 
 	## The announcement to make in the broadcaster’s chat room. Announcements are limited to a maximum of 500 characters; announcements longer than 500 characters are truncated.
-	var message: String:
+	@export var message: String:
 		set(val): 
 			message = val
 			track_data(&"message", val)
@@ -26,7 +26,7 @@ class Body extends TwitchData:
 	## * primary (default)
 	##   
 	## If `color` is set to _primary_ or is not set, the channel’s accent color is used to highlight the announcement (see **Profile Accent Color** under [profile settings](https://www.twitch.tv/settings/profile), **Channel and Videos**, and **Brand**).
-	var color: String:
+	@export var color: String:
 		set(val): 
 			color = val
 			track_data(&"color", val)

@@ -12,7 +12,7 @@ class_name TwitchGetAdSchedule
 class Response extends TwitchData:
 
 	## A list that contains information related to the channel’s ad schedule.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,37 +40,37 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The number of snoozes available for the broadcaster.
-	var snooze_count: int:
+	@export var snooze_count: int:
 		set(val): 
 			snooze_count = val
 			track_data(&"snooze_count", val)
 	
 	## The UTC timestamp when the broadcaster will gain an additional snooze, in RFC3339 format.
-	var snooze_refresh_at: Variant:
+	@export var snooze_refresh_at: String:
 		set(val): 
 			snooze_refresh_at = val
 			track_data(&"snooze_refresh_at", val)
 	
 	## The UTC timestamp of the broadcaster’s next scheduled ad, in RFC3339 format. Empty if the channel has no ad scheduled or is not live.
-	var next_ad_at: Variant:
+	@export var next_ad_at: String:
 		set(val): 
 			next_ad_at = val
 			track_data(&"next_ad_at", val)
 	
 	## The length in seconds of the scheduled upcoming ad break.
-	var duration: int:
+	@export var duration: int:
 		set(val): 
 			duration = val
 			track_data(&"duration", val)
 	
 	## The UTC timestamp of the broadcaster’s last ad-break, in RFC3339 format. Empty if the channel has not run an ad or is not live.
-	var last_ad_at: Variant:
+	@export var last_ad_at: String:
 		set(val): 
 			last_ad_at = val
 			track_data(&"last_ad_at", val)
 	
 	## The amount of pre-roll free time remaining for the channel in seconds. Returns 0 if they are currently not pre-roll free.
-	var preroll_free_time: int:
+	@export var preroll_free_time: int:
 		set(val): 
 			preroll_free_time = val
 			track_data(&"preroll_free_time", val)
@@ -78,7 +78,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_snooze_count: int, _snooze_refresh_at: Variant, _next_ad_at: Variant, _duration: int, _last_ad_at: Variant, _preroll_free_time: int) -> ResponseData:
+	static func create(_snooze_count: int, _snooze_refresh_at: String, _next_ad_at: String, _duration: int, _last_ad_at: String, _preroll_free_time: int) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.snooze_count = _snooze_count
 		response_data.snooze_refresh_at = _snooze_refresh_at

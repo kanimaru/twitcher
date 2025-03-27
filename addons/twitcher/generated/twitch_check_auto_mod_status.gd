@@ -12,7 +12,7 @@ class_name TwitchCheckAutoModStatus
 class Body extends TwitchData:
 
 	## The list of messages to check. The list must contain at least one message and may contain up to a maximum of 100 messages.
-	var data: Array[BodyData]:
+	@export var data: Array[BodyData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,13 +40,13 @@ class Body extends TwitchData:
 class BodyData extends TwitchData:
 
 	## A caller-defined ID used to correlate this message with the same message in the response.
-	var msg_id: String:
+	@export var msg_id: String:
 		set(val): 
 			msg_id = val
 			track_data(&"msg_id", val)
 	
 	## The message to check.
-	var msg_text: String:
+	@export var msg_text: String:
 		set(val): 
 			msg_text = val
 			track_data(&"msg_text", val)
@@ -76,7 +76,7 @@ class BodyData extends TwitchData:
 class Response extends TwitchData:
 
 	## The list of messages and whether Twitch would approve them for chat.
-	var data: Array[TwitchAutoModStatus]:
+	@export var data: Array[TwitchAutoModStatus]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

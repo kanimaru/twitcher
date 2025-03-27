@@ -12,31 +12,31 @@ class_name TwitchGetEventSubSubscriptions
 class Response extends TwitchData:
 
 	## The list of subscriptions. The list is ordered by the oldest subscription first. The list is empty if the client hasn't created subscriptions or there are no subscriptions that match the specified filter criteria.
-	var data: Array[TwitchEventSubSubscription]:
+	@export var data: Array[TwitchEventSubSubscription]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## The total number of subscriptions that you've created.
-	var total: int:
+	@export var total: int:
 		set(val): 
 			total = val
 			track_data(&"total", val)
 	
 	## The sum of all of your subscription costs. [Learn More](https://dev.twitch.tv/docs/eventsub/manage-subscriptions/#subscription-limits)
-	var total_cost: int:
+	@export var total_cost: int:
 		set(val): 
 			total_cost = val
 			track_data(&"total_cost", val)
 	
 	## The maximum total cost that you're allowed to incur for all subscriptions that you create.
-	var max_total_cost: int:
+	@export var max_total_cost: int:
 		set(val): 
 			max_total_cost = val
 			track_data(&"max_total_cost", val)
 	
 	## An object that contains the cursor used to get the next page of subscriptions. The object is empty if there are no more pages to get. The number of subscriptions returned per page is undertermined.
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -118,7 +118,7 @@ class Response extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor value that you set the _after_ query parameter to.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)

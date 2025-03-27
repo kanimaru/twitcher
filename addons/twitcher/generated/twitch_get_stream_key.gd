@@ -12,7 +12,7 @@ class_name TwitchGetStreamKey
 class Response extends TwitchData:
 
 	## A list that contains the channel’s stream key.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,7 +40,7 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The channel’s stream key.
-	var stream_key: String:
+	@export var stream_key: String:
 		set(val): 
 			stream_key = val
 			track_data(&"stream_key", val)

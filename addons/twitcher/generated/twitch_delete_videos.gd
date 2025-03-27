@@ -12,7 +12,7 @@ class_name TwitchDeleteVideos
 class Response extends TwitchData:
 
 	## The list of IDs of the videos that were deleted.
-	var data: Array[String]:
+	@export var data: Array[String]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

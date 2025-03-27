@@ -12,7 +12,7 @@ class_name TwitchGetExtensions
 class Response extends TwitchData:
 
 	## A list that contains the specified extension.
-	var data: Array[TwitchExtension]:
+	@export var data: Array[TwitchExtension]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,7 +40,7 @@ class Response extends TwitchData:
 class Opt extends TwitchData:
 
 	## The version of the extension to get. If not specified, it returns the latest, released version. If you don’t have a released version, you must specify a version; otherwise, the list is empty.
-	var extension_version: String:
+	@export var extension_version: String:
 		set(val): 
 			extension_version = val
 			track_data(&"extension_version", val)

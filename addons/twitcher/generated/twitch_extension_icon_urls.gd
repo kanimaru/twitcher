@@ -8,19 +8,19 @@ extends TwitchData
 class_name TwitchExtensionIconUrls
 	
 ## 
-var _100x100: String:
+@export var _100x100: String:
 	set(val): 
 		_100x100 = val
 		track_data(&"_100x100", val)
 
 ## 
-var _24x24: String:
+@export var _24x24: String:
 	set(val): 
 		_24x24 = val
 		track_data(&"_24x24", val)
 
 ## 
-var _300x200: String:
+@export var _300x200: String:
 	set(val): 
 		_300x200 = val
 		track_data(&"_300x200", val)

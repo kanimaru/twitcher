@@ -8,25 +8,25 @@ extends TwitchData
 class_name TwitchStreamMarkerCreated
 	
 ## An ID that identifies this marker.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The UTC date and time (in RFC3339 format) of when the user created the marker.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The relative offset (in seconds) of the marker from the beginning of the stream.
-var position_seconds: int:
+@export var position_seconds: int:
 	set(val): 
 		position_seconds = val
 		track_data(&"position_seconds", val)
 
 ## A description that the user gave the marker to help them remember why they marked the location.
-var description: String:
+@export var description: String:
 	set(val): 
 		description = val
 		track_data(&"description", val)
@@ -34,7 +34,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _created_at: Variant, _position_seconds: int, _description: String) -> TwitchStreamMarkerCreated:
+static func create(_id: String, _created_at: String, _position_seconds: int, _description: String) -> TwitchStreamMarkerCreated:
 	var twitch_stream_marker_created: TwitchStreamMarkerCreated = TwitchStreamMarkerCreated.new()
 	twitch_stream_marker_created.id = _id
 	twitch_stream_marker_created.created_at = _created_at

@@ -8,13 +8,13 @@ extends TwitchData
 class_name TwitchCheermoteImageTheme
 	
 ## 
-var animated_format: TwitchCheermoteImageFormat:
+@export var animated_format: TwitchCheermoteImageFormat:
 	set(val): 
 		animated_format = val
 		track_data(&"animated_format", val)
 
 ## 
-var static_format: TwitchCheermoteImageFormat:
+@export var static_format: TwitchCheermoteImageFormat:
 	set(val): 
 		static_format = val
 		track_data(&"static_format", val)

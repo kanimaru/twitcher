@@ -12,13 +12,13 @@ class_name TwitchGetModeratedChannels
 class Response extends TwitchData:
 
 	## The list of channels that the user has moderator privileges in.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through.
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -88,19 +88,19 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## An ID that uniquely identifies the channel this user can moderate.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The channel’s login name.
-	var broadcaster_login: String:
+	@export var broadcaster_login: String:
 		set(val): 
 			broadcaster_login = val
 			track_data(&"broadcaster_login", val)
 	
 	## The channels’ display name.
-	var broadcaster_name: String:
+	@export var broadcaster_name: String:
 		set(val): 
 			broadcaster_name = val
 			track_data(&"broadcaster_name", val)
@@ -133,7 +133,7 @@ class ResponseData extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s after query parameter.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -159,7 +159,7 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## The cursor used to get the next page of results. The Pagination object in the response contains the cursor’s value.
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)
@@ -167,7 +167,7 @@ class Opt extends TwitchData:
 	## The maximum number of items to return per page in the response.  
 	##   
 	## Minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int:
+	@export var first: int:
 		set(val): 
 			first = val
 			track_data(&"first", val)

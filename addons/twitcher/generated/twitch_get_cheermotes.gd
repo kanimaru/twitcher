@@ -12,7 +12,7 @@ class_name TwitchGetCheermotes
 class Response extends TwitchData:
 
 	## The list of Cheermotes. The list is in ascending order by the `order` field’s value.
-	var data: Array[TwitchCheermote]:
+	@export var data: Array[TwitchCheermote]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -42,7 +42,7 @@ class Opt extends TwitchData:
 	## The ID of the broadcaster whose custom Cheermotes you want to get. Specify the broadcaster’s ID if you want to include the broadcaster’s Cheermotes in the response (not all broadcasters upload Cheermotes). If not specified, the response contains only global Cheermotes.  
 	##   
 	## If the broadcaster uploaded Cheermotes, the `type` field in the response is set to **channel\_custom**.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)

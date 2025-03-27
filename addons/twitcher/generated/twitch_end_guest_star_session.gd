@@ -12,7 +12,7 @@ class_name TwitchEndGuestStarSession
 class Response extends TwitchData:
 
 	## Summary of the session details when the session was ended.
-	var data: Array[TwitchGuestStarSession]:
+	@export var data: Array[TwitchGuestStarSession]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

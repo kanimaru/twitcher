@@ -12,7 +12,7 @@ class_name TwitchBanUser
 class Body extends TwitchData:
 
 	## Identifies the user and type of ban.
-	var data: BodyData:
+	@export var data: BodyData:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -39,7 +39,7 @@ class Body extends TwitchData:
 class BodyData extends TwitchData:
 
 	## The ID of the user to ban or put in a timeout.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
@@ -49,13 +49,13 @@ class BodyData extends TwitchData:
 	## To put a user in a timeout, include this field and specify the timeout period, in seconds. The minimum timeout is 1 second and the maximum is 1,209,600 seconds (2 weeks).  
 	##   
 	## To end a user’s timeout early, set this field to 1, or use the [Unban user](https://dev.twitch.tv/docs/api/reference#unban-user) endpoint.
-	var duration: int:
+	@export var duration: int:
 		set(val): 
 			duration = val
 			track_data(&"duration", val)
 	
 	## The reason the you’re banning the user or putting them in a timeout. The text is user defined and is limited to a maximum of 500 characters.
-	var reason: String:
+	@export var reason: String:
 		set(val): 
 			reason = val
 			track_data(&"reason", val)
@@ -86,7 +86,7 @@ class BodyData extends TwitchData:
 class Response extends TwitchData:
 
 	## A list that contains the user you successfully banned or put in a timeout.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -114,31 +114,31 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The broadcaster whose chat room the user was banned from chatting in.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The moderator that banned or put the user in the timeout.
-	var moderator_id: String:
+	@export var moderator_id: String:
 		set(val): 
 			moderator_id = val
 			track_data(&"moderator_id", val)
 	
 	## The user that was banned or put in a timeout.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The UTC date and time (in RFC3339 format) that the ban or timeout was placed.
-	var created_at: Variant:
+	@export var created_at: String:
 		set(val): 
 			created_at = val
 			track_data(&"created_at", val)
 	
 	## The UTC date and time (in RFC3339 format) that the timeout will end. Is **null** if the user was banned instead of being put in a timeout.
-	var end_time: Variant:
+	@export var end_time: String:
 		set(val): 
 			end_time = val
 			track_data(&"end_time", val)
@@ -146,7 +146,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_broadcaster_id: String, _moderator_id: String, _user_id: String, _created_at: Variant, _end_time: Variant) -> ResponseData:
+	static func create(_broadcaster_id: String, _moderator_id: String, _user_id: String, _created_at: String, _end_time: String) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.broadcaster_id = _broadcaster_id
 		response_data.moderator_id = _moderator_id

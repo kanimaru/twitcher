@@ -8,91 +8,91 @@ extends TwitchData
 class_name TwitchClip
 	
 ## An ID that uniquely identifies the clip.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## A URL to the clip.
-var url: String:
+@export var url: String:
 	set(val): 
 		url = val
 		track_data(&"url", val)
 
 ## A URL that you can use in an iframe to embed the clip (see [Embedding Video and Clips](https://dev.twitch.tv/docs/embed/video-and-clips/)).
-var embed_url: String:
+@export var embed_url: String:
 	set(val): 
 		embed_url = val
 		track_data(&"embed_url", val)
 
 ## An ID that identifies the broadcaster that the video was clipped from.
-var broadcaster_id: String:
+@export var broadcaster_id: String:
 	set(val): 
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s display name.
-var broadcaster_name: String:
+@export var broadcaster_name: String:
 	set(val): 
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## An ID that identifies the user that created the clip.
-var creator_id: String:
+@export var creator_id: String:
 	set(val): 
 		creator_id = val
 		track_data(&"creator_id", val)
 
 ## The user’s display name.
-var creator_name: String:
+@export var creator_name: String:
 	set(val): 
 		creator_name = val
 		track_data(&"creator_name", val)
 
 ## An ID that identifies the video that the clip came from. This field contains an empty string if the video is not available.
-var video_id: String:
+@export var video_id: String:
 	set(val): 
 		video_id = val
 		track_data(&"video_id", val)
 
 ## The ID of the game that was being played when the clip was created.
-var game_id: String:
+@export var game_id: String:
 	set(val): 
 		game_id = val
 		track_data(&"game_id", val)
 
 ## The ISO 639-1 two-letter language code that the broadcaster broadcasts in. For example, _en_ for English. The value is _other_ if the broadcaster uses a language that Twitch doesn’t support.
-var language: String:
+@export var language: String:
 	set(val): 
 		language = val
 		track_data(&"language", val)
 
 ## The title of the clip.
-var title: String:
+@export var title: String:
 	set(val): 
 		title = val
 		track_data(&"title", val)
 
 ## The number of times the clip has been viewed.
-var view_count: int:
+@export var view_count: int:
 	set(val): 
 		view_count = val
 		track_data(&"view_count", val)
 
 ## The date and time of when the clip was created. The date and time is in RFC3339 format.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
 
 ## A URL to a thumbnail image of the clip.
-var thumbnail_url: String:
+@export var thumbnail_url: String:
 	set(val): 
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
 
 ## The length of the clip, in seconds. Precision is 0.1.
-var duration: Variant:
+@export var duration: float:
 	set(val): 
 		duration = val
 		track_data(&"duration", val)
@@ -100,13 +100,13 @@ var duration: Variant:
 ## The zero-based offset, in seconds, to where the clip starts in the video (VOD). Is **null** if the video is not available or hasn’t been created yet from the live stream (see `video_id`).  
 ##   
 ## Note that there’s a delay between when a clip is created during a broadcast and when the offset is set. During the delay period, `vod_offset` is **null**. The delay is indeterminant but is typically minutes long.
-var vod_offset: int:
+@export var vod_offset: int:
 	set(val): 
 		vod_offset = val
 		track_data(&"vod_offset", val)
 
 ## A Boolean value that indicates if the clip is featured or not.
-var is_featured: bool:
+@export var is_featured: bool:
 	set(val): 
 		is_featured = val
 		track_data(&"is_featured", val)
@@ -114,7 +114,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _url: String, _embed_url: String, _broadcaster_id: String, _broadcaster_name: String, _creator_id: String, _creator_name: String, _video_id: String, _game_id: String, _language: String, _title: String, _view_count: int, _created_at: Variant, _thumbnail_url: String, _duration: Variant, _vod_offset: int, _is_featured: bool) -> TwitchClip:
+static func create(_id: String, _url: String, _embed_url: String, _broadcaster_id: String, _broadcaster_name: String, _creator_id: String, _creator_name: String, _video_id: String, _game_id: String, _language: String, _title: String, _view_count: int, _created_at: String, _thumbnail_url: String, _duration: float, _vod_offset: int, _is_featured: bool) -> TwitchClip:
 	var twitch_clip: TwitchClip = TwitchClip.new()
 	twitch_clip.id = _id
 	twitch_clip.url = _url

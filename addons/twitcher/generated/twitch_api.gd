@@ -1,4 +1,3 @@
-@icon("res://addons/twitcher/assets/api-icon.svg")
 @tool
 extends Twitcher
 

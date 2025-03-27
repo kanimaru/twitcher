@@ -8,49 +8,49 @@ extends TwitchData
 class_name TwitchPrediction
 	
 ## An ID that identifies this prediction.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## An ID that identifies the broadcaster that created the prediction.
-var broadcaster_id: String:
+@export var broadcaster_id: String:
 	set(val): 
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s display name.
-var broadcaster_name: String:
+@export var broadcaster_name: String:
 	set(val): 
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The broadcaster’s login name.
-var broadcaster_login: String:
+@export var broadcaster_login: String:
 	set(val): 
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The question that the prediction asks. For example, _Will I finish this entire pizza?_
-var title: String:
+@export var title: String:
 	set(val): 
 		title = val
 		track_data(&"title", val)
 
 ## The ID of the winning outcome. Is **null** unless `status` is RESOLVED.
-var winning_outcome_id: String:
+@export var winning_outcome_id: String:
 	set(val): 
 		winning_outcome_id = val
 		track_data(&"winning_outcome_id", val)
 
 ## The list of possible outcomes for the prediction.
-var outcomes: Array[TwitchPredictionOutcome]:
+@export var outcomes: Array[TwitchPredictionOutcome]:
 	set(val): 
 		outcomes = val
 		track_data(&"outcomes", val)
 
 ## The length of time (in seconds) that the prediction will run for.
-var prediction_window: int:
+@export var prediction_window: int:
 	set(val): 
 		prediction_window = val
 		track_data(&"prediction_window", val)
@@ -61,25 +61,25 @@ var prediction_window: int:
 ## * CANCELED — The broadcaster canceled the Prediction and refunded the Channel Points to the participants.
 ## * LOCKED — The broadcaster locked the Prediction, which means viewers can no longer make predictions.
 ## * RESOLVED — The winning outcome was determined and the Channel Points were distributed to the viewers who predicted the correct outcome.
-var status: String:
+@export var status: String:
 	set(val): 
 		status = val
 		track_data(&"status", val)
 
 ## The UTC date and time of when the Prediction began.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The UTC date and time of when the Prediction ended. If `status` is ACTIVE, this is set to **null**.
-var ended_at: Variant:
+@export var ended_at: String:
 	set(val): 
 		ended_at = val
 		track_data(&"ended_at", val)
 
 ## The UTC date and time of when the Prediction was locked. If `status` is not LOCKED, this is set to **null**.
-var locked_at: Variant:
+@export var locked_at: String:
 	set(val): 
 		locked_at = val
 		track_data(&"locked_at", val)
@@ -87,7 +87,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _broadcaster_id: String, _broadcaster_name: String, _broadcaster_login: String, _title: String, _winning_outcome_id: String, _outcomes: Array[TwitchPredictionOutcome], _prediction_window: int, _status: String, _created_at: Variant, _ended_at: Variant, _locked_at: Variant) -> TwitchPrediction:
+static func create(_id: String, _broadcaster_id: String, _broadcaster_name: String, _broadcaster_login: String, _title: String, _winning_outcome_id: String, _outcomes: Array[TwitchPredictionOutcome], _prediction_window: int, _status: String, _created_at: String, _ended_at: String, _locked_at: String) -> TwitchPrediction:
 	var twitch_prediction: TwitchPrediction = TwitchPrediction.new()
 	twitch_prediction.id = _id
 	twitch_prediction.broadcaster_id = _broadcaster_id

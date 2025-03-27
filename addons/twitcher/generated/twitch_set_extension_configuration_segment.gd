@@ -12,7 +12,7 @@ class_name TwitchSetExtensionConfigurationSegment
 class Body extends TwitchData:
 
 	## The ID of the extension to update.
-	var extension_id: String:
+	@export var extension_id: String:
 		set(val): 
 			extension_id = val
 			track_data(&"extension_id", val)
@@ -22,25 +22,25 @@ class Body extends TwitchData:
 	## * broadcaster
 	## * developer
 	## * global
-	var segment: String:
+	@export var segment: String:
 		set(val): 
 			segment = val
 			track_data(&"segment", val)
 	
 	## The ID of the broadcaster that installed the extension. Include this field only if the `segment` is set to developer or broadcaster.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The contents of the segment. This string may be a plain-text string or a string-encoded JSON object.
-	var content: String:
+	@export var content: String:
 		set(val): 
 			content = val
 			track_data(&"content", val)
 	
 	## The version number that identifies this definition of the segment’s data. If not specified, the latest definition is updated.
-	var version: String:
+	@export var version: String:
 		set(val): 
 			version = val
 			track_data(&"version", val)

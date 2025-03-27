@@ -12,37 +12,37 @@ class_name TwitchCreateChannelStreamScheduleSegment
 class Body extends TwitchData:
 
 	## The date and time that the broadcast segment starts. Specify the date and time in RFC3339 format (for example, 2021-07-01T18:00:00Z).
-	var start_time: Variant:
+	@export var start_time: String:
 		set(val): 
 			start_time = val
 			track_data(&"start_time", val)
 	
 	## The time zone where the broadcast takes place. Specify the time zone using [IANA time zone database](https://www.iana.org/time-zones) format (for example, America/New\_York).
-	var timezone: String:
+	@export var timezone: String:
 		set(val): 
 			timezone = val
 			track_data(&"timezone", val)
 	
 	## The length of time, in minutes, that the broadcast is scheduled to run. The duration must be in the range 30 through 1380 (23 hours).
-	var duration: String:
+	@export var duration: String:
 		set(val): 
 			duration = val
 			track_data(&"duration", val)
 	
 	## A Boolean value that determines whether the broadcast recurs weekly. Is **true** if the broadcast recurs weekly. Only partners and affiliates may add non-recurring broadcasts.
-	var is_recurring: bool:
+	@export var is_recurring: bool:
 		set(val): 
 			is_recurring = val
 			track_data(&"is_recurring", val)
 	
 	## The ID of the category that best represents the broadcast’s content. To get the category ID, use the [Search Categories](https://dev.twitch.tv/docs/api/reference#search-categories) endpoint.
-	var category_id: String:
+	@export var category_id: String:
 		set(val): 
 			category_id = val
 			track_data(&"category_id", val)
 	
 	## The broadcast’s title. The title may contain a maximum of 140 characters.
-	var title: String:
+	@export var title: String:
 		set(val): 
 			title = val
 			track_data(&"title", val)
@@ -50,7 +50,7 @@ class Body extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_start_time: Variant, _timezone: String, _duration: String) -> Body:
+	static func create(_start_time: String, _timezone: String, _duration: String) -> Body:
 		var body: Body = Body.new()
 		body.start_time = _start_time
 		body.timezone = _timezone
@@ -81,7 +81,7 @@ class Body extends TwitchData:
 class Response extends TwitchData:
 
 	## The broadcaster’s streaming scheduled.
-	var data: ResponseData:
+	@export var data: ResponseData:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -108,31 +108,31 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## A list that contains the single broadcast segment that you added.
-	var segments: Array[TwitchChannelStreamScheduleSegment]:
+	@export var segments: Array[TwitchChannelStreamScheduleSegment]:
 		set(val): 
 			segments = val
 			track_data(&"segments", val)
 	
 	## The ID of the broadcaster that owns the broadcast schedule.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The broadcaster’s display name.
-	var broadcaster_name: String:
+	@export var broadcaster_name: String:
 		set(val): 
 			broadcaster_name = val
 			track_data(&"broadcaster_name", val)
 	
 	## The broadcaster’s login name.
-	var broadcaster_login: String:
+	@export var broadcaster_login: String:
 		set(val): 
 			broadcaster_login = val
 			track_data(&"broadcaster_login", val)
 	
 	## The dates when the broadcaster is on vacation and not streaming. Is set to **null** if vacation mode is not enabled.
-	var vacation: ResponseVacation:
+	@export var vacation: ResponseVacation:
 		set(val): 
 			vacation = val
 			track_data(&"vacation", val)
@@ -172,13 +172,13 @@ class ResponseData extends TwitchData:
 class ResponseVacation extends TwitchData:
 
 	## The UTC date and time (in RFC3339 format) of when the broadcaster’s vacation starts.
-	var start_time: Variant:
+	@export var start_time: String:
 		set(val): 
 			start_time = val
 			track_data(&"start_time", val)
 	
 	## The UTC date and time (in RFC3339 format) of when the broadcaster’s vacation ends.
-	var end_time: Variant:
+	@export var end_time: String:
 		set(val): 
 			end_time = val
 			track_data(&"end_time", val)
@@ -186,7 +186,7 @@ class ResponseVacation extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_start_time: Variant, _end_time: Variant) -> ResponseVacation:
+	static func create(_start_time: String, _end_time: String) -> ResponseVacation:
 		var response_vacation: ResponseVacation = ResponseVacation.new()
 		response_vacation.start_time = _start_time
 		response_vacation.end_time = _end_time

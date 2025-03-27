@@ -12,25 +12,25 @@ class_name TwitchUpdateChannelStreamSchedule
 class Opt extends TwitchData:
 
 	## A Boolean value that indicates whether the broadcaster has scheduled a vacation. Set to **true** to enable Vacation Mode and add vacation dates, or **false** to cancel a previously scheduled vacation.
-	var is_vacation_enabled: bool:
+	@export var is_vacation_enabled: bool:
 		set(val): 
 			is_vacation_enabled = val
 			track_data(&"is_vacation_enabled", val)
 	
 	## The UTC date and time of when the broadcaster’s vacation starts. Specify the date and time in RFC3339 format (for example, 2021-05-16T00:00:00Z). Required if _is\_vacation\_enabled_ is **true**.
-	var vacation_start_time: Variant:
+	@export var vacation_start_time: String:
 		set(val): 
 			vacation_start_time = val
 			track_data(&"vacation_start_time", val)
 	
 	## The UTC date and time of when the broadcaster’s vacation ends. Specify the date and time in RFC3339 format (for example, 2021-05-30T23:59:59Z). Required if _is\_vacation\_enabled_ is **true**.
-	var vacation_end_time: Variant:
+	@export var vacation_end_time: String:
 		set(val): 
 			vacation_end_time = val
 			track_data(&"vacation_end_time", val)
 	
 	## The time zone that the broadcaster broadcasts from. Specify the time zone using [IANA time zone database](https://www.iana.org/time-zones) format (for example, America/New\_York). Required if _is\_vacation\_enabled_ is **true**.
-	var timezone: String:
+	@export var timezone: String:
 		set(val): 
 			timezone = val
 			track_data(&"timezone", val)

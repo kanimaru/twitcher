@@ -12,7 +12,7 @@ class_name TwitchGetChatSettings
 class Response extends TwitchData:
 
 	## The list of chat settings. The list contains a single object with all the settings.
-	var data: Array[TwitchChatSettings]:
+	@export var data: Array[TwitchChatSettings]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -44,7 +44,7 @@ class Opt extends TwitchData:
 	## This field is required only if you want to include the `non_moderator_chat_delay` and `non_moderator_chat_delay_duration` settings in the response.  
 	##   
 	## If you specify this field, this ID must match the user ID in the user access token.
-	var moderator_id: String:
+	@export var moderator_id: String:
 		set(val): 
 			moderator_id = val
 			track_data(&"moderator_id", val)

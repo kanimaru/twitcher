@@ -12,25 +12,25 @@ class_name TwitchModifyChannelInformation
 class Body extends TwitchData:
 
 	## The ID of the game that the user plays. The game is not updated if the ID isn’t a game ID that Twitch recognizes. To unset this field, use “0” or “” (an empty string).
-	var game_id: String:
+	@export var game_id: String:
 		set(val): 
 			game_id = val
 			track_data(&"game_id", val)
 	
 	## The user’s preferred language. Set the value to an ISO 639-1 two-letter language code (for example, _en_ for English). Set to “other” if the user’s preferred language is not a Twitch supported language. The language isn’t updated if the language code isn’t a Twitch supported language.
-	var broadcaster_language: String:
+	@export var broadcaster_language: String:
 		set(val): 
 			broadcaster_language = val
 			track_data(&"broadcaster_language", val)
 	
 	## The title of the user’s stream. You may not set this field to an empty string.
-	var title: String:
+	@export var title: String:
 		set(val): 
 			title = val
 			track_data(&"title", val)
 	
 	## The number of seconds you want your broadcast buffered before streaming it live. The delay helps ensure fairness during competitive play. Only users with Partner status may set this field. The maximum delay is 900 seconds (15 minutes).
-	var delay: int:
+	@export var delay: int:
 		set(val): 
 			delay = val
 			track_data(&"delay", val)
@@ -38,19 +38,19 @@ class Body extends TwitchData:
 	## A list of channel-defined tags to apply to the channel. To remove all tags from the channel, set tags to an empty array. Tags help identify the content that the channel streams. [Learn More](https://help.twitch.tv/s/article/guide-to-tags)  
 	##   
 	## A channel may specify a maximum of 10 tags. Each tag is limited to a maximum of 25 characters and may not be an empty string or contain spaces or special characters. Tags are case insensitive. For readability, consider using camelCasing or PascalCasing.
-	var tags: Array[String]:
+	@export var tags: Array[String]:
 		set(val): 
 			tags = val
 			track_data(&"tags", val)
 	
 	## List of labels that should be set as the Channel’s CCLs.
-	var content_classification_labels: Array[BodyContentClassificationLabels]:
+	@export var content_classification_labels: Array[BodyContentClassificationLabels]:
 		set(val): 
 			content_classification_labels = val
 			track_data(&"content_classification_labels", val)
 	
 	## Boolean flag indicating if the channel has branded content.
-	var is_branded_content: bool:
+	@export var is_branded_content: bool:
 		set(val): 
 			is_branded_content = val
 			track_data(&"is_branded_content", val)
@@ -97,13 +97,13 @@ class BodyContentClassificationLabels extends TwitchData:
 	## * ViolentGraphic
 	## * Gambling
 	## * ProfanityVulgarity
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## Boolean flag indicating whether the label should be enabled (true) or disabled for the channel.
-	var is_enabled: bool:
+	@export var is_enabled: bool:
 		set(val): 
 			is_enabled = val
 			track_data(&"is_enabled", val)

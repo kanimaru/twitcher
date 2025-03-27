@@ -12,7 +12,7 @@ class_name TwitchGetGlobalChatBadges
 class Response extends TwitchData:
 
 	## The list of chat badges. The list is sorted in ascending order by `set_id`, and within a set, the list is sorted in ascending order by `id`.
-	var data: Array[TwitchChatBadge]:
+	@export var data: Array[TwitchChatBadge]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

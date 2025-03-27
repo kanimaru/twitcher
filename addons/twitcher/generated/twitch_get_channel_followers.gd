@@ -12,19 +12,19 @@ class_name TwitchGetChannelFollowers
 class Response extends TwitchData:
 
 	## The list of users that follow the specified broadcaster. The list is in descending order by `followed_at` (with the most recent follower first). The list is empty if nobody follows the broadcaster, the specified `user_id` isn’t in the follower list, the user access token is missing the **moderator:read:followers** scope, or the user isn’t the broadcaster or moderator for the channel.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
 	
 	## The total number of users that follow this broadcaster. As someone pages through the list, the number of users may change as users follow or unfollow the broadcaster.
-	var total: int:
+	@export var total: int:
 		set(val): 
 			total = val
 			track_data(&"total", val)
@@ -98,25 +98,25 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The UTC timestamp when the user started following the broadcaster.
-	var followed_at: Variant:
+	@export var followed_at: String:
 		set(val): 
 			followed_at = val
 			track_data(&"followed_at", val)
 	
 	## An ID that uniquely identifies the user that’s following the broadcaster.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user’s login name.
-	var user_login: String:
+	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user’s display name.
-	var user_name: String:
+	@export var user_name: String:
 		set(val): 
 			user_name = val
 			track_data(&"user_name", val)
@@ -124,7 +124,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_followed_at: Variant, _user_id: String, _user_login: String, _user_name: String) -> ResponseData:
+	static func create(_followed_at: String, _user_id: String, _user_login: String, _user_name: String) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.followed_at = _followed_at
 		response_data.user_id = _user_id
@@ -152,7 +152,7 @@ class ResponseData extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -180,19 +180,19 @@ class Opt extends TwitchData:
 	## A user’s ID. Use this parameter to see whether the user follows this broadcaster. If specified, the response contains this user if they follow the broadcaster. If not specified, the response contains all users that follow the broadcaster.  
 	##   
 	## Using this parameter requires both a user access token with the **moderator:read:followers** scope and the user ID in the access token match the broadcaster\_id or be the user ID for a moderator of the specified broadcaster.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.
-	var first: int:
+	@export var first: int:
 		set(val): 
 			first = val
 			track_data(&"first", val)
 	
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read more](https://dev.twitch.tv/docs/api/guide#pagination).
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)

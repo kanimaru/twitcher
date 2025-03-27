@@ -12,13 +12,13 @@ class_name TwitchStartARaid
 class Opt extends TwitchData:
 
 	## The ID of the broadcaster that’s sending the raiding party. This ID must match the user ID in the user access token.
-	var from_broadcaster_id: String:
+	@export var from_broadcaster_id: String:
 		set(val): 
 			from_broadcaster_id = val
 			track_data(&"from_broadcaster_id", val)
 	
 	## The ID of the broadcaster to raid.
-	var to_broadcaster_id: String:
+	@export var to_broadcaster_id: String:
 		set(val): 
 			to_broadcaster_id = val
 			track_data(&"to_broadcaster_id", val)

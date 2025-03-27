@@ -31,25 +31,25 @@ class Opt extends TwitchData:
 	## * websocket\_network\_timeout — The Twitch WebSocket server timed out writing the message to the client.
 	## * websocket\_network\_error — The Twitch WebSocket server experienced a network error writing the message to the client.
 	## * websocket\_failed\_to\_reconnect - The client failed to reconnect to the Twitch WebSocket server within the required time after a Reconnect Message.
-	var status: String:
+	@export var status: String:
 		set(val): 
 			status = val
 			track_data(&"status", val)
 	
 	## Filter subscriptions by subscription type. For a list of subscription types, see [Subscription Types](https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#subscription-types).
-	var type: String:
+	@export var type: String:
 		set(val): 
 			type = val
 			track_data(&"type", val)
 	
 	## Filter subscriptions by user ID. The response contains subscriptions where this ID matches a user ID that you specified in the **Condition** object when you [created the subscription](https://dev.twitch.tv/docs/api/reference#create-eventsub-subscription).
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The cursor used to get the next page of results. The `pagination` object in the response contains the cursor's value.
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)

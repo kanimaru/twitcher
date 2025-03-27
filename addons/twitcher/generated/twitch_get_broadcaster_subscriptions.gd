@@ -12,25 +12,25 @@ class_name TwitchGetBroadcasterSubscriptions
 class Response extends TwitchData:
 
 	## The list of users that subscribe to the broadcaster. The list is empty if the broadcaster has no subscribers.
-	var data: Array[TwitchBroadcasterSubscription]:
+	@export var data: Array[TwitchBroadcasterSubscription]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
 	
 	## The current number of subscriber points earned by this broadcaster. Points are based on the subscription tier of each user that subscribes to this broadcaster. For example, a Tier 1 subscription is worth 1 point, Tier 2 is worth 2 points, and Tier 3 is worth 6 points. The number of points determines the number of emote slots that are unlocked for the broadcaster (see [Subscriber Emote Slots](https://help.twitch.tv/s/article/subscriber-emote-guide#emoteslots)).
-	var points: int:
+	@export var points: int:
 		set(val): 
 			points = val
 			track_data(&"points", val)
 	
 	## The total number of users that subscribe to this broadcaster.
-	var total: int:
+	@export var total: int:
 		set(val): 
 			total = val
 			track_data(&"total", val)
@@ -108,7 +108,7 @@ class Response extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next or previous page of results. Use the cursor to set the request’s _after_ or _before_ query parameter depending on whether you’re paging forwards or backwards.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -134,25 +134,25 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## Filters the list to include only the specified subscribers. To specify more than one subscriber, include this parameter for each subscriber. For example, `&user_id=1234&user_id=5678`. You may specify a maximum of 100 subscribers.
-	var user_id: Array[String]:
+	@export var user_id: Array[String]:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
-	var first: String:
+	@export var first: String:
 		set(val): 
 			first = val
 			track_data(&"first", val)
 	
 	## The cursor used to get the next page of results. Do not specify if you set the _user\_id_ query parameter. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)
 	
 	## The cursor used to get the previous page of results. Do not specify if you set the _user\_id_ query parameter. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var before: String:
+	@export var before: String:
 		set(val): 
 			before = val
 			track_data(&"before", val)

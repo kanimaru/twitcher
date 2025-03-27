@@ -8,55 +8,55 @@ extends TwitchData
 class_name TwitchBannedUser
 	
 ## The ID of the banned user.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The banned user’s login name.
-var user_login: String:
+@export var user_login: String:
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The banned user’s display name.
-var user_name: String:
+@export var user_name: String:
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The UTC date and time (in RFC3339 format) of when the timeout expires, or an empty string if the user is permanently banned.
-var expires_at: Variant:
+@export var expires_at: String:
 	set(val): 
 		expires_at = val
 		track_data(&"expires_at", val)
 
 ## The UTC date and time (in RFC3339 format) of when the user was banned.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The reason the user was banned or put in a timeout if the moderator provided one.
-var reason: String:
+@export var reason: String:
 	set(val): 
 		reason = val
 		track_data(&"reason", val)
 
 ## The ID of the moderator that banned the user or put them in a timeout.
-var moderator_id: String:
+@export var moderator_id: String:
 	set(val): 
 		moderator_id = val
 		track_data(&"moderator_id", val)
 
 ## The moderator’s login name.
-var moderator_login: String:
+@export var moderator_login: String:
 	set(val): 
 		moderator_login = val
 		track_data(&"moderator_login", val)
 
 ## The moderator’s display name.
-var moderator_name: String:
+@export var moderator_name: String:
 	set(val): 
 		moderator_name = val
 		track_data(&"moderator_name", val)
@@ -64,7 +64,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_user_id: String, _user_login: String, _user_name: String, _expires_at: Variant, _created_at: Variant, _reason: String, _moderator_id: String, _moderator_login: String, _moderator_name: String) -> TwitchBannedUser:
+static func create(_user_id: String, _user_login: String, _user_name: String, _expires_at: String, _created_at: String, _reason: String, _moderator_id: String, _moderator_login: String, _moderator_name: String) -> TwitchBannedUser:
 	var twitch_banned_user: TwitchBannedUser = TwitchBannedUser.new()
 	twitch_banned_user.user_id = _user_id
 	twitch_banned_user.user_login = _user_login

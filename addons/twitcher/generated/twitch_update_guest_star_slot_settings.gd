@@ -12,25 +12,25 @@ class_name TwitchUpdateGuestStarSlotSettings
 class Opt extends TwitchData:
 
 	## Flag indicating whether the slot is allowed to share their audio with the rest of the session. If false, the slot will be muted in any views containing the slot.
-	var is_audio_enabled: bool:
+	@export var is_audio_enabled: bool:
 		set(val): 
 			is_audio_enabled = val
 			track_data(&"is_audio_enabled", val)
 	
 	## Flag indicating whether the slot is allowed to share their video with the rest of the session. If false, the slot will have no video shared in any views containing the slot.
-	var is_video_enabled: bool:
+	@export var is_video_enabled: bool:
 		set(val): 
 			is_video_enabled = val
 			track_data(&"is_video_enabled", val)
 	
 	## Flag indicating whether the user assigned to this slot is visible/can be heard from any public subscriptions. Generally, this determines whether or not the slot is enabled in any broadcasting software integrations.
-	var is_live: bool:
+	@export var is_live: bool:
 		set(val): 
 			is_live = val
 			track_data(&"is_live", val)
 	
 	## Value from 0-100 that controls the audio volume for shared views containing the slot.
-	var volume: int:
+	@export var volume: int:
 		set(val): 
 			volume = val
 			track_data(&"volume", val)

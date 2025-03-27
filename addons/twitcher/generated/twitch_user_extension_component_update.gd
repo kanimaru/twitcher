@@ -8,31 +8,31 @@ extends TwitchData
 class_name TwitchUserExtensionComponentUpdate
 	
 ## A Boolean value that determines the extension’s activation state. If **false**, the user has not configured a component extension.
-var active: bool:
+@export var active: bool:
 	set(val): 
 		active = val
 		track_data(&"active", val)
 
 ## An ID that identifies the extension.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The extension’s version.
-var version: String:
+@export var version: String:
 	set(val): 
 		version = val
 		track_data(&"version", val)
 
 ## The x-coordinate where the extension is placed.
-var x: int:
+@export var x: int:
 	set(val): 
 		x = val
 		track_data(&"x", val)
 
 ## The y-coordinate where the extension is placed.
-var y: int:
+@export var y: int:
 	set(val): 
 		y = val
 		track_data(&"y", val)

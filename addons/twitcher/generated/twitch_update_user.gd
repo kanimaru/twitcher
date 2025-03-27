@@ -12,7 +12,7 @@ class_name TwitchUpdateUser
 class Response extends TwitchData:
 
 	## A list contains the single user that you updated.
-	var data: Array[TwitchUser]:
+	@export var data: Array[TwitchUser]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -42,7 +42,7 @@ class Opt extends TwitchData:
 	## The string to update the channel’s description to. The description is limited to a maximum of 300 characters.  
 	##   
 	## To remove the description, specify this parameter but don’t set it’s value (for example, `?description=`).
-	var description: String:
+	@export var description: String:
 		set(val): 
 			description = val
 			track_data(&"description", val)

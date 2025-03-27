@@ -8,31 +8,31 @@ extends TwitchData
 class_name TwitchCheermoteImageFormat
 	
 ## 
-var _1: String:
+@export var _1: String:
 	set(val): 
 		_1 = val
 		track_data(&"_1", val)
 
 ## 
-var _2: String:
+@export var _2: String:
 	set(val): 
 		_2 = val
 		track_data(&"_2", val)
 
 ## 
-var _3: String:
+@export var _3: String:
 	set(val): 
 		_3 = val
 		track_data(&"_3", val)
 
 ## 
-var _4: String:
+@export var _4: String:
 	set(val): 
 		_4 = val
 		track_data(&"_4", val)
 
 ## 
-var _1_5: String:
+@export var _1_5: String:
 	set(val): 
 		_1_5 = val
 		track_data(&"_1_5", val)

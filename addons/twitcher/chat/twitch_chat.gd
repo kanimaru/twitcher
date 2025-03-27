@@ -19,17 +19,14 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchChat")
 	set(val):
 		api = val
 		update_configuration_warnings()
-		
-## Channel of the chat that this node should listen too
-@export var target_user_channel: String = "":
-	set = _update_target_user_channel
+@export var broadcaster_user: TwitchUser:
+	set(val):
+		broadcaster_user = val
+		update_configuration_warnings()
+## Can be null. Then the owner of the access token will be used to send message aka the current user.
+@export var sender_user: TwitchUser
 
 var twitch_event_listener: TwitchEventListener = TwitchEventListener.new()
-
-var broadcaster_user: TwitchUser:
-	set = _update_broadcaster_user
-
-var sender_user: TwitchUser
 
 ## Triggered when a chat message got received
 signal message_received(message: TwitchChatMessage)
@@ -40,33 +37,14 @@ signal rest_updated(rest: TwitchAPI)
 func _ready() -> void:
 	_log.d("is ready")
 	eventsub.event.connect(_on_event_received)
-	_update_target_user_channel(target_user_channel)
 
-## Resolves username to TwitchUser
-func _update_target_user_channel(val: String) -> void:
-	target_user_channel = val
-	if not is_inside_tree(): return
-	if val != null && val != "":
-		_log.d("change channel to %s" % val)
-		var opt : TwitchGetUsers.Opt = TwitchGetUsers.Opt.create()
-		opt.login = [ val ] as Array[String]
-		broadcaster_user = await api.get_user(opt)
-	else:
-		broadcaster_user = null
-		
 
-## Perepares the user preloads badges and emojis
-func _update_broadcaster_user(val: TwitchUser) -> void:
-		broadcaster_user = val
-		update_configuration_warnings()
-		notify_property_list_changed()
-		if broadcaster_user != null:
-			media_loader.preload_badges(broadcaster_user.id)
-			media_loader.preload_emotes(broadcaster_user.id)
-			_subscribe_to_channel()
-
-## Subscribe to eventsub if not happend yet
-func _subscribe_to_channel() -> void:
+## Subscribe to eventsub and preload data if not happend yet
+func subscribe() -> void:
+	if broadcaster_user != null:
+		media_loader.preload_badges(broadcaster_user.id)
+		media_loader.preload_emotes(broadcaster_user.id)
+			
 	var subscriptions: Array[TwitchEventsubConfig] = eventsub.get_subscriptions()
 	for subscription: TwitchEventsubConfig in subscriptions:
 		if subscription.type == TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE and \

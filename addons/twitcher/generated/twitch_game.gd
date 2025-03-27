@@ -8,25 +8,25 @@ extends TwitchData
 class_name TwitchGame
 	
 ## An ID that identifies the category or game.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The category’s or game’s name.
-var name: String:
+@export var name: String:
 	set(val): 
 		name = val
 		track_data(&"name", val)
 
 ## A URL to the category’s or game’s box art. You must replace the `{width}x{height}` placeholder with the size of image you want.
-var box_art_url: String:
+@export var box_art_url: String:
 	set(val): 
 		box_art_url = val
 		track_data(&"box_art_url", val)
 
 ## The ID that [IGDB](https://www.igdb.com/) uses to identify this game. If the IGDB ID is not available to Twitch, this field is set to an empty string.
-var igdb_id: String:
+@export var igdb_id: String:
 	set(val): 
 		igdb_id = val
 		track_data(&"igdb_id", val)

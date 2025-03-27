@@ -18,25 +18,25 @@ class Body extends TwitchData:
 	## * whisper-<user-id>
 	##   
 	## If `is_global_broadcast` is **true**, you must set this field to global. The broadcast and global values are mutually exclusive; specify only one of them.
-	var target: Array[String]:
+	@export var target: Array[String]:
 		set(val): 
 			target = val
 			track_data(&"target", val)
 	
 	## The ID of the broadcaster to send the message to. Don’t include this field if `is_global_broadcast` is set to **true**.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## A Boolean value that determines whether the message should be sent to all channels where your extension is active. Set to **true** if the message should be sent to all channels. The default is **false**.
-	var is_global_broadcast: bool:
+	@export var is_global_broadcast: bool:
 		set(val): 
 			is_global_broadcast = val
 			track_data(&"is_global_broadcast", val)
 	
 	## The message to send. The message can be a plain-text string or a string-encoded JSON object. The message is limited to a maximum of 5 KB.
-	var message: String:
+	@export var message: String:
 		set(val): 
 			message = val
 			track_data(&"message", val)

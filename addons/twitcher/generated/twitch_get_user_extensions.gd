@@ -12,7 +12,7 @@ class_name TwitchGetUserExtensions
 class Response extends TwitchData:
 
 	## The list of extensions that the user has installed.
-	var data: Array[TwitchUserExtension]:
+	@export var data: Array[TwitchUserExtension]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

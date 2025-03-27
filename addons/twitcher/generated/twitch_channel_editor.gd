@@ -8,19 +8,19 @@ extends TwitchData
 class_name TwitchChannelEditor
 	
 ## An ID that uniquely identifies a user with editor permissions.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s display name.
-var user_name: String:
+@export var user_name: String:
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The date and time, in RFC3339 format, when the user became one of the broadcaster’s editors.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
@@ -28,7 +28,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_user_id: String, _user_name: String, _created_at: Variant) -> TwitchChannelEditor:
+static func create(_user_id: String, _user_name: String, _created_at: String) -> TwitchChannelEditor:
 	var twitch_channel_editor: TwitchChannelEditor = TwitchChannelEditor.new()
 	twitch_channel_editor.user_id = _user_id
 	twitch_channel_editor.user_name = _user_name

@@ -12,13 +12,13 @@ class_name TwitchGetGameAnalytics
 class Response extends TwitchData:
 
 	## A list of reports. The reports are returned in no particular order; however, the data within each report is in ascending order by date (newest first). The report contains one row of data per day of the reporting window; the report contains rows for only those days that the game was used. A report is available only if the game was broadcast for at least 5 hours over the reporting period. The array is empty if there are no reports.
-	var data: Array[TwitchGameAnalytics]:
+	@export var data: Array[TwitchGameAnalytics]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -88,7 +88,7 @@ class Response extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -114,7 +114,7 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## The game’s client ID. If specified, the response contains a report for the specified game. If not specified, the response includes a report for each of the authenticated user’s games.
-	var game_id: String:
+	@export var game_id: String:
 		set(val): 
 			game_id = val
 			track_data(&"game_id", val)
@@ -122,7 +122,7 @@ class Opt extends TwitchData:
 	## The type of analytics report to get. Possible values are:  
 	##   
 	## * overview\_v2
-	var type: String:
+	@export var type: String:
 		set(val): 
 			type = val
 			track_data(&"type", val)
@@ -132,7 +132,7 @@ class Opt extends TwitchData:
 	## The start date must be within one year of today’s date. If you specify an earlier date, the API ignores it and uses a date that’s one year prior to today’s date. If you don’t specify a start and end date, the report includes all available data for the last 365 days from today.  
 	##   
 	## The report contains one row of data for each day in the reporting window.
-	var started_at: Variant:
+	@export var started_at: String:
 		set(val): 
 			started_at = val
 			track_data(&"started_at", val)
@@ -140,7 +140,7 @@ class Opt extends TwitchData:
 	## The reporting window’s end date, in RFC3339 format. Set the time portion to zeroes (for example, 2021-10-22T00:00:00Z). The report is inclusive of the end date.  
 	##   
 	## Specify an end date only if you provide a start date. Because it can take up to two days for the data to be available, you must specify an end date that’s earlier than today minus one to two days. If not, the API ignores your end date and uses an end date that is today minus one to two days.
-	var ended_at: Variant:
+	@export var ended_at: String:
 		set(val): 
 			ended_at = val
 			track_data(&"ended_at", val)
@@ -148,7 +148,7 @@ class Opt extends TwitchData:
 	## The maximum number of report URLs to return per page in the response. The minimum page size is 1 URL per page and the maximum is 100 URLs per page. The default is 20.  
 	##   
 	## **NOTE**: While you may specify a maximum value of 100, the response will contain at most 20 URLs per page.
-	var first: int:
+	@export var first: int:
 		set(val): 
 			first = val
 			track_data(&"first", val)
@@ -156,7 +156,7 @@ class Opt extends TwitchData:
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)  
 	##   
 	## This parameter is ignored if _game\_id_ parameter is set.
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)

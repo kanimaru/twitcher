@@ -12,7 +12,7 @@ class_name TwitchGetExtensionConfigurationSegment
 class Response extends TwitchData:
 
 	## The list of requested configuration segments. The list is returned in the same order that you specified the list of segments in the request.
-	var data: Array[TwitchExtensionConfigurationSegment]:
+	@export var data: Array[TwitchExtensionConfigurationSegment]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,7 +40,7 @@ class Response extends TwitchData:
 class Opt extends TwitchData:
 
 	## The ID of the broadcaster that installed the extension. This parameter is required if you set the _segment_ parameter to broadcaster or developer. Do not specify this parameter if you set _segment_ to global.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)

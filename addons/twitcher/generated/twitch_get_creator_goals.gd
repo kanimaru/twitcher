@@ -12,7 +12,7 @@ class_name TwitchGetCreatorGoals
 class Response extends TwitchData:
 
 	## The list of goals. The list is empty if the broadcaster hasn’t created goals.
-	var data: Array[TwitchCreatorGoal]:
+	@export var data: Array[TwitchCreatorGoal]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

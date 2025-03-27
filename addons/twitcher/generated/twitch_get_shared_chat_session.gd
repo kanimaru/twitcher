@@ -12,7 +12,7 @@ class_name TwitchGetSharedChatSession
 class Response extends TwitchData:
 
 	## 
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,31 +40,31 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The unique identifier for the shared chat session.
-	var session_id: String:
+	@export var session_id: String:
 		set(val): 
 			session_id = val
 			track_data(&"session_id", val)
 	
 	## The User ID of the host channel.
-	var host_broadcaster_id: String:
+	@export var host_broadcaster_id: String:
 		set(val): 
 			host_broadcaster_id = val
 			track_data(&"host_broadcaster_id", val)
 	
 	## The list of participants in the session.
-	var participants: Array[ResponseParticipants]:
+	@export var participants: Array[ResponseParticipants]:
 		set(val): 
 			participants = val
 			track_data(&"participants", val)
 	
 	## The UTC date and time (in RFC3339 format) for when the session was created.
-	var created_at: Variant:
+	@export var created_at: String:
 		set(val): 
 			created_at = val
 			track_data(&"created_at", val)
 	
 	## The UTC date and time (in RFC3339 format) for when the session was last updated.
-	var updated_at: Variant:
+	@export var updated_at: String:
 		set(val): 
 			updated_at = val
 			track_data(&"updated_at", val)
@@ -72,7 +72,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_session_id: String, _host_broadcaster_id: String, _participants: Array[ResponseParticipants], _created_at: Variant, _updated_at: Variant) -> ResponseData:
+	static func create(_session_id: String, _host_broadcaster_id: String, _participants: Array[ResponseParticipants], _created_at: String, _updated_at: String) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.session_id = _session_id
 		response_data.host_broadcaster_id = _host_broadcaster_id
@@ -104,7 +104,7 @@ class ResponseData extends TwitchData:
 class ResponseParticipants extends TwitchData:
 
 	## The User ID of the participant channel.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)

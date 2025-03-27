@@ -19,7 +19,7 @@ class Body extends TwitchData:
 	## * 10,000 characters if the user you're sending the message to has whispered you before.
 	##   
 	## Messages that exceed the maximum length are truncated.
-	var message: String:
+	@export var message: String:
 		set(val): 
 			message = val
 			track_data(&"message", val)

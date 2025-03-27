@@ -8,37 +8,37 @@ extends TwitchData
 class_name TwitchStream
 	
 ## An ID that identifies the stream. You can use this ID later to look up the video on demand (VOD).
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The ID of the user that’s broadcasting the stream.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s login name.
-var user_login: String:
+@export var user_login: String:
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The user’s display name.
-var user_name: String:
+@export var user_name: String:
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The ID of the category or game being played.
-var game_id: String:
+@export var game_id: String:
 	set(val): 
 		game_id = val
 		track_data(&"game_id", val)
 
 ## The ID of the category or game being played.
-var game_name: String:
+@export var game_name: String:
 	set(val): 
 		game_name = val
 		track_data(&"game_name", val)
@@ -48,37 +48,37 @@ var game_name: String:
 ## * live
 ##   
 ## If an error occurs, this field is set to an empty string.
-var type: String:
+@export var type: String:
 	set(val): 
 		type = val
 		track_data(&"type", val)
 
 ## The stream’s title. Is an empty string if not set.
-var title: String:
+@export var title: String:
 	set(val): 
 		title = val
 		track_data(&"title", val)
 
 ## The number of users watching the stream.
-var viewer_count: int:
+@export var viewer_count: int:
 	set(val): 
 		viewer_count = val
 		track_data(&"viewer_count", val)
 
 ## The UTC date and time (in RFC3339 format) of when the broadcast began.
-var started_at: Variant:
+@export var started_at: String:
 	set(val): 
 		started_at = val
 		track_data(&"started_at", val)
 
 ## The language that the stream uses. This is an ISO 639-1 two-letter language code or _other_ if the stream uses a language not in the list of [supported stream languages](https://help.twitch.tv/s/article/languages-on-twitch#streamlang).
-var language: String:
+@export var language: String:
 	set(val): 
 		language = val
 		track_data(&"language", val)
 
 ## A URL to an image of a frame from the last 5 minutes of the stream. Replace the width and height placeholders in the URL (`{width}x{height}`) with the size of the image you want, in pixels.
-var thumbnail_url: String:
+@export var thumbnail_url: String:
 	set(val): 
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
@@ -86,19 +86,19 @@ var thumbnail_url: String:
 ## **IMPORTANT** As of February 28, 2023, this field is deprecated and returns only an empty array. If you use this field, please update your code to use the `tags` field.  
 ##   
 ## The list of tags that apply to the stream. The list contains IDs only when the channel is steaming live. For a list of possible tags, see [List of All Tags](https://www.twitch.tv/directory/all/tags). The list doesn’t include Category Tags.
-var tag_ids: Array[String]:
+@export var tag_ids: Array[String]:
 	set(val): 
 		tag_ids = val
 		track_data(&"tag_ids", val)
 
 ## The tags applied to the stream.
-var tags: Array[String]:
+@export var tags: Array[String]:
 	set(val): 
 		tags = val
 		track_data(&"tags", val)
 
 ## A Boolean value that indicates whether the stream is meant for mature audiences.
-var is_mature: bool:
+@export var is_mature: bool:
 	set(val): 
 		is_mature = val
 		track_data(&"is_mature", val)
@@ -106,7 +106,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _user_id: String, _user_login: String, _user_name: String, _game_id: String, _game_name: String, _type: String, _title: String, _viewer_count: int, _started_at: Variant, _language: String, _thumbnail_url: String, _tag_ids: Array[String], _tags: Array[String], _is_mature: bool) -> TwitchStream:
+static func create(_id: String, _user_id: String, _user_login: String, _user_name: String, _game_id: String, _game_name: String, _type: String, _title: String, _viewer_count: int, _started_at: String, _language: String, _thumbnail_url: String, _tag_ids: Array[String], _tags: Array[String], _is_mature: bool) -> TwitchStream:
 	var twitch_stream: TwitchStream = TwitchStream.new()
 	twitch_stream.id = _id
 	twitch_stream.user_id = _user_id

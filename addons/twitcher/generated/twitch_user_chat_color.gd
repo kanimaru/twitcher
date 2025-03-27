@@ -8,25 +8,25 @@ extends TwitchData
 class_name TwitchUserChatColor
 	
 ## An ID that uniquely identifies the user.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s login name.
-var user_login: String:
+@export var user_login: String:
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The user’s display name.
-var user_name: String:
+@export var user_name: String:
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The Hex color code that the user uses in chat for their name. If the user hasn’t specified a color in their settings, the string is empty.
-var color: String:
+@export var color: String:
 	set(val): 
 		color = val
 		track_data(&"color", val)

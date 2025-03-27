@@ -12,7 +12,7 @@ class_name TwitchGetUserEmotes
 class Response extends TwitchData:
 
 	## 
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -20,7 +20,7 @@ class Response extends TwitchData:
 	## A templated URL. Uses the values from the _id_, _format_, _scale_, and _theme\_mode_ fields to replace the like-named placeholder strings in the templated URL to create a CDN (content delivery network) URL that you use to fetch the emote.   
 	##   
 	##  For information about what the template looks like and how to use it to fetch emotes, see [Emote CDN URL](https://dev.twitch.tv/docs/irc/emotes#cdn-template) format.
-	var template: String:
+	@export var template: String:
 		set(val): 
 			template = val
 			track_data(&"template", val)
@@ -28,7 +28,7 @@ class Response extends TwitchData:
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through.   
 	##   
 	##  For more information about pagination support, see [Twitch API Guide - Pagination](https://dev.twitch.tv/docs/api/guide#pagination).
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -102,13 +102,13 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## An ID that uniquely identifies this emote.
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## The User ID of broadcaster whose channel is receiving the unban request.
-	var name: String:
+	@export var name: String:
 		set(val): 
 			name = val
 			track_data(&"name", val)
@@ -129,19 +129,19 @@ class ResponseData extends TwitchData:
 	## * **owl2019** — Emotes related to Overwatch League 2019.
 	## * **twofactor** — Emotes granted by enabling two-factor authentication on an account.
 	## * **limitedtime** — Emotes that were granted for only a limited time.
-	var emote_type: String:
+	@export var emote_type: String:
 		set(val): 
 			emote_type = val
 			track_data(&"emote_type", val)
 	
 	## An ID that identifies the emote set that the emote belongs to.
-	var emote_set_id: String:
+	@export var emote_set_id: String:
 		set(val): 
 			emote_set_id = val
 			track_data(&"emote_set_id", val)
 	
 	## The ID of the broadcaster who owns the emote.
-	var owner_id: String:
+	@export var owner_id: String:
 		set(val): 
 			owner_id = val
 			track_data(&"owner_id", val)
@@ -150,7 +150,7 @@ class ResponseData extends TwitchData:
 	##   
 	## * **animated** — An animated GIF is available for this emote.
 	## * **static** — A static PNG file is available for this emote.
-	var format: Array[String]:
+	@export var format: Array[String]:
 		set(val): 
 			format = val
 			track_data(&"format", val)
@@ -160,7 +160,7 @@ class ResponseData extends TwitchData:
 	## * **1.0** — A small version (28px x 28px) is available.
 	## * **2.0** — A medium version (56px x 56px) is available.
 	## * **3.0** — A large version (112px x 112px) is available.
-	var scale: Array[String]:
+	@export var scale: Array[String]:
 		set(val): 
 			scale = val
 			track_data(&"scale", val)
@@ -169,7 +169,7 @@ class ResponseData extends TwitchData:
 	##   
 	## * **dark**
 	## * **light**
-	var theme_mode: Array[String]:
+	@export var theme_mode: Array[String]:
 		set(val): 
 			theme_mode = val
 			track_data(&"theme_mode", val)
@@ -222,7 +222,7 @@ class ResponseData extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s after query parameter.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -248,7 +248,7 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## The cursor used to get the next page of results. The Pagination object in the response contains the cursor’s value.
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)
@@ -256,7 +256,7 @@ class Opt extends TwitchData:
 	## The User ID of a broadcaster you wish to get follower emotes of. Using this query parameter will guarantee inclusion of the broadcaster’s follower emotes in the response body.   
 	##   
 	## **Note:** If the user specified in `user_id` is subscribed to the broadcaster specified, their follower emotes will appear in the response body regardless if this query parameter is used.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)

@@ -41,6 +41,7 @@ class Server extends TCPServer:
 	
 	func stop_listening() -> void:
 		_listeners -= 1
+		HTTPServer.logDebug("{%s:%s} listener node detached %s left" % [ _bind_address, _port, _listeners ])
 		if _listeners <= 0:
 			_stop_server()
 

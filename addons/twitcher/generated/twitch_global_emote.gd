@@ -8,13 +8,13 @@ extends TwitchData
 class_name TwitchGlobalEmote
 	
 ## An ID that identifies this emote.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The name of the emote. This is the name that viewers type in the chat window to get the emote to appear.
-var name: String:
+@export var name: String:
 	set(val): 
 		name = val
 		track_data(&"name", val)
@@ -22,7 +22,7 @@ var name: String:
 ## The image URLs for the emote. These image URLs always provide a static, non-animated emote image with a light background.  
 ##   
 ## **NOTE:** You should use the templated URL in the `template` field to fetch the image instead of using these URLs.
-var images: Images:
+@export var images: Images:
 	set(val): 
 		images = val
 		track_data(&"images", val)
@@ -31,7 +31,7 @@ var images: Images:
 ##   
 ## * animated — An animated GIF is available for this emote.
 ## * static — A static PNG file is available for this emote.
-var format: Array[String]:
+@export var format: Array[String]:
 	set(val): 
 		format = val
 		track_data(&"format", val)
@@ -41,7 +41,7 @@ var format: Array[String]:
 ## * 1.0 — A small version (28px x 28px) is available.
 ## * 2.0 — A medium version (56px x 56px) is available.
 ## * 3.0 — A large version (112px x 112px) is available.
-var scale: Array[String]:
+@export var scale: Array[String]:
 	set(val): 
 		scale = val
 		track_data(&"scale", val)
@@ -50,7 +50,7 @@ var scale: Array[String]:
 ##   
 ## * dark
 ## * light
-var theme_mode: Array[String]:
+@export var theme_mode: Array[String]:
 	set(val): 
 		theme_mode = val
 		track_data(&"theme_mode", val)
@@ -97,19 +97,19 @@ static func from_json(d: Dictionary) -> TwitchGlobalEmote:
 class Images extends TwitchData:
 
 	## A URL to the small version (28px x 28px) of the emote.
-	var url_1x: String:
+	@export var url_1x: String:
 		set(val): 
 			url_1x = val
 			track_data(&"url_1x", val)
 	
 	## A URL to the medium version (56px x 56px) of the emote.
-	var url_2x: String:
+	@export var url_2x: String:
 		set(val): 
 			url_2x = val
 			track_data(&"url_2x", val)
 	
 	## A URL to the large version (112px x 112px) of the emote.
-	var url_4x: String:
+	@export var url_4x: String:
 		set(val): 
 			url_4x = val
 			track_data(&"url_4x", val)

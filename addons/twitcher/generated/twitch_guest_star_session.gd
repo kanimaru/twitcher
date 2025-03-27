@@ -8,13 +8,13 @@ extends TwitchData
 class_name TwitchGuestStarSession
 	
 ## ID uniquely representing the Guest Star session.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## List of guests currently interacting with the Guest Star session.
-var guests: Array[TwitchGuest]:
+@export var guests: Array[TwitchGuest]:
 	set(val): 
 		guests = val
 		track_data(&"guests", val)

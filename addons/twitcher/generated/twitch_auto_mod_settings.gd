@@ -8,67 +8,67 @@ extends TwitchData
 class_name TwitchAutoModSettings
 	
 ## The broadcaster’s ID.
-var broadcaster_id: String:
+@export var broadcaster_id: String:
 	set(val): 
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The moderator’s ID.
-var moderator_id: String:
+@export var moderator_id: String:
 	set(val): 
 		moderator_id = val
 		track_data(&"moderator_id", val)
 
 ## The default AutoMod level for the broadcaster. This field is **null** if the broadcaster has set one or more of the individual settings.
-var overall_level: int:
+@export var overall_level: int:
 	set(val): 
 		overall_level = val
 		track_data(&"overall_level", val)
 
 ## The Automod level for discrimination against disability.
-var disability: int:
+@export var disability: int:
 	set(val): 
 		disability = val
 		track_data(&"disability", val)
 
 ## The Automod level for hostility involving aggression.
-var aggression: int:
+@export var aggression: int:
 	set(val): 
 		aggression = val
 		track_data(&"aggression", val)
 
 ## The AutoMod level for discrimination based on sexuality, sex, or gender.
-var sexuality_sex_or_gender: int:
+@export var sexuality_sex_or_gender: int:
 	set(val): 
 		sexuality_sex_or_gender = val
 		track_data(&"sexuality_sex_or_gender", val)
 
 ## The Automod level for discrimination against women.
-var misogyny: int:
+@export var misogyny: int:
 	set(val): 
 		misogyny = val
 		track_data(&"misogyny", val)
 
 ## The Automod level for hostility involving name calling or insults.
-var bullying: int:
+@export var bullying: int:
 	set(val): 
 		bullying = val
 		track_data(&"bullying", val)
 
 ## The Automod level for profanity.
-var swearing: int:
+@export var swearing: int:
 	set(val): 
 		swearing = val
 		track_data(&"swearing", val)
 
 ## The Automod level for racial discrimination.
-var race_ethnicity_or_religion: int:
+@export var race_ethnicity_or_religion: int:
 	set(val): 
 		race_ethnicity_or_religion = val
 		track_data(&"race_ethnicity_or_religion", val)
 
 ## The Automod level for sexual content.
-var sex_based_terms: int:
+@export var sex_based_terms: int:
 	set(val): 
 		sex_based_terms = val
 		track_data(&"sex_based_terms", val)

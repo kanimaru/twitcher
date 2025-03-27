@@ -12,7 +12,7 @@ class_name TwitchStartRaid
 class Response extends TwitchData:
 
 	## A list that contains a single object with information about the pending raid.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,13 +40,13 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The UTC date and time, in RFC3339 format, of when the raid was requested.
-	var created_at: Variant:
+	@export var created_at: String:
 		set(val): 
 			created_at = val
 			track_data(&"created_at", val)
 	
 	## A Boolean value that indicates whether the channel being raided contains mature content.
-	var is_mature: bool:
+	@export var is_mature: bool:
 		set(val): 
 			is_mature = val
 			track_data(&"is_mature", val)
@@ -54,7 +54,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_created_at: Variant, _is_mature: bool) -> ResponseData:
+	static func create(_created_at: String, _is_mature: bool) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.created_at = _created_at
 		response_data.is_mature = _is_mature

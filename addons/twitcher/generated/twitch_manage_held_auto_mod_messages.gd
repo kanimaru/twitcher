@@ -12,13 +12,13 @@ class_name TwitchManageHeldAutoModMessages
 class Body extends TwitchData:
 
 	## The moderator who is approving or denying the held message. This ID must match the user ID in the access token.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The ID of the message to allow or deny.
-	var msg_id: String:
+	@export var msg_id: String:
 		set(val): 
 			msg_id = val
 			track_data(&"msg_id", val)
@@ -27,7 +27,7 @@ class Body extends TwitchData:
 	##   
 	## * ALLOW
 	## * DENY
-	var action: String:
+	@export var action: String:
 		set(val): 
 			action = val
 			track_data(&"action", val)

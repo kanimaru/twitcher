@@ -12,7 +12,7 @@ class_name TwitchCheckUserSubscription
 class Response extends TwitchData:
 
 	## A list that contains a single object with information about the user’s subscription.
-	var data: Array[TwitchUserSubscription]:
+	@export var data: Array[TwitchUserSubscription]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

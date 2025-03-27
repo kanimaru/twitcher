@@ -12,19 +12,19 @@ class_name TwitchGetBitsLeaderboard
 class Response extends TwitchData:
 
 	## A list of leaderboard leaders. The leaders are returned in rank order by how much they’ve cheered. The array is empty if nobody has cheered bits.
-	var data: Array[TwitchBitsLeaderboard]:
+	@export var data: Array[TwitchBitsLeaderboard]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## The reporting window’s start and end dates, in RFC3339 format. The dates are calculated by using the _started\_at_ and _period_ query parameters. If you don’t specify the _started\_at_ query parameter, the fields contain empty strings.
-	var date_range: ResponseDateRange:
+	@export var date_range: ResponseDateRange:
 		set(val): 
 			date_range = val
 			track_data(&"date_range", val)
 	
 	## The number of ranked users in `data`. This is the value in the _count_ query parameter or the total number of entries on the leaderboard, whichever is less.
-	var total: int:
+	@export var total: int:
 		set(val): 
 			total = val
 			track_data(&"total", val)
@@ -58,13 +58,13 @@ class Response extends TwitchData:
 class ResponseDateRange extends TwitchData:
 
 	## The reporting window’s start date.
-	var started_at: Variant:
+	@export var started_at: String:
 		set(val): 
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The reporting window’s end date.
-	var ended_at: Variant:
+	@export var ended_at: String:
 		set(val): 
 			ended_at = val
 			track_data(&"ended_at", val)
@@ -72,7 +72,7 @@ class ResponseDateRange extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_started_at: Variant, _ended_at: Variant) -> ResponseDateRange:
+	static func create(_started_at: String, _ended_at: String) -> ResponseDateRange:
 		var response_date_range: ResponseDateRange = ResponseDateRange.new()
 		response_date_range.started_at = _started_at
 		response_date_range.ended_at = _ended_at
@@ -94,7 +94,7 @@ class ResponseDateRange extends TwitchData:
 class Opt extends TwitchData:
 
 	## The number of results to return. The minimum count is 1 and the maximum is 100\. The default is 10.
-	var count: int:
+	@export var count: int:
 		set(val): 
 			count = val
 			track_data(&"count", val)
@@ -106,7 +106,7 @@ class Opt extends TwitchData:
 	## * month — A month spans from 00:00:00 on the first day of the month specified in _started\_at_ and runs through 00:00:00 of the first day of the next month.
 	## * year — A year spans from 00:00:00 on the first day of the year specified in _started\_at_ and runs through 00:00:00 of the first day of the next year.
 	## * all — Default. The lifetime of the broadcaster's channel.
-	var period: String:
+	@export var period: String:
 		set(val): 
 			period = val
 			track_data(&"period", val)
@@ -116,13 +116,13 @@ class Opt extends TwitchData:
 	## Note that the date is converted to PST before being used, so if you set the start time to `2022-01-01T00:00:00.0Z` and _period_ to month, the actual reporting period is December 2021, not January 2022\. If you want the reporting period to be January 2022, you must set the start time to `2022-01-01T08:00:00.0Z` or `2022-01-01T00:00:00.0-08:00`.  
 	##   
 	## If your start date uses the ‘+’ offset operator (for example, `2022-01-01T00:00:00.0+05:00`), you must URL encode the start date.
-	var started_at: Variant:
+	@export var started_at: String:
 		set(val): 
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## An ID that identifies a user that cheered bits in the channel. If _count_ is greater than 1, the response may include users ranked above and below the specified user. To get the leaderboard’s top leaders, don’t specify a user ID.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)

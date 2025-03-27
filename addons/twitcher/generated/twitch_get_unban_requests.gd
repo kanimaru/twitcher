@@ -12,13 +12,13 @@ class_name TwitchGetUnbanRequests
 class Response extends TwitchData:
 
 	## A list that contains information about the channel's unban requests.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## Contains information used to page through a list of results. The object is empty if there are no more pages left to page through.
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -88,67 +88,67 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## Unban request ID.
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## User ID of broadcaster whose channel is receiving the unban request.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The broadcaster's display name.
-	var broadcaster_name: String:
+	@export var broadcaster_name: String:
 		set(val): 
 			broadcaster_name = val
 			track_data(&"broadcaster_name", val)
 	
 	## The broadcaster's login name.
-	var broadcaster_login: String:
+	@export var broadcaster_login: String:
 		set(val): 
 			broadcaster_login = val
 			track_data(&"broadcaster_login", val)
 	
 	## User ID of moderator who approved/denied the request.
-	var moderator_id: String:
+	@export var moderator_id: String:
 		set(val): 
 			moderator_id = val
 			track_data(&"moderator_id", val)
 	
 	## The moderator's login name.
-	var moderator_login: String:
+	@export var moderator_login: String:
 		set(val): 
 			moderator_login = val
 			track_data(&"moderator_login", val)
 	
 	## The moderator's display name.
-	var moderator_name: String:
+	@export var moderator_name: String:
 		set(val): 
 			moderator_name = val
 			track_data(&"moderator_name", val)
 	
 	## User ID of the requestor who is asking for an unban.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user's login name.
-	var user_login: String:
+	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user's display name.
-	var user_name: String:
+	@export var user_name: String:
 		set(val): 
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## Text of the request from the requesting user.
-	var text: String:
+	@export var text: String:
 		set(val): 
 			text = val
 			track_data(&"text", val)
@@ -160,25 +160,25 @@ class ResponseData extends TwitchData:
 	## * denied
 	## * acknowledged
 	## * canceled
-	var status: String:
+	@export var status: String:
 		set(val): 
 			status = val
 			track_data(&"status", val)
 	
 	## Timestamp of when the unban request was created.
-	var created_at: Variant:
+	@export var created_at: String:
 		set(val): 
 			created_at = val
 			track_data(&"created_at", val)
 	
 	## Timestamp of when moderator/broadcaster approved or denied the request.
-	var resolved_at: Variant:
+	@export var resolved_at: String:
 		set(val): 
 			resolved_at = val
 			track_data(&"resolved_at", val)
 	
 	## Text input by the resolver (moderator) of the unban. request
-	var resolution_text: String:
+	@export var resolution_text: String:
 		set(val): 
 			resolution_text = val
 			track_data(&"resolution_text", val)
@@ -186,7 +186,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_id: String, _broadcaster_id: String, _broadcaster_name: String, _broadcaster_login: String, _moderator_id: String, _moderator_login: String, _moderator_name: String, _user_id: String, _user_login: String, _user_name: String, _text: String, _status: String, _created_at: Variant, _resolved_at: Variant, _resolution_text: String) -> ResponseData:
+	static func create(_id: String, _broadcaster_id: String, _broadcaster_name: String, _broadcaster_login: String, _moderator_id: String, _moderator_login: String, _moderator_name: String, _user_id: String, _user_login: String, _user_name: String, _text: String, _status: String, _created_at: String, _resolved_at: String, _resolution_text: String) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.id = _id
 		response_data.broadcaster_id = _broadcaster_id
@@ -247,7 +247,7 @@ class ResponseData extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s after query parameter.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -273,19 +273,19 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## The ID used to filter what unban requests are returned.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## Cursor used to get next page of results. Pagination object in response contains cursor value.
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)
 	
 	## The maximum number of items to return per page in response
-	var first: int:
+	@export var first: int:
 		set(val): 
 			first = val
 			track_data(&"first", val)

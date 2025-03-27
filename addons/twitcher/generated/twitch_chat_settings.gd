@@ -8,13 +8,13 @@ extends TwitchData
 class_name TwitchChatSettings
 	
 ## The ID of the broadcaster specified in the request.
-var broadcaster_id: String:
+@export var broadcaster_id: String:
 	set(val): 
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## A Boolean value that determines whether chat messages must contain only emotes. Is **true** if chat messages may contain only emotes; otherwise, **false**.
-var emote_mode: bool:
+@export var emote_mode: bool:
 	set(val): 
 		emote_mode = val
 		track_data(&"emote_mode", val)
@@ -24,19 +24,19 @@ var emote_mode: bool:
 ## Is **true** if the broadcaster restricts the chat room to followers only; otherwise, **false**.  
 ##   
 ## See the `follower_mode_duration` field for how long users must follow the broadcaster before being able to participate in the chat room.
-var follower_mode: bool:
+@export var follower_mode: bool:
 	set(val): 
 		follower_mode = val
 		track_data(&"follower_mode", val)
 
 ## The length of time, in minutes, that users must follow the broadcaster before being able to participate in the chat room. Is **null** if `follower_mode` is **false**.
-var follower_mode_duration: int:
+@export var follower_mode_duration: int:
 	set(val): 
 		follower_mode_duration = val
 		track_data(&"follower_mode_duration", val)
 
 ## The moderator’s ID. The response includes this field only if the request specifies a user access token that includes the **moderator:read:chat\_settings** scope.
-var moderator_id: String:
+@export var moderator_id: String:
 	set(val): 
 		moderator_id = val
 		track_data(&"moderator_id", val)
@@ -44,7 +44,7 @@ var moderator_id: String:
 ## A Boolean value that determines whether the broadcaster adds a short delay before chat messages appear in the chat room. This gives chat moderators and bots a chance to remove them before viewers can see the message. See the `non_moderator_chat_delay_duration` field for the length of the delay. Is **true** if the broadcaster applies a delay; otherwise, **false**.  
 ##   
 ## The response includes this field only if the request specifies a user access token that includes the **moderator:read:chat\_settings** scope and the user in the _moderator\_id_ query parameter is one of the broadcaster’s moderators.
-var non_moderator_chat_delay: bool:
+@export var non_moderator_chat_delay: bool:
 	set(val): 
 		non_moderator_chat_delay = val
 		track_data(&"non_moderator_chat_delay", val)
@@ -52,7 +52,7 @@ var non_moderator_chat_delay: bool:
 ## The amount of time, in seconds, that messages are delayed before appearing in chat. Is **null** if `non_moderator_chat_delay` is **false**.  
 ##   
 ## The response includes this field only if the request specifies a user access token that includes the **moderator:read:chat\_settings** scope and the user in the _moderator\_id_ query parameter is one of the broadcaster’s moderators.
-var non_moderator_chat_delay_duration: int:
+@export var non_moderator_chat_delay_duration: int:
 	set(val): 
 		non_moderator_chat_delay_duration = val
 		track_data(&"non_moderator_chat_delay_duration", val)
@@ -62,7 +62,7 @@ var non_moderator_chat_delay_duration: int:
 ## Is **true** if the broadcaster applies a delay; otherwise, **false**.  
 ##   
 ## See the `slow_mode_wait_time` field for the delay.
-var slow_mode: bool:
+@export var slow_mode: bool:
 	set(val): 
 		slow_mode = val
 		track_data(&"slow_mode", val)
@@ -70,7 +70,7 @@ var slow_mode: bool:
 ## The amount of time, in seconds, that users must wait between sending messages.  
 ##   
 ## Is **null** if slow\_mode is **false**.
-var slow_mode_wait_time: int:
+@export var slow_mode_wait_time: int:
 	set(val): 
 		slow_mode_wait_time = val
 		track_data(&"slow_mode_wait_time", val)
@@ -78,7 +78,7 @@ var slow_mode_wait_time: int:
 ## A Boolean value that determines whether only users that subscribe to the broadcaster’s channel may talk in the chat room.  
 ##   
 ## Is **true** if the broadcaster restricts the chat room to subscribers only; otherwise, **false**.
-var subscriber_mode: bool:
+@export var subscriber_mode: bool:
 	set(val): 
 		subscriber_mode = val
 		track_data(&"subscriber_mode", val)
@@ -86,7 +86,7 @@ var subscriber_mode: bool:
 ## A Boolean value that determines whether the broadcaster requires users to post only unique messages in the chat room.  
 ##   
 ## Is **true** if the broadcaster requires unique messages only; otherwise, **false**.
-var unique_chat_mode: bool:
+@export var unique_chat_mode: bool:
 	set(val): 
 		unique_chat_mode = val
 		track_data(&"unique_chat_mode", val)

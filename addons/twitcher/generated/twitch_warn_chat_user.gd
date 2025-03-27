@@ -12,7 +12,7 @@ class_name TwitchWarnChatUser
 class Body extends TwitchData:
 
 	## A list that contains information about the warning.
-	var data: BodyData:
+	@export var data: BodyData:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -39,13 +39,13 @@ class Body extends TwitchData:
 class BodyData extends TwitchData:
 
 	## The ID of the twitch user to be warned.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## A custom reason for the warning. **Max 500 chars.**
-	var reason: String:
+	@export var reason: String:
 		set(val): 
 			reason = val
 			track_data(&"reason", val)
@@ -75,7 +75,7 @@ class BodyData extends TwitchData:
 class Response extends TwitchData:
 
 	## A list that contains information about the warning.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -103,25 +103,25 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The ID of the channel in which the warning will take effect.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The ID of the warned user.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The ID of the user who applied the warning.
-	var moderator_id: String:
+	@export var moderator_id: String:
 		set(val): 
 			moderator_id = val
 			track_data(&"moderator_id", val)
 	
 	## The reason provided for warning.
-	var reason: String:
+	@export var reason: String:
 		set(val): 
 			reason = val
 			track_data(&"reason", val)

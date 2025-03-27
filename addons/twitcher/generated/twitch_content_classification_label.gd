@@ -8,19 +8,19 @@ extends TwitchData
 class_name TwitchContentClassificationLabel
 	
 ## Unique identifier for the CCL.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## Localized description of the CCL.
-var description: String:
+@export var description: String:
 	set(val): 
 		description = val
 		track_data(&"description", val)
 
 ## Localized name of the CCL.
-var name: String:
+@export var name: String:
 	set(val): 
 		name = val
 		track_data(&"name", val)

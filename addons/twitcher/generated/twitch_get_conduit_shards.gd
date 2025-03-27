@@ -12,13 +12,13 @@ class_name TwitchGetConduitShards
 class Response extends TwitchData:
 
 	## List of information about a conduit's shards.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
 	
 	## Contains information used to page through a list of results. The object is empty if there are no more pages left to page through.
-	var pagination: ResponsePagination:
+	@export var pagination: ResponsePagination:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
@@ -88,7 +88,7 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## Shard ID.
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
@@ -106,13 +106,13 @@ class ResponseData extends TwitchData:
 	## * websocket\_network\_timeout — The Twitch WebSocket server timed out writing the message to the client.
 	## * websocket\_network\_error — The Twitch WebSocket server experienced a network error writing the message to the client.
 	## * websocket\_failed\_to\_reconnect - The client failed to reconnect to the Twitch WebSocket server within the required time after a Reconnect Message.
-	var status: String:
+	@export var status: String:
 		set(val): 
 			status = val
 			track_data(&"status", val)
 	
 	## The transport details used to send the notifications.
-	var transport: ResponseTransport:
+	@export var transport: ResponseTransport:
 		set(val): 
 			transport = val
 			track_data(&"transport", val)
@@ -148,31 +148,31 @@ class ResponseTransport extends TwitchData:
 	##   
 	## * webhook
 	## * websocket
-	var method: String:
+	@export var method: String:
 		set(val): 
 			method = val
 			track_data(&"method", val)
 	
 	## The callback URL where the notifications are sent. Included only if method is set to webhook.
-	var callback: String:
+	@export var callback: String:
 		set(val): 
 			callback = val
 			track_data(&"callback", val)
 	
 	## An ID that identifies the WebSocket that notifications are sent to. Included only if method is set to websocket.
-	var session_id: String:
+	@export var session_id: String:
 		set(val): 
 			session_id = val
 			track_data(&"session_id", val)
 	
 	## The UTC date and time that the WebSocket connection was established. Included only if method is set to websocket.
-	var connected_at: Variant:
+	@export var connected_at: String:
 		set(val): 
 			connected_at = val
 			track_data(&"connected_at", val)
 	
 	## The UTC date and time that the WebSocket connection was lost. Included only if method is set to websocket.
-	var disconnected_at: Variant:
+	@export var disconnected_at: String:
 		set(val): 
 			disconnected_at = val
 			track_data(&"disconnected_at", val)
@@ -207,7 +207,7 @@ class ResponseTransport extends TwitchData:
 class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s after query parameter.
-	var cursor: String:
+	@export var cursor: String:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
@@ -233,13 +233,13 @@ class ResponsePagination extends TwitchData:
 class Opt extends TwitchData:
 
 	## Status to filter by.
-	var status: String:
+	@export var status: String:
 		set(val): 
 			status = val
 			track_data(&"status", val)
 	
 	## The cursor used to get the next page of results. The pagination object in the response contains the cursor’s value.
-	var after: String:
+	@export var after: String:
 		set(val): 
 			after = val
 			track_data(&"after", val)

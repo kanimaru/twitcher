@@ -17,7 +17,7 @@ class Opt extends TwitchData:
 	## * whisper
 	##   
 	## .
-	var source_context: String:
+	@export var source_context: String:
 		set(val): 
 			source_context = val
 			track_data(&"source_context", val)
@@ -27,7 +27,7 @@ class Opt extends TwitchData:
 	## * harassment
 	## * spam
 	## * other
-	var reason: String:
+	@export var reason: String:
 		set(val): 
 			reason = val
 			track_data(&"reason", val)

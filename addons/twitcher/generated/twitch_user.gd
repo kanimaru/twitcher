@@ -8,19 +8,19 @@ extends TwitchData
 class_name TwitchUser
 	
 ## An ID that identifies the user.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The user's login name.
-var login: String:
+@export var login: String:
 	set(val): 
 		login = val
 		track_data(&"login", val)
 
 ## The user's display name.
-var display_name: String:
+@export var display_name: String:
 	set(val): 
 		display_name = val
 		track_data(&"display_name", val)
@@ -31,7 +31,7 @@ var display_name: String:
 ## * global\_mod
 ## * staff — Twitch staff
 ## * "" — Normal user
-var type: String:
+@export var type: String:
 	set(val): 
 		type = val
 		track_data(&"type", val)
@@ -41,25 +41,25 @@ var type: String:
 ## * affiliate — An [affiliate broadcaster](https://help.twitch.tv/s/article/joining-the-affiliate-program)
 ## * partner — A [partner broadcaster](https://help.twitch.tv/s/article/partner-program-overview)
 ## * "" — A normal broadcaster
-var broadcaster_type: String:
+@export var broadcaster_type: String:
 	set(val): 
 		broadcaster_type = val
 		track_data(&"broadcaster_type", val)
 
 ## The user's description of their channel.
-var description: String:
+@export var description: String:
 	set(val): 
 		description = val
 		track_data(&"description", val)
 
 ## A URL to the user's profile image.
-var profile_image_url: String:
+@export var profile_image_url: String:
 	set(val): 
 		profile_image_url = val
 		track_data(&"profile_image_url", val)
 
 ## A URL to the user's offline image.
-var offline_image_url: String:
+@export var offline_image_url: String:
 	set(val): 
 		offline_image_url = val
 		track_data(&"offline_image_url", val)
@@ -67,7 +67,7 @@ var offline_image_url: String:
 ## The number of times the user's channel has been viewed.  
 ##   
 ## **NOTE**: This field has been deprecated (see [Get Users API endpoint – "view\_count" deprecation](https://discuss.dev.twitch.tv/t/get-users-api-endpoint-view-count-deprecation/37777)). Any data in this field is not valid and should not be used.
-var view_count: int:
+@export var view_count: int:
 	set(val): 
 		view_count = val
 		track_data(&"view_count", val)
@@ -75,13 +75,13 @@ var view_count: int:
 ## The user's verified email address. The object includes this field only if the user access token includes the **user:read:email** scope.  
 ##   
 ## If the request contains more than one user, only the user associated with the access token that provided consent will include an email address — the email address for all other users will be empty.
-var email: String:
+@export var email: String:
 	set(val): 
 		email = val
 		track_data(&"email", val)
 
 ## The UTC date and time that the user's account was created. The timestamp is in RFC3339 format.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
@@ -89,7 +89,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _login: String, _display_name: String, _type: String, _broadcaster_type: String, _description: String, _profile_image_url: String, _offline_image_url: String, _view_count: int, _created_at: Variant) -> TwitchUser:
+static func create(_id: String, _login: String, _display_name: String, _type: String, _broadcaster_type: String, _description: String, _profile_image_url: String, _offline_image_url: String, _view_count: int, _created_at: String) -> TwitchUser:
 	var twitch_user: TwitchUser = TwitchUser.new()
 	twitch_user.id = _id
 	twitch_user.login = _login

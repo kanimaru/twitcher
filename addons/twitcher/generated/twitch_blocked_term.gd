@@ -8,31 +8,31 @@ extends TwitchData
 class_name TwitchBlockedTerm
 	
 ## The broadcaster that owns the list of blocked terms.
-var broadcaster_id: String:
+@export var broadcaster_id: String:
 	set(val): 
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The moderator that blocked the word or phrase from being used in the broadcaster’s chat room.
-var moderator_id: String:
+@export var moderator_id: String:
 	set(val): 
 		moderator_id = val
 		track_data(&"moderator_id", val)
 
 ## An ID that identifies this blocked term.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The blocked word or phrase.
-var text: String:
+@export var text: String:
 	set(val): 
 		text = val
 		track_data(&"text", val)
 
 ## The UTC date and time (in RFC3339 format) that the term was blocked.
-var created_at: Variant:
+@export var created_at: String:
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
@@ -40,7 +40,7 @@ var created_at: Variant:
 ## The UTC date and time (in RFC3339 format) that the term was updated.  
 ##   
 ## When the term is added, this timestamp is the same as `created_at`. The timestamp changes as AutoMod continues to deny the term.
-var updated_at: Variant:
+@export var updated_at: String:
 	set(val): 
 		updated_at = val
 		track_data(&"updated_at", val)
@@ -48,7 +48,7 @@ var updated_at: Variant:
 ## The UTC date and time (in RFC3339 format) that the blocked term is set to expire. After the block expires, users may use the term in the broadcaster’s chat room.  
 ##   
 ## This field is **null** if the term was added manually or was permanently blocked by AutoMod.
-var expires_at: Variant:
+@export var expires_at: String:
 	set(val): 
 		expires_at = val
 		track_data(&"expires_at", val)
@@ -56,7 +56,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_broadcaster_id: String, _moderator_id: String, _id: String, _text: String, _created_at: Variant, _updated_at: Variant, _expires_at: Variant) -> TwitchBlockedTerm:
+static func create(_broadcaster_id: String, _moderator_id: String, _id: String, _text: String, _created_at: String, _updated_at: String, _expires_at: String) -> TwitchBlockedTerm:
 	var twitch_blocked_term: TwitchBlockedTerm = TwitchBlockedTerm.new()
 	twitch_blocked_term.broadcaster_id = _broadcaster_id
 	twitch_blocked_term.moderator_id = _moderator_id

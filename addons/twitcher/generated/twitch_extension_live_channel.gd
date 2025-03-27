@@ -8,31 +8,31 @@ extends TwitchData
 class_name TwitchExtensionLiveChannel
 	
 ## The ID of the broadcaster that is streaming live and has installed or activated the extension.
-var broadcaster_id: String:
+@export var broadcaster_id: String:
 	set(val): 
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s display name.
-var broadcaster_name: String:
+@export var broadcaster_name: String:
 	set(val): 
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The name of the category or game being streamed.
-var game_name: String:
+@export var game_name: String:
 	set(val): 
 		game_name = val
 		track_data(&"game_name", val)
 
 ## The ID of the category or game being streamed.
-var game_id: String:
+@export var game_id: String:
 	set(val): 
 		game_id = val
 		track_data(&"game_id", val)
 
 ## The title of the broadcaster’s stream. May be an empty string if not specified.
-var title: String:
+@export var title: String:
 	set(val): 
 		title = val
 		track_data(&"title", val)

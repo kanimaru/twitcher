@@ -8,49 +8,49 @@ extends TwitchData
 class_name TwitchExtensionTransaction
 	
 ## An ID that identifies the transaction.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The UTC date and time (in RFC3339 format) of the transaction.
-var timestamp: Variant:
+@export var timestamp: String:
 	set(val): 
 		timestamp = val
 		track_data(&"timestamp", val)
 
 ## The ID of the broadcaster that owns the channel where the transaction occurred.
-var broadcaster_id: String:
+@export var broadcaster_id: String:
 	set(val): 
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s login name.
-var broadcaster_login: String:
+@export var broadcaster_login: String:
 	set(val): 
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The broadcaster’s display name.
-var broadcaster_name: String:
+@export var broadcaster_name: String:
 	set(val): 
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The ID of the user that purchased the digital product.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s login name.
-var user_login: String:
+@export var user_login: String:
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The user’s display name.
-var user_name: String:
+@export var user_name: String:
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
@@ -58,13 +58,13 @@ var user_name: String:
 ## The type of transaction. Possible values are:  
 ##   
 ## * BITS\_IN\_EXTENSION
-var product_type: String:
+@export var product_type: String:
 	set(val): 
 		product_type = val
 		track_data(&"product_type", val)
 
 ## Contains details about the digital product.
-var product_data: ProductData:
+@export var product_data: ProductData:
 	set(val): 
 		product_data = val
 		track_data(&"product_data", val)
@@ -72,7 +72,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _timestamp: Variant, _broadcaster_id: String, _broadcaster_login: String, _broadcaster_name: String, _user_id: String, _user_login: String, _user_name: String, _product_type: String, _product_data: ProductData) -> TwitchExtensionTransaction:
+static func create(_id: String, _timestamp: String, _broadcaster_id: String, _broadcaster_login: String, _broadcaster_name: String, _user_id: String, _user_login: String, _user_name: String, _product_type: String, _product_data: ProductData) -> TwitchExtensionTransaction:
 	var twitch_extension_transaction: TwitchExtensionTransaction = TwitchExtensionTransaction.new()
 	twitch_extension_transaction.id = _id
 	twitch_extension_transaction.timestamp = _timestamp
@@ -118,43 +118,43 @@ static func from_json(d: Dictionary) -> TwitchExtensionTransaction:
 class ProductData extends TwitchData:
 
 	## An ID that identifies the digital product.
-	var sku: String:
+	@export var sku: String:
 		set(val): 
 			sku = val
 			track_data(&"sku", val)
 	
 	## Set to `twitch.ext.` \+ `<the extension's ID>`.
-	var domain: String:
+	@export var domain: String:
 		set(val): 
 			domain = val
 			track_data(&"domain", val)
 	
 	## Contains details about the digital product’s cost.
-	var cost: Cost:
+	@export var cost: Cost:
 		set(val): 
 			cost = val
 			track_data(&"cost", val)
 	
 	## A Boolean value that determines whether the product is in development. Is **true** if the digital product is in development and cannot be exchanged.
-	var inDevelopment: bool:
+	@export var inDevelopment: bool:
 		set(val): 
 			inDevelopment = val
 			track_data(&"inDevelopment", val)
 	
 	## The name of the digital product.
-	var displayName: String:
+	@export var displayName: String:
 		set(val): 
 			displayName = val
 			track_data(&"displayName", val)
 	
 	## This field is always empty since you may purchase only unexpired products.
-	var expiration: String:
+	@export var expiration: String:
 		set(val): 
 			expiration = val
 			track_data(&"expiration", val)
 	
 	## A Boolean value that determines whether the data was broadcast to all instances of the extension. Is **true** if the data was broadcast to all instances.
-	var broadcast: bool:
+	@export var broadcast: bool:
 		set(val): 
 			broadcast = val
 			track_data(&"broadcast", val)
@@ -199,7 +199,7 @@ class ProductData extends TwitchData:
 class Cost extends TwitchData:
 
 	## The amount exchanged for the digital product.
-	var amount: int:
+	@export var amount: int:
 		set(val): 
 			amount = val
 			track_data(&"amount", val)
@@ -207,7 +207,7 @@ class Cost extends TwitchData:
 	## The type of currency exchanged. Possible values are:  
 	##   
 	## * bits
-	var type: String:
+	@export var type: String:
 		set(val): 
 			type = val
 			track_data(&"type", val)

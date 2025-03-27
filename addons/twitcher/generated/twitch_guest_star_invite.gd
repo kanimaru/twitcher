@@ -8,13 +8,13 @@ extends TwitchData
 class_name TwitchGuestStarInvite
 	
 ## Twitch User ID corresponding to the invited guest
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## Timestamp when this user was invited to the session.
-var invited_at: Variant:
+@export var invited_at: String:
 	set(val): 
 		invited_at = val
 		track_data(&"invited_at", val)
@@ -24,31 +24,31 @@ var invited_at: Variant:
 ## * `INVITED`: The user has been invited to the session but has not acknowledged it.
 ## * `ACCEPTED`: The invited user has acknowledged the invite and joined the waiting room, but may still be setting up their media devices or otherwise preparing to join the call.
 ## * `READY`: The invited user has signaled they are ready to join the call from the waiting room.
-var status: String:
+@export var status: String:
 	set(val): 
 		status = val
 		track_data(&"status", val)
 
 ## Flag signaling that the invited user has chosen to disable their local video device. The user has hidden themselves, but they may choose to reveal their video feed upon joining the session.
-var is_video_enabled: bool:
+@export var is_video_enabled: bool:
 	set(val): 
 		is_video_enabled = val
 		track_data(&"is_video_enabled", val)
 
 ## Flag signaling that the invited user has chosen to disable their local audio device. The user has muted themselves, but they may choose to unmute their audio feed upon joining the session.
-var is_audio_enabled: bool:
+@export var is_audio_enabled: bool:
 	set(val): 
 		is_audio_enabled = val
 		track_data(&"is_audio_enabled", val)
 
 ## Flag signaling that the invited user has a video device available for sharing.
-var is_video_available: bool:
+@export var is_video_available: bool:
 	set(val): 
 		is_video_available = val
 		track_data(&"is_video_available", val)
 
 ## Flag signaling that the invited user has an audio device available for sharing.
-var is_audio_available: bool:
+@export var is_audio_available: bool:
 	set(val): 
 		is_audio_available = val
 		track_data(&"is_audio_available", val)
@@ -56,7 +56,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_user_id: String, _invited_at: Variant, _status: String, _is_video_enabled: bool, _is_audio_enabled: bool, _is_video_available: bool, _is_audio_available: bool) -> TwitchGuestStarInvite:
+static func create(_user_id: String, _invited_at: String, _status: String, _is_video_enabled: bool, _is_audio_enabled: bool, _is_video_available: bool, _is_audio_available: bool) -> TwitchGuestStarInvite:
 	var twitch_guest_star_invite: TwitchGuestStarInvite = TwitchGuestStarInvite.new()
 	twitch_guest_star_invite.user_id = _user_id
 	twitch_guest_star_invite.invited_at = _invited_at

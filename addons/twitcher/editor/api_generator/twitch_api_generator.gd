@@ -190,7 +190,7 @@ func field_declaration(field: TwitchGenField) -> String:
 	var type = get_type(field._type, field._is_array)
 	return """
 ## {description}
-var {name}: {type}:
+@export var {name}: {type}:
 	set(val): 
 		{name} = val
 		track_data(&"{name}", val)\n""".format({

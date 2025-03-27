@@ -8,31 +8,31 @@ extends TwitchData
 class_name TwitchHypeTrainEvent
 	
 ## An ID that identifies this event.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The type of event. The string is in the form, hypetrain.{event\_name}. The request returns only progress event types (i.e., hypetrain.progression).
-var event_type: String:
+@export var event_type: String:
 	set(val): 
 		event_type = val
 		track_data(&"event_type", val)
 
 ## The UTC date and time (in RFC3339 format) that the event occurred.
-var event_timestamp: Variant:
+@export var event_timestamp: String:
 	set(val): 
 		event_timestamp = val
 		track_data(&"event_timestamp", val)
 
 ## The version number of the definition of the event’s data. For example, the value is 1 if the data in `event_data` uses the first definition of the event’s data.
-var version: String:
+@export var version: String:
 	set(val): 
 		version = val
 		track_data(&"version", val)
 
 ## The event’s data.
-var event_data: EventData:
+@export var event_data: EventData:
 	set(val): 
 		event_data = val
 		track_data(&"event_data", val)
@@ -40,7 +40,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _event_type: String, _event_timestamp: Variant, _version: String, _event_data: EventData) -> TwitchHypeTrainEvent:
+static func create(_id: String, _event_type: String, _event_timestamp: String, _version: String, _event_data: EventData) -> TwitchHypeTrainEvent:
 	var twitch_hype_train_event: TwitchHypeTrainEvent = TwitchHypeTrainEvent.new()
 	twitch_hype_train_event.id = _id
 	twitch_hype_train_event.event_type = _event_type
@@ -71,61 +71,61 @@ static func from_json(d: Dictionary) -> TwitchHypeTrainEvent:
 class EventData extends TwitchData:
 
 	## The ID of the broadcaster that’s running the Hype Train.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The UTC date and time (in RFC3339 format) that another Hype Train can start.
-	var cooldown_end_time: Variant:
+	@export var cooldown_end_time: String:
 		set(val): 
 			cooldown_end_time = val
 			track_data(&"cooldown_end_time", val)
 	
 	## The UTC date and time (in RFC3339 format) that the Hype Train ends.
-	var expires_at: Variant:
+	@export var expires_at: String:
 		set(val): 
 			expires_at = val
 			track_data(&"expires_at", val)
 	
 	## The value needed to reach the next level.
-	var goal: int:
+	@export var goal: int:
 		set(val): 
 			goal = val
 			track_data(&"goal", val)
 	
 	## An ID that identifies this Hype Train.
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## The most recent contribution towards the Hype Train’s goal.
-	var last_contribution: LastContribution:
+	@export var last_contribution: LastContribution:
 		set(val): 
 			last_contribution = val
 			track_data(&"last_contribution", val)
 	
 	## The highest level that the Hype Train reached (the levels are 1 through 5).
-	var level: int:
+	@export var level: int:
 		set(val): 
 			level = val
 			track_data(&"level", val)
 	
 	## The UTC date and time (in RFC3339 format) that this Hype Train started.
-	var started_at: Variant:
+	@export var started_at: String:
 		set(val): 
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The top contributors for each contribution type. For example, the top contributor using BITS (by aggregate) and the top contributor using SUBS (by count).
-	var top_contributions: Array[TopContributions]:
+	@export var top_contributions: Array[TopContributions]:
 		set(val): 
 			top_contributions = val
 			track_data(&"top_contributions", val)
 	
 	## The current total amount raised.
-	var total: int:
+	@export var total: int:
 		set(val): 
 			total = val
 			track_data(&"total", val)
@@ -133,7 +133,7 @@ class EventData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_broadcaster_id: String, _cooldown_end_time: Variant, _expires_at: Variant, _goal: int, _id: String, _last_contribution: LastContribution, _level: int, _started_at: Variant, _top_contributions: Array[TopContributions], _total: int) -> EventData:
+	static func create(_broadcaster_id: String, _cooldown_end_time: String, _expires_at: String, _goal: int, _id: String, _last_contribution: LastContribution, _level: int, _started_at: String, _top_contributions: Array[TopContributions], _total: int) -> EventData:
 		var event_data: EventData = EventData.new()
 		event_data.broadcaster_id = _broadcaster_id
 		event_data.cooldown_end_time = _cooldown_end_time
@@ -180,7 +180,7 @@ class EventData extends TwitchData:
 class LastContribution extends TwitchData:
 
 	## The total amount contributed. If `type` is BITS, `total` represents the amount of Bits used. If `type` is SUBS, `total` is 500, 1000, or 2500 to represent tier 1, 2, or 3 subscriptions, respectively.
-	var total: int:
+	@export var total: int:
 		set(val): 
 			total = val
 			track_data(&"total", val)
@@ -190,13 +190,13 @@ class LastContribution extends TwitchData:
 	## * BITS — Cheering with Bits.
 	## * SUBS — Subscription activity like subscribing or gifting subscriptions.
 	## * OTHER — Covers other contribution methods not listed.
-	var type: String:
+	@export var type: String:
 		set(val): 
 			type = val
 			track_data(&"type", val)
 	
 	## The ID of the user that made the contribution.
-	var user: String:
+	@export var user: String:
 		set(val): 
 			user = val
 			track_data(&"user", val)
@@ -229,7 +229,7 @@ class LastContribution extends TwitchData:
 class TopContributions extends TwitchData:
 
 	## The total amount contributed. If `type` is BITS, `total` represents the amount of Bits used. If `type` is SUBS, `total` is 500, 1000, or 2500 to represent tier 1, 2, or 3 subscriptions, respectively.
-	var total: int:
+	@export var total: int:
 		set(val): 
 			total = val
 			track_data(&"total", val)
@@ -239,13 +239,13 @@ class TopContributions extends TwitchData:
 	## * BITS — Cheering with Bits.
 	## * SUBS — Subscription activity like subscribing or gifting subscriptions.
 	## * OTHER — Covers other contribution methods not listed.
-	var type: String:
+	@export var type: String:
 		set(val): 
 			type = val
 			track_data(&"type", val)
 	
 	## The ID of the user that made the contribution.
-	var user: String:
+	@export var user: String:
 		set(val): 
 			user = val
 			track_data(&"user", val)

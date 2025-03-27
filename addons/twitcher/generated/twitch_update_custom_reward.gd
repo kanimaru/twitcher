@@ -12,85 +12,85 @@ class_name TwitchUpdateCustomReward
 class Body extends TwitchData:
 
 	## The reward’s title. The title may contain a maximum of 45 characters and it must be unique amongst all of the broadcaster’s custom rewards.
-	var title: String:
+	@export var title: String:
 		set(val): 
 			title = val
 			track_data(&"title", val)
 	
 	## The prompt shown to the viewer when they redeem the reward. Specify a prompt if `is_user_input_required` is **true**. The prompt is limited to a maximum of 200 characters.
-	var prompt: String:
+	@export var prompt: String:
 		set(val): 
 			prompt = val
 			track_data(&"prompt", val)
 	
 	## The cost of the reward, in channel points. The minimum is 1 point.
-	var cost: int:
+	@export var cost: int:
 		set(val): 
 			cost = val
 			track_data(&"cost", val)
 	
 	## The background color to use for the reward. Specify the color using Hex format (for example, \\#00E5CB).
-	var background_color: String:
+	@export var background_color: String:
 		set(val): 
 			background_color = val
 			track_data(&"background_color", val)
 	
 	## A Boolean value that indicates whether the reward is enabled. Set to **true** to enable the reward. Viewers see only enabled rewards.
-	var is_enabled: bool:
+	@export var is_enabled: bool:
 		set(val): 
 			is_enabled = val
 			track_data(&"is_enabled", val)
 	
 	## A Boolean value that determines whether users must enter information to redeem the reward. Set to **true** if user input is required. See the `prompt` field.
-	var is_user_input_required: bool:
+	@export var is_user_input_required: bool:
 		set(val): 
 			is_user_input_required = val
 			track_data(&"is_user_input_required", val)
 	
 	## A Boolean value that determines whether to limit the maximum number of redemptions allowed per live stream (see the `max_per_stream` field). Set to **true** to limit redemptions.
-	var is_max_per_stream_enabled: bool:
+	@export var is_max_per_stream_enabled: bool:
 		set(val): 
 			is_max_per_stream_enabled = val
 			track_data(&"is_max_per_stream_enabled", val)
 	
 	## The maximum number of redemptions allowed per live stream. Applied only if `is_max_per_stream_enabled` is **true**. The minimum value is 1.
-	var max_per_stream: int:
+	@export var max_per_stream: int:
 		set(val): 
 			max_per_stream = val
 			track_data(&"max_per_stream", val)
 	
 	## A Boolean value that determines whether to limit the maximum number of redemptions allowed per user per stream (see `max_per_user_per_stream`). The minimum value is 1\. Set to **true** to limit redemptions.
-	var is_max_per_user_per_stream_enabled: bool:
+	@export var is_max_per_user_per_stream_enabled: bool:
 		set(val): 
 			is_max_per_user_per_stream_enabled = val
 			track_data(&"is_max_per_user_per_stream_enabled", val)
 	
 	## The maximum number of redemptions allowed per user per stream. Applied only if `is_max_per_user_per_stream_enabled` is **true**.
-	var max_per_user_per_stream: int:
+	@export var max_per_user_per_stream: int:
 		set(val): 
 			max_per_user_per_stream = val
 			track_data(&"max_per_user_per_stream", val)
 	
 	## A Boolean value that determines whether to apply a cooldown period between redemptions. Set to **true** to apply a cooldown period. For the duration of the cooldown period, see `global_cooldown_seconds`.
-	var is_global_cooldown_enabled: bool:
+	@export var is_global_cooldown_enabled: bool:
 		set(val): 
 			is_global_cooldown_enabled = val
 			track_data(&"is_global_cooldown_enabled", val)
 	
 	## The cooldown period, in seconds. Applied only if `is_global_cooldown_enabled` is **true**. The minimum value is 1; however, for it to be shown in the Twitch UX, the minimum value is 60.
-	var global_cooldown_seconds: int:
+	@export var global_cooldown_seconds: int:
 		set(val): 
 			global_cooldown_seconds = val
 			track_data(&"global_cooldown_seconds", val)
 	
 	## A Boolean value that determines whether to pause the reward. Set to **true** to pause the reward. Viewers can’t redeem paused rewards..
-	var is_paused: bool:
+	@export var is_paused: bool:
 		set(val): 
 			is_paused = val
 			track_data(&"is_paused", val)
 	
 	## A Boolean value that determines whether redemptions should be set to FULFILLED status immediately when a reward is redeemed. If **false**, status is set to UNFULFILLED and follows the normal request queue process.
-	var should_redemptions_skip_request_queue: bool:
+	@export var should_redemptions_skip_request_queue: bool:
 		set(val): 
 			should_redemptions_skip_request_queue = val
 			track_data(&"should_redemptions_skip_request_queue", val)
@@ -142,7 +142,7 @@ class Body extends TwitchData:
 class Response extends TwitchData:
 
 	## The list contains the single reward that you updated.
-	var data: Array[TwitchCustomReward]:
+	@export var data: Array[TwitchCustomReward]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

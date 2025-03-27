@@ -12,19 +12,19 @@ class_name TwitchSendExtensionChatMessage
 class Body extends TwitchData:
 
 	## The message. The message may contain a maximum of 280 characters.
-	var text: String:
+	@export var text: String:
 		set(val): 
 			text = val
 			track_data(&"text", val)
 	
 	## The ID of the extension that’s sending the chat message.
-	var extension_id: String:
+	@export var extension_id: String:
 		set(val): 
 			extension_id = val
 			track_data(&"extension_id", val)
 	
 	## The extension’s version number.
-	var extension_version: String:
+	@export var extension_version: String:
 		set(val): 
 			extension_version = val
 			track_data(&"extension_version", val)

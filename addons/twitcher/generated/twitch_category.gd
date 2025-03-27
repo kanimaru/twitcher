@@ -8,19 +8,19 @@ extends TwitchData
 class_name TwitchCategory
 	
 ## A URL to an image of the game’s box art or streaming category.
-var box_art_url: String:
+@export var box_art_url: String:
 	set(val): 
 		box_art_url = val
 		track_data(&"box_art_url", val)
 
 ## The name of the game or category.
-var name: String:
+@export var name: String:
 	set(val): 
 		name = val
 		track_data(&"name", val)
 
 ## An ID that uniquely identifies the game or category.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)

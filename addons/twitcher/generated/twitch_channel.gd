@@ -8,43 +8,43 @@ extends TwitchData
 class_name TwitchChannel
 	
 ## The ISO 639-1 two-letter language code of the language used by the broadcaster. For example, _en_ for English. If the broadcaster uses a language not in the list of [supported stream languages](https://help.twitch.tv/s/article/languages-on-twitch#streamlang), the value is _other_.
-var broadcaster_language: String:
+@export var broadcaster_language: String:
 	set(val): 
 		broadcaster_language = val
 		track_data(&"broadcaster_language", val)
 
 ## The broadcaster’s login name.
-var broadcaster_login: String:
+@export var broadcaster_login: String:
 	set(val): 
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The broadcaster’s display name.
-var display_name: String:
+@export var display_name: String:
 	set(val): 
 		display_name = val
 		track_data(&"display_name", val)
 
 ## The ID of the game that the broadcaster is playing or last played.
-var game_id: String:
+@export var game_id: String:
 	set(val): 
 		game_id = val
 		track_data(&"game_id", val)
 
 ## The name of the game that the broadcaster is playing or last played.
-var game_name: String:
+@export var game_name: String:
 	set(val): 
 		game_name = val
 		track_data(&"game_name", val)
 
 ## An ID that uniquely identifies the channel (this is the broadcaster’s ID).
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## A Boolean value that determines whether the broadcaster is streaming live. Is **true** if the broadcaster is streaming live; otherwise, **false**.
-var is_live: bool:
+@export var is_live: bool:
 	set(val): 
 		is_live = val
 		track_data(&"is_live", val)
@@ -52,31 +52,31 @@ var is_live: bool:
 ## **IMPORTANT** As of February 28, 2023, this field is deprecated and returns only an empty array. If you use this field, please update your code to use the `tags` field.  
 ##   
 ## The list of tags that apply to the stream. The list contains IDs only when the channel is steaming live. For a list of possible tags, see [List of All Tags](https://www.twitch.tv/directory/all/tags). The list doesn’t include Category Tags.
-var tag_ids: Array[String]:
+@export var tag_ids: Array[String]:
 	set(val): 
 		tag_ids = val
 		track_data(&"tag_ids", val)
 
 ## The tags applied to the channel.
-var tags: Array[String]:
+@export var tags: Array[String]:
 	set(val): 
 		tags = val
 		track_data(&"tags", val)
 
 ## A URL to a thumbnail of the broadcaster’s profile image.
-var thumbnail_url: String:
+@export var thumbnail_url: String:
 	set(val): 
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
 
 ## The stream’s title. Is an empty string if the broadcaster didn’t set it.
-var title: String:
+@export var title: String:
 	set(val): 
 		title = val
 		track_data(&"title", val)
 
 ## The UTC date and time (in RFC3339 format) of when the broadcaster started streaming. The string is empty if the broadcaster is not streaming live.
-var started_at: Variant:
+@export var started_at: String:
 	set(val): 
 		started_at = val
 		track_data(&"started_at", val)
@@ -84,7 +84,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_broadcaster_language: String, _broadcaster_login: String, _display_name: String, _game_id: String, _game_name: String, _id: String, _is_live: bool, _tag_ids: Array[String], _tags: Array[String], _thumbnail_url: String, _title: String, _started_at: Variant) -> TwitchChannel:
+static func create(_broadcaster_language: String, _broadcaster_login: String, _display_name: String, _game_id: String, _game_name: String, _id: String, _is_live: bool, _tag_ids: Array[String], _tags: Array[String], _thumbnail_url: String, _title: String, _started_at: String) -> TwitchChannel:
 	var twitch_channel: TwitchChannel = TwitchChannel.new()
 	twitch_channel.broadcaster_language = _broadcaster_language
 	twitch_channel.broadcaster_login = _broadcaster_login

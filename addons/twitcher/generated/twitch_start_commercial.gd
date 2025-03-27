@@ -12,13 +12,13 @@ class_name TwitchStartCommercial
 class Body extends TwitchData:
 
 	## The ID of the partner or affiliate broadcaster that wants to run the commercial. This ID must match the user ID found in the OAuth token.
-	var broadcaster_id: String:
+	@export var broadcaster_id: String:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The length of the commercial to run, in seconds. Twitch tries to serve a commercial that’s the requested length, but it may be shorter or longer. The maximum length you should request is 180 seconds.
-	var length: int:
+	@export var length: int:
 		set(val): 
 			length = val
 			track_data(&"length", val)
@@ -48,7 +48,7 @@ class Body extends TwitchData:
 class Response extends TwitchData:
 
 	## An array that contains a single object with the status of your start commercial request.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -76,19 +76,19 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The length of the commercial you requested. If you request a commercial that’s longer than 180 seconds, the API uses 180 seconds.
-	var length: int:
+	@export var length: int:
 		set(val): 
 			length = val
 			track_data(&"length", val)
 	
 	## A message that indicates whether Twitch was able to serve an ad.
-	var message: String:
+	@export var message: String:
 		set(val): 
 			message = val
 			track_data(&"message", val)
 	
 	## The number of seconds you must wait before running another commercial.
-	var retry_after: int:
+	@export var retry_after: int:
 		set(val): 
 			retry_after = val
 			track_data(&"retry_after", val)

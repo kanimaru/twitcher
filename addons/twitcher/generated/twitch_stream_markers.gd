@@ -8,37 +8,37 @@ extends TwitchData
 class_name TwitchStreamMarkers
 	
 ## The ID of the user that created the marker.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s display name.
-var user_name: String:
+@export var user_name: String:
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The user’s login name.
-var user_login: String:
+@export var user_login: String:
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)
 
 ## A list of videos that contain markers. The list contains a single video.
-var videos: Array[Variant]:
+@export var videos: Array[Variant]:
 	set(val): 
 		videos = val
 		track_data(&"videos", val)
 
 ## An ID that identifies this video.
-var video_id: String:
+@export var video_id: String:
 	set(val): 
 		video_id = val
 		track_data(&"video_id", val)
 
 ## The list of markers in this video. The list in ascending order by when the marker was created.
-var markers: Array[Markers]:
+@export var markers: Array[Markers]:
 	set(val): 
 		markers = val
 		track_data(&"markers", val)
@@ -82,31 +82,31 @@ static func from_json(d: Dictionary) -> TwitchStreamMarkers:
 class Markers extends TwitchData:
 
 	## An ID that identifies this marker.
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## The UTC date and time (in RFC3339 format) of when the user created the marker.
-	var created_at: Variant:
+	@export var created_at: String:
 		set(val): 
 			created_at = val
 			track_data(&"created_at", val)
 	
 	## The description that the user gave the marker to help them remember why they marked the location. Is an empty string if the user didn’t provide one.
-	var description: String:
+	@export var description: String:
 		set(val): 
 			description = val
 			track_data(&"description", val)
 	
 	## The relative offset (in seconds) of the marker from the beginning of the stream.
-	var position_seconds: int:
+	@export var position_seconds: int:
 		set(val): 
 			position_seconds = val
 			track_data(&"position_seconds", val)
 	
 	## A URL that opens the video in Twitch Highlighter.
-	var url: String:
+	@export var url: String:
 		set(val): 
 			url = val
 			track_data(&"url", val)
@@ -114,7 +114,7 @@ class Markers extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_id: String, _created_at: Variant, _description: String, _position_seconds: int, _url: String) -> Markers:
+	static func create(_id: String, _created_at: String, _description: String, _position_seconds: int, _url: String) -> Markers:
 		var markers: Markers = Markers.new()
 		markers.id = _id
 		markers.created_at = _created_at

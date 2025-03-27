@@ -8,37 +8,37 @@ extends TwitchData
 class_name TwitchExtensionBitsProduct
 	
 ## The product's SKU. The SKU is unique across an extension's products.
-var sku: String:
+@export var sku: String:
 	set(val): 
 		sku = val
 		track_data(&"sku", val)
 
 ## An object that contains the product's cost information.
-var cost: Cost:
+@export var cost: Cost:
 	set(val): 
 		cost = val
 		track_data(&"cost", val)
 
 ## A Boolean value that indicates whether the product is in development. If **true**, the product is not available for public use.
-var in_development: bool:
+@export var in_development: bool:
 	set(val): 
 		in_development = val
 		track_data(&"in_development", val)
 
 ## The product's name as displayed in the extension.
-var display_name: String:
+@export var display_name: String:
 	set(val): 
 		display_name = val
 		track_data(&"display_name", val)
 
 ## The date and time, in RFC3339 format, when the product expires.
-var expiration: Variant:
+@export var expiration: String:
 	set(val): 
 		expiration = val
 		track_data(&"expiration", val)
 
 ## A Boolean value that determines whether Bits product purchase events are broadcast to all instances of an extension on a channel. The events are broadcast via the `onTransactionComplete` helper callback. Is **true** if the event is broadcast to all instances.
-var is_broadcast: bool:
+@export var is_broadcast: bool:
 	set(val): 
 		is_broadcast = val
 		track_data(&"is_broadcast", val)
@@ -46,7 +46,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_sku: String, _cost: Cost, _in_development: bool, _display_name: String, _expiration: Variant, _is_broadcast: bool) -> TwitchExtensionBitsProduct:
+static func create(_sku: String, _cost: Cost, _in_development: bool, _display_name: String, _expiration: String, _is_broadcast: bool) -> TwitchExtensionBitsProduct:
 	var twitch_extension_bits_product: TwitchExtensionBitsProduct = TwitchExtensionBitsProduct.new()
 	twitch_extension_bits_product.sku = _sku
 	twitch_extension_bits_product.cost = _cost
@@ -80,7 +80,7 @@ static func from_json(d: Dictionary) -> TwitchExtensionBitsProduct:
 class Cost extends TwitchData:
 
 	## The product's price.
-	var amount: int:
+	@export var amount: int:
 		set(val): 
 			amount = val
 			track_data(&"amount", val)
@@ -88,7 +88,7 @@ class Cost extends TwitchData:
 	## The type of currency. Possible values are:  
 	##   
 	## * bits
-	var type: String:
+	@export var type: String:
 		set(val): 
 			type = val
 			track_data(&"type", val)

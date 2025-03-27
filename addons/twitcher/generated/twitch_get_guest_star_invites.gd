@@ -12,7 +12,7 @@ class_name TwitchGetGuestStarInvites
 class Response extends TwitchData:
 
 	## A list of invite objects describing the invited user as well as their ready status.
-	var data: Array[TwitchGuestStarInvite]:
+	@export var data: Array[TwitchGuestStarInvite]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

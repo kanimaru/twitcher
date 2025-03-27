@@ -12,7 +12,7 @@ class_name TwitchGetUserChatColor
 class Response extends TwitchData:
 
 	## The list of users and the color code they use for their name.
-	var data: Array[TwitchUserChatColor]:
+	@export var data: Array[TwitchUserChatColor]:
 		set(val): 
 			data = val
 			track_data(&"data", val)

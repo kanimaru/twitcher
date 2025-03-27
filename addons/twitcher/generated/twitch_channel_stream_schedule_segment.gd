@@ -8,43 +8,43 @@ extends TwitchData
 class_name TwitchChannelStreamScheduleSegment
 	
 ## An ID that identifies this broadcast segment.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## The UTC date and time (in RFC3339 format) of when the broadcast starts.
-var start_time: Variant:
+@export var start_time: String:
 	set(val): 
 		start_time = val
 		track_data(&"start_time", val)
 
 ## The UTC date and time (in RFC3339 format) of when the broadcast ends.
-var end_time: Variant:
+@export var end_time: String:
 	set(val): 
 		end_time = val
 		track_data(&"end_time", val)
 
 ## The broadcast segment’s title.
-var title: String:
+@export var title: String:
 	set(val): 
 		title = val
 		track_data(&"title", val)
 
 ## Indicates whether the broadcaster canceled this segment of a recurring broadcast. If the broadcaster canceled this segment, this field is set to the same value that’s in the `end_time` field; otherwise, it’s set to **null**.
-var canceled_until: String:
+@export var canceled_until: String:
 	set(val): 
 		canceled_until = val
 		track_data(&"canceled_until", val)
 
 ## The type of content that the broadcaster plans to stream or **null** if not specified.
-var category: Category:
+@export var category: Category:
 	set(val): 
 		category = val
 		track_data(&"category", val)
 
 ## A Boolean value that determines whether the broadcast is part of a recurring series that streams at the same time each week or is a one-time broadcast. Is **true** if the broadcast is part of a recurring series.
-var is_recurring: bool:
+@export var is_recurring: bool:
 	set(val): 
 		is_recurring = val
 		track_data(&"is_recurring", val)
@@ -52,7 +52,7 @@ var response: BufferedHTTPClient.ResponseData
 
 
 ## Constructor with all required fields.
-static func create(_id: String, _start_time: Variant, _end_time: Variant, _title: String, _canceled_until: String, _category: Category, _is_recurring: bool) -> TwitchChannelStreamScheduleSegment:
+static func create(_id: String, _start_time: String, _end_time: String, _title: String, _canceled_until: String, _category: Category, _is_recurring: bool) -> TwitchChannelStreamScheduleSegment:
 	var twitch_channel_stream_schedule_segment: TwitchChannelStreamScheduleSegment = TwitchChannelStreamScheduleSegment.new()
 	twitch_channel_stream_schedule_segment.id = _id
 	twitch_channel_stream_schedule_segment.start_time = _start_time
@@ -89,13 +89,13 @@ static func from_json(d: Dictionary) -> TwitchChannelStreamScheduleSegment:
 class Category extends TwitchData:
 
 	## An ID that identifies the category that best represents the content that the broadcaster plans to stream. For example, the game’s ID if the broadcaster will play a game or the Just Chatting ID if the broadcaster will host a talk show.
-	var id: String:
+	@export var id: String:
 		set(val): 
 			id = val
 			track_data(&"id", val)
 	
 	## The name of the category. For example, the game’s title if the broadcaster will play a game or Just Chatting if the broadcaster will host a talk show.
-	var name: String:
+	@export var name: String:
 		set(val): 
 			name = val
 			track_data(&"name", val)

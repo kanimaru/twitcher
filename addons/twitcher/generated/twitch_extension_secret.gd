@@ -8,13 +8,13 @@ extends TwitchData
 class_name TwitchExtensionSecret
 	
 ## The version number that identifies this definition of the secret’s data.
-var format_version: int:
+@export var format_version: int:
 	set(val): 
 		format_version = val
 		track_data(&"format_version", val)
 
 ## The list of secrets.
-var secrets: Array[Secrets]:
+@export var secrets: Array[Secrets]:
 	set(val): 
 		secrets = val
 		track_data(&"secrets", val)
@@ -45,19 +45,19 @@ static func from_json(d: Dictionary) -> TwitchExtensionSecret:
 class Secrets extends TwitchData:
 
 	## The raw secret that you use with JWT encoding.
-	var content: String:
+	@export var content: String:
 		set(val): 
 			content = val
 			track_data(&"content", val)
 	
 	## The UTC date and time (in RFC3339 format) that you may begin using this secret to sign a JWT.
-	var active_at: Variant:
+	@export var active_at: String:
 		set(val): 
 			active_at = val
 			track_data(&"active_at", val)
 	
 	## The UTC date and time (in RFC3339 format) that you must stop using this secret to decode a JWT.
-	var expires_at: Variant:
+	@export var expires_at: String:
 		set(val): 
 			expires_at = val
 			track_data(&"expires_at", val)
@@ -65,7 +65,7 @@ class Secrets extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_content: String, _active_at: Variant, _expires_at: Variant) -> Secrets:
+	static func create(_content: String, _active_at: String, _expires_at: String) -> Secrets:
 		var secrets: Secrets = Secrets.new()
 		secrets.content = _content
 		secrets.active_at = _active_at

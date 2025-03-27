@@ -12,7 +12,7 @@ class_name TwitchDeleteGuestStarSlot
 class Opt extends TwitchData:
 
 	## Flag signaling that the guest should be reinvited to the session, sending them back to the invite queue.
-	var should_reinvite_guest: String:
+	@export var should_reinvite_guest: String:
 		set(val): 
 			should_reinvite_guest = val
 			track_data(&"should_reinvite_guest", val)

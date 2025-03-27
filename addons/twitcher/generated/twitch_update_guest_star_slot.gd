@@ -12,7 +12,7 @@ class_name TwitchUpdateGuestStarSlot
 class Opt extends TwitchData:
 
 	## The slot to move this user assignment to. If the destination slot is occupied, the user assigned will be swapped into `source_slot_id`.
-	var destination_slot_id: String:
+	@export var destination_slot_id: String:
 		set(val): 
 			destination_slot_id = val
 			track_data(&"destination_slot_id", val)

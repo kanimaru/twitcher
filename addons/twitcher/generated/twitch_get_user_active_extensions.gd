@@ -12,7 +12,7 @@ class_name TwitchGetUserActiveExtensions
 class Response extends TwitchData:
 
 	## The active extensions that the broadcaster has installed.
-	var data: ResponseData:
+	@export var data: ResponseData:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -38,19 +38,19 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## A dictionary that contains the data for a panel extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the panel’s data for each key.
-	var panel: Dictionary:
+	@export var panel: Dictionary:
 		set(val): 
 			panel = val
 			track_data(&"panel", val)
 	
 	## A dictionary that contains the data for a video-overlay extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the overlay’s data for each key.
-	var overlay: Dictionary:
+	@export var overlay: Dictionary:
 		set(val): 
 			overlay = val
 			track_data(&"overlay", val)
 	
 	## A dictionary that contains the data for a video-component extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the component’s data for each key.
-	var component: Dictionary:
+	@export var component: Dictionary:
 		set(val): 
 			component = val
 			track_data(&"component", val)
@@ -82,7 +82,7 @@ class Opt extends TwitchData:
 	## The ID of the broadcaster whose active extensions you want to get.  
 	##   
 	## This parameter is required if you specify an app access token and is optional if you specify a user access token. If you specify a user access token and don’t specify this parameter, the API uses the user ID from the access token.
-	var user_id: String:
+	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)

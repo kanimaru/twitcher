@@ -8,13 +8,13 @@ extends TwitchData
 class_name TwitchCheermoteImages
 	
 ## 
-var light: TwitchCheermoteImageTheme:
+@export var light: TwitchCheermoteImageTheme:
 	set(val): 
 		light = val
 		track_data(&"light", val)
 
 ## 
-var dark: TwitchCheermoteImageTheme:
+@export var dark: TwitchCheermoteImageTheme:
 	set(val): 
 		dark = val
 		track_data(&"dark", val)

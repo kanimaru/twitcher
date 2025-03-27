@@ -8,37 +8,37 @@ extends TwitchData
 class_name TwitchCharityCampaignDonation
 	
 ## An ID that identifies the donation. The ID is unique across campaigns.
-var id: String:
+@export var id: String:
 	set(val): 
 		id = val
 		track_data(&"id", val)
 
 ## An ID that identifies the charity campaign that the donation applies to.
-var campaign_id: String:
+@export var campaign_id: String:
 	set(val): 
 		campaign_id = val
 		track_data(&"campaign_id", val)
 
 ## An ID that identifies a user that donated money to the campaign.
-var user_id: String:
+@export var user_id: String:
 	set(val): 
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s login name.
-var user_login: String:
+@export var user_login: String:
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The user’s display name.
-var user_name: String:
+@export var user_name: String:
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
 
 ## An object that contains the amount of money that the user donated.
-var amount: Amount:
+@export var amount: Amount:
 	set(val): 
 		amount = val
 		track_data(&"amount", val)
@@ -80,7 +80,7 @@ static func from_json(d: Dictionary) -> TwitchCharityCampaignDonation:
 class Amount extends TwitchData:
 
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
-	var value: int:
+	@export var value: int:
 		set(val): 
 			value = val
 			track_data(&"value", val)
@@ -88,13 +88,13 @@ class Amount extends TwitchData:
 	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate `value` from minor units to major units by using the formula:  
 	##   
 	## `value / 10^decimal_places`
-	var decimal_places: int:
+	@export var decimal_places: int:
 		set(val): 
 			decimal_places = val
 			track_data(&"decimal_places", val)
 	
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
-	var currency: String:
+	@export var currency: String:
 		set(val): 
 			currency = val
 			track_data(&"currency", val)

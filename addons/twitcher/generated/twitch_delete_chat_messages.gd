@@ -18,7 +18,7 @@ class Opt extends TwitchData:
 	## * The message must not belong to another moderator.
 	##   
 	## If not specified, the request removes all messages in the broadcaster’s chat room.
-	var message_id: String:
+	@export var message_id: String:
 		set(val): 
 			message_id = val
 			track_data(&"message_id", val)

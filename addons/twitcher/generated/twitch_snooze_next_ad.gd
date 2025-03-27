@@ -12,7 +12,7 @@ class_name TwitchSnoozeNextAd
 class Response extends TwitchData:
 
 	## A list that contains information about the channel’s snoozes and next upcoming ad after successfully snoozing.
-	var data: Array[ResponseData]:
+	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -40,19 +40,19 @@ class Response extends TwitchData:
 class ResponseData extends TwitchData:
 
 	## The number of snoozes available for the broadcaster.
-	var snooze_count: int:
+	@export var snooze_count: int:
 		set(val): 
 			snooze_count = val
 			track_data(&"snooze_count", val)
 	
 	## The UTC timestamp when the broadcaster will gain an additional snooze, in RFC3339 format.
-	var snooze_refresh_at: Variant:
+	@export var snooze_refresh_at: String:
 		set(val): 
 			snooze_refresh_at = val
 			track_data(&"snooze_refresh_at", val)
 	
 	## The UTC timestamp of the broadcaster’s next scheduled ad, in RFC3339 format.
-	var next_ad_at: Variant:
+	@export var next_ad_at: String:
 		set(val): 
 			next_ad_at = val
 			track_data(&"next_ad_at", val)
@@ -60,7 +60,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_snooze_count: int, _snooze_refresh_at: Variant, _next_ad_at: Variant) -> ResponseData:
+	static func create(_snooze_count: int, _snooze_refresh_at: String, _next_ad_at: String) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.snooze_count = _snooze_count
 		response_data.snooze_refresh_at = _snooze_refresh_at
