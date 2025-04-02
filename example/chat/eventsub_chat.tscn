@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://5lyf04rwo1mf"]
+[gd_scene load_steps=20 format=3 uid="uid://5lyf04rwo1mf"]
 
 [ext_resource type="Script" uid="uid://ypwkjkx2pncv" path="res://example/chat/eventsub_chat.gd" id="1_pvhqt"]
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="2_5ubu1"]
@@ -7,17 +7,48 @@
 [ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="5_cneyv"]
 [ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/twitch_auth.gd" id="6_2pnhe"]
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="7_itbs2"]
+[ext_resource type="Script" uid="uid://bf0wi70haua35" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="7_y0pkj"]
+[ext_resource type="Script" uid="uid://blnbogtrshw4r" path="res://addons/twitcher/twitch_token_handler.gd" id="8_tvr5c"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="9_otx6d"]
 [ext_resource type="Texture2D" uid="uid://g1dbcjksbotw" path="res://addons/twitcher/assets/fallback_texture.tres" id="10_1iusd"]
 [ext_resource type="Script" uid="uid://6v8jnfjwbnhm" path="res://addons/twitcher/image_transformer/twitch_image_transformer.gd" id="11_1iusd"]
 [ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://example/chat_view.tscn" id="11_5c0by"]
 [ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/twitch_media_loader.gd" id="11_aprrr"]
 [ext_resource type="PackedScene" uid="uid://cinvytmtixgwu" path="res://addons/twitcher/chat/twitch_chat.tscn" id="12_5f2sm"]
+[ext_resource type="Script" uid="uid://cnmohrdxqihr0" path="res://addons/twitcher/generated/twitch_user.gd" id="15_tvr5c"]
 
 [sub_resource type="Resource" id="Resource_4x3fm"]
 script = ExtResource("11_1iusd")
 fallback_texture = ExtResource("10_1iusd")
 metadata/_custom_type_script = "uid://6v8jnfjwbnhm"
+
+[sub_resource type="Resource" id="Resource_jftlh"]
+script = ExtResource("15_tvr5c")
+id = "132799162"
+login = "kani_dev"
+display_name = "kani_dev"
+type = ""
+broadcaster_type = "affiliate"
+description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
+offline_image_url = ""
+view_count = 0
+email = ""
+created_at = "2016-08-21T18:50:12Z"
+
+[sub_resource type="Resource" id="Resource_tvr5c"]
+script = ExtResource("15_tvr5c")
+id = "132799162"
+login = "kani_dev"
+display_name = "kani_dev"
+type = ""
+broadcaster_type = "affiliate"
+description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
+offline_image_url = ""
+view_count = 0
+email = ""
+created_at = "2016-08-21T18:50:12Z"
 
 [node name="Chat" type="Control"]
 layout_mode = 3
@@ -41,6 +72,17 @@ oauth_setting = ExtResource("3_d0q0w")
 token = ExtResource("5_cneyv")
 scopes = ExtResource("4_wpyv0")
 
+[node name="OAuth" type="Node" parent="TwitchService/Auth" node_paths=PackedStringArray("token_handler")]
+script = ExtResource("7_y0pkj")
+oauth_setting = ExtResource("3_d0q0w")
+scopes = ExtResource("4_wpyv0")
+token_handler = NodePath("../TokenHandler")
+
+[node name="TokenHandler" type="Node" parent="TwitchService/Auth"]
+script = ExtResource("8_tvr5c")
+oauth_setting = ExtResource("3_d0q0w")
+token = ExtResource("5_cneyv")
+
 [node name="EventSub" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
 script = ExtResource("7_itbs2")
 api = NodePath("../API")
@@ -62,6 +104,8 @@ unique_name_in_owner = true
 eventsub = NodePath("../TwitchService/EventSub")
 media_loader = NodePath("../TwitchService/MediaLoader")
 api = NodePath("../TwitchService/API")
+broadcaster_user = SubResource("Resource_jftlh")
+sender_user = SubResource("Resource_tvr5c")
 
 [node name="ChatView" parent="." instance=ExtResource("11_5c0by")]
 unique_name_in_owner = true

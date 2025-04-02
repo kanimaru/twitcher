@@ -19,15 +19,8 @@ func _init() -> void:
 
 
 func _on_authorize() -> void:
-	var obj = get_edited_object()
-	var twitch_auth: TwitchAuth
-	if obj is TwitchService:
-		var twitch_service: TwitchService = obj as TwitchService
-		twitch_auth = twitch_service.auth
-	elif obj is TwitchAuth:
-		twitch_auth = obj as TwitchAuth
-		
+	var twitch_auth: TwitchAuth = get_edited_object()	
 	if not twitch_auth.is_configured():
-		printerr("%s is not configured correctly please fix the warnings." % obj.get_script())
+		printerr("%s is not configured correctly please fix the warnings." % twitch_auth.name)
 	else:
 		await twitch_auth.authorize()

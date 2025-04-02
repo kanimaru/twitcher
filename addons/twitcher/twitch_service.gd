@@ -85,7 +85,7 @@ func _on_child_exiting(node: Node) -> void:
 ## Call this to setup the complete Twitch integration whenever you need.
 ## It boots everything up this Lib supports.
 func setup() -> void:
-	await auth.authorize()
+	if auth: await auth.authorize()
 	await propagate_call(&"do_setup")
 	for child in get_children():
 		if child.has_method(&"wait_setup"):
@@ -101,8 +101,6 @@ func is_configured() -> bool:
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
-	if auth == null:
-		result.append("TwitchAuth Node is missing")
 	if oauth_setting == null:
 		result.append("OAuthSetting Resource is missing")
 	else:

@@ -1,3 +1,4 @@
+@tool
 @icon("res://addons/twitcher/lib/oOuch/scope-icon.svg")
 extends OAuthScopes
 

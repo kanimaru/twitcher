@@ -27,5 +27,6 @@ func track_data(property: StringName, value: Variant) -> bool:
 func to_dict() -> Dictionary[StringName, Variant]:
 	return _tracked
 	
+	
 func to_json() -> String:
 	return JSON.stringify(to_dict())

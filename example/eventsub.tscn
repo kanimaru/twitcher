@@ -42,7 +42,6 @@ scopes = SubResource("Resource_5khjo")
 [node name="API" type="Node" parent="TwitchService"]
 unique_name_in_owner = true
 script = ExtResource("8_7v820")
-default_broadcaster_login = "kani_dev"
 token = ExtResource("9_pysb7")
 oauth_setting = ExtResource("10_b87ds")
 

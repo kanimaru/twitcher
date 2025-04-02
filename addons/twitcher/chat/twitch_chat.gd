@@ -91,11 +91,11 @@ func send_message(message: String, reply_parent_message_id: String = "") -> Arra
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
 	if eventsub == null:
-		result.append("TwitchEventsub not assgined")
+		result.append("TwitchEventsub not assigned")
 	if media_loader == null:
-		result.append("TwitchMediaLoader not assgined")
+		result.append("TwitchMediaLoader not assigned")
 	if api == null:
-		result.append("TwitchAPI not assgined")
+		result.append("TwitchAPI not assigned")
 	if broadcaster_user == null:
 		result.append("Target broadcaster not specified")
 	return result
