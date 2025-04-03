@@ -24,7 +24,7 @@ script = ExtResource("10_jftlh")
 type = 9
 condition = {
 &"broadcaster_user_id": "132799162",
-&"user_id": "132799162"
+&"user_id": ""
 }
 metadata/_custom_type_script = "uid://cjug64e3433g0"
 

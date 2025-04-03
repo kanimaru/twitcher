@@ -17,10 +17,12 @@ func _parse_property(object: Object, type: Variant.Type, name: String, \
 		add_property_editor("type", ToDocs.new(), true, "Documentation")
 	return false
 
+
 class ToDocs extends EditorProperty:
 	const EXT_LINK = preload("res://addons/twitcher/assets/ext-link.svg")
 
 	var docs = Button.new()
+
 
 	func _init() -> void:
 		docs.text = "To dev.twitch.tv"
@@ -28,6 +30,7 @@ class ToDocs extends EditorProperty:
 		docs.pressed.connect(_on_to_docs)
 		add_child(docs)
 		add_focusable(docs)
+
 
 	func _on_to_docs() -> void:
 		var eventsub_config: TwitchEventsubConfig = get_edited_object()

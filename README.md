@@ -2,14 +2,11 @@
 - Updating documentation
 - Better Setup TODOs
 
-- Bug chat not subscribing automatically
 - Inspector for Eventsub
 - authorize and dosetup
 - Explain the editor project settings
 - making errors better
 - large Emotes are to much up
-
-- twitch_editor_settings.gd get val NiL
 - Check update proccess 
 
 # [Early Beta] Twitcher V2

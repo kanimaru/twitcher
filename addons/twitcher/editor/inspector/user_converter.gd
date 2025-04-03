@@ -58,6 +58,11 @@ func _on_login_changed(new_text: String) -> void:
 	_debounce.start()
 
 
+func reload() -> void:
+	loading()
+	_on_changed()
+
+
 func loading() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "modulate", Color.YELLOW, 0.2).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
@@ -67,6 +72,12 @@ func flash(color: Color) -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(self, "modulate", color, 0.2).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_property(self, "modulate", Color.WHITE, 0.2).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
+	await tween.finished
+
+
+func update_user(user: TwitchUser) -> void:
+	user_login = user.login
+	user_id = user.id
 
 
 func _on_changed() -> void:
@@ -84,7 +95,11 @@ func _on_changed() -> void:
 		users.id = [ new_user_id ]
 	
 	if users.id != null || users.login != null:
-		var user = await _get_user(users)
+		user = await _get_user(users)
+		if user != null:
+			user_login = user.login
+			user_id = user.id
+		
 		changed.emit(user)
 
 
@@ -100,6 +115,6 @@ func _get_user(get_user_opt: TwitchGetUsers.Opt) -> TwitchUser:
 		printerr("User %s%s was not found." % [ get_user_opt.login, get_user_opt.id ])
 		return null
 	remove_child(api)
-	flash(Color.GREEN)
+	await flash(Color.GREEN)
 	return data[0]
 	
