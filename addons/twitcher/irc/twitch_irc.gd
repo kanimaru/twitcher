@@ -2,6 +2,7 @@
 @tool
 extends Twitcher
 
+## @deprecated: Twitch plans to remove IRC so use the eventsub solution instead
 class_name TwitchIRC
 
 static var log: TwitchLogger = TwitchLogger.new("TwitchIRC")

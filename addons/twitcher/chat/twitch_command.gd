@@ -13,6 +13,24 @@ signal command_received(from_username: String, info: TwitchCommandInfo, args: Pa
 ## Called when the command got received in the wrong format
 signal received_invalid_command(from_username: String, info: TwitchCommandInfo, args: PackedStringArray)
 
+## Required permission to execute the command
+enum PermissionFlag {
+	EVERYONE = 0,
+	VIP = 1,
+	SUB = 2,
+	MOD = 4,
+	STREAMER = 8,
+	MOD_STREAMER = 12, # Mods and the streamer
+	NON_REGULAR = 15 # Everyone but regular viewers
+}
+
+## Where the command should be accepted
+enum WhereFlag {
+	CHAT = 1,
+	WHISPER = 2,
+	ANYWHERE = 3
+}
+
 ## Name Command
 @export var command: String
 ## Optional names of commands
@@ -25,9 +43,9 @@ signal received_invalid_command(from_username: String, info: TwitchCommandInfo, 
 ## Max amount of arguments -1 means infinite
 @export var args_max: int = -1
 ## Wich role of user is allowed to use it
-@export var permission_level : TwitchCommandHandler.PermissionFlag = TwitchCommandHandler.PermissionFlag.EVERYONE
+@export var permission_level : PermissionFlag = PermissionFlag.EVERYONE
 ## Where is it allowed to use chat or whisper or both
-@export var where : TwitchCommandHandler.WhereFlag = TwitchCommandHandler.WhereFlag.CHAT
+@export var where : WhereFlag = WhereFlag.CHAT
 ## All allowed users empty array means everyone
 @export var allowed_users: Array[String] = []
 ## All chatrooms where the command listens to
@@ -42,8 +60,8 @@ static func create(
 		callable : Callable,
 		min_args : int = 0,
 		max_args : int = 0,
-		permission_level : int = TwitchCommandHandler.PermissionFlag.EVERYONE,
-		where : int = TwitchCommandHandler.WhereFlag.CHAT,
+		permission_level : int = PermissionFlag.EVERYONE,
+		where : int = WhereFlag.CHAT,
 		listen_to_chatrooms : Array[String] = []) -> TwitchCommand:
 	var command := TwitchCommand.new()
 	command.eventsub = eventsub
@@ -57,6 +75,7 @@ static func create(
 
 
 func _enter_tree() -> void:
+	if eventsub == null: eventsub = TwitchEventsub.instance
 	eventsub.event.connect(_on_event)
 
 
@@ -65,8 +84,8 @@ func _exit_tree() -> void:
 
 
 func _on_event(type: StringName, data: Dictionary) -> void:
-	if type != TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE.value:
-		if where & TwitchCommandHandler.WhereFlag.CHAT != TwitchCommandHandler.WhereFlag.CHAT: return
+	if type == TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE.value:
+		if where & WhereFlag.CHAT != WhereFlag.CHAT: return
 		var message : String = data.message.text
 		var username : String = data.chatter_user_name
 		var channel_name : String = data.broadcaster_user_name
@@ -74,8 +93,8 @@ func _on_event(type: StringName, data: Dictionary) -> void:
 		var chat_message = TwitchChatMessage.from_json(data)
 		_handle_command(username, message, channel_name, chat_message)
 		
-	if type != TwitchEventsubDefinition.USER_WHISPER_MESSAGE.value:
-		if where & TwitchCommandHandler.WhereFlag.WHISPER != TwitchCommandHandler.WhereFlag.WHISPER: return
+	if type == TwitchEventsubDefinition.USER_WHISPER_MESSAGE.value:
+		if where & WhereFlag.WHISPER != WhereFlag.WHISPER: return
 		var message : String = data.whisper.text
 		var from_user : String = data.from_user_login
 		if not _should_handle(message, from_user): return
@@ -140,8 +159,8 @@ func _get_perm_flag_from_tags(data : Variant) -> int:
 		var message: TwitchChatMessage = data as TwitchChatMessage
 		for badge in message.badges:
 			match badge.set_id:
-				"broadcaster": flag += TwitchCommandHandler.PermissionFlag.STREAMER
-				"vip": flag += TwitchCommandHandler.PermissionFlag.VIP
-				"moderator": flag += TwitchCommandHandler.PermissionFlag.MOD
-				"subscriber": flag += TwitchCommandHandler.PermissionFlag.SUB
+				"broadcaster": flag += PermissionFlag.STREAMER
+				"vip": flag += PermissionFlag.VIP
+				"moderator": flag += PermissionFlag.MOD
+				"subscriber": flag += PermissionFlag.SUB
 	return flag

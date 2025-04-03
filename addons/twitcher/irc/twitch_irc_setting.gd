@@ -1,5 +1,6 @@
 extends Resource
 
+## @deprecated: Twitch plans to remove IRC so use the eventsub solution instead
 class_name TwitchIrcSetting
 
 const CAP_COMMANDS := &"twitch.tv/commands"

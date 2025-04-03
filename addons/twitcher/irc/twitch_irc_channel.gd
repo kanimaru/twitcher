@@ -4,9 +4,8 @@ extends Twitcher
 ## Direct access to the chat for one specific channel
 ##
 ## Usefull when using multiple channels otherwise TwitchIRC has everything you need
-## Deprecated Eventsub solution is prefred with `TwitchChat` Node!
 ## This one exists only for tracking user join and leave events.
-
+## ## @deprecated: Twitch plans to remove IRC so use the eventsub solution instead
 class_name TwitchIrcChannel
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchIrcChannel")

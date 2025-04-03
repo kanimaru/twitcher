@@ -39,11 +39,11 @@ func _on_swap_view() -> void:
 	if _login.visible:
 		_login.visible = false
 		_id.visible = true
-		_swap_view.text = "Name"
+		_swap_view.text = "ID"
 	else:
 		_login.visible = true
 		_id.visible = false
-		_swap_view.text = "ID"
+		_swap_view.text = "Name"
 	
 
 func _on_id_changed(new_text: String) -> void:

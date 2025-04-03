@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="OAuthScopes" load_steps=2 format=3 uid="uid://hqh5x62qipk8"]
+[gd_resource type="Resource" script_class="TwitchOAuthScopes" load_steps=2 format=3 uid="uid://hqh5x62qipk8"]
 
-[ext_resource type="Script" uid="uid://dexweyb521tu0" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="1_ivxsf"]
+[ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="1_r0bso"]
 
 [resource]
-script = ExtResource("1_ivxsf")
+script = ExtResource("1_r0bso")
 used_scopes = Array[StringName]([&"chat:edit", &"chat:read", &"channel:bot", &"user:bot", &"user:read:chat", &"user:write:chat", &"channel:moderate"])

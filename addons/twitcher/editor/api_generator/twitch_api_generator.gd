@@ -17,6 +17,8 @@ class_name TwitchAPI
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchAPI")
 
+static var instance: TwitchAPI
+
 ## Maximal tries to reauthrorize before giving up the request.
 const MAX_AUTH_ERRORS = 3
 
@@ -49,6 +51,14 @@ func _ready() -> void:
 	add_child(client)
 	
 	
+func _enter_tree() -> void:
+	if instance == null: instance = self
+	
+	
+func _exit_tree() -> void:
+	if instance == self: instance = null
+	
+	
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
 	if token == null:
@@ -56,6 +66,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 	if oauth_setting == null:
 		result.append("Please set the correct oauth settings")
 	return result
+		
 		
 func request(path: String, method: int, body: Variant = "", content_type: String = "", error_count: int = 0) -> BufferedHTTPClient.ResponseData:
 	var header : Dictionary = {

@@ -4,8 +4,10 @@ extends Twitcher
 
 ## Handles the evensub part of twitch. Returns the event data when receives it.
 class_name TwitchEventsub
+
 static var _log: TwitchLogger = TwitchLogger.new("TwitchEventsub")
 
+static var instance: TwitchEventsub
 
 ## An object that identifies the message.
 class Metadata extends RefCounted:
@@ -115,7 +117,16 @@ func _ready() -> void:
 	if use_test_server:
 		_test_client.name = "Websocket Client Test"
 		add_child(_test_client)
+	if api == null: api = TwitchAPI.instance
 
+
+func _enter_tree() -> void:
+	if instance == null: instance = self
+	
+	
+func _exit_tree() -> void:
+	if instance == self: instance = null
+	
 
 ## Propergated call from twitch service
 func do_setup() -> void:

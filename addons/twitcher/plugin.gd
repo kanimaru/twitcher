@@ -36,20 +36,19 @@ var settings: TwitchEditorSettings = TwitchEditorSettings.new()
 func _enter_tree():
 	_log.i("Start Twitcher loading...")
 
-	if Engine.is_editor_hint():
-		add_tool_menu_item(REGENERATE_API_LABEL, func():
-			generator = TwitchAPIGenerator.new()
-			parser = TwitchAPIParser.new()
-			generator.parser = parser
-			add_child(generator)
-			add_child(parser)
-			await parser.parse_api()
-			generator.generate_api()
-			remove_child(generator)
-			remove_child(parser)
-			)
+	TwitchEditorSettings.setup()
+	add_tool_menu_item(REGENERATE_API_LABEL, func():
+		generator = TwitchAPIGenerator.new()
+		parser = TwitchAPIParser.new()
+		generator.parser = parser
+		add_child(generator)
+		add_child(parser)
+		await parser.parse_api()
+		generator.generate_api()
+		remove_child(generator)
+		remove_child(parser)
+		)
 			
-		
 	add_inspector_plugin(eventsub_config_inspector)
 	add_inspector_plugin(eventsub_inspector)
 	add_inspector_plugin(scope_inspector)

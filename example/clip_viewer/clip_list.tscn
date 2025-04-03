@@ -1,12 +1,12 @@
 [gd_scene load_steps=9 format=3 uid="uid://c6d1ul2eklm43"]
 
 [ext_resource type="Script" uid="uid://cylmiv78ot7x1" path="res://example/clip_viewer/clip_list.gd" id="1_8c30q"]
-[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/twitch_auth.gd" id="2_vwnax"]
-[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/twitch_oauth_setting.tres" id="3_rl7ni"]
-[ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="4_mm8r3"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="2_vwnax"]
+[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/auth/twitch_oauth_setting.tres" id="3_rl7ni"]
+[ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/auth/default_oauth_token.tres" id="4_mm8r3"]
 [ext_resource type="Script" uid="uid://dexweyb521tu0" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="5_u00p2"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="6_8c30q"]
-[ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/twitch_media_loader.gd" id="7_0jpfl"]
+[ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/media/twitch_media_loader.gd" id="7_0jpfl"]
 
 [sub_resource type="Resource" id="Resource_r0ljb"]
 script = ExtResource("5_u00p2")

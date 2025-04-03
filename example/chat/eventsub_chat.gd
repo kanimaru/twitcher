@@ -17,6 +17,8 @@ const ChatView = preload("res://example/chat_view.gd")
 @onready var twitch_service: TwitchService = %TwitchService
 ## Loader to get the emotes, badges etc.
 @onready var media_loader: TwitchMediaLoader = %MediaLoader
+## Hello command receiver
+@onready var hello_command: TwitchCommand = %HelloCommand
 
 @export var token: OAuthToken
 
@@ -28,13 +30,21 @@ func _ready() -> void:
 
 	# Setup the library
 	await twitch_service.setup()
+	
+	# You can skip this when 
 	var current_user: TwitchUser = await twitch_service.get_current_user()
 	twitch_chat.broadcaster_user = current_user
 
 	# Listen to the message received of the chat
 	twitch_chat.message_received.connect(_on_chat_message)
 	chat_view.message_sent.connect(_on_sent_message)
+	hello_command.command_received.connect(_on_hello)
 
+
+func _on_hello(from_username: String, info: TwitchCommandInfo, args: PackedStringArray) -> void:
+	var message: TwitchChatMessage = info.original_message as TwitchChatMessage
+	twitch_chat.send_message("Hello to you too %s" % from_username, message.message_id)
+	
 
 func _on_chat_message(message: TwitchChatMessage) -> void:
 	# Get all badges from the user that sends the message

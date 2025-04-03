@@ -8,6 +8,8 @@ class_name TwitchService
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 
+static var instance: TwitchService
+
 @export var oauth_setting: OAuthSetting = OAuthSetting.new():
 	set(val):
 		oauth_setting = val
@@ -30,11 +32,11 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 @onready var api: TwitchAPI
 @onready var irc: TwitchIRC
 @onready var media_loader: TwitchMediaLoader
-@onready var command_handler: TwitchCommandHandler
 
 ## Cache for the current user so that no roundtrip has to be done every time get_current_user will be called
 var _current_user: TwitchUser
 
+var _commands: Dictionary[String, TwitchCommand] = {}
 
 func _init() -> void:
 	child_entered_tree.connect(_on_child_entered)
@@ -45,13 +47,20 @@ func _ready() -> void:
 	_log.d("is ready")
 
 
+func _enter_tree() -> void:
+	if instance == null: instance = self
+	
+	
+func _exit_tree() -> void:
+	if instance == self: instance = null
+	
+
 func _on_child_entered(node: Node) -> void:
 	if node is TwitchAuth: auth = node
 	if node is TwitchAPI: api = node
 	if node is TwitchEventsub: eventsub = node
 	if node is TwitchIRC: irc = node
 	if node is TwitchMediaLoader: media_loader = node
-	if node is TwitchCommandHandler: command_handler = node
 
 	if "token" in node && token != null:
 		node.token = token
@@ -75,7 +84,6 @@ func _on_child_exiting(node: Node) -> void:
 	if node is TwitchEventsub: eventsub = null
 	if node is TwitchIRC: irc = null
 	if node is TwitchMediaLoader: media_loader = null
-	if node is TwitchCommandHandler: command_handler = null
 	
 	if node.has_signal(&"unauthenticated"):
 		node.unauthenticated.disconnect(_on_unauthenticated)
@@ -236,17 +244,26 @@ func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnounc
 ## Args are optional depending on the configuration.[br]
 ## args_max == -1 => no upper limit for arguments
 func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1,
-	permission_level : TwitchCommandHandler.PermissionFlag = TwitchCommandHandler.PermissionFlag.EVERYONE,
-	where : TwitchCommandHandler.WhereFlag = TwitchCommandHandler.WhereFlag.CHAT) -> void:
-
+	permission_level : TwitchCommand.PermissionFlag = TwitchCommand.PermissionFlag.EVERYONE,
+	where : TwitchCommand.WhereFlag = TwitchCommand.WhereFlag.CHAT) -> void:
+	var command_node = TwitchCommand.new()
+	command_node.command = command
+	command_node.command_received.connect(callback) 
+	command_node.args_min = args_min
+	command_node.args_max = args_max
+	command_node.permission_level = permission_level
+	command_node.where = where
+	add_child(command_node)
 	_log.i("Register command %s" % command)
-	command_handler.add_command(command, callback, args_min, args_max, permission_level, where)
 
 
 ## Removes a command
 func remove_command(command: String) -> void:
 	_log.i("Remove command %s" % command)
-	command_handler.remove_command(command)
+	var command_node: TwitchCommand = _commands.get(command, null)
+	if command_node != null:
+		command_node.queue_free()
+		_commands.erase(command)
 
 
 ## Whispers to another user.

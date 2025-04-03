@@ -1,5 +1,6 @@
 extends Resource
 
+## Base class to track which data got changed.
 class_name TwitchData
 
 ## Contains all values that got actually changed

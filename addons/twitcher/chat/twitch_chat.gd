@@ -7,6 +7,8 @@ class_name TwitchChat
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchChat")
 
+static var instance: TwitchChat
+
 @export var eventsub: TwitchEventsub:
 	set(val):
 		eventsub = val
@@ -26,6 +28,8 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchChat")
 ## Can be null. Then the owner of the access token will be used to send message aka the current user.
 @export var sender_user: TwitchUser
 
+## Should it subscribe on ready
+@export var subscribe_on_ready: bool = true
 var twitch_event_listener: TwitchEventListener = TwitchEventListener.new()
 
 ## Triggered when a chat message got received
@@ -36,7 +40,18 @@ signal rest_updated(rest: TwitchAPI)
 
 func _ready() -> void:
 	_log.d("is ready")
+	if eventsub == null: eventsub = TwitchEventsub.instance
 	eventsub.event.connect(_on_event_received)
+	if Engine.is_editor_hint() && subscribe_on_ready:
+		subscribe()
+	
+
+func _enter_tree() -> void:
+	if instance == null: instance = self
+	
+	
+func _exit_tree() -> void:
+	if instance == self: instance = null
 
 
 ## Subscribe to eventsub and preload data if not happend yet
@@ -52,8 +67,9 @@ func subscribe() -> void:
 				# it is already subscribed
 				return
 		
-	var current_user: TwitchGetUsers.Response = await api.get_users(null)
-	sender_user = current_user.data[0]
+	if sender_user == null:
+		var current_user: TwitchGetUsers.Response = await api.get_users(null)
+		sender_user = current_user.data[0]
 	
 	var config: TwitchEventsubConfig = TwitchEventsubConfig.new()
 	config.type = TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE

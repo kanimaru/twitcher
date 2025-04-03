@@ -5,14 +5,15 @@ extends Twitcher
 ## Will load badges, icons and profile images
 class_name TwitchMediaLoader
 
+static var _log: TwitchLogger  = TwitchLogger.new("TwitchMediaLoader")
+
+static var instance: TwitchMediaLoader
 
 ## Called when an emoji was succesfully loaded
 signal emoji_loaded(definition: TwitchEmoteDefinition)
 
 const FALLBACK_TEXTURE = preload("res://addons/twitcher/assets/fallback_texture.tres")
 const FALLBACK_PROFILE = preload("res://addons/twitcher/assets/no_profile.png")
-
-var _log: TwitchLogger  = TwitchLogger.new("TwitchMediaLoader")
 
 @export var api: TwitchAPI
 @export var image_transformer: TwitchImageTransformer = TwitchImageTransformer.new(): 
@@ -35,7 +36,6 @@ var _cached_badges : Dictionary = {}
 var _cached_emotes : Dictionary = {}
 ## Key: String Cheer Prefix | Value: TwitchCheermote
 var _cached_cheermotes: Dictionary[String, TwitchCheermote] = {}
-var image_transformer_implementation: TwitchImageTransformer
 
 ## All cached emotes, badges, cheermotes
 ## Is needed that the garbage collector isn't deleting our cache.
@@ -50,7 +50,16 @@ func _ready() -> void:
 	_client.name = "TwitchMediaLoaderClient"
 	add_child(_client)
 	_load_cache()
+	if api == null: api = TwitchAPI.instance
 
+
+func _enter_tree() -> void:
+	if instance == null: instance = self
+	
+	
+func _exit_tree() -> void:
+	if instance == self: instance = null
+	
 
 ## Loading all images from the directory into the memory cache
 func _load_cache() -> void:
@@ -113,7 +122,7 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 			response[emote_definition] = ResourceLoader.load(spriteframe_path)
 			continue
 
-		if not image_transformer_implementation.is_supporting_animation():
+		if not image_transformer.is_supporting_animation():
 			emote_definition.type_static()
 
 		if _requests_in_progress.has(original_file_cache_path): continue
@@ -316,7 +325,7 @@ func get_cheermotes(cheermote_definition: TwitchCheermoteDefinition) -> Dictiona
 		if ResourceLoader.has_cached(id): 
 			_log.d("Use cached cheer %s" % cheermote_definition)
 			response[tier] = ResourceLoader.load(id)
-		if not image_transformer_implementation.is_supporting_animation():
+		if not image_transformer.is_supporting_animation():
 			cheermote_definition.type_static()
 		else: 
 			_log.d("Request cheer %s" % cheermote_definition)
@@ -346,7 +355,7 @@ func _get_cheermote_sprite_frames(tier: TwitchCheermote.Tiers, cheermote_definit
 func _wait_for_cheeremote(request: BufferedHTTPClient.RequestData, cheer_id: String) -> SpriteFrames:
 	var response : BufferedHTTPClient.ResponseData = await _client.wait_for_request(request)
 	var cache_path : String = cache_cheermote.path_join(cheer_id)
-	var sprite_frames : SpriteFrames = await image_transformer_implementation.convert_image(
+	var sprite_frames : SpriteFrames = await image_transformer.convert_image(
 		cache_path,
 		response.response_data,
 		cache_path + ".res") as SpriteFrames
@@ -416,7 +425,7 @@ func _convert_response(request: BufferedHTTPClient.RequestData, cache_path: Stri
 	var file_head = response_data.slice(0, 3)
 	# REMARK: don't use content-type... twitch doesn't check and sends PNGs with GIF content type.
 	if file_head == GIF_HEADER:
-		return await image_transformer_implementation.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames
+		return await image_transformer.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames
 	else:
 		return await static_image_transformer.convert_image(cache_path, response_data, spriteframe_path) as SpriteFrames
 

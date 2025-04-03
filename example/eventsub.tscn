@@ -1,12 +1,12 @@
 [gd_scene load_steps=11 format=3 uid="uid://djicbmxnkil7r"]
 
 [ext_resource type="Script" uid="uid://c4vxnmsvwsytd" path="res://example/eventsub.gd" id="1_xhllw"]
-[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="2_rsm4n"]
+[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://example/chat/twitch_service.gd" id="2_rsm4n"]
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="5_t2qpq"]
 [ext_resource type="Script" uid="uid://dexweyb521tu0" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="7_ewdek"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="8_7v820"]
-[ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/default_oauth_token.tres" id="9_pysb7"]
-[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/twitch_oauth_setting.tres" id="10_b87ds"]
+[ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/auth/default_oauth_token.tres" id="9_pysb7"]
+[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/auth/twitch_oauth_setting.tres" id="10_b87ds"]
 [ext_resource type="Script" uid="uid://bol5ltrjr6ux8" path="res://addons/twitcher/eventsub/twitch_event_listener.gd" id="12_4m14a"]
 
 [sub_resource type="Resource" id="Resource_5khjo"]
