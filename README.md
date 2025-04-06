@@ -1,13 +1,17 @@
 !!!! TODOS:
 - Updating documentation
-- Better Setup TODOs
 
-- Inspector for Eventsub
 - authorize and dosetup
 - Explain the editor project settings
+
 - making errors better
 - large Emotes are to much up
-- Check update proccess 
+- remove class name of userproperty
+- implemnt description in commands
+
+Nice To Have:
+- Default To Own ID Eventsub
+- Multicommands
 
 # [Early Beta] Twitcher V2
 .. is a Godot Library for implementing Twitch functionality in Godot.

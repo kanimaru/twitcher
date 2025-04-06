@@ -40,7 +40,9 @@ var _last_login_attempt: int
 ## State for the current authcode request to compare with
 var _current_state: String
 var _client: OAuthHTTPClient
-var _crypto = Crypto.new()
+var _crypto: Crypto = Crypto.new()
+var _login_timeout_timer: Timer
+var _initialized: bool
 
 enum AuthorizationFlow {
 	AUTHORIZATION_CODE_FLOW,
@@ -50,25 +52,12 @@ enum AuthorizationFlow {
 }
 
 
-func _ready() -> void:
-	_client = OAuthHTTPClient.new()
-	_client.name = "OAuthClient"
-	add_child(_client)
-	_auth_http_server = OAuthHTTPServer.create(oauth_setting.redirect_port)
-	_auth_http_server.name = "OAuthServer"
-	add_child(_auth_http_server)
-	if token_handler == null:
-		token_handler = OAuthTokenHandler.new()
-		add_child(token_handler)
-	token_handler.unauthenticated.connect(_on_unauthenticated)
-	token_handler.token_resolved.connect(_on_token_resolved)
-
-
 func _on_unauthenticated() -> void:
 	login()
 
 
 func _on_token_resolved(token: OAuthToken) -> void:
+	if token == null: return
 	token_changed.emit(token.get_access_token())
 
 
@@ -82,19 +71,42 @@ func refresh_token() -> void:
 	await token_handler.refresh_tokens()
 
 
-## Gets the current token as soon as it is available
-func get_token() -> String:
-	if token_handler.get_access_token() == "":
-		await token_handler.token_resolved
-	return token_handler.get_access_token()
-
+func _setup_nodes() -> void:
+	if _initialized: return
+	_initialized = true
+	
+	if _client == null:
+		_client = OAuthHTTPClient.new()
+		_client.name = "OAuthClient"
+		add_child(_client)
+	
+	if _auth_http_server == null:
+		_auth_http_server = OAuthHTTPServer.create(oauth_setting.redirect_port)
+		_auth_http_server.name = "OAuthServer"
+		add_child(_auth_http_server)
+	
+	if token_handler == null:
+		token_handler = OAuthTokenHandler.new()
+		add_child(token_handler)
+		
+	token_handler.unauthenticated.connect(_on_unauthenticated)
+	token_handler.token_resolved.connect(_on_token_resolved)
+	
+	_login_timeout_timer = Timer.new()
+	_login_timeout_timer.name = "LoginTimeoutTimer"
+	_login_timeout_timer.one_shot = true
+	_login_timeout_timer.wait_time = 30
+	_login_timeout_timer.timeout.connect(_on_login_timeout)
+	add_child(_login_timeout_timer)
 
 ## Depending on the authorization_flow it gets resolves the token via the different
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
 func login() -> void:
 	if not is_node_ready(): await ready
+	_setup_nodes()
 	if token_handler.is_token_valid() && not _got_scopes_changed(): return
+	logDebug("Token is valid (%s) and not scopes changed (%s)" % [ token_handler.is_token_valid(), _got_scopes_changed()])
 
 	if login_in_process:
 		# TODO Find away to implement a proper timeout for previous requests.
@@ -110,6 +122,7 @@ func login() -> void:
 	_last_login_attempt = Time.get_ticks_msec()
 
 	login_in_process = true
+	_login_timeout_timer.start()
 	logInfo("do login")
 	match oauth_setting.authorization_flow:
 		AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
@@ -122,6 +135,7 @@ func login() -> void:
 			await _start_device_login_process()
 
 	login_in_process = false
+	_login_timeout_timer.stop()
 	
 
 func _got_scopes_changed() -> bool:
@@ -137,6 +151,14 @@ func _got_scopes_changed() -> bool:
 			return true
 
 	return false
+
+	
+## Called when the login process is timing out cause of misconfiguration or other natural catastrophes.
+func _on_login_timeout() -> void:
+	if token_handler.is_token_valid(): return
+	logError("Login run into a timeout. Stop all login processes.")
+	_auth_succeed.emit("")
+	token_handler.token_resolved.emit(null)
 
 
 func _start_login_process(response_type: String) -> void:
@@ -172,6 +194,9 @@ func _start_login_process(response_type: String) -> void:
 	logDebug("waiting for user to login.")
 	if response_type == "code":
 		var auth_code = await _auth_succeed
+		if auth_code == "":
+			logDebug("Auth code was empty. Abort Login.")
+			return
 		token_handler.request_token("authorization_code", auth_code)
 		await token_handler.token_resolved
 		_auth_http_server.request_received.disconnect(_process_code_request.bind(_auth_http_server))

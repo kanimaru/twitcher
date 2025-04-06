@@ -42,7 +42,7 @@ func _ready() -> void:
 	_log.d("is ready")
 	if eventsub == null: eventsub = TwitchEventsub.instance
 	eventsub.event.connect(_on_event_received)
-	if Engine.is_editor_hint() && subscribe_on_ready:
+	if not Engine.is_editor_hint() && subscribe_on_ready:
 		subscribe()
 	
 
@@ -56,9 +56,12 @@ func _exit_tree() -> void:
 
 ## Subscribe to eventsub and preload data if not happend yet
 func subscribe() -> void:
-	if broadcaster_user != null:
-		media_loader.preload_badges(broadcaster_user.id)
-		media_loader.preload_emotes(broadcaster_user.id)
+	if broadcaster_user == null:
+		printerr("BroadcasterUser is not set. Can't subscribe to chat.")
+		return
+		
+	media_loader.preload_badges(broadcaster_user.id)
+	media_loader.preload_emotes(broadcaster_user.id)
 			
 	var subscriptions: Array[TwitchEventsubConfig] = eventsub.get_subscriptions()
 	for subscription: TwitchEventsubConfig in subscriptions:

@@ -66,7 +66,7 @@ func _load_tokens() -> bool:
 		var encrypted_refresh_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "refresh_token"))
 		_access_token = _crypto_key_provider.decrypt(encrypted_access_token).get_string_from_utf8()
 		_refresh_token = _crypto_key_provider.decrypt(encrypted_refresh_token).get_string_from_utf8()
-		_scopes = _config_file.get_value(_identifier, "scopes", "").split(",")
+		_scopes = _config_file.get_value(_identifier, "scopes", "").split(",", false)
 		emit_changed()
 		return true
 	return false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://5lyf04rwo1mf"]
+[gd_scene load_steps=18 format=3 uid="uid://5lyf04rwo1mf"]
 
 [ext_resource type="Script" uid="uid://ypwkjkx2pncv" path="res://example/chat/eventsub_chat.gd" id="1_pvhqt"]
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://example/chat/twitch_service.gd" id="2_vxv1r"]
@@ -12,54 +12,15 @@
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="9_otx6d"]
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="9_rohya"]
 [ext_resource type="Texture2D" uid="uid://g1dbcjksbotw" path="res://addons/twitcher/assets/fallback_texture.tres" id="10_1iusd"]
-[ext_resource type="Script" uid="uid://cjug64e3433g0" path="res://addons/twitcher/eventsub/twitch_eventsub_config.gd" id="10_jftlh"]
 [ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://example/chat_view.tscn" id="11_5c0by"]
 [ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/media/twitch_media_loader.gd" id="11_aprrr"]
 [ext_resource type="PackedScene" uid="uid://cinvytmtixgwu" path="res://addons/twitcher/chat/twitch_chat.tscn" id="12_5f2sm"]
 [ext_resource type="Script" uid="uid://ddwa0dm0qhc3s" path="res://addons/twitcher/media/native_image_transformer.gd" id="14_jftlh"]
-[ext_resource type="Script" uid="uid://cnmohrdxqihr0" path="res://addons/twitcher/generated/twitch_user.gd" id="15_tvr5c"]
-
-[sub_resource type="Resource" id="Resource_vxv1r"]
-script = ExtResource("10_jftlh")
-type = 9
-condition = {
-&"broadcaster_user_id": "132799162",
-&"user_id": ""
-}
-metadata/_custom_type_script = "uid://cjug64e3433g0"
 
 [sub_resource type="Resource" id="Resource_rohya"]
 script = ExtResource("14_jftlh")
 fallback_texture = ExtResource("10_1iusd")
 metadata/_custom_type_script = "uid://ddwa0dm0qhc3s"
-
-[sub_resource type="Resource" id="Resource_jftlh"]
-script = ExtResource("15_tvr5c")
-id = "132799162"
-login = "kani_dev"
-display_name = "kani_dev"
-type = ""
-broadcaster_type = "affiliate"
-description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
-profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
-offline_image_url = ""
-view_count = 0
-email = ""
-created_at = "2016-08-21T18:50:12Z"
-
-[sub_resource type="Resource" id="Resource_tvr5c"]
-script = ExtResource("15_tvr5c")
-id = "132799162"
-login = "kani_dev"
-display_name = "kani_dev"
-type = ""
-broadcaster_type = "affiliate"
-description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
-profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
-offline_image_url = ""
-view_count = 0
-email = ""
-created_at = "2016-08-21T18:50:12Z"
 
 [node name="Chat" type="Control"]
 layout_mode = 3
@@ -97,7 +58,6 @@ token = ExtResource("5_cneyv")
 [node name="EventSub" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
 script = ExtResource("9_rohya")
 api = NodePath("../API")
-_subscriptions = Array[ExtResource("10_jftlh")]([SubResource("Resource_vxv1r")])
 scopes = ExtResource("4_wpyv0")
 
 [node name="API" type="Node" parent="TwitchService"]
@@ -123,8 +83,6 @@ unique_name_in_owner = true
 eventsub = NodePath("../TwitchService/EventSub")
 media_loader = NodePath("../TwitchService/MediaLoader")
 api = NodePath("../TwitchService/API")
-broadcaster_user = SubResource("Resource_jftlh")
-sender_user = SubResource("Resource_tvr5c")
 subscribe_on_ready = true
 
 [node name="ChatView" parent="." instance=ExtResource("11_5c0by")]

@@ -4,4 +4,4 @@
 
 [resource]
 script = ExtResource("1_r0bso")
-used_scopes = Array[StringName]([&"chat:edit", &"chat:read", &"channel:bot", &"user:bot", &"user:read:chat", &"user:write:chat", &"channel:moderate"])
+used_scopes = Array[StringName]([&"chat:edit", &"chat:read", &"user:read:chat", &"user:write:chat", &"channel:moderate"])

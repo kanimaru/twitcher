@@ -6,3 +6,4 @@ force_autohinter = true
 
 [resource]
 font = SubResource("SystemFont_rtf3j")
+font_size = 18

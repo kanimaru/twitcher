@@ -72,13 +72,7 @@ func _ensure_children() -> void:
 		auth = OAuth.new()
 		auth.name = "OAuth"
 		
-
-	auth.token_handler = token_handler
-	auth.scopes = scopes
-	auth.force_verify = &"true" if force_verify else &"false"
-	auth.oauth_setting = oauth_setting
-	token_handler.oauth_setting = oauth_setting
-	token_handler.token = token
+	_sync_childs()
 
 	if not auth.is_inside_tree():
 		add_child(auth)
@@ -88,7 +82,17 @@ func _ensure_children() -> void:
 		token_handler.owner = owner
 
 
+func _sync_childs() -> void:
+	token_handler.oauth_setting = oauth_setting
+	token_handler.token = token
+	auth.token_handler = token_handler
+	auth.oauth_setting = oauth_setting
+	auth.scopes = scopes
+	auth.force_verify = &"true" if force_verify else &"false"
+	
+
 func authorize() -> void:
+	_sync_childs()
 	await auth.login()
 	token_handler.process_mode = Node.PROCESS_MODE_INHERIT
 
@@ -97,7 +101,7 @@ func refresh_token() -> void:
 	auth.refresh_token()
 
 
-func create_default_oauth_setting() -> OAuthSetting:
+static func create_default_oauth_setting() -> OAuthSetting:
 	var oauth_setting = OAuthSetting.new()
 	oauth_setting.authorization_flow = OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW
 	oauth_setting.device_authorization_url = "https://id.twitch.tv/oauth2/device"
@@ -115,10 +119,13 @@ func is_configured() -> bool:
 	
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
-	var oauth_setting_problems : PackedStringArray = oauth_setting.get_valididation_problems()
-	if not oauth_setting_problems.is_empty():
-		result.append("OAuthSetting is invalid")
-		result.append_array(oauth_setting_problems)
+	if oauth_setting == null:
+		result.append("OAuthSetting missing")
+	else:
+		var oauth_setting_problems : PackedStringArray = oauth_setting.get_valididation_problems()
+		if not oauth_setting_problems.is_empty():
+			result.append("OAuthSetting is invalid")
+			result.append_array(oauth_setting_problems)
 	if scopes == null:
 		result.append("OAuthScopes is missing")
 	if token == null:

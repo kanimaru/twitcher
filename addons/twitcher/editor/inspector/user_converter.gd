@@ -2,6 +2,7 @@
 extends HBoxContainer
 
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
+const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 
 @onready var _login: LineEdit = %Login
 @onready var _id: LineEdit = %Id
@@ -48,31 +49,19 @@ func _on_swap_view() -> void:
 
 func _on_id_changed(new_text: String) -> void:
 	_login.text = ""
-	loading()
+	TwitchTweens.loading(self)
 	_debounce.start()
 	
 	
 func _on_login_changed(new_text: String) -> void:
 	_id.text = ""
-	loading()
+	TwitchTweens.loading(self)
 	_debounce.start()
 
 
 func reload() -> void:
-	loading()
+	TwitchTweens.loading(self)
 	_on_changed()
-
-
-func loading() -> void:
-	var tween: Tween = create_tween()
-	tween.tween_property(self, "modulate", Color.YELLOW, 0.2).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-
-
-func flash(color: Color) -> void:
-	var tween: Tween = create_tween()
-	tween.tween_property(self, "modulate", color, 0.2).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-	tween.tween_property(self, "modulate", Color.WHITE, 0.2).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN_OUT)
-	await tween.finished
 
 
 func update_user(user: TwitchUser) -> void:
@@ -111,10 +100,10 @@ func _get_user(get_user_opt: TwitchGetUsers.Opt) -> TwitchUser:
 	var response: TwitchGetUsers.Response = await api.get_users(get_user_opt)
 	var data: Array[TwitchUser] = response.data
 	if data.is_empty():
-		flash(Color.RED)
+		await TwitchTweens.flash(self, Color.RED)
 		printerr("User %s%s was not found." % [ get_user_opt.login, get_user_opt.id ])
 		return null
 	remove_child(api)
-	await flash(Color.GREEN)
+	await TwitchTweens.flash(self, Color.GREEN)
 	return data[0]
 	

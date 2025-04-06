@@ -1,0 +1,126 @@
+[gd_scene load_steps=7 format=3 uid="uid://dm6jvnuikxtei"]
+
+[ext_resource type="Script" uid="uid://dxql15j5ornlc" path="res://addons/twitcher/editor/setup/page_authorization.gd" id="1_78hk7"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/title_label_settings.tres" id="2_owlil"]
+[ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="3_dbhpx"]
+[ext_resource type="PackedScene" uid="uid://bfksyo3klyvdn" path="res://addons/twitcher/editor/setup/test_credentials.tscn" id="3_ncncv"]
+[ext_resource type="Resource" uid="uid://jge01jggkbca" path="res://twitch_oauth_setting.tres" id="5_6v7gf"]
+[ext_resource type="Resource" uid="uid://ephf2qulp0yn" path="res://twitch_token.tres" id="6_t06fr"]
+
+[node name="Authorization" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("1_78hk7")
+metadata/_tab_index = 1
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="AuthorizationTitle" type="Label" parent="Layout"]
+layout_mode = 2
+text = "Step 2: Authorization"
+label_settings = ExtResource("2_owlil")
+horizontal_alignment = 1
+
+[node name="AuthorizationExplaination" type="RichTextLabel" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "You can request your credentials [url=https://dev.twitch.tv/console/apps/create]Twitch Dev Console[/url] for more informations see [url=https://twitcher.kani.dev/#authorization]Documentation[/url]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Layout/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="AuthorizationOptions" type="GridContainer" parent="Layout/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+columns = 2
+
+[node name="ClientIdLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
+layout_mode = 2
+text = "Client ID:"
+
+[node name="ClientId" type="LineEdit" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1ae0idgxbvn6vi97ls7d89cyd919oq"
+
+[node name="ClientSecretLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
+layout_mode = 2
+text = "Client Secret:"
+
+[node name="ClientSecret" type="LineEdit" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "k22x037lmmrmkmwvy79xr19qfy993g"
+secret = true
+
+[node name="RedirectURLLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
+layout_mode = 2
+text = "Redirect URL:"
+
+[node name="RedirectURL" type="LineEdit" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Location that Twitch is calling after the login process. Take care that this one is the same that you used during creation of the application within the twitch dev console."
+text = "http://localhost:7170"
+
+[node name="OauthSettingLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
+layout_mode = 2
+text = "Auth File Path:"
+
+[node name="OauthSettingFileSelect" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions" instance=ExtResource("3_dbhpx")]
+unique_name_in_owner = true
+layout_mode = 2
+default_path = "res://twitch_oauth_setting.tres"
+path = "res://twitch_oauth_setting.tres"
+
+[node name="TokenLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
+layout_mode = 2
+text = "Token File Path:"
+
+[node name="TokenFileSelect" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions" instance=ExtResource("3_dbhpx")]
+unique_name_in_owner = true
+layout_mode = 2
+default_path = "res://twitch_token.tres"
+path = "res://twitch_token.tres"
+filters = PackedStringArray("*.tres", "*.res")
+
+[node name="TestCredentials" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions" node_paths=PackedStringArray("test_response") instance=ExtResource("3_ncncv")]
+unique_name_in_owner = true
+layout_mode = 2
+oauth_setting = ExtResource("5_6v7gf")
+oauth_token = ExtResource("6_t06fr")
+test_response = NodePath("../../../../TestResponse")
+
+[node name="OAuthSave" type="Button" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save"
+
+[node name="TestResponse" type="Label" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2

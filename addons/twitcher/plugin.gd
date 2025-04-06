@@ -4,13 +4,14 @@ extends EditorPlugin
 static var _log : TwitchLogger = TwitchLogger.new("Twitcher Plugin")
 
 const REGENERATE_API_LABEL: String = "Regenerate Twitch Api"
+const OPEN_SETUP_LABEL: String = "Twitcher Setup"
 
 # oOuch imports
 const OauthSettingInspector = preload("res://addons/twitcher/lib/oOuch/oauth_setting_inspector.gd")
 const TokenInspector = preload("res://addons/twitcher/lib/oOuch/oauth_token_inspector.gd")
 
 # Twitcher imports
-const ScopeInspectorPlugin = preload("res://addons/twitcher/editor/inspector/scope_inspector.gd")
+const TwitchScopeInspectorPlugin = preload("res://addons/twitcher/editor/inspector/twitch_scope_inspector.gd")
 const TwitchEventsubInspectorPlugin = preload("res://addons/twitcher/editor/inspector/twitch_eventsub_inspector.gd")
 const TwitchEventsubConfigInspectorPlugin = preload("res://addons/twitcher/editor/inspector/twitch_eventsub_config_inspector.gd")
 const TwitchMediaLoaderInspector = preload("res://addons/twitcher/editor/inspector/twitch_media_loader_inspector.gd")
@@ -25,7 +26,7 @@ var gif_importer_imagemagick: GifImporterImagemagick = GifImporterImagemagick.ne
 var gif_importer_native: GifImporterNative = GifImporterNative.new()
 var eventsub_config_inspector: TwitchEventsubConfigInspectorPlugin = TwitchEventsubConfigInspectorPlugin.new()
 var eventsub_inspector: TwitchEventsubInspectorPlugin = TwitchEventsubInspectorPlugin.new()
-var scope_inspector: ScopeInspectorPlugin = ScopeInspectorPlugin.new()
+var scope_inspector: TwitchScopeInspectorPlugin = TwitchScopeInspectorPlugin.new()
 var oauth_setting_inspector: OauthSettingInspector = OauthSettingInspector.new()
 var token_inspector: TokenInspector = TokenInspector.new()
 var media_loader_inspector: TwitchMediaLoaderInspector = TwitchMediaLoaderInspector.new()
@@ -35,8 +36,8 @@ var settings: TwitchEditorSettings = TwitchEditorSettings.new()
 
 func _enter_tree():
 	_log.i("Start Twitcher loading...")
-
 	TwitchEditorSettings.setup()
+		
 	add_tool_menu_item(REGENERATE_API_LABEL, func():
 		generator = TwitchAPIGenerator.new()
 		parser = TwitchAPIParser.new()
@@ -48,6 +49,9 @@ func _enter_tree():
 		remove_child(generator)
 		remove_child(parser)
 		)
+	add_tool_menu_item(OPEN_SETUP_LABEL, func():
+		var setup = load("res://addons/twitcher/editor/setup/setup.tscn").instantiate()
+		add_child(setup))
 			
 	add_inspector_plugin(eventsub_config_inspector)
 	add_inspector_plugin(eventsub_inspector)

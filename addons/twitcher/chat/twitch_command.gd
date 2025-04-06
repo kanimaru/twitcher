@@ -1,4 +1,4 @@
-@icon("./assets/command-icon.svg")
+@icon("res://addons/twitcher/assets/command-icon.svg")
 extends Twitcher
 
 # Untested yet
