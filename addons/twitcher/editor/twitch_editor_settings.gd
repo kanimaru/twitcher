@@ -58,15 +58,15 @@ static func _setup_project_settings() -> void:
 
 static func _reload_setting() -> void:
 	var editor_token_path: String = get_editor_token_path()
-	if editor_token_path:
+	if editor_token_path and FileAccess.file_exists(editor_token_path):
 		editor_token = load(editor_token_path)
 		
 	var oauth_setting_path: String = get_oauth_setting_path()
-	if oauth_setting_path:
+	if oauth_setting_path and FileAccess.file_exists(oauth_setting_path):
 		oauth_setting = load(oauth_setting_path)
 		
 	var scope_path: String = get_scope_path()
-	if scope_path:
+	if scope_path and FileAccess.file_exists(scope_path):
 		scopes = load(scope_path)
 
 
@@ -98,4 +98,3 @@ static func is_valid() -> bool:
 	var token_valid = is_instance_valid(editor_token) && editor_token.is_token_valid()
 	var auth_setting_valid = is_instance_valid(oauth_setting) && oauth_setting.is_valid()
 	return token_valid && auth_setting_valid
-	
