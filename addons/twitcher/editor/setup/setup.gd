@@ -1,7 +1,6 @@
 @tool
 extends Window
 
-const AuthorizationEditorProperty = preload("res://addons/twitcher/editor/inspector/authorization_editor_property.gd")
 const PageUseCase = preload("res://addons/twitcher/editor/setup/page_use_case.gd")
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 

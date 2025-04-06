@@ -15,7 +15,6 @@ const TwitchScopeInspectorPlugin = preload("res://addons/twitcher/editor/inspect
 const TwitchEventsubInspectorPlugin = preload("res://addons/twitcher/editor/inspector/twitch_eventsub_inspector.gd")
 const TwitchEventsubConfigInspectorPlugin = preload("res://addons/twitcher/editor/inspector/twitch_eventsub_config_inspector.gd")
 const TwitchMediaLoaderInspector = preload("res://addons/twitcher/editor/inspector/twitch_media_loader_inspector.gd")
-const TwitchAuthInspector = preload("res://addons/twitcher/editor/inspector/twitch_auth_inspector.gd")
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 const TwitchUserInspector = preload("res://addons/twitcher/editor/inspector/twitch_user_inspector.gd")
 
@@ -30,7 +29,6 @@ var scope_inspector: TwitchScopeInspectorPlugin = TwitchScopeInspectorPlugin.new
 var oauth_setting_inspector: OauthSettingInspector = OauthSettingInspector.new()
 var token_inspector: TokenInspector = TokenInspector.new()
 var media_loader_inspector: TwitchMediaLoaderInspector = TwitchMediaLoaderInspector.new()
-var auth_inspector: TwitchAuthInspector = TwitchAuthInspector.new()
 var user_inspector: TwitchUserInspector = TwitchUserInspector.new()
 var settings: TwitchEditorSettings = TwitchEditorSettings.new()
 var current_setup_window: Node
@@ -48,7 +46,6 @@ func _enter_tree():
 	add_inspector_plugin(oauth_setting_inspector)
 	add_inspector_plugin(token_inspector)
 	add_inspector_plugin(media_loader_inspector)
-	add_inspector_plugin(auth_inspector)
 	add_inspector_plugin(user_inspector)
 	add_import_plugin(gif_importer_native)
 	if is_magick_available():
@@ -69,7 +66,6 @@ func _exit_tree():
 	remove_inspector_plugin(oauth_setting_inspector)
 	remove_inspector_plugin(token_inspector)
 	remove_inspector_plugin(media_loader_inspector)
-	remove_inspector_plugin(auth_inspector)
 	remove_inspector_plugin(user_inspector)
 	if Engine.is_editor_hint():
 		remove_tool_menu_item(REGENERATE_API_LABEL)
