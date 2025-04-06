@@ -33,25 +33,14 @@ var media_loader_inspector: TwitchMediaLoaderInspector = TwitchMediaLoaderInspec
 var auth_inspector: TwitchAuthInspector = TwitchAuthInspector.new()
 var user_inspector: TwitchUserInspector = TwitchUserInspector.new()
 var settings: TwitchEditorSettings = TwitchEditorSettings.new()
+var current_setup_window: Node
 
 func _enter_tree():
 	_log.i("Start Twitcher loading...")
 	TwitchEditorSettings.setup()
 		
-	add_tool_menu_item(REGENERATE_API_LABEL, func():
-		generator = TwitchAPIGenerator.new()
-		parser = TwitchAPIParser.new()
-		generator.parser = parser
-		add_child(generator)
-		add_child(parser)
-		await parser.parse_api()
-		generator.generate_api()
-		remove_child(generator)
-		remove_child(parser)
-		)
-	add_tool_menu_item(OPEN_SETUP_LABEL, func():
-		var setup = load("res://addons/twitcher/editor/setup/setup.tscn").instantiate()
-		add_child(setup))
+	add_tool_menu_item(REGENERATE_API_LABEL, generate_api)
+	add_tool_menu_item(OPEN_SETUP_LABEL, open_setup)
 			
 	add_inspector_plugin(eventsub_config_inspector)
 	add_inspector_plugin(eventsub_inspector)
@@ -64,6 +53,8 @@ func _enter_tree():
 	add_import_plugin(gif_importer_native)
 	if is_magick_available():
 		add_import_plugin(gif_importer_imagemagick)
+		
+	if TwitchEditorSettings.show_setup_on_startup: open_setup()
 	_log.i("Twitcher loading ended")
 
 
@@ -85,6 +76,24 @@ func _exit_tree():
 		
 	_log.i("Twitcher Unloaded")
 
+
+func open_setup() -> void:
+	if is_instance_valid(current_setup_window): return
+	
+	current_setup_window = load("res://addons/twitcher/editor/setup/setup.tscn").instantiate()
+	add_child(current_setup_window)
+
+
+func generate_api() -> void:
+	generator = TwitchAPIGenerator.new()
+	parser = TwitchAPIParser.new()
+	generator.parser = parser
+	add_child(generator)
+	add_child(parser)
+	await parser.parse_api()
+	generator.generate_api()
+	remove_child(generator)
+	remove_child(parser)
 
 func is_magick_available() -> bool:
 	var transformer = MagicImageTransformer.new()

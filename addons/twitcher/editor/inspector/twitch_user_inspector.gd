@@ -2,6 +2,7 @@
 extends EditorInspectorPlugin
 
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
+const UserProperty = preload("res://addons/twitcher/editor/inspector/user_property.gd")
 
 func _can_handle(object: Object) -> bool:
 	return true

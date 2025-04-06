@@ -16,66 +16,83 @@ const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 @onready var overlay: CheckBox = %Overlay
 @onready var game: CheckBox = %Game
 @onready var something_else: CheckBox = %SomethingElse
-@onready var scope_list_label: Label = %ScopeListLabel
 @onready var scope_list: RichTextLabel = %ScopeList
 @onready var to_documentation: Button = %ToDocumentation
 @onready var scope_file_select: FileSelect = %ScopeFileSelect
 @onready var scopes_container: HBoxContainer = %Scopes
+@onready var advanced_edit: CheckButton = %AdvancedEdit
 @onready var other_scope_options: PanelContainer = %OtherScopeOptions
-@onready var basic_scope_info: PanelContainer = %BasicScopeInfo
 @onready var extended_scope_info: PanelContainer = %ExtendedScopeInfo
 @onready var save: Button = %Save
-@onready var scope_info: RichTextLabel = %ScopeInfo
 
 var other_scope_property: TwitchScopeProperty = TwitchScopeProperty.new()
-var scopes: TwitchOAuthScopes
+var scopes: TwitchOAuthScopes: set = update_scopes
+
 
 signal use_case_changed(use_case: UseCase)
 
 
-func _ready() -> void:
-	scopes_container.hide()
-	extended_scope_info.add_child(other_scope_property)
-	scope_file_select.path = TwitchEditorSettings.get_scope_path()
-	if scope_file_select.path == "":
-		scope_file_select.path = "res://twitch_scopes.tres"
-	
+func _ready() -> void:	
 	to_documentation.pressed.connect(_on_to_documentation_pressed)
 	choose_button_group.pressed.connect(_on_choose)
 	scope_file_select.file_selected.connect(_on_scope_file_selected)
 	save.pressed.connect(_on_save_pressed)
 	other_scope_property.scope_selected.connect(_on_scope_info)
+	advanced_edit.toggled.connect(_on_toggle_advanced_edit)
+	
+	scopes_container.hide()
+	extended_scope_info.hide()
+	extended_scope_info.add_child(other_scope_property)
+	
+	# Reset radio buttons cause it's a tool script and the radio button stay and won't throw another signal otherwise
+	game.set_pressed_no_signal(false)
+	overlay.set_pressed_no_signal(false)
+	something_else.set_pressed_no_signal(false)
+	
+	scope_file_select.path = TwitchEditorSettings.get_scope_path()	
+	match TwitchEditorSettings.project_preset: 
+		TwitchEditorSettings.PRESET_GAME:
+			game.button_pressed = true
+		TwitchEditorSettings.PRESET_OVERLAY:
+			overlay.button_pressed = true
+		TwitchEditorSettings.PRESET_OTHER:
+			something_else.button_pressed = true
 
 
 func _on_scope_file_selected(path: String) -> void:
-	TwitchEditorSettings.set_scope_path(path)
+	if FileAccess.file_exists(path):
+		var resource = load(path)
+		if resource is OAuthScopes: scopes = resource
+		else: OS.alert("The selected scope is not a scope file, it will be overwritten!")
+	
+	
+func _on_toggle_advanced_edit(toggled_on: bool) -> void:
+	extended_scope_info.visible = toggled_on
 	
 
 func _on_choose(button: BaseButton) -> void:
-	other_scope_options.hide()
-	extended_scope_info.hide()
-	basic_scope_info.hide()
 	match button:
 		overlay:
 			use_case_changed.emit(UseCase.Overlay)
-			scopes = PRESET_OVERLAY_SCOPES
-			TwitchEditorSettings.set_scope_path(PRESET_OVERLAY_SCOPES.resource_path)
-			basic_scope_info.show()
+			scopes = PRESET_OVERLAY_SCOPES.duplicate(true)
+			advanced_edit.button_pressed = false
+			TwitchEditorSettings.project_preset = TwitchEditorSettings.PRESET_OVERLAY
 		game:
 			use_case_changed.emit(UseCase.Game)
-			scopes = PRESET_GAME_SCOPES
-			TwitchEditorSettings.set_scope_path(PRESET_GAME_SCOPES.resource_path)
-			basic_scope_info.show()
+			scopes = PRESET_GAME_SCOPES.duplicate(true)
+			advanced_edit.button_pressed = false
+			TwitchEditorSettings.project_preset = TwitchEditorSettings.PRESET_GAME
 		something_else:
 			use_case_changed.emit(UseCase.Other)
 			scopes = TwitchOAuthScopes.new()
-			other_scope_property.set_object_and_property(scopes, "")
-			extended_scope_info.show()
-			other_scope_options.show()
+			advanced_edit.button_pressed = true
+			TwitchEditorSettings.project_preset = TwitchEditorSettings.PRESET_OTHER
+			
 	_show_selected_scopes()
 	
+	
 func _on_scope_info(scope: TwitchScope.Definition) -> void:
-	scope_info.text = _get_scope_info(scope)
+	_show_selected_scopes()
 	
 	
 func _on_save_pressed() -> void:
@@ -89,17 +106,29 @@ func _on_save_pressed() -> void:
 func _show_selected_scopes() -> void:
 	scopes_container.show()
 	
+	if scopes.used_scopes.is_empty():
+		scope_list.text = "[i]No scopes selected yet[/i]"
+		return
+	
 	var scope_description: String = ""
 	for scope_name: StringName in scopes.used_scopes:
 		var scope: TwitchScope.Definition = TwitchScope.SCOPE_MAP[scope_name]
-		scope_description += _get_scope_info(scope)
+		scope_description += "[b]%s[/b] - %s\n\n" % [scope.value, scope.description]
 	
 	scope_list.text = scope_description
+
+
+func _set_scope_path(path: String) -> void:
+	TwitchEditorSettings.set_scope_path(path)
+	scope_file_select.path = path
 	
 	
 func _on_to_documentation_pressed() -> void:
 	OS.shell_open("https://dev.twitch.tv/docs/authentication/scopes/")
 
 
-func _get_scope_info(scope: TwitchScope.Definition) -> String:
-	return "[b]%s[/b] - %s\n\n" % [scope.value, scope.description]
+func update_scopes(val: TwitchOAuthScopes) -> void:
+	scopes = val
+	other_scope_property.set_object_and_property(scopes, "")
+	other_scope_property.update_property()
+	_show_selected_scopes()

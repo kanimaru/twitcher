@@ -1,11 +1,31 @@
-[gd_scene load_steps=7 format=3 uid="uid://dm6jvnuikxtei"]
+[gd_scene load_steps=10 format=3 uid="uid://dm6jvnuikxtei"]
 
 [ext_resource type="Script" uid="uid://dxql15j5ornlc" path="res://addons/twitcher/editor/setup/page_authorization.gd" id="1_78hk7"]
 [ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/title_label_settings.tres" id="2_owlil"]
 [ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="3_dbhpx"]
 [ext_resource type="PackedScene" uid="uid://bfksyo3klyvdn" path="res://addons/twitcher/editor/setup/test_credentials.tscn" id="3_ncncv"]
-[ext_resource type="Resource" uid="uid://jge01jggkbca" path="res://twitch_oauth_setting.tres" id="5_6v7gf"]
-[ext_resource type="Resource" uid="uid://ephf2qulp0yn" path="res://twitch_token.tres" id="6_t06fr"]
+[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="5_o4tdm"]
+[ext_resource type="Script" uid="uid://00xbijwpi8xa" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="6_gowq2"]
+[ext_resource type="Script" uid="uid://b52xp7c23ucfk" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="7_78hk7"]
+
+[sub_resource type="Resource" id="Resource_owlil"]
+script = ExtResource("6_gowq2")
+redirect_url = "http://localhost:7170"
+well_known_url = ""
+token_url = "https://id.twitch.tv/oauth2/token"
+authorization_url = "https://id.twitch.tv/oauth2/authorize"
+device_authorization_url = "https://id.twitch.tv/oauth2/device"
+cache_file = "user://auth.conf"
+client_id = ""
+authorization_flow = 0
+_encryption_key_provider = ExtResource("5_o4tdm")
+client_secret = ""
+
+[sub_resource type="Resource" id="Resource_kxspb"]
+script = ExtResource("7_78hk7")
+_crypto_key_provider = ExtResource("5_o4tdm")
+_identifier = "Auth-883"
+_cache_path = "user://auth.conf"
 
 [node name="Authorization" type="MarginContainer"]
 anchors_preset = 15
@@ -24,11 +44,27 @@ metadata/_tab_index = 1
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="AuthorizationTitle" type="Label" parent="Layout"]
+[node name="Title" type="Label" parent="Layout"]
 layout_mode = 2
 text = "Step 2: Authorization"
 label_settings = ExtResource("2_owlil")
 horizontal_alignment = 1
+
+[node name="ToDocumentation" type="Button" parent="Layout/Title"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -52.0
+offset_top = -15.5
+offset_bottom = 15.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "DOCS"
+metadata/_edit_use_anchors_ = true
 
 [node name="AuthorizationExplaination" type="RichTextLabel" parent="Layout"]
 unique_name_in_owner = true
@@ -97,6 +133,7 @@ unique_name_in_owner = true
 layout_mode = 2
 default_path = "res://twitch_oauth_setting.tres"
 path = "res://twitch_oauth_setting.tres"
+filters = PackedStringArray("*.tres", "*.res")
 
 [node name="TokenLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]
 layout_mode = 2
@@ -112,8 +149,8 @@ filters = PackedStringArray("*.tres", "*.res")
 [node name="TestCredentials" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions" node_paths=PackedStringArray("test_response") instance=ExtResource("3_ncncv")]
 unique_name_in_owner = true
 layout_mode = 2
-oauth_setting = ExtResource("5_6v7gf")
-oauth_token = ExtResource("6_t06fr")
+oauth_setting = SubResource("Resource_owlil")
+oauth_token = SubResource("Resource_kxspb")
 test_response = NodePath("../../../../TestResponse")
 
 [node name="OAuthSave" type="Button" parent="Layout/PanelContainer/MarginContainer/AuthorizationOptions"]

@@ -11,6 +11,8 @@ const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 
 @export var user: TwitchUser
 
+static var _current_user: TwitchUser
+
 var user_login: String:
 	set(val):
 		user_login = val
@@ -34,6 +36,19 @@ func _ready() -> void:
 	_id.text_changed.connect(_on_id_changed)
 	_swap_view.pressed.connect(_on_swap_view)
 	_debounce.timeout.connect(_on_changed)
+	_load_current_user()
+
+
+## Experimental tries to load user from api key
+func _load_current_user() -> void:
+	if _current_user == null:
+		var users: TwitchGetUsers.Opt = TwitchGetUsers.Opt.new()
+		_current_user = await _get_user(users)
+		
+	if _current_user != null:
+		user_login = _current_user.login
+		user_id = _current_user.id
+		changed.emit(_current_user)
 
 
 func _on_swap_view() -> void:
@@ -85,7 +100,10 @@ func _on_changed() -> void:
 	
 	if users.id != null || users.login != null:
 		user = await _get_user(users)
-		if user != null:
+		if user == null:
+			await TwitchTweens.flash(self, Color.RED)
+		else:
+			await TwitchTweens.flash(self, Color.GREEN)
 			user_login = user.login
 			user_id = user.id
 		
@@ -100,10 +118,8 @@ func _get_user(get_user_opt: TwitchGetUsers.Opt) -> TwitchUser:
 	var response: TwitchGetUsers.Response = await api.get_users(get_user_opt)
 	var data: Array[TwitchUser] = response.data
 	if data.is_empty():
-		await TwitchTweens.flash(self, Color.RED)
 		printerr("User %s%s was not found." % [ get_user_opt.login, get_user_opt.id ])
 		return null
 	remove_child(api)
-	await TwitchTweens.flash(self, Color.GREEN)
 	return data[0]
 	

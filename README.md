@@ -1,17 +1,14 @@
 !!!! TODOS:
 - Updating documentation
 
-- authorize and dosetup
-- Explain the editor project settings
+- Split Editor and Game Settings
 
 - making errors better
 - large Emotes are to much up
-- remove class name of userproperty
-- implemnt description in commands
 
 Nice To Have:
-- Default To Own ID Eventsub
 - Multicommands
+- implemnt description in commands
 
 # [Early Beta] Twitcher V2
 .. is a Godot Library for implementing Twitch functionality in Godot.

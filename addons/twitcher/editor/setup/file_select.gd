@@ -44,12 +44,12 @@ func _on_open_file_dialog() -> void:
 
 
 func _on_path_changed(new_path: String) -> void:
-	file_selected.emit(new_path)
 	file_dialog.current_path = new_path
 	path = new_path
+	file_selected.emit(new_path)
 	
 
 func _on_file_selected(new_path: String) -> void:
-	file_selected.emit(new_path)
 	line_edit.text = new_path
 	path = new_path
+	file_selected.emit(new_path)

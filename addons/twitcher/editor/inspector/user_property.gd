@@ -1,6 +1,5 @@
 @tool
 extends EditorProperty
-class_name UserProperty
 
 const USER_CONVERTER = preload("res://addons/twitcher/editor/inspector/user_converter.tscn")
 const UserConverter = preload("res://addons/twitcher/editor/inspector/user_converter.gd")

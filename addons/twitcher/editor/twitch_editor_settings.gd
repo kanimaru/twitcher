@@ -6,6 +6,10 @@ extends RefCounted
 const DEFAULT_OAUTH_TOKEN: String = "res://addons/twitcher/default_oauth_token.tres"
 const TWITCH_OAUTH_SETTING: String = "res://addons/twitcher/twitch_oauth_setting.tres"
 
+const PRESET_GAME: StringName = &"Game"
+const PRESET_OVERLAY: StringName = &"Overlay"
+const PRESET_OTHER: StringName = &"Other"
+
 static var _editor_token_property: ProjectSettingProperty
 static var editor_token: OAuthToken
 
@@ -14,6 +18,16 @@ static var oauth_setting: OAuthSetting
 
 static var _scope_property: ProjectSettingProperty
 static var scopes: TwitchOAuthScopes
+
+static var _show_setup_on_startup: ProjectSettingProperty
+static var show_setup_on_startup: bool:
+	set(val): _show_setup_on_startup.set_val(val)
+	get: return _show_setup_on_startup.get_val()
+	
+static var _project_preset: ProjectSettingProperty
+static var project_preset: StringName:
+	set(val): _project_preset.set_val(val)
+	get: return _project_preset.get_val()
 
 static var _initialized: bool
 
@@ -35,6 +49,11 @@ static func _setup_project_settings() -> void:
 	
 	_scope_property = ProjectSettingProperty.new("twitcher/editor/default_scopes", "res://addons/twitcher/auth/preset_overlay_scopes.tres")
 	_scope_property.as_file("*.res,*.tres")
+	
+	_show_setup_on_startup = ProjectSettingProperty.new("twitcher/editor/show_setup_on_startup", true)
+	
+	_project_preset = ProjectSettingProperty.new("twitcher/editor/project_preset")
+	_project_preset.as_select([PRESET_GAME, PRESET_OVERLAY, PRESET_OTHER], false)
 	
 
 static func _reload_setting() -> void:
