@@ -107,14 +107,13 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 	if result != HTTPRequest.Result.RESULT_SUCCESS:
 		logInfo("[%s] problems with result \n\t> response code: %s \n\t> body: %s" % [request_data.path, response_code, body.get_string_from_utf8()])
 		response_data.error = true
-
-	if result == HTTPRequest.Result.RESULT_CONNECTION_ERROR:
+	if result == HTTPRequest.Result.RESULT_CONNECTION_ERROR || result == HTTPRequest.Result.RESULT_TLS_HANDSHAKE_ERROR:
 		if request_data.retry == max_error_count:
 			printerr("Maximum amount of retries for the request. Abort request: %s" % [request_data.path])
 			return
 		var wait_time = pow(2, request_data.retry)
 		wait_time = min(wait_time, 30)
-		logDebug("Wait for %s" % wait_time)
+		logDebug("Error happend during connection. Wait for %s" % wait_time)
 		await get_tree().create_timer(wait_time).timeout
 		var http_request: HTTPRequest = request_data.http_request.duplicate()
 		add_child(http_request)

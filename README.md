@@ -1,10 +1,6 @@
 !!!! TODOS:
 - Updating documentation
-
 - Split Editor and Game Settings
-
-- making errors better
-- large Emotes are to much up
 
 Nice To Have:
 - Multicommands

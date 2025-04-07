@@ -75,25 +75,28 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 	else:
 		request_body = JSON.stringify(body)
 
-	var request = client.request(api_host + path, method, header, request_body)
-	var response = await client.wait_for_request(request)
+	var request: BufferedHTTPClient.RequestData = client.request(api_host + path, method, header, request_body)
+	var response: BufferedHTTPClient.ResponseData = await client.wait_for_request(request)
 
-	# Token expired / or missing permissions
-	if response.response_code == 401:
-		_log.e("'%s' is unauthorized. It is probably your scopes." % path)
-		unauthorized.emit()
-	if response.response_code == 403:
-		_log.i("'%s' is unauthenticated. Refresh token." % path)
-		unauthenticated.emit()
-		await token.authorized
-		if error_count + 1 < MAX_AUTH_ERRORS:
-			return await request(path, method, body, content_type, error_count + 1)
-		else:
-			# Give up the request after trying multiple times and
-			# return an empty response with correct error code
-			var empty_response: BufferedHTTPClient.ResponseData = client.empty_response(request)
-			empty_response.response_code = response.response_code
-			return empty_response
+	match response.response_code:
+		400:
+			var error_message: String = response.response_data.get_string_from_utf8()
+			_log.e("'%s' failed cause of: \n%s" % [path, error_message])
+		401: # Token expired / or missing permissions
+			_log.e("'%s' is unauthorized. It is probably your scopes." % path)
+			unauthorized.emit()
+		403:
+			_log.i("'%s' is unauthenticated. Refresh token." % path)
+			unauthenticated.emit()
+			await token.authorized
+			if error_count + 1 < MAX_AUTH_ERRORS:
+				return await request(path, method, body, content_type, error_count + 1)
+			else:
+				# Give up the request after trying multiple times and
+				# return an empty response with correct error code
+				var empty_response: BufferedHTTPClient.ResponseData = client.empty_response(request)
+				empty_response.response_code = response.response_code
+				return empty_response
 	return response
 
 
