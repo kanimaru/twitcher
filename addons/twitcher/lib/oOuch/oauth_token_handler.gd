@@ -123,7 +123,7 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 			return
 		elif response.response_code == 400 && response_string.contains("authorization_pending"):
 			# Awaits for this amount of time until retry
-			await get_tree().create_timer(device_code_repsonse.interval).timeout
+			await get_tree().create_timer(device_code_repsonse.interval, true, false, true).timeout
 		elif response.response_code == 400:
 			unauthenticated.emit()
 			_requesting_token = false

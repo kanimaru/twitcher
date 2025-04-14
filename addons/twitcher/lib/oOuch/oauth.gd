@@ -117,7 +117,7 @@ func login() -> void:
 
 	if _last_login_attempt != 0 && Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
 		print("[OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
-		await get_tree().create_timer(60).timeout
+		await get_tree().create_timer(60, true, false, true).timeout
 
 	_last_login_attempt = Time.get_ticks_msec()
 

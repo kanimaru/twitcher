@@ -46,7 +46,7 @@ func _on_add_request(request: BufferedHTTPClient.RequestData, http_item: TreeIte
 func _on_done_request(response: BufferedHTTPClient.ResponseData):
 	var request_item = request_map[response.request_data] as TreeItem
 	request_item.set_text(1, "DONE")
-	await get_tree().create_timer(60).timeout
+	await get_tree().create_timer(60, true, false, true).timeout
 	if request_item != null: request_item.free()
 
 
@@ -54,5 +54,5 @@ func _close_client(client: BufferedHTTPClient):
 	var http_item = client_map[client] as TreeItem
 	client_map.erase(client)
 	http_item.set_text(1, "CLOSED")
-	await get_tree().create_timer(60).timeout
+	await get_tree().create_timer(60, true, false, true).timeout
 	http_item.free()
