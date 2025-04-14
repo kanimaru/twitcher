@@ -63,7 +63,7 @@ func _establish_connection() -> void:
 	_is_already_connecting = true
 	var wait_time = pow(2, _tries)
 	_logDebug("Wait %s before connecting" % [wait_time])
-	await get_tree().create_timer(wait_time).timeout
+	await get_tree().create_timer(wait_time, true, false, true).timeout
 	_logInfo("Connecting to %s" % connection_url)
 	var err = _peer.connect_to_url(connection_url)
 	if err != OK:

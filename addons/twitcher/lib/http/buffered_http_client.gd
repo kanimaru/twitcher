@@ -114,7 +114,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 		var wait_time = pow(2, request_data.retry)
 		wait_time = min(wait_time, 30)
 		logDebug("Error happend during connection. Wait for %s" % wait_time)
-		await get_tree().create_timer(wait_time).timeout
+		await get_tree().create_timer(wait_time, true, false, true).timeout
 		var http_request: HTTPRequest = request_data.http_request.duplicate()
 		add_child(http_request)
 		request_data.http_request = http_request
