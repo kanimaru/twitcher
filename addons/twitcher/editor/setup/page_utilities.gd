@@ -2,15 +2,19 @@
 extends MarginContainer
 
 const script_path: String = "res://addons/twitcher/twitch_service.tscn"
-const autoload_name: String = "TwitchService"
+const autoload_name: String = "Twitch"
 const setting_key: String = "autoload/%s" % autoload_name
 const setting_value: String = "*" + script_path
 
 @onready var autoload_install: Button = %AutoloadInstall
 @onready var autoload_info: Label = %AutoloadInfo
+@onready var autoload_description: RichTextLabel = %AutoloadDescription
 
 
 func _ready() -> void:
+	autoload_description.text = autoload_description.text.format({
+		"autoload_name": autoload_name
+	})
 	autoload_install.pressed.connect(_on_install_autoload_pressed)
 	_update_install_autoload()
 	
