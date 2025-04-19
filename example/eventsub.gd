@@ -17,8 +17,7 @@ func _ready() -> void:
 	await twitch_service.setup()
 
 	var current_user: TwitchUser = await twitch_service.get_current_user()
-	api.default_broadcaster_login = current_user.login
-
+	
 	twitch_service.subscribe_event(TwitchEventsubDefinition.CHANNEL_FOLLOW, {
 		"broadcaster_user_id": current_user.id,
 		"moderator_user_id": current_user.id
