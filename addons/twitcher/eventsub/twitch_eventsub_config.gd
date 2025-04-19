@@ -28,7 +28,7 @@ static func create(definition: TwitchEventsubDefinition, conditions: Dictionary)
 	config.condition = conditions
 	for condition_name: StringName in definition.conditions:
 		if not conditions.has(condition_name):
-			_log.w("You miss probably follwing condition %s" % condition_name)
+			_log.w("You miss probably following condition %s" % condition_name)
 	return config
 
 
