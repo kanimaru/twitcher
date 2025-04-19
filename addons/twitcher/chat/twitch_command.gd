@@ -127,7 +127,7 @@ func _handle_command(from_username: String, raw_message: String, to_user: String
 	var info = TwitchCommandInfo.new(self, to_user, from_username, arg_array, data)
 	if cmd_msg.size() > 1:
 		message = cmd_msg[1]
-		arg_array.append_array(message.split(" "))
+		arg_array.append_array(message.split(" ", false))
 		var to_less_arguments = arg_array.size() < args_min
 		var to_much_arguments = arg_array.size() > args_max
 		if to_much_arguments && args_max != -1 || to_less_arguments:
