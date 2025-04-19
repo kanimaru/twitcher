@@ -90,7 +90,8 @@ var _swap_over_process: bool
 ## queues the actions that should be executed when the connection is established
 var _action_stack: Array[SubscriptionAction]
 var _executing_action_stack: bool
-
+## Increased on every reconnect without subscriptions
+var _empty_connections: int
 
 ## Determines the action that the subscription should do
 class SubscriptionAction extends RefCounted:
@@ -146,6 +147,13 @@ func wait_for_session_established() -> void:
 func _on_connection_established() -> void:
 	if not _swap_over_process:
 		_action_stack.clear()
+		if _subscriptions.is_empty(): _empty_connections += 1
+		if _empty_connections >= 3:
+			_empty_connections = 0
+			_log.e("Stopped eventsub cause of no subscription.")
+			close_connection()
+			return
+
 		# Resubscribe
 		_log.i("Connection established -> resubscribe to: [%s]" % [_subscriptions])
 		for sub in _subscriptions: _add_action(sub, true)
@@ -159,12 +167,20 @@ func open_connection() -> void:
 		_test_client.open_connection()
 
 
+func close_connection() -> void:
+	if not _client.is_closed:
+		_client.close()
+	if not _test_client.is_closed:
+		_test_client.close()
+
+
 ## Add a new subscription
 func subscribe(eventsub_config: TwitchEventsubConfig) -> void:
 	_log.i("Subscribe to %s" % eventsub_config.definition.get_readable_name())
 	_subscriptions.append(eventsub_config)
 	_add_action(eventsub_config, true)
-
+	_empty_connections = 0
+	
 
 ## Remove a subscription
 func unsubscribe(eventsub_config: TwitchEventsubConfig) -> void:
