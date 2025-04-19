@@ -1,17 +1,28 @@
-[gd_scene load_steps=11 format=3 uid="uid://djicbmxnkil7r"]
+[gd_scene load_steps=13 format=3 uid="uid://djicbmxnkil7r"]
 
 [ext_resource type="Script" uid="uid://c4vxnmsvwsytd" path="res://example/eventsub.gd" id="1_xhllw"]
-[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://example/chat/twitch_service.gd" id="2_rsm4n"]
+[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="2_rsm4n"]
+[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://twitch_oauth_setting.tres" id="3_33cbv"]
+[ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="4_ln4am"]
+[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://default_oauth_token.tres" id="5_5jcsy"]
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="5_t2qpq"]
-[ext_resource type="Script" uid="uid://dexweyb521tu0" path="res://addons/twitcher/lib/oOuch/oauth_scopes.gd" id="7_ewdek"]
+[ext_resource type="Script" uid="uid://cjug64e3433g0" path="res://addons/twitcher/eventsub/twitch_eventsub_config.gd" id="7_bq4ao"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="8_7v820"]
-[ext_resource type="Resource" uid="uid://bjtnrj1x7nbo8" path="res://addons/twitcher/auth/default_oauth_token.tres" id="9_pysb7"]
-[ext_resource type="Resource" uid="uid://jhyuw0w216ix" path="res://addons/twitcher/auth/twitch_oauth_setting.tres" id="10_b87ds"]
 [ext_resource type="Script" uid="uid://bol5ltrjr6ux8" path="res://addons/twitcher/eventsub/twitch_event_listener.gd" id="12_4m14a"]
 
-[sub_resource type="Resource" id="Resource_5khjo"]
-script = ExtResource("7_ewdek")
-used_scopes = Array[StringName]([&"moderator:read:followers", &"chat:read", &"chat:edit", &"user:write:chat", &"user:read:chat", &"user:bot"])
+[sub_resource type="Resource" id="Resource_orn12"]
+script = ExtResource("4_ln4am")
+used_scopes = Array[StringName]([&"moderator:read:followers"])
+metadata/_custom_type_script = "uid://b3n3et8mebjcc"
+
+[sub_resource type="Resource" id="Resource_hjn1h"]
+script = ExtResource("7_bq4ao")
+type = 5
+condition = {
+&"broadcaster_user_id": "",
+&"moderator_user_id": ""
+}
+metadata/_custom_type_script = "uid://cjug64e3433g0"
 
 [sub_resource type="LabelSettings" id="LabelSettings_ixhl3"]
 font_size = 64
@@ -29,21 +40,22 @@ script = ExtResource("1_xhllw")
 [node name="TwitchService" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("2_rsm4n")
-oauth_setting = ExtResource("10_b87ds")
-scopes = SubResource("Resource_5khjo")
-token = ExtResource("9_pysb7")
+oauth_setting = ExtResource("3_33cbv")
+scopes = SubResource("Resource_orn12")
+token = ExtResource("5_5jcsy")
 
 [node name="Eventsub" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
 unique_name_in_owner = true
 script = ExtResource("5_t2qpq")
 api = NodePath("../API")
-scopes = SubResource("Resource_5khjo")
+_subscriptions = Array[ExtResource("7_bq4ao")]([SubResource("Resource_hjn1h")])
+scopes = SubResource("Resource_orn12")
 
 [node name="API" type="Node" parent="TwitchService"]
 unique_name_in_owner = true
 script = ExtResource("8_7v820")
-token = ExtResource("9_pysb7")
-oauth_setting = ExtResource("10_b87ds")
+token = ExtResource("5_5jcsy")
+oauth_setting = ExtResource("3_33cbv")
 
 [node name="ChannelFollowEventListener" type="Node" parent="." node_paths=PackedStringArray("eventsub")]
 unique_name_in_owner = true
