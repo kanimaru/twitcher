@@ -91,10 +91,12 @@ func _sync_childs() -> void:
 	auth.force_verify = &"true" if force_verify else &"false"
 	
 
-func authorize() -> void:
+func authorize() -> bool:
 	_sync_childs()
-	await auth.login()
-	token_handler.process_mode = Node.PROCESS_MODE_INHERIT
+	if await auth.login():
+		token_handler.process_mode = Node.PROCESS_MODE_INHERIT
+		return true
+	return false
 
 
 func refresh_token() -> void:

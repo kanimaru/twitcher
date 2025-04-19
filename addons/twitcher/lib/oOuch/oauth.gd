@@ -102,18 +102,17 @@ func _setup_nodes() -> void:
 ## Depending on the authorization_flow it gets resolves the token via the different
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
-func login() -> void:
+func login() -> bool:
 	if not is_node_ready(): await ready
 	_setup_nodes()
-	if token_handler.is_token_valid() && not _got_scopes_changed(): return
+	if token_handler.is_token_valid() && not _got_scopes_changed(): return true
 	logDebug("Token is valid (%s) and not scopes changed (%s)" % [ token_handler.is_token_valid(), _got_scopes_changed()])
 
 	if login_in_process:
-		# TODO Find away to implement a proper timeout for previous requests.
-		# Problem is that awaits are not canceable
 		logInfo("Another process tries already to login. Abort")
-		await token_handler.token_resolved
-		return
+		if (await token_handler.token_resolved) == null:
+			return false
+		return true
 
 	if _last_login_attempt != 0 && Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
 		print("[OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
@@ -136,7 +135,8 @@ func login() -> void:
 
 	login_in_process = false
 	_login_timeout_timer.stop()
-	
+	return true
+
 
 func _got_scopes_changed() -> bool:
 	if not check_scope_changed: return false

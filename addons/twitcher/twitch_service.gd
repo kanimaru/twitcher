@@ -92,15 +92,19 @@ func _on_child_exiting(node: Node) -> void:
 
 ## Call this to setup the complete Twitch integration whenever you need.
 ## It boots everything up this Lib supports.
-func setup() -> void:
-	if auth: await auth.authorize()
+func setup() -> bool:
+	if is_instance_valid(auth): 
+		if not await auth.authorize(): return false
+	else:
+		push_error("Authorization Node got removed, can't setup twitch service")
+		return false
 	await propagate_call(&"do_setup")
 	for child in get_children():
 		if child.has_method(&"wait_setup"):
 			await child.wait_setup()
 
 	_log.i("TwitchService setup")
-
+	return true
 
 ## Checks if the correctly setup
 func is_configured() -> bool:
