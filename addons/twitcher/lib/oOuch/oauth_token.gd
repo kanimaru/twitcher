@@ -54,7 +54,8 @@ func _persist_tokens():
 	_config_file.set_value(_identifier, "access_token", Marshalls.raw_to_base64(encrypted_access_token))
 	_config_file.set_value(_identifier, "refresh_token", Marshalls.raw_to_base64(encrypted_refresh_token))
 	_config_file.set_value(_identifier, "scopes", ",".join(_scopes))
-	_config_file.save(_cache_path)
+	var err = _config_file.save(_cache_path)
+	if err != OK: push_error("Couldn't save tokens cause of ", error_string(err))
 
 
 ## Loads the tokens and returns the information if the file got created
@@ -81,7 +82,8 @@ func remove_tokens() -> void:
 		_scopes.clear()
 
 		_config_file.erase_section(_identifier)
-		_config_file.save(_cache_path)
+		var err = _config_file.save(_cache_path)
+		if err != OK: push_error("Couldn't save tokens cause of ", error_string(err))
 		emit_changed()
 		print("%s got revoked" % _identifier)
 	else:
