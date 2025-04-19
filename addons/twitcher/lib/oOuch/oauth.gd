@@ -226,8 +226,6 @@ func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 	logInfo("Start device code flow")
 	logDebug("Request Scopes: %s" % scopes)
 	var body = "client_id=%s&scopes=%s" % [oauth_setting.client_id, scopes.uri_encode()]
-	if oauth_setting.client_secret != "":
-		body += "&client_secret=%s" % oauth_setting.get_client_secret()
 	var request = _client.request(oauth_setting.device_authorization_url, HTTPClient.METHOD_POST, {
 		"Content-Type": "application/x-www-form-urlencoded"
 	}, body)

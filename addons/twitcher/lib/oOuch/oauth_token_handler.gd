@@ -104,8 +104,6 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 		"device_code=%s" % device_code_repsonse.device_code,
 		"scopes=%s" % scopes
 	]
-	if oauth_setting.client_secret != "":
-		parameters.append("client_secret=%s" % oauth_setting.get_client_secret())
 
 	var request_body = "&".join(parameters)
 
