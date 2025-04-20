@@ -29,7 +29,7 @@ func _create_conditions() -> void:
 		node.queue_free()
 
 	var eventsub_config: TwitchEventsubConfig = get_edited_object();
-	if eventsub_config == null: return
+	if eventsub_config == null || eventsub_config.get_class() == &"EditorDebuggerRemoteObject": return
 
 	for condition_name: StringName in eventsub_config.definition.conditions:
 		var condition_value = eventsub_config.condition.get_or_add(condition_name, "")
