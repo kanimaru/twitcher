@@ -58,7 +58,7 @@ func _on_unauthenticated() -> void:
 
 func _on_token_resolved(token: OAuthToken) -> void:
 	if token == null: return
-	token_changed.emit(token.get_access_token())
+	token_changed.emit(await token.get_access_token())
 
 
 ## Checks if the authentication is valid.

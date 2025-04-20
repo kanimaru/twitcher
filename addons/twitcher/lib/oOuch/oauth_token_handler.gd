@@ -199,7 +199,7 @@ func token_needs_refresh() -> bool:
 	return !token.is_token_valid() && token.has_refresh_token()
 
 
-func get_access_token() -> String: return token.get_access_token()
+func get_access_token() -> String: return await token.get_access_token()
 
 
 func has_refresh_token() -> bool: return token.has_refresh_token()

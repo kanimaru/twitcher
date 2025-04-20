@@ -209,7 +209,7 @@ func _process(delta: float) -> void:
 
 ## Sends the login message for authorization pupose and sets an username
 func _login() -> void:
-	_client.send_text("PASS oauth:%s" % token.get_access_token())
+	_client.send_text("PASS oauth:%s" % await token.get_access_token())
 	_send("NICK " + setting.username)
 	_send("CAP REQ :" + " ".join(setting.irc_capabilities))
 

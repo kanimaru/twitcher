@@ -95,6 +95,7 @@ func get_refresh_token() -> String:
 
 
 func get_access_token() -> String:
+	if not is_token_valid(): await authorized
 	return _access_token
 
 
