@@ -36,7 +36,7 @@ func _create_conditions() -> void:
 		var condition_title = Label.new()
 		condition_title.text = condition_name.capitalize()
 		_container.add_child(condition_title)
-		var editor_token = TwitchEditorSettings.editor_token
+		var editor_token = TwitchEditorSettings.editor_oauth_token
 		if condition_name.to_lower().ends_with("user_id") && editor_token.is_token_valid():
 			var user_converter = USER_CONVERTER.instantiate()
 			user_converter.changed.connect(_on_changed_user.bind(condition_name))

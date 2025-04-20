@@ -2,6 +2,7 @@
 extends Button
 
 const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
+const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 
 @export var oauth_setting: OAuthSetting: set = update_oauth_setting
 @export var oauth_token: OAuthToken: set = update_oauth_token
@@ -13,6 +14,8 @@ func _ready() -> void:
 	pressed.connect(_pressed)
 	update_oauth_setting(oauth_setting)
 	update_oauth_token(oauth_token)
+	twitch_auth.oauth_setting = TwitchEditorSettings.editor_oauth_setting
+	twitch_auth.token = TwitchEditorSettings.editor_oauth_token
 
 
 func _pressed() -> void:

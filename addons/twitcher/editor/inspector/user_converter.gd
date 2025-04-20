@@ -112,8 +112,8 @@ func _on_changed() -> void:
 
 func _get_user(get_user_opt: TwitchGetUsers.Opt) -> TwitchUser:
 	var api: TwitchAPI = TwitchAPI.new()
-	api.token = TwitchEditorSettings.editor_token
-	api.oauth_setting = TwitchEditorSettings.oauth_setting
+	api.token = TwitchEditorSettings.editor_oauth_token
+	api.oauth_setting = TwitchEditorSettings.editor_oauth_setting
 	add_child(api)
 	var response: TwitchGetUsers.Response = await api.get_users(get_user_opt)
 	var data: Array[TwitchUser] = response.data

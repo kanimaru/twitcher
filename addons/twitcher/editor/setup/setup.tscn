@@ -35,6 +35,7 @@ visible = false
 layout_mode = 2
 
 [node name="Utilities" parent="VBoxContainer/Setup" instance=ExtResource("4_qcivh")]
+visible = false
 layout_mode = 2
 
 [node name="StartupCheck" type="CheckButton" parent="VBoxContainer"]
