@@ -1,10 +1,14 @@
 !!!! TODOS:
 - Updating documentation
-- Split Editor and Game Settings
+- Settings not saved:
+	ERROR: Cannot open file 'res://twitch_oauth_setting.tres'.
+	ERROR: Failed loading resource: res://twitch_oauth_setting.tres. 
+	Make sure resources have been imported by opening the project in the editor at least once.
 
 Nice To Have:
 - Multicommands
 - implemnt description in commands
+- load_emotes_from_fragment returns dict[emote name, emote]
 
 # [Early Beta] Twitcher V2
 .. is a Godot Library for implementing Twitch functionality in Godot.
