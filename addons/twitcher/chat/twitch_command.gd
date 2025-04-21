@@ -5,8 +5,6 @@ extends Twitcher
 ## A single command like !lurk 
 class_name TwitchCommand
 
-static var command_prefixes : Array[String] = ["!"]
-
 ## Called when the command got received in the right format
 signal command_received(from_username: String, info: TwitchCommandInfo, args: PackedStringArray)
 
@@ -31,6 +29,7 @@ enum WhereFlag {
 	ANYWHERE = 3
 }
 
+@export var command_prefixes : Array[String] = ["!"]
 ## Name Command
 @export var command: String
 ## Optional names of commands
