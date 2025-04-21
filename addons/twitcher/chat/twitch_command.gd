@@ -42,26 +42,27 @@ enum WhereFlag {
 ## Max amount of arguments -1 means infinite
 @export var args_max: int = -1
 ## Wich role of user is allowed to use it
-@export var permission_level : PermissionFlag = PermissionFlag.EVERYONE
+@export var permission_level: PermissionFlag = PermissionFlag.EVERYONE
 ## Where is it allowed to use chat or whisper or both
-@export var where : WhereFlag = WhereFlag.CHAT
+@export var where: WhereFlag = WhereFlag.CHAT
 ## All allowed users empty array means everyone
 @export var allowed_users: Array[String] = []
 ## All chatrooms where the command listens to
-@export var listen_to_chatrooms : Array[String] = []
+@export var listen_to_chatrooms: Array[String] = []
 
 ## The eventsub to listen for chatmessages
 @export var eventsub: TwitchEventsub
 
 static func create(
 		eventsub: TwitchEventsub,
-		cmd_name : String,
-		callable : Callable,
-		min_args : int = 0,
-		max_args : int = 0,
-		permission_level : int = PermissionFlag.EVERYONE,
-		where : int = WhereFlag.CHAT,
-		listen_to_chatrooms : Array[String] = []) -> TwitchCommand:
+		cmd_name: String,
+		callable: Callable,
+		min_args: int = 0,
+		max_args: int = 0,
+		permission_level: int = PermissionFlag.EVERYONE,
+		where: int = WhereFlag.CHAT,
+		allowed_users: Array[String] = [],
+		listen_to_chatrooms: Array[String] = []) -> TwitchCommand:
 	var command := TwitchCommand.new()
 	command.eventsub = eventsub
 	command.command = cmd_name
@@ -70,6 +71,7 @@ static func create(
 	command.args_max = max_args
 	command.permission_level = permission_level
 	command.where = where
+	command.allowed_users = allowed_users
 	command.listen_to_chatrooms = listen_to_chatrooms
 	return command
 
