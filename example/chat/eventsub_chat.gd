@@ -39,6 +39,9 @@ func _ready() -> void:
 	twitch_chat.message_received.connect(_on_chat_message)
 	chat_view.message_sent.connect(_on_sent_message)
 	hello_command.command_received.connect(_on_hello)
+	
+	# Alternative use programatical way to listen to commands
+	twitch_service.add_command("lurk", func(from_username: String, info: TwitchCommandInfo, args: PackedStringArray): twitch_service.chat("Thanks for the lurk")) 
 
 
 func _on_hello(from_username: String, info: TwitchCommandInfo, args: PackedStringArray) -> void:
