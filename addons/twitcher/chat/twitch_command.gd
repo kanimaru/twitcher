@@ -70,6 +70,7 @@ static func create(
 	command.args_max = max_args
 	command.permission_level = permission_level
 	command.where = where
+	command.listen_to_chatrooms = listen_to_chatrooms
 	return command
 
 
@@ -88,7 +89,7 @@ func _on_event(type: StringName, data: Dictionary) -> void:
 		var message : String = data.message.text
 		var username : String = data.chatter_user_name
 		var channel_name : String = data.broadcaster_user_name
-		if not _should_handle(message, username): return
+		if not _should_handle(message, username, channel_name): return
 		var chat_message = TwitchChatMessage.from_json(data)
 		_handle_command(username, message, channel_name, chat_message)
 		
@@ -96,7 +97,7 @@ func _on_event(type: StringName, data: Dictionary) -> void:
 		if where & WhereFlag.WHISPER != WhereFlag.WHISPER: return
 		var message : String = data.whisper.text
 		var from_user : String = data.from_user_login
-		if not _should_handle(message, from_user): return
+		if not _should_handle(message, from_user, from_user): return
 		_handle_command(from_user, message, data.to_user_login, data)
 
 
@@ -104,7 +105,8 @@ func add_alias(alias: String) -> void:
 	aliases.append(alias)
 
 
-func _should_handle(message: String, username: String) -> bool:
+func _should_handle(message: String, username: String, channel_name: String) -> bool:
+	if not listen_to_chatrooms.is_empty() && not listen_to_chatrooms.has(channel_name): return false
 	if not allowed_users.is_empty() && not allowed_users.has(username): return false
 	if not command_prefixes.has(message.left(1)): return false
 
