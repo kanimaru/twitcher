@@ -14,8 +14,8 @@
 [ext_resource type="Texture2D" uid="uid://g1dbcjksbotw" path="res://addons/twitcher/assets/fallback_texture.tres" id="10_1iusd"]
 [ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://example/chat_view.tscn" id="11_5c0by"]
 [ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/media/twitch_media_loader.gd" id="11_aprrr"]
-[ext_resource type="PackedScene" uid="uid://cinvytmtixgwu" path="res://addons/twitcher/chat/twitch_chat.tscn" id="12_5f2sm"]
 [ext_resource type="Script" uid="uid://ddwa0dm0qhc3s" path="res://addons/twitcher/media/native_image_transformer.gd" id="14_jftlh"]
+[ext_resource type="Script" uid="uid://dcq1bvfrqimqq" path="res://addons/twitcher/chat/twitch_chat.gd" id="15_jftlh"]
 [ext_resource type="Script" uid="uid://cnmohrdxqihr0" path="res://addons/twitcher/generated/twitch_user.gd" id="16_jftlh"]
 
 [sub_resource type="Resource" id="Resource_rohya"]
@@ -107,14 +107,14 @@ command = "hello"
 eventsub = NodePath("../EventSub")
 metadata/_custom_type_script = "uid://bmluckfvgm1c2"
 
-[node name="TwitchChat" parent="." node_paths=PackedStringArray("eventsub", "media_loader", "api") instance=ExtResource("12_5f2sm")]
+[node name="TwitchChat" type="Node" parent="." node_paths=PackedStringArray("media_loader", "eventsub", "api")]
 unique_name_in_owner = true
-eventsub = NodePath("../TwitchService/EventSub")
-media_loader = NodePath("../TwitchService/MediaLoader")
-api = NodePath("../TwitchService/API")
+script = ExtResource("15_jftlh")
 broadcaster_user = SubResource("Resource_jftlh")
 sender_user = SubResource("Resource_vxv1r")
-subscribe_on_ready = true
+media_loader = NodePath("../TwitchService/MediaLoader")
+eventsub = NodePath("../TwitchService/EventSub")
+api = NodePath("../TwitchService/API")
 
 [node name="ChatView" parent="." instance=ExtResource("11_5c0by")]
 unique_name_in_owner = true
