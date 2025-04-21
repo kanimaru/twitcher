@@ -19,8 +19,8 @@ func _ready() -> void:
 	var current_user: TwitchUser = await twitch_service.get_current_user()
 	
 	twitch_service.subscribe_event(TwitchEventsubDefinition.CHANNEL_FOLLOW, {
-		"broadcaster_user_id": current_user.id,
-		"moderator_user_id": current_user.id
+		&"broadcaster_user_id": current_user.id,
+		&"moderator_user_id": current_user.id
 	})
 	channel_follow_event_listener.received.connect(_on_event)
 
@@ -32,7 +32,7 @@ func _on_event(data: Dictionary) -> void:
 func show_follow(username: String) -> void:
 	thx.text = "Thx for the follow! %s" % username
 	var tween = get_tree().create_tween()
-	tween.tween_property(thx.label_settings, "font_color", Color.WHITE, 1).from(Color.TRANSPARENT)
-	tween.tween_property(thx.label_settings, "font_color", Color.TRANSPARENT, 1)
+	tween.tween_property(thx.label_settings, ^"font_color", Color.WHITE, 1).from(Color.TRANSPARENT)
+	tween.tween_property(thx.label_settings, ^"font_color", Color.TRANSPARENT, 1)
 	
 	
