@@ -222,7 +222,7 @@ func chat(message: String, target_broadcaster_id: String = "", sender_id: String
 		sender_id = current_user.id
 	if target_broadcaster_id == "": 
 		var current_user = await get_current_user()
-		sender_id = current_user.id
+		target_broadcaster_id = current_user.id
 	var body = TwitchSendChatMessage.Body.create(target_broadcaster_id, sender_id, message)
 	api.send_chat_message(body)
 
@@ -244,7 +244,7 @@ func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnounc
 
 
 ## Add a new command handler and register it for a command.
-## The callback will receive [code]info: TwitchCommandInfo, args: Array[String][/code][br]
+## The callback will receive [code]from_username: String, info: TwitchCommandInfo, args: PackedStringArray[/code][br]
 ## Args are optional depending on the configuration.[br]
 ## args_max == -1 => no upper limit for arguments
 func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1,
