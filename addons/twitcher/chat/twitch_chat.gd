@@ -9,37 +9,34 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchChat")
 
 static var instance: TwitchChat
 
-@export var eventsub: TwitchEventsub:
-	set(val):
-		eventsub = val
-		update_configuration_warnings()
-@export var media_loader: TwitchMediaLoader:
-	set(val):
-		media_loader = val
-		update_configuration_warnings()
-@export var api: TwitchAPI:
-	set(val):
-		api = val
-		update_configuration_warnings()
 @export var broadcaster_user: TwitchUser:
 	set(val):
 		broadcaster_user = val
 		update_configuration_warnings()
 ## Can be null. Then the owner of the access token will be used to send message aka the current user.
 @export var sender_user: TwitchUser
+@export var media_loader: TwitchMediaLoader
+@export var eventsub: TwitchEventsub:
+	set(val):
+		eventsub = val
+		update_configuration_warnings()
+@export var api: TwitchAPI:
+	set(val):
+		api = val
+		update_configuration_warnings()
 
 ## Should it subscribe on ready
 @export var subscribe_on_ready: bool = true
-var twitch_event_listener: TwitchEventListener = TwitchEventListener.new()
+
 
 ## Triggered when a chat message got received
 signal message_received(message: TwitchChatMessage)
-## Rest API got changed
-signal rest_updated(rest: TwitchAPI)
 
 
 func _ready() -> void:
 	_log.d("is ready")
+	if media_loader == null: media_loader = TwitchMediaLoader.instance
+	if api == null: api = TwitchAPI.instance
 	if eventsub == null: eventsub = TwitchEventsub.instance
 	eventsub.event.connect(_on_event_received)
 	if not Engine.is_editor_hint() && subscribe_on_ready:
@@ -60,16 +57,16 @@ func subscribe() -> void:
 		printerr("BroadcasterUser is not set. Can't subscribe to chat.")
 		return
 		
-	media_loader.preload_badges(broadcaster_user.id)
-	media_loader.preload_emotes(broadcaster_user.id)
+	if is_instance_valid(media_loader):
+		media_loader.preload_badges(broadcaster_user.id)
+		media_loader.preload_emotes(broadcaster_user.id)
 			
-	var subscriptions: Array[TwitchEventsubConfig] = eventsub.get_subscriptions()
-	for subscription: TwitchEventsubConfig in subscriptions:
+	for subscription: TwitchEventsubConfig in eventsub.get_subscriptions():
 		if subscription.type == TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE and \
 			subscription.condition.broadcaster_user_id == broadcaster_user.id:
 				# it is already subscribed
 				return
-		
+				
 	if sender_user == null:
 		var current_user: TwitchGetUsers.Response = await api.get_users(null)
 		sender_user = current_user.data[0]
@@ -111,8 +108,6 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
 	if eventsub == null:
 		result.append("TwitchEventsub not assigned")
-	if media_loader == null:
-		result.append("TwitchMediaLoader not assigned")
 	if api == null:
 		result.append("TwitchAPI not assigned")
 	if broadcaster_user == null:
