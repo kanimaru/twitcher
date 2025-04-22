@@ -17,6 +17,8 @@ var cache: Dictionary = {}
 var ready: bool
 ## Save theme for calculating line height
 var parent_label: RichTextLabel
+## If you don't want to have spaces between images (made for Foolbox <3)
+var no_space: bool
 
 func prepare_message(message: String, parent: RichTextLabel) -> String:
 	parent_label = parent
@@ -33,12 +35,15 @@ func prepare_message(message: String, parent: RichTextLabel) -> String:
 		var size = tex.get_size()
 		var start = m.get_start(0)
 		# Add an empty image to make the correct amount of space
-		message = message.replace(path, "[img width=%s height=%s]%s[/img] " % [size.x, size.y, TRANSPARENT.resource_path])
+		message = message.replace(path, "[img width=%s height=%s]%s[/img]" % [size.x, size.y, TRANSPARENT.resource_path])
 		var emoji = _create_emoji(resource)
+		emoji.name = id
 		emoji.set_meta("size", size)
 		cache[id] = emoji
 		parent.add_child(emoji)
-
+	
+	if no_space: message = message.replace("[/sprite] [sprite", "[/sprite][sprite")
+	
 	ready = true
 	return message
 	
