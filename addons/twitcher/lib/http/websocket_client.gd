@@ -112,8 +112,8 @@ func _read_data() -> void:
 		message_received.emit(_peer.get_packet())
 
 
-func send_text(message: String) -> void:
-	_peer.send_text(message)
+func send_text(message: String) -> Error:
+	return _peer.send_text(message)
 
 
 func close(status: int = 1000, message: String = "Normal Closure") -> void:
