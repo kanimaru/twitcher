@@ -46,15 +46,17 @@ class ResponseData extends RefCounted:
 	## Had the response an error
 	var error: bool
 
+## When a request fails max_error_count then cancel that request -1 for endless amount of tries.
+@export var max_error_count : int = -1
+@export var custom_header : Dictionary[String, String] = { "Accept": "*/*" }
+
 var requests : Array[RequestData] = []
 var current_request : RequestData
 var current_response_data : PackedByteArray = PackedByteArray()
-
-var custom_header : Dictionary = { "Accept": "*/*" }
 var responses : Dictionary = {}
 var error_count : int
-## When a request fails max_error_count then cancel that request -1 for endless amount of tries.
-var max_error_count : int = -1
+
+
 ## Only one poll at a time so block for all other tries to call it
 var polling: bool
 var processing: bool:
