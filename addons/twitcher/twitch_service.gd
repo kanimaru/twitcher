@@ -6,11 +6,13 @@ extends Twitcher
 ## Makes some actions easier to use.
 class_name TwitchService
 
+const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
+
 static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 
 static var instance: TwitchService
 
-@export var oauth_setting: OAuthSetting = OAuthSetting.new():
+@export var oauth_setting: OAuthSetting:
 	set(val):
 		oauth_setting = val
 		oauth_setting.changed.connect(update_configuration_warnings)
@@ -45,6 +47,8 @@ func _init() -> void:
 
 func _ready() -> void:
 	_log.d("is ready")
+	if token == null: token = TwitchEditorSettings.game_oauth_token
+	if oauth_setting == null: oauth_setting = TwitchEditorSettings.game_oauth_setting
 
 
 func _enter_tree() -> void:

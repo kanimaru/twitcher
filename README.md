@@ -1,9 +1,7 @@
 !!!! TODOS:
-- Updating documentation
-- Settings not saved:
-	ERROR: Cannot open file 'res://twitch_oauth_setting.tres'.
-	ERROR: Failed loading resource: res://twitch_oauth_setting.tres. 
-	Make sure resources have been imported by opening the project in the editor at least once.
+- Git checker ala Phantomcamera
+
+
 
 Nice To Have:
 - Multicommands

@@ -3,6 +3,7 @@ extends Node
 
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
+const TWITCH_SERVICE = preload("res://addons/twitcher/twitch_service.tscn")
 
 @onready var authorization_explaination: RichTextLabel = %AuthExplain
 
@@ -67,11 +68,13 @@ func _on_save() -> void:
 	var setting = TwitchEditorSettings.editor_oauth_setting.duplicate(true)
 	setting.take_over_path(setting_path)
 	ResourceSaver.save(setting, setting_path)
+	TwitchEditorSettings.game_oauth_setting = setting
 	
 	var token_path = token_file_select.path
 	var token = TwitchEditorSettings.editor_oauth_token.duplicate()
 	token.take_over_path(token_path)
 	ResourceSaver.save(token, token_path)
+	TwitchEditorSettings.game_oauth_token = token
 		
 	TwitchTweens.flash(o_auth_save, Color.GREEN)
 	ProjectSettings.save()

@@ -49,7 +49,7 @@ func _ready() -> void:
 	overlay.set_pressed_no_signal(false)
 	something_else.set_pressed_no_signal(false)
 	
-	scope_file_select.path = TwitchEditorSettings.get_scope_path()	
+	scope_file_select.path = TwitchEditorSettings.get_scope_path()
 	match TwitchEditorSettings.project_preset: 
 		TwitchEditorSettings.PRESET_GAME:
 			game.button_pressed = true
@@ -116,11 +116,6 @@ func _show_selected_scopes() -> void:
 		scope_description += "[b]%s[/b] - %s\n\n" % [scope.value, scope.description]
 	
 	scope_list.text = scope_description
-
-
-func _set_scope_path(path: String) -> void:
-	TwitchEditorSettings.set_scope_path(path)
-	scope_file_select.path = path
 	
 	
 func _on_to_documentation_pressed() -> void:
