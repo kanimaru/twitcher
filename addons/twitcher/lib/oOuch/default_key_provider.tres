@@ -4,4 +4,4 @@
 
 [resource]
 script = ExtResource("1_q12uq")
-encrpytion_secret_location = "res://.godot/export_credentials.cfg"
+encrpytion_secret_location = "user://encryption_key.cfg"
