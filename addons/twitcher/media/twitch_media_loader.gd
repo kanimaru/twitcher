@@ -23,6 +23,8 @@ const FALLBACK_PROFILE = preload("res://addons/twitcher/assets/no_profile.png")
 @export var fallback_texture: Texture2D = FALLBACK_TEXTURE
 @export var fallback_profile: Texture2D = FALLBACK_PROFILE
 @export var image_cdn_host: String = "https://static-cdn.jtvnw.net"
+## Will preload the whole badge and emote cache also to editor time (use it when you make a Editor Plugin with Twitch Support)
+@export var load_cache_in_editor: bool
 
 @export_global_dir var cache_emote: String = "user://emotes"
 @export_global_dir var cache_badge: String = "user://badges"
@@ -63,8 +65,9 @@ func _exit_tree() -> void:
 
 ## Loading all images from the directory into the memory cache
 func _load_cache() -> void:
-	_cache_directory(cache_emote)
-	_cache_directory(cache_badge)
+	if Engine.is_editor_hint() || load_cache_in_editor:
+		_cache_directory(cache_emote)
+		_cache_directory(cache_badge)
 
 
 func _cache_directory(path: String):
