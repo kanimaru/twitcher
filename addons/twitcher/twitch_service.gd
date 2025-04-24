@@ -253,7 +253,7 @@ func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnounc
 ## args_max == -1 => no upper limit for arguments
 func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1,
 	permission_level : TwitchCommand.PermissionFlag = TwitchCommand.PermissionFlag.EVERYONE,
-	where : TwitchCommand.WhereFlag = TwitchCommand.WhereFlag.CHAT) -> void:
+	where : TwitchCommand.WhereFlag = TwitchCommand.WhereFlag.CHAT) -> TwitchCommand:
 	var command_node = TwitchCommand.new()
 	command_node.command = command
 	command_node.command_received.connect(callback) 
@@ -263,6 +263,7 @@ func add_command(command: String, callback: Callable, args_min: int = 0, args_ma
 	command_node.where = where
 	add_child(command_node)
 	_log.i("Register command %s" % command)
+	return command_node
 
 
 ## Removes a command
