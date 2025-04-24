@@ -41,16 +41,12 @@ func _exit_tree() -> void:
 func start_listening() -> void:
 	_log.d("start listening %s" % subscription_definition.get_readable_name())
 	if eventsub != null && not eventsub.event.is_connected(_on_received):
-		if eventsub.use_test_server:
-			eventsub.event.connect(_on_received)
 		eventsub.event.connect(_on_received)
 
 
 func stop_listening() -> void:
 	_log.d("stop listening %s" % subscription_definition.get_readable_name())
 	if eventsub != null && eventsub.event.is_connected(_on_received):
-		if eventsub.use_test_server:
-			eventsub.event.disconnect(_on_received)
 		eventsub.event.disconnect(_on_received)
 
 
