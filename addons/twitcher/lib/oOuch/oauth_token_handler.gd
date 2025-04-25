@@ -53,6 +53,10 @@ func _ready() -> void:
 	token.changed.connect(update_expiration_check)
 
 
+func _exit_tree() -> void:
+	token.changed.disconnect(update_expiration_check)
+
+
 func update_expiration_check() -> void:
 	var current_time = Time.get_unix_time_from_system()
 	var expiration = token.get_expiration()
