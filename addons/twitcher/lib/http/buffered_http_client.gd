@@ -121,7 +121,7 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 		add_child(http_request)
 		request_data.http_request = http_request
 		request_data.retry += 1
-		http_request.request(request_data.url, _pack_headers(request_data.headers), request_data.method, request_data.body)
+		http_request.request(request_data.path, _pack_headers(request_data.headers), request_data.method, request_data.body)
 		http_request.request_completed.connect(_on_request_completed.bind(http_request))
 
 	response_data.result = result
