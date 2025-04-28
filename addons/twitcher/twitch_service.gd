@@ -14,20 +14,25 @@ static var instance: TwitchService
 
 @export var oauth_setting: OAuthSetting:
 	set(val):
+		if oauth_setting != null:
+			oauth_setting.changed.disconnect(update_configuration_warnings)
 		oauth_setting = val
-		oauth_setting.changed.connect(update_configuration_warnings)
-		_set_in_child("oauth_setting", val)
+		if val != null:
+			oauth_setting.changed.connect(update_configuration_warnings)
+			_set_in_child("oauth_setting", val)
 		update_configuration_warnings()
 @export var scopes: OAuthScopes:
 	set(val):
 		scopes = val
-		_set_in_child("scopes", val)
-		update_configuration_warnings()
+		if val != null:
+			_set_in_child("scopes", val)
+			update_configuration_warnings()
 @export var token: OAuthToken:
 	set(val):
 		token = val
-		_set_in_child("token", val)
-		update_configuration_warnings()
+		if val != null:
+			_set_in_child("token", val)
+			update_configuration_warnings()
 
 @onready var auth: TwitchAuth
 @onready var eventsub: TwitchEventsub
@@ -47,8 +52,8 @@ func _init() -> void:
 
 func _ready() -> void:
 	_log.d("is ready")
-	if token == null: token = TwitchEditorSettings.game_oauth_token
-	if oauth_setting == null: oauth_setting = TwitchEditorSettings.game_oauth_setting
+	if not is_instance_valid(token): token = TwitchEditorSettings.game_oauth_token
+	if not is_instance_valid(oauth_setting): oauth_setting = TwitchEditorSettings.game_oauth_setting
 
 
 func _enter_tree() -> void:
