@@ -12,6 +12,7 @@ extends Control
 @onready var _send: Button = %Send
 ## Warning in case you missed the confugration part above
 @onready var _configuration_warning: Label = %ConfigurationWarning
+@onready var _scroll_container: ScrollContainer = %ScrollContainer
 
 
 ## When a message should be send
@@ -44,6 +45,19 @@ func show_message(message: String) -> void:
 	# Perpare all the sprites for the richtext label
 	message = sprite_effect.prepare_message(message, chat_message)
 	chat_message.text = _get_time() + " " + message
+	
+	_clean_old_messages()
+	
+	# Scroll to the bottom of the container
+	_scroll_container.scroll_vertical = 9999
+	
+	
+# Cleans old messages that are out of position
+func _clean_old_messages() -> void:
+	for child: RichTextLabel in _chat_container.get_children():
+		if _scroll_container.global_position.y > child.global_position.y - child.size.y:
+			child.queue_free()
+		else: break # break cause childs are ordered and the other childs are all inside of the sight
 	
 	
 # Formats the time to 02:03

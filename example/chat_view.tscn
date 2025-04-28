@@ -24,14 +24,17 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="ChatContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 3
 
 [node name="ChatContainer" type="VBoxContainer" parent="ChatContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+alignment = 2
 
 [node name="InputContainer" type="HBoxContainer" parent="ChatContainer"]
 layout_mode = 2
@@ -48,6 +51,7 @@ text = "Send"
 
 [node name="ConfigurationWarning" type="Label" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
