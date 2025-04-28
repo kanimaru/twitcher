@@ -78,6 +78,7 @@ func subscribe() -> void:
 		"user_id": sender_user.id
 	}
 	eventsub.subscribe(config)
+	_log.i("Listen to Chat of %s (%s)" % [broadcaster_user.display_name, broadcaster_user.id])
 
 
 func _on_event_received(type: StringName, data: Dictionary) -> void:
