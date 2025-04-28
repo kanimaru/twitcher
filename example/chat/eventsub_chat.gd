@@ -19,6 +19,8 @@ const ChatView = preload("res://example/chat_view.gd")
 @onready var media_loader: TwitchMediaLoader = %MediaLoader
 ## Hello command receiver
 @onready var hello_command: TwitchCommand = %HelloCommand
+## Help Command
+@onready var twitch_command_help: TwitchCommandHelp = %TwitchCommandHelp
 
 @export var token: OAuthToken
 
@@ -32,8 +34,9 @@ func _ready() -> void:
 	await twitch_service.setup()
 	
 	# You can skip this when 
-	var current_user: TwitchUser = await twitch_service.get_current_user()
-	twitch_chat.broadcaster_user = current_user
+	if twitch_chat.broadcaster_user == null:
+		var current_user: TwitchUser = await twitch_service.get_current_user()
+		twitch_chat.broadcaster_user = current_user
 
 	# Listen to the message received of the chat
 	twitch_chat.message_received.connect(_on_chat_message)
@@ -41,7 +44,10 @@ func _ready() -> void:
 	hello_command.command_received.connect(_on_hello)
 	
 	# Alternative use programatical way to listen to commands
-	twitch_service.add_command("lurk", func(from_username: String, info: TwitchCommandInfo, args: PackedStringArray): twitch_service.chat("Thanks for the lurk")) 
+	var command = twitch_service.add_command("lurk", func(from_username: String, info: TwitchCommandInfo, args: PackedStringArray): twitch_service.chat("Thanks for the lurk")) 
+	command.description = "Go into a passive lurk mode"
+		
+	twitch_chat.subscribe()
 
 
 func _on_hello(from_username: String, info: TwitchCommandInfo, args: PackedStringArray) -> void:

@@ -5,6 +5,8 @@ extends Twitcher
 ## A single command like !lurk 
 class_name TwitchCommand
 
+static var ALL_COMMANDS: Array[TwitchCommand] = []
+
 ## Called when the command got received in the right format
 signal command_received(from_username: String, info: TwitchCommandInfo, args: PackedStringArray)
 
@@ -79,10 +81,12 @@ static func create(
 func _enter_tree() -> void:
 	if eventsub == null: eventsub = TwitchEventsub.instance
 	eventsub.event.connect(_on_event)
+	ALL_COMMANDS.append(self)
 
 
 func _exit_tree() -> void:
 	eventsub.event.disconnect(_on_event)
+	ALL_COMMANDS.erase(self)
 
 
 func _on_event(type: StringName, data: Dictionary) -> void:
