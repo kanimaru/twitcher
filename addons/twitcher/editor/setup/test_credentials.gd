@@ -23,12 +23,14 @@ func _pressed() -> void:
 	await twitch_auth.authorize()
 	
 	if twitch_auth.token.is_token_valid():
-		test_response.text = "Credentials are valid!"
-		test_response.add_theme_color_override(&"font_color", Color.GREEN)
+		if test_response:
+			test_response.text = "Credentials are valid!"
+			test_response.add_theme_color_override(&"font_color", Color.GREEN)
 		TwitchTweens.flash(self, Color.GREEN)
 	else:
-		test_response.text = "Credentials are invalid!"
-		test_response.add_theme_color_override(&"font_color", Color.RED)
+		if test_response:
+			test_response.text = "Credentials are invalid!"
+			test_response.add_theme_color_override(&"font_color", Color.RED)
 		TwitchTweens.flash(self, Color.RED)
 
 
