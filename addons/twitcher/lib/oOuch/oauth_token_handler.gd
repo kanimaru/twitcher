@@ -49,6 +49,8 @@ func _ready() -> void:
 	add_child(_expiration_check_timer)
 	update_expiration_check()
 	
+	
+func _enter_tree() -> void:
 	# When the token changed externally it need's to update the refresh timeout
 	token.changed.connect(update_expiration_check)
 
@@ -64,7 +66,7 @@ func update_expiration_check() -> void:
 		_expiration_check_timer.stop()
 		return
 	_expiration_check_timer.start(expiration - current_time - SECONDS_TO_CHECK_EARLIER)
-	logDebug("Refresh token in %s seconds" % roundf(_expiration_check_timer.wait_time))
+	logDebug("Refresh token (%s) in %s seconds" % [token._identifier, roundf(_expiration_check_timer.wait_time)])
 
 
 ## Checks if tokens expires and starts refreshing it. (called often hold footprint small)
@@ -72,7 +74,7 @@ func _check_token_refresh() -> void:
 	if _requesting_token: return
 
 	if token_needs_refresh():
-		logInfo("Token needs refresh")
+		logInfo("Token (%s) needs refresh" % token._identifier)
 		refresh_tokens()
 
 
@@ -80,7 +82,7 @@ func _check_token_refresh() -> void:
 func request_token(grant_type: String, auth_code: String = ""):
 	if _requesting_token: return
 	_requesting_token = true
-	logInfo("Request token via '%s'" % grant_type)
+	logInfo("Request token (for %s) via '%s'" % [token._identifier, grant_type])
 	var request_params = [
 		"grant_type=%s" % grant_type,
 		"client_id=%s" % oauth_setting.client_id,
@@ -101,7 +103,7 @@ func request_token(grant_type: String, auth_code: String = ""):
 func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes: String, grant_type: String = "urn:ietf:params:oauth:grant-type:device_code") -> void:
 	if _requesting_token: return
 	_requesting_token = true
-	logInfo("request token via urn:ietf:params:oauth:grant-type:device_code")
+	logInfo("request token (for %s) via urn:ietf:params:oauth:grant-type:device_code" % token._identifier)
 	var parameters = [
 		"client_id=%s" % oauth_setting.client_id,
 		"grant_type=%s" % grant_type,
@@ -139,17 +141,17 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 ## Uses the refresh token if possible to refresh all tokens
 func refresh_tokens() -> void:
 	if not oauth_setting.is_valid(): 
-		logDebug("Try to refresh token but oauth settings are invalid. Can't refresh token.")
+		logDebug("Try to refresh token (%s) but oauth settings are invalid. Can't refresh token." % token._identifier)
 		return
 
 	if _requesting_token: return
 	_requesting_token = true
-	logInfo("use refresh token")
+	logInfo("use refresh (%s) token" % token._identifier)
 	if token.has_refresh_token():
 		var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
 		var request = _http_client.request(oauth_setting.token_url, HTTPClient.METHOD_POST, HEADERS, request_body)
 		if await _handle_token_request(request):
-			logInfo("token got refreshed")
+			logInfo("token (%s) got refreshed" % token._identifier)
 		else:
 			unauthenticated.emit()
 	else:
@@ -168,7 +170,7 @@ func _handle_token_request(request: OAuthHTTPClient.RequestData) -> bool:
 	else:
 		# Reset expiration cause token wasn't refreshed correctly.
 		token.invalidate()
-	logError("token could not be fetched ResponseCode %s / Body %s" % [response.response_code, response_string])
+	logError("token (for %s) could not be fetched ResponseCode %s / Body %s" % [token._identifier, response.response_code, response_string])
 	return false
 
 
@@ -186,7 +188,7 @@ func _update_tokens_from_response(result: Dictionary):
 func update_tokens(access_token: String, refresh_token: String = "", expires_in: int = -1, scopes: Array[String] = []):
 	token.update_values(access_token, refresh_token, expires_in, scopes)
 	token_resolved.emit(token)
-	logInfo("token resolved")
+	logInfo("token (%s) resolved" % token._identifier)
 
 
 func get_token_expiration() -> String:
