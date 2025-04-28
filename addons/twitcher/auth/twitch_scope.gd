@@ -4,15 +4,21 @@ extends Resource
 class_name TwitchScope
 
 class Definition extends Object:
-	var value: StringName;
-	var description: String;
+	var value: StringName
+	var description: String
+	var categroy: String
 
-	func _init(val: StringName, desc: String) -> void:
-		value = val;
-		description = desc;
+
+	func _init(val: StringName, desc: String, cat: String = "") -> void:
+		value = val
+		description = desc
+		categroy = cat
+
 
 	func get_category() -> String:
-		return value.substr(0, value.find(":"));
+		if categroy: return categroy
+		return value.substr(0, value.find(":"))
+
 
 static var ANALYTICS_READ_EXTENSIONS = Definition.new(&"analytics:read:extensions", "View analytics data for the Twitch Extensions owned by the authenticated account.")
 static var ANALYTICS_READ_GAMES = Definition.new(&"analytics:read:games", "View analytics data for the games owned by the authenticated account.")
@@ -88,8 +94,8 @@ static var USER_READ_SUBSCRIPTIONS = Definition.new(&"user:read:subscriptions", 
 static var USER_READ_WHISPERS = Definition.new(&"user:read:whispers", "Receive whispers sent to your user.")
 static var USER_MANAGE_WHISPERS = Definition.new(&"user:manage:whispers", "Receive whispers sent to your user, and send whispers on your user’s behalf.")
 static var USER_WRITE_CHAT = Definition.new(&"user:write:chat", "Send chat messages to a chatroom.")
-static var CHAT_READ = Definition.new(&"chat:edit", "Send chat messages to a chatroom using an IRC connection.");
-static var CHAT_EDIT = Definition.new(&"chat:read", "View chat messages sent in a chatroom using an IRC connection.");
+static var CHAT_READ = Definition.new(&"chat:edit", "Send chat messages to a chatroom using an IRC connection.", "IRC")
+static var CHAT_EDIT = Definition.new(&"chat:read", "View chat messages sent in a chatroom using an IRC connection.", "IRC")
 
 ## Key: Scope Name as String | Value: Definition
 static var SCOPE_MAP: Dictionary = {
@@ -169,21 +175,21 @@ static var SCOPE_MAP: Dictionary = {
 	"user:write:chat" = USER_WRITE_CHAT,
 	"chat:read" = CHAT_READ,
 	"chat:edit" = CHAT_EDIT,
-};
+}
 
 
 ## Key: Category as String, value as Array[Definition]
 static func get_grouped_scopes() -> Dictionary:
 	var result = {}
 	for scope: Definition in get_all_scopes():
-		var category_name = scope.get_category();
-		var category = result.get_or_add(category_name, []);
-		category.append(scope);
-	return result;
+		var category_name = scope.get_category()
+		var category = result.get_or_add(category_name, [])
+		category.append(scope)
+	return result
 
 
 static func get_all_scopes() -> Array[Definition]:
-	var scopes: Array[Definition] = [];
+	var scopes: Array[Definition] = []
 	for scope in SCOPE_MAP.values():
-		scopes.append(scope);
-	return scopes;
+		scopes.append(scope)
+	return scopes
