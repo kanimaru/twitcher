@@ -31,6 +31,7 @@ func prepare_message(message: String, parent: RichTextLabel) -> String:
 		var path = m.get_string("path")
 		var id = m.get_string("id")
 		var resource = ResourceLoader.load(path, "SpriteFrames") as SpriteFrames
+		if resource == null: continue
 		var tex = resource.get_frame_texture("default", 0)
 		var size = tex.get_size()
 		var start = m.get_start(0)
