@@ -49,7 +49,8 @@ func _create_conditions() -> void:
 				user_converter.reload()
 		else:
 			var input = LineEdit.new()
-			input.text_changed.connect(_on_change_text.bind(condition_name))
+			input.text_submitted.connect(_on_change_text.bind(condition_name, input))
+			input.focus_exited.connect(_on_change_text.bind("", condition_name, input))
 			input.text = condition_value
 			input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			_container.add_child(input)
@@ -67,7 +68,8 @@ func _on_changed_user(user: TwitchUser, condition_name: StringName) -> void:
 		emit_changed(&"condition", eventsub_config.condition)
 
 
-func _on_change_text(new_text: String, condition_name: StringName) -> void:
+func _on_change_text(new_text: String, condition_name: StringName, input: LineEdit) -> void:
+	print("BLUB")
 	var eventsub_config: TwitchEventsubConfig = get_edited_object();
-	eventsub_config.condition[condition_name] = new_text
-	emit_changed(&"condition", eventsub_config.condition)
+	eventsub_config.condition[condition_name] = input.text
+	#emit_changed(&"condition", eventsub_config.condition)
