@@ -27,8 +27,14 @@ const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 
 var other_scope_property: TwitchScopeProperty = TwitchScopeProperty.new()
 var scopes: TwitchOAuthScopes: set = update_scopes
+var has_changes: bool:
+	set(val): 
+		has_changes = val
+		changed.emit()
+		save.text = save.text.trim_suffix(" (unsaved changes)")
+		if has_changes: save.text += " (unsaved changes)"
 
-
+signal changed
 signal use_case_changed(use_case: UseCase)
 
 
@@ -57,9 +63,12 @@ func _ready() -> void:
 			overlay.button_pressed = true
 		TwitchEditorSettings.PRESET_OTHER:
 			something_else.button_pressed = true
-
+			
+	# Needs to be resetted cause the radio reset will change the has_changges to true
+	has_changes = false
 
 func _on_scope_file_selected(path: String) -> void:
+	has_changes = true
 	if FileAccess.file_exists(path):
 		var resource = load(path)
 		if resource is OAuthScopes: scopes = resource
@@ -89,7 +98,7 @@ func _on_choose(button: BaseButton) -> void:
 			TwitchEditorSettings.project_preset = TwitchEditorSettings.PRESET_OTHER
 			
 	_show_selected_scopes()
-	
+	has_changes = true
 	
 func _on_scope_info(scope: TwitchScope.Definition) -> void:
 	_show_selected_scopes()
@@ -101,6 +110,7 @@ func _on_save_pressed() -> void:
 	ResourceSaver.save(scopes, s_path)
 	TwitchEditorSettings.set_scope_path(s_path)
 	TwitchTweens.flash(save, Color.GREEN)
+	has_changes = false
 	
 	
 func _show_selected_scopes() -> void:

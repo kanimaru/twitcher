@@ -31,6 +31,7 @@ layout_mode = 2
 choose_button_group = SubResource("ButtonGroup_6678v")
 
 [node name="Authorization" parent="VBoxContainer/Setup" instance=ExtResource("3_qcivh")]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
