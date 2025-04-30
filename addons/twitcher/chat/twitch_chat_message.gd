@@ -356,7 +356,7 @@ func get_color(default_color: String = "#AAAAAA") -> String:
 
 
 ## Preload all emojis in parallel to reduce loadtime
-func load_emotes_from_fragment(_media_loader: TwitchMediaLoader) -> void:
+func load_emotes_from_fragment(_media_loader: TwitchMediaLoader) -> Dictionary[TwitchEmoteDefinition, SpriteFrames]:
 	var emotes_to_load : Array[TwitchEmoteDefinition] = []
 	
 	for fragment : TwitchChatMessage.Fragment in message.fragments:
@@ -364,4 +364,4 @@ func load_emotes_from_fragment(_media_loader: TwitchMediaLoader) -> void:
 			TwitchChatMessage.FragmentType.emote:
 				var definition : TwitchEmoteDefinition = TwitchEmoteDefinition.new(fragment.emote.id)
 				emotes_to_load.append(definition)
-	var emotes = await _media_loader.get_emotes_by_definition(emotes_to_load)
+	return await _media_loader.get_emotes_by_definition(emotes_to_load)
