@@ -46,12 +46,26 @@ class Session extends RefCounted:
 			reconnect_url = d["reconnect_url"]
 		connected_at = d["connected_at"]
 
+## A specific event received from eventsub
+class Event extends RefCounted:
+	var type: TwitchEventsubDefinition:
+		get(): return TwitchEventsubDefinition.BY_NAME[message.payload.subscription.type]
+	var data: Dictionary: 
+		get(): return message.payload.event
+	var message: TwitchNotificationMessage
+	
+	func _init(notification_message: TwitchNotificationMessage) -> void: 
+		message = notification_message
+
 
 ## Will be send as soon as the websocket connection is up and running you can use it to subscribe to events
 signal session_id_received(id: String)
 
 ## Will be called when an event is sent from Twitch.
 signal event(type: StringName, data: Dictionary)
+
+## Will be called when an event is sent from Twitch. Same like event signal but better named and easier to use in inline awaits.
+signal event_received(event: Event)
 
 ## Will be called when an event got revoked from your subscription by Twitch.
 signal events_revoked(type: StringName, status: String)
@@ -181,6 +195,13 @@ func subscribe(eventsub_config: TwitchEventsubConfig) -> void:
 	_add_action(eventsub_config, true)
 	_empty_connections = 0
 	
+	
+func has_subscription(eventsub_definition: TwitchEventsubDefinition, condition: Dictionary) -> bool:
+	for subscription: TwitchEventsubConfig in _subscriptions:
+		if subscription.definition == eventsub_definition && subscription.condition == condition:
+			return true
+	return false
+
 
 ## Remove a subscription
 func unsubscribe(eventsub_config: TwitchEventsubConfig) -> void:
@@ -303,6 +324,7 @@ func _data_received(data : PackedByteArray) -> void:
 			message_received.emit(notification_message)
 			event.emit(notification_message.payload.subscription.type,
 				notification_message.payload.event)
+			event_received.emit(Event.new(notification_message))
 	_cleanup()
 
 
