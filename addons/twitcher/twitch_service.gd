@@ -7,6 +7,9 @@ extends Twitcher
 class_name TwitchService
 
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
+## When the poll doesn't end after the offical endtime + POLL_TIMEOUT_MS. The wait loop for poll end 
+## event will be stopped to prevent endless loops.
+const POLL_TIMEOUT_MS: int = 30000
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 
@@ -235,6 +238,7 @@ func chat(message: String, target_broadcaster_id: String = "", sender_id: String
 	var body = TwitchSendChatMessage.Body.create(target_broadcaster_id, sender_id, message)
 	api.send_chat_message(body)
 
+
 ## Sends out a shoutout to a specific user
 func shoutout(user: TwitchUser) -> void:
 	var broadcaster_id = api.default_broadcaster_login
@@ -310,6 +314,39 @@ func get_emotes(ids: Array[String]) -> Dictionary[String, SpriteFrames]:
 func get_emotes_by_definition(emotes: Array[TwitchEmoteDefinition]) -> Dictionary[TwitchEmoteDefinition, SpriteFrames]:
 	return await media_loader.get_emotes_by_definition(emotes)
 
+
+func poll(title: String, choices: Array[String], duration: int = 60, channel_points_voting_enabled: bool = false, channel_points_per_vote: int = 1000, broadcaster_id: String = "") -> Dictionary:
+	if broadcaster_id == "": broadcaster_id = _current_user.id
+	var body_choices: Array[TwitchCreatePoll.BodyChoices] = []
+	for choice: String in choices:
+		var body_choice = TwitchCreatePoll.BodyChoices.create(choice)
+		body_choices.append(body_choice)
+	duration = clamp(duration, 15, 1800)
+	var poll_body: TwitchCreatePoll.Body = TwitchCreatePoll.Body.create(broadcaster_id, title, body_choices, duration)
+	if channel_points_voting_enabled:
+		poll_body.channel_points_per_vote = channel_points_per_vote
+		poll_body.channel_points_voting_enabled = channel_points_voting_enabled
+	var poll_response: TwitchCreatePoll.Response = await api.create_poll(poll_body)
+	if poll_response.response.response_code != 200:
+		var error_message: String = poll_response.response.response_data.get_string_from_utf8()
+		push_error("Can't create poll response cause of ", error_message)
+		return {}
+	var poll: TwitchPoll = poll_response.data[0]
+	var poll_end_time: int = Time.get_ticks_msec() + duration * 1000 + POLL_TIMEOUT_MS
+	var event: TwitchEventsub.Event
+	if eventsub && eventsub.has_subscription(TwitchEventsubDefinition.CHANNEL_POLL_END, {&"broadcaster_user_id": broadcaster_id}):
+		var poll_ended: bool
+		while not poll_ended:
+			if poll_end_time < Time.get_ticks_msec():
+				return {}
+			event = await eventsub.event_received
+			if event.type != TwitchEventsubDefinition.CHANNEL_POLL_END: continue
+			if event.data[&"id"] != poll.id: continue
+			break
+	else:
+		_log.i("Can't wait for poll end. Either eventsub is not set ot it is not listenting to ending polls")
+		return {}
+	return event.data
 
 #endregion
 #region Cheermotes
