@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Twitcher - Login</title>
+  <script>setTimeout(() => window.close(), 5000);</script>
+  <style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	background: linear-gradient(135deg, #22c55e, #16a34a);
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	color: #133620;
+}
+
+.success-container {
+	background: rgba(255, 255, 255, 0.1);
+	padding: 30px;
+	border-radius: 15px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+	backdrop-filter: blur(10px);
+	max-width: 400px;
+}
+
+.success-icon {
+	font-size: 60px;
+	margin-bottom: 15px;
+}
+
+.success-message {
+	font-size: 24px;
+	font-weight: bold;
+}
+
+.success-description {
+	font-size: 18px;
+	margin-top: 10px;
+	text-align: justify;
+}
+
+.button {
+	display: inline-block;
+	cursor: pointer;
+	margin-top: 20px;
+	padding: 12px 25px;
+	background-color: white;
+	color: #15803d;
+	text-decoration: none;
+	font-weight: bold;
+	border-radius: 5px;
+	transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+	background-color: #d1fae5;
+	transform: scale(1.05);
+}
+  </style>
+</head>
+
+<body>
+  <div class="success-container">
+	<div class="success-message">Login Success</div>
+	<div class="success-description">Page should automatically close when it doesn't happen close it manually.</div>
+	<a onclick="window.close()" class="button">Close Page</a>
+</div>
+</body>
+</html>

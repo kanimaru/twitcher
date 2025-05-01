@@ -1,0 +1,72 @@
+[gd_scene load_steps=3 format=3 uid="uid://cfe0kxk8dptag"]
+
+[ext_resource type="Script" uid="uid://dac0roqrgssf1" path="res://example/chat_view.gd" id="1_wk2am"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_2vgfi"]
+font_size = 36
+font_color = Color(0.956209, 0, 0.289367, 1)
+
+[node name="ChatView" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wk2am")
+
+[node name="ChatContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ChatContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+
+[node name="ChatContainer" type="VBoxContainer" parent="ChatContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 2
+
+[node name="InputContainer" type="HBoxContainer" parent="ChatContainer"]
+layout_mode = 2
+
+[node name="InputLine" type="LineEdit" parent="ChatContainer/InputContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Send" type="Button" parent="ChatContainer/InputContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Send"
+
+[node name="ConfigurationWarning" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -514.5
+offset_top = -25.0
+offset_right = 514.5
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 0.359557
+pivot_offset = Vector2(514, 25)
+text = "Please configure client credentials according to the readme"
+label_settings = SubResource("LabelSettings_2vgfi")
+horizontal_alignment = 1
+vertical_alignment = 1

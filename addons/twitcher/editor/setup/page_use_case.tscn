@@ -1,0 +1,162 @@
+[gd_scene load_steps=5 format=3 uid="uid://c7pja1druikbn"]
+
+[ext_resource type="Script" uid="uid://cjni881olloyf" path="res://addons/twitcher/editor/setup/page_use_case.gd" id="1_2qemh"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/title_label_settings.tres" id="1_r6qea"]
+[ext_resource type="ButtonGroup" uid="uid://bkocyfdqvh4t" path="res://addons/twitcher/editor/setup/use_case_button_group.tres" id="1_vqr26"]
+[ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="4_c6y6e"]
+
+[node name="UseCase" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("1_2qemh")
+choose_button_group = ExtResource("1_vqr26")
+metadata/_tab_index = 0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+
+[node name="SelectionContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="ScrollContainer/SelectionContainer"]
+layout_mode = 2
+text = "Step 1: Use Case"
+label_settings = ExtResource("1_r6qea")
+horizontal_alignment = 1
+
+[node name="ToDocumentation" type="Button" parent="ScrollContainer/SelectionContainer/Title"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -52.0
+offset_top = -15.5
+offset_bottom = 15.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "DOCS"
+metadata/_edit_use_anchors_ = true
+
+[node name="Explaination" type="RichTextLabel" parent="ScrollContainer/SelectionContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "To help you with scopes and authentication please select your use case."
+fit_content = true
+vertical_alignment = 1
+
+[node name="ChooseLabel" type="Label" parent="ScrollContainer/SelectionContainer"]
+layout_mode = 2
+text = "What do you want to make:"
+
+[node name="Overlay" type="CheckBox" parent="ScrollContainer/SelectionContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+button_group = ExtResource("1_vqr26")
+text = "Overlay"
+
+[node name="Game" type="CheckBox" parent="ScrollContainer/SelectionContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = ExtResource("1_vqr26")
+text = "Game"
+
+[node name="SomethingElse" type="CheckBox" parent="ScrollContainer/SelectionContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = ExtResource("1_vqr26")
+text = "I know what I do / Something else"
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/SelectionContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Scopes" type="HBoxContainer" parent="ScrollContainer/SelectionContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ExtendedScopeInfo" type="PanelContainer" parent="ScrollContainer/SelectionContainer/Scopes"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="OtherScopeOptions" type="PanelContainer" parent="ScrollContainer/SelectionContainer/Scopes"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/SelectionContainer/Scopes/OtherScopeOptions"]
+layout_mode = 2
+
+[node name="ScopeListLabel" type="Label" parent="ScrollContainer/SelectionContainer/Scopes/OtherScopeOptions/VBoxContainer"]
+layout_mode = 2
+text = "Scopes:"
+label_settings = ExtResource("1_r6qea")
+
+[node name="AdvancedEdit" type="CheckButton" parent="ScrollContainer/SelectionContainer/Scopes/OtherScopeOptions/VBoxContainer/ScopeListLabel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -168.0
+offset_top = -15.5
+offset_bottom = 15.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "Edit (Advanced)"
+
+[node name="ScopeList" type="RichTextLabel" parent="ScrollContainer/SelectionContainer/Scopes/OtherScopeOptions/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "[b]user:read:chat[/b] - Receive chatroom messages and informational notifications relating to a channel’s chatroom.
+
+[b]user:write:chat[/b] - Send chat messages to a chatroom.
+
+[b]moderator:read:followers[/b] - Read the followers of a broadcaster.
+
+[b]bits:read[/b] - View Bits information for a channel.
+
+[b]channel:read:redemptions[/b] - View Channel Points custom rewards and their redemptions on a channel.
+
+[b]channel:manage:redemptions[/b] - Manage Channel Points custom rewards and their redemptions on a channel.
+
+"
+fit_content = true
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/SelectionContainer/Scopes/OtherScopeOptions/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ScopeFileLabel" type="Label" parent="ScrollContainer/SelectionContainer/Scopes/OtherScopeOptions/VBoxContainer"]
+layout_mode = 2
+text = "Save selected scopes:"
+
+[node name="ScopeFileSelect" parent="ScrollContainer/SelectionContainer/Scopes/OtherScopeOptions/VBoxContainer" instance=ExtResource("4_c6y6e")]
+unique_name_in_owner = true
+layout_mode = 2
+default_path = "res://twitch_scopes.tres"
+path = "res://twitch_scopes.tres"
+filters = PackedStringArray("*.tres", "*.res")
+
+[node name="Save" type="Button" parent="ScrollContainer/SelectionContainer/Scopes/OtherScopeOptions/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save Scopes"

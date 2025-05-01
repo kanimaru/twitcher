@@ -1,0 +1,182 @@
+[gd_scene load_steps=6 format=3 uid="uid://dm6jvnuikxtei"]
+
+[ext_resource type="Script" uid="uid://dxql15j5ornlc" path="res://addons/twitcher/editor/setup/page_authorization.gd" id="1_78hk7"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/title_label_settings.tres" id="2_owlil"]
+[ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="3_dbhpx"]
+[ext_resource type="Script" uid="uid://ddugotjvuahex" path="res://addons/twitcher/editor/setup/focus_child_show.gd" id="3_o4tdm"]
+[ext_resource type="PackedScene" uid="uid://bfksyo3klyvdn" path="res://addons/twitcher/editor/setup/test_credentials.tscn" id="5_dbhpx"]
+
+[node name="Authorization" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("1_78hk7")
+metadata/_tab_index = 1
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="Layout"]
+layout_mode = 2
+text = "Step 2: Authorization"
+label_settings = ExtResource("2_owlil")
+horizontal_alignment = 1
+
+[node name="ToDocumentation" type="Button" parent="Layout/Title"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -52.0
+offset_top = -15.5
+offset_bottom = 15.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "DOCS"
+metadata/_edit_use_anchors_ = true
+
+[node name="PanelContainer" type="PanelContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Layout/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Layout/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="AuthorizationTitle" type="Label" parent="Layout/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "General"
+label_settings = ExtResource("2_owlil")
+horizontal_alignment = 1
+
+[node name="AuthExplain" type="RichTextLabel" parent="Layout/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "The credentials that are used by the editor and game to connect to Twitch. You can request your credentials [url=https://dev.twitch.tv/console/apps/create]Twitch Dev Console[/url] for more informations see [url=https://twitcher.kani.dev/#authorization]Documentation[/url]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="AuthorizationOptions" type="GridContainer" parent="Layout/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("show_elements")]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+columns = 2
+script = ExtResource("3_o4tdm")
+show_elements = [NodePath("../AuthExplain")]
+
+[node name="ClientIdLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/AuthorizationOptions"]
+layout_mode = 2
+text = "Client ID:"
+
+[node name="ClientId" type="LineEdit" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/AuthorizationOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1ae0idgxbvn6vi97ls7d89cyd919oq"
+
+[node name="ClientSecretLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/AuthorizationOptions"]
+layout_mode = 2
+text = "Client Secret:"
+
+[node name="ClientSecret" type="LineEdit" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/AuthorizationOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "k22x037lmmrmkmwvy79xr19qfy993g"
+secret = true
+
+[node name="RedirectURLLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/AuthorizationOptions"]
+layout_mode = 2
+text = "Redirect URL:"
+
+[node name="RedirectURL" type="LineEdit" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/AuthorizationOptions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Location that Twitch is calling after the login process. Take care that this one is the same that you used during creation of the application within the twitch dev console."
+text = "http://localhost:7170"
+
+[node name="HSeparator2" type="HSeparator" parent="Layout/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="GameSettingTitle" type="Label" parent="Layout/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Game"
+label_settings = ExtResource("2_owlil")
+horizontal_alignment = 1
+
+[node name="GameExplain" type="RichTextLabel" parent="Layout/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "These settings are needed for the game to connect with Twitch."
+fit_content = true
+vertical_alignment = 1
+
+[node name="GameSetting" type="GridContainer" parent="Layout/PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("show_elements")]
+layout_mode = 2
+columns = 2
+script = ExtResource("3_o4tdm")
+show_elements = [NodePath("../GameExplain")]
+
+[node name="OauthSettingLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/GameSetting"]
+layout_mode = 2
+text = "Auth File Path:"
+
+[node name="OauthSettingFileSelect" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/GameSetting" instance=ExtResource("3_dbhpx")]
+unique_name_in_owner = true
+layout_mode = 2
+default_path = "res://twitch_oauth_setting.tres"
+path = "res://twitch_oauth_setting.tres"
+filters = PackedStringArray("*.tres", "*.res")
+
+[node name="TokenLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/GameSetting"]
+layout_mode = 2
+text = "Token File Path:"
+
+[node name="TokenFileSelect" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/GameSetting" instance=ExtResource("3_dbhpx")]
+unique_name_in_owner = true
+layout_mode = 2
+default_path = "res://twitch_oauth_token.tres"
+path = "res://twitch_oauth_token.tres"
+filters = PackedStringArray("*.tres", "*.res")
+
+[node name="HSeparator" type="HSeparator" parent="Layout/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+
+[node name="TestCredentials" parent="Layout/HBoxContainer" node_paths=PackedStringArray("test_response") instance=ExtResource("5_dbhpx")]
+layout_mode = 2
+size_flags_horizontal = 3
+test_response = NodePath("../../TestResponse")
+
+[node name="OAuthSave" type="Button" parent="Layout/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save"
+
+[node name="TestResponse" type="Label" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2

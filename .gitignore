@@ -16,3 +16,7 @@ mono_crash.*.json
 
 # Remote the documentation images to be imported, cause the importer could be not available.
 documentation/*.import
+
+# Jetbrains specific ignores
+.idea/
+*.tmp

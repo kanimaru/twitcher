@@ -1,158 +1,54 @@
-# Version 2 is going into Beta
-You can find a branch called v2. It breaks almost everything in v1 so only think about using v2 when you want to start a new project or some features are missing in v1.
-Features in v2 that v1 doesn't have:
+# Twitcher
 
-- All node based setup
-- Editor features like Scopes List, Tokeninfo, Eventsub helper
-- Support for Web builds
-- Multiple users support (yes you can have now bot account and broadcaster account)
-- Initialize only what you need and when you need it (don't forced to init everything in editor settings)
-- Better Rest API
-- Better encryption for secrets and tokens
-- Cleaner code (almost no statics anymore)
+[![Godot Asset Library](https://img.shields.io/badge/Godot%20Asset%20Library-Twitcher-blue?style=flat-square)](https://godotengine.org/asset-library/asset/2629) <!-- Replace YOUR_ASSET_ID -->
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://github.com/kanimaru/twitcher/blob/v2/LICENSE) <!-- Assuming MIT License -->
+[![Twitch](https://img.shields.io/badge/Support_on_Twitch-kani_dev-purple?style=flat-square&logo=twitch)](https://www.twitch.tv/kani_dev/)
 
-Currently it is missing documentation you can see how it works in the examples. I will take care soon for a good documentation.
+**Seamless Twitch Integration for Godot 4.4+**
 
-## When does v2 will be the default version?
-As soon as I have battle tested it in my overlay and a game I will make the v2 branch to the leading branch and upload it to Godot Asset Lib. 
+Twitcher V2 provides a comprehensive toolkit to effortlessly connect your Godot Engine games, 
+overlays, or applications to the Twitch platform. Integrate real-time chat, respond to events like 
+follows and subscriptions, manage rewards, handle chat commands, and utilize the full Twitch API with ease.
 
-# [Beta] Twitcher V1
-.. is a Godot Library for implementing Twitch functionality in Godot.
-The main purpose is to use this library for easier overlay development.
-The library can also be used to support Twitch game integration.
+## Key Features
 
-## Features
-- Integration of Authorizationsflows (Auth Code, Client Credentials, Device Code, ~~Implicit~~)
-- Configuration driven approach. Almost all feature can be configured and used afterwards. But programatically approach is also supported.
-  - Auth Credentials
-  - Requested Auth Scopes
-  - Subscribed events for EventSub. All possible events with their needed configurations.
-  - ...
-- Easy integration of chat support via Node `TwitchIrcChannel`
-- Easy integration of event sub via Node `TwitchEventListener`
-- Easy integration of IRC commands via Node `TwitchCommand`
-- Complete REST Api (provided by [https://twitch-api-swagger.surge.sh/](https://twitch-api-swagger.surge.sh/)) with data classes for type safety
-- Cheer Emote parsing
-- Command Handler for easy implementing custom commands
-- Handles low level integration of websocket and http requests for you that is fully compatible with the Twitch Docs
-- GIF support for emojis via ImageMagick (other options are planned)
+*   **Modern Twitch Integration:** Utilizes EventSub for real-time events and the Helix API for robust interactions (moving away from deprecated IRC features for core functionality).
+*   **Simplified Authentication:** Supports multiple OAuth flows (Authorization Code, Client Credentials, Device Code) with helpers for secure token management.
+*   **Easy Event Handling:** Dedicated `TwitchEventListener` node to react to specific EventSub events (Follows, Subs, Cheers, Rewards, etc.).
+*   **API Coverage:** Auto-generated, type-safe wrapper methods for the Twitch Helix REST API.
+*   **Chat Command Framework:** `TwitchCommand` nodes for defining and handling chat commands with permission checks. Includes an automated `!help` command generator.
+*   **Editor Tools:** Built-in helpers for configuring OAuth Scopes, EventSub subscriptions, and testing credentials directly within the Godot editor.
+*   **Media Loading:** Handles fetching and caching Twitch Emotes (including animated GIFs via optional transformers), Badges, and Cheermotes as Godot `SpriteFrames`.
 
-**Secondary Features**
-- BufferedHttpClient to request multiple requests to the same API without manual orchestration, handles automatical reconnect
-- Simple load balanced HTTP Client: HTTP request in parallel
-- Simple Websocket Client with auto reconnect
-- GIF to SpriteFrame importer
-- Simple Logger to enable and disable logging for modules
-- Simple generator for the Twitch REST Api in case of changes (maybe a good base for other Swagger APIs too, maybe not cause the code generator is trash and hold together with duct tape)
-- A RichTextEffect to positioning SpriteFrames within a RichTextLabel (easy to extend to support positioning everything within a RichTextLabel)
+## Installation
 
-Most of the features are implemented. Bugs are very likely, cause of the amount of generated code.
+1.  **Get the Addon:**
+	*   **Recommended (AssetLib):** Search for "Twitcher" in the Godot AssetLib tab and click Download.
+	*   **Manual (GitHub):** Download from [GitHub](https://github.com/kanimaru/twitcher/releases). Extract the `addons/twitcher` folder into your project's directory.
+	*   **Important:** The addon *must* reside in the exact path `res://addons/twitcher` for internal resources to load correctly.
+2.  **Enable Plugin:** Go to `Project -> Project Settings -> Plugins` and check the `Enable` box next to "Twitcher".
 
-## Install
-*Upfront information: You will stumble over a `Redirect URL`. This URL has to point to your PC / Application that the authorization is redirected after the login.
-In case you have no clue just use `http://localhost:7170` and make sure this is the redirect URL in `https://dev.twitch.tv` and your settings in Godot at `Twitch -> Auth -> redirect_url`*
+## Quick Start & Documentation
 
-1. Checkout the project into your addon folder or use the AssetLib. **Important: The path has to be `/addons/Twitcher` otherwise the internal paths doesn't work anymore.**
-   Tries to make the path relative didn't worked 😒
-2. Then enable the Plugin via `Project -> Project Settings -> Plugins`
-3. Insert your credentials: `Project -> Project Settings -> Twitch -> Auth`
-   Insert client credentials, find them at [Twitch Dev Console](https://dev.twitch.tv/) use the [guide](https://dev.twitch.tv/docs/authentication/register-app/)
-	  <img src="./documentation/create-credentials.gif" alt="how-to-create-credentials" width="600">
-   	  Note: for the goblins the secret is invalidated ;)
-4. Call `TwitchService.setup();` at some point in your application when you want to start the Twitch integration. See also the examples
+1.  **Run Setup Wizard:** After enabling the plugin, the easiest way to configure authentication is via the Setup Wizard:
+	*   Navigate to `Project -> Tools -> Twitcher Setup`.
+	*   Follow the on-screen instructions to enter your Twitch Application credentials and select required OAuth scopes.
+2.  **Explore the Documentation:** For detailed guides, tutorials, API reference, and advanced configuration (like setting up GIF support), please refer to the **[Full Twitcher Documentation](https://twitcher.kani.dev)**.
 
-## Image Transformer
+## Image Transformers (for Animated Emotes)
 
-**TwitchImageTransformer**
-Is the default transformer for all projects. It doesn't support animation at all and returns static images instead.
-Version that always should work.
+Godot doesn't natively support animated GIFs. Twitcher uses configurable "Image Transformers" to handle them:
 
-**MagickImageTransformer**
-Cause Godot doesn't support GIF by default the library provides a possibility for exchangeable converter.
-Not everyone needs the GIF support. At default the library doesn't use GIF's and requests only static Emojis.
-The Converter that is provided by the Lib requires [ImageMagick](https://imagemagick.org)
-an external program to convert the GIFs to Images and then gather them to `SpriteFrames`.
+*   **`TwitchImageTransformer` (Default):** Static images only. Works out-of-the-box.
+*   **`MagickImageTransformer`:** Requires [ImageMagick](https://imagemagick.org) to be installed separately. Converts GIFs to `SpriteFrames`.
+*   **`NativeImageTransformer`:** Experimental, uses native gdscript implementation (based on [vbousquet/godot-gif-importer](https://github.com/vbousquet/godot-gif-importer)). No external programs needed, but may struggle with malformed GIFs.
 
-**NativeImageTransformer**
-The native image transformer uses a ported version of [vbousquet/godot-gif-importer](https://github.com/vbousquet/godot-gif-importer)
-I can't guarantee that I ported it correctly from Godot 3 to 4 nor I can guarantee that the original Implementation was correctly.
-This is an alterantive that has to be battle tested. But this one doesn't need any external Program to work (or even not) :D.
-Also have a look at [jegor377/godot-gif-lzw](https://github.com/jegor377/godot-gif-lzw) that is used for the LZW compression.
-The readme has good links for checking this implementation. Couple of parts was broken and I added a "fix".
+**See the [Full Documentation](https://twitcher.kani.dev/core-nodes/twitch-image-transformer.html)** for instructions on how to configure and use `MagickImageTransformer` or `NativeImageTransformer`.
 
-In case you want to use another way to convert the GIFs. You can easily create a class that has to support:
+## Support
 
-```gdscript
-extends RefCounted
-class_name MyImageTransformer
+Need help or have questions? Find kani_dev streaming development and answering questions on [Twitch](https://www.twitch.tv/kani_dev/). Feel free to open an Issue on GitHub for bugs or feature requests.
 
-## Should the animated or static version requested
-func is_supporting_animation() -> bool:
-	return true
+## License
 
-## path is the location where the GIF file is currently stored
-## buffer_in is the data of the GIF that is stored at path location
-## output_path is the location where the converted data should be saved (optional)
-func convert_image(path: String, buffer_in: PackedByteArray, output_path: String) -> SpriteFrames:
-	# Implement your custom logic
-	return SpriteFrames.new();
-
-```
-When you implemented your converter, you can configure the Twitch Lib to use it in the **Advanced Settings** of the project settings
-set `Project Settings -> Twitch -> General -> Images -> Image Transformer` to the ClassName it will be load at runtime with `load()` function.
-
-### Animated Emojis (with ImageMagick)
-To use animated Emojis you need to install [ImageMagick](https://imagemagick.org) and set the path to the executable in
-the **Advanced Settings** of the project settings `Project Settings -> Twitch -> General -> Images -> Image Magic`. In case of windows
-when you didn't changed the path settings it is enough to write `magick` into this field.
-For all other users you need a full path to the executable (untested assumption in case of error open issue please).
-Also set the `Image Transformer` to `Magic Image Transformer` afterwards all emojis you receive should be animated.
-
-1. Install [ImageMagick](https://imagemagick.org)
-2. Configure usage
-<img alt="Configure GIF Support" src="./documentation/setup-gifs.png" height="400">
-
-## FAQ
-<dl>
-	<dt>Why are you using SpriteFrames instead of AnimatedTexture?</dt>
-	<dd>Animated Textures are deprecated and I don't want to add deprecated stuff to a brand new lib. Better use a
-		solution that is stable on the long run. Otherwise user of the lib has to change their implementation as soon
-		as Godot decides to drop the support fully.</dd>
-	<dt>My chat messages have a short delay why?</dt>
-	<dd>There is a buffer in the implementation that send the messages one by one.
-		You can find it in the settings at `Twitch -> Websocket -> Irc -> Send Message Delay`. This setting is to prevent
-		you from accidentally get disconnected by Twitch. Values below ~310 might lead to a disconnect after 100 messages.
-	</dd>
-	<dt>Why is the generated folder commited to the repository?</dt>
-	<dd>This Library targets beginners and the API won't change much anyway. One step less for beginners of this library.</dd>
-	<dt>I changed scopes but my token is still invalid.</dt>
-	<dd>
-		The token can't auto refresh after scope changes always. In case it happens it is possible to remove the token manually or wait until the token runs up.
-		You can find the token in `user://auth.conf` it's encrypted. Just delete the file and the application will reauthorize next time.
-	</dd>
-	<dt>I want to subscribe to the event when the ads starts</dt>
-	<dd>
-		<ol>
-			<li>Check the `twitch/auth/scopes/channel` scope called `channel_read_ads`</li>
-			<li>Fille the information in `twitch/eventsub/channel_ad_break_begin/subscribed`</li>
-			<li>Then subscribe via TwitchEventListener or directly via TwitchService.</li>
-			<li>Happy event receiving</li>
-		</ol>
-	</dd>
-</dl>
-
-## See also:
-Uses a modified version of [MagicDumps](https://github.com/erodozer/magick-dumps)
-but has the same limitations.
-Changed the library to use SpriteFrames instead of AnimatedTextures
-
-Inspired by: [GIFT](https://github.com/issork/gift/)
-
-**Known Bugs**
-
-**Nice to Have**
-- Add continious deployment to Godot AssetLib
-- Implement all eventsub datastructures?
-
-**Need Support**
-Find me on https://www.twitch.tv/kani_dev/
+Twitcher V2 is released under the MIT License. See the [LICENSE](https://github.com/kanimaru/twitcher/blob/master/LICENSE) file for details.

@@ -1,0 +1,174 @@
+[gd_scene load_steps=13 format=3 uid="uid://8aaffyevs7h3"]
+
+[ext_resource type="Script" uid="uid://d03wgpor12tel" path="res://example/poll.gd" id="1_l1adj"]
+[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="2_rsdnh"]
+[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://twitch_oauth_setting.tres" id="3_vxhn7"]
+[ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="4_uhhrj"]
+[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://default_oauth_token.tres" id="5_h73vx"]
+[ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="6_v01hy"]
+[ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="7_0ntit"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="8_6trg3"]
+[ext_resource type="Script" uid="uid://bf0wi70haua35" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="9_lfp8b"]
+[ext_resource type="Script" uid="uid://blnbogtrshw4r" path="res://addons/twitcher/auth/twitch_token_handler.gd" id="10_o18lj"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/title_label_settings.tres" id="11_6ip30"]
+
+[sub_resource type="Resource" id="Resource_orn12"]
+script = ExtResource("4_uhhrj")
+used_scopes = Array[StringName]([&"channel:manage:polls", &"channel:read:polls"])
+metadata/_custom_type_script = "uid://b3n3et8mebjcc"
+
+[node name="Margin" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="TwitchService" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_rsdnh")
+oauth_setting = ExtResource("3_vxhn7")
+scopes = SubResource("Resource_orn12")
+token = ExtResource("5_h73vx")
+
+[node name="Eventsub" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+unique_name_in_owner = true
+script = ExtResource("6_v01hy")
+api = NodePath("../API")
+scopes = SubResource("Resource_orn12")
+
+[node name="API" type="Node" parent="TwitchService"]
+unique_name_in_owner = true
+script = ExtResource("7_0ntit")
+token = ExtResource("5_h73vx")
+oauth_setting = ExtResource("3_vxhn7")
+
+[node name="TwitchAuth" type="Node" parent="TwitchService"]
+script = ExtResource("8_6trg3")
+oauth_setting = ExtResource("3_vxhn7")
+token = ExtResource("5_h73vx")
+scopes = SubResource("Resource_orn12")
+metadata/_custom_type_script = "uid://iv0mgv0lu8b0"
+
+[node name="OAuth" type="Node" parent="TwitchService/TwitchAuth" node_paths=PackedStringArray("token_handler")]
+script = ExtResource("9_lfp8b")
+oauth_setting = ExtResource("3_vxhn7")
+scopes = SubResource("Resource_orn12")
+token_handler = NodePath("../TokenHandler")
+
+[node name="TokenHandler" type="Node" parent="TwitchService/TwitchAuth"]
+script = ExtResource("10_o18lj")
+oauth_setting = ExtResource("3_vxhn7")
+token = ExtResource("5_h73vx")
+
+[node name="Poll" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 30
+script = ExtResource("1_l1adj")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Poll"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="PollSetting" type="VBoxContainer" parent="Poll/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="AddTitle" type="Label" parent="Poll/HBoxContainer/PollSetting"]
+layout_mode = 2
+text = "Add a Poll"
+label_settings = ExtResource("11_6ip30")
+horizontal_alignment = 1
+
+[node name="Title" type="LineEdit" parent="Poll/HBoxContainer/PollSetting"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Title"
+
+[node name="HSeparator" type="HSeparator" parent="Poll/HBoxContainer/PollSetting"]
+layout_mode = 2
+
+[node name="Answers" type="VBoxContainer" parent="Poll/HBoxContainer/PollSetting"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Answer" type="LineEdit" parent="Poll/HBoxContainer/PollSetting/Answers" groups=["answer"]]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Answer"
+
+[node name="OptionSetting" type="VBoxContainer" parent="Poll/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionTitle" type="Label" parent="Poll/HBoxContainer/OptionSetting"]
+layout_mode = 2
+text = "Options"
+label_settings = ExtResource("11_6ip30")
+horizontal_alignment = 1
+
+[node name="ChannelPointVoting" type="HBoxContainer" parent="Poll/HBoxContainer/OptionSetting"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Poll/HBoxContainer/OptionSetting/ChannelPointVoting"]
+layout_mode = 2
+text = "With Channelpoints:"
+
+[node name="ChannelPointVoting" type="CheckButton" parent="Poll/HBoxContainer/OptionSetting/ChannelPointVoting"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ChannelPoints" type="LineEdit" parent="Poll/HBoxContainer/OptionSetting/ChannelPointVoting"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Channel Points per Vote"
+
+[node name="Duration" type="HBoxContainer" parent="Poll/HBoxContainer/OptionSetting"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Poll/HBoxContainer/OptionSetting/Duration"]
+layout_mode = 2
+text = "Duration"
+
+[node name="Duration" type="LineEdit" parent="Poll/HBoxContainer/OptionSetting/Duration"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "60"
+placeholder_text = "in seconds"
+virtual_keyboard_type = 2
+
+[node name="Send" type="Button" parent="Poll"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Send"
+
+[node name="Result" type="GridContainer" parent="Poll"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 3
+
+[node name="Title" type="Label" parent="Poll/Result"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Title"
+horizontal_alignment = 1
+
+[node name="ChannelPointVotes" type="Label" parent="Poll/Result"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Channel Point Votes"
+horizontal_alignment = 1
+
+[node name="Votes" type="Label" parent="Poll/Result"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Votes"
+horizontal_alignment = 1

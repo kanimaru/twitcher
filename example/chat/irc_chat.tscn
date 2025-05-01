@@ -1,0 +1,93 @@
+[gd_scene load_steps=19 format=3 uid="uid://5qw2frq187io"]
+
+[ext_resource type="Script" uid="uid://bxtr3pfc1xjel" path="res://example/chat/irc_chat.gd" id="1_bjj8u"]
+[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="1_jw6hb"]
+[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://twitch_oauth_setting.tres" id="3_okatg"]
+[ext_resource type="Resource" uid="uid://hqh5x62qipk8" path="res://example/chat/chat_scopes.tres" id="3_yp6d3"]
+[ext_resource type="Script" uid="uid://wkh0l2xsyapj" path="res://addons/twitcher/irc/twitch_irc.gd" id="4_llwbm"]
+[ext_resource type="Script" uid="uid://c8mv0lq0a2l8f" path="res://addons/twitcher/irc/twitch_irc_setting.gd" id="5_1si3o"]
+[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://default_oauth_token.tres" id="5_okatg"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="8_bv4ru"]
+[ext_resource type="Texture2D" uid="uid://g1dbcjksbotw" path="res://addons/twitcher/assets/fallback_texture.tres" id="8_rmi0k"]
+[ext_resource type="Script" uid="uid://6v8jnfjwbnhm" path="res://addons/twitcher/media/twitch_image_transformer.gd" id="9_xkrle"]
+[ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="10_nmebx"]
+[ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/media/twitch_media_loader.gd" id="11_le525"]
+[ext_resource type="Script" uid="uid://bf0wi70haua35" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="11_vvdv3"]
+[ext_resource type="Script" uid="uid://cva5e053boj4u" path="res://addons/twitcher/irc/twitch_irc_channel.gd" id="11_y0yp4"]
+[ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://example/chat_view.tscn" id="12_8andf"]
+[ext_resource type="Script" uid="uid://blnbogtrshw4r" path="res://addons/twitcher/auth/twitch_token_handler.gd" id="12_xdjrn"]
+
+[sub_resource type="Resource" id="Resource_ci754"]
+script = ExtResource("9_xkrle")
+fallback_texture = ExtResource("8_rmi0k")
+
+[sub_resource type="Resource" id="Resource_8andf"]
+script = ExtResource("5_1si3o")
+username = ""
+auto_join_channels = Array[StringName]([])
+server = "wss://irc-ws.chat.twitch.tv:443"
+send_message_delay_ms = 320
+capabilities = 5
+
+[node name="IrcChat" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bjj8u")
+
+[node name="TwitchService" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("1_jw6hb")
+oauth_setting = ExtResource("3_okatg")
+scopes = ExtResource("3_yp6d3")
+token = ExtResource("5_okatg")
+
+[node name="TwitchAPI" type="Node" parent="TwitchService"]
+script = ExtResource("10_nmebx")
+token = ExtResource("5_okatg")
+oauth_setting = ExtResource("3_okatg")
+metadata/_custom_type_script = "uid://cw30cwveway65"
+
+[node name="TwitchMediaLoader" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+script = ExtResource("11_le525")
+api = NodePath("../TwitchAPI")
+image_transformer = SubResource("Resource_ci754")
+metadata/_custom_type_script = "uid://d4lyup0vy1wtu"
+
+[node name="TwitchAuth" type="Node" parent="TwitchService"]
+script = ExtResource("8_bv4ru")
+oauth_setting = ExtResource("3_okatg")
+token = ExtResource("5_okatg")
+scopes = ExtResource("3_yp6d3")
+metadata/_custom_type_script = "uid://iv0mgv0lu8b0"
+
+[node name="OAuth" type="Node" parent="TwitchService/TwitchAuth" node_paths=PackedStringArray("token_handler")]
+script = ExtResource("11_vvdv3")
+oauth_setting = ExtResource("3_okatg")
+scopes = ExtResource("3_yp6d3")
+token_handler = NodePath("../TokenHandler")
+
+[node name="TokenHandler" type="Node" parent="TwitchService/TwitchAuth"]
+script = ExtResource("12_xdjrn")
+oauth_setting = ExtResource("3_okatg")
+token = ExtResource("5_okatg")
+
+[node name="TwitchIRC" type="Node" parent="TwitchService"]
+unique_name_in_owner = true
+script = ExtResource("4_llwbm")
+setting = SubResource("Resource_8andf")
+token = ExtResource("5_okatg")
+metadata/_custom_type_script = "uid://wkh0l2xsyapj"
+
+[node name="TwitchIrcChannel" type="Node" parent="." node_paths=PackedStringArray("twitch_service")]
+unique_name_in_owner = true
+script = ExtResource("11_y0yp4")
+twitch_service = NodePath("../TwitchService")
+metadata/_custom_type_script = "uid://cva5e053boj4u"
+
+[node name="ChatView" parent="." instance=ExtResource("12_8andf")]
+unique_name_in_owner = true
+layout_mode = 1

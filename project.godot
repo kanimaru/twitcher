@@ -11,18 +11,39 @@ config_version=5
 [application]
 
 config/name="Twitcher"
-run/main_scene="res://example/chat.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
-config/icon="res://documentation/icon.png"
+run/main_scene="res://example/chat/eventsub_chat.tscn"
+config/features=PackedStringArray("4.4", "Forward Plus")
+config/icon="uid://pnr400301dhc"
 
-[autoload]
+[debug]
 
-HttpClientManager="*res://addons/twitcher/communication/http_client_manager.gd"
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/inferred_declaration=1
+gdscript/warnings/unsafe_property_access=1
+gdscript/warnings/unsafe_method_access=1
+gdscript/warnings/unsafe_cast=1
+gdscript/warnings/unsafe_call_argument=1
+
+[display]
+
+window/size/transparent=true
+window/per_pixel_transparency/allowed=true
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/twitcher/plugin.cfg")
 
-[twitch]
+[twitcher]
 
-general/images/image_transformer="NativeImageTransformer"
+logs/TwitchChat="debug"
+logs/TwitchAPI="debug"
+logs/TwitchService="debug"
+logs/Http="debug"
+logs/TwitchAuth="debug"
+logs/TwitchIRC="debug"
+logs/TwitchImageTransformer="debug"
+logs/TwitchMediaLoader="debug"
+editor/default_scopes="res://twitch_scopes.tres"
+editor/project_preset=&"Overlay"
+editor/editor_token="res://default_oauth_token.tres"
+editor/oauth_setting="res://twitch_oauth_setting.tres"
