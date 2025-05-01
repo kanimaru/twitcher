@@ -188,7 +188,6 @@ func get_current_user() -> TwitchUser:
 	_current_user = user_data.data[0]
 	return _current_user
 
-
 ## Get the image of an user
 func load_profile_image(user: TwitchUser) -> ImageTexture:
 	return await media_loader.load_profile_image(user)
