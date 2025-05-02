@@ -43,6 +43,8 @@ static var instance: TwitchService
 @onready var irc: TwitchIRC
 @onready var media_loader: TwitchMediaLoader
 
+var _user_cache: Dictionary[String, TwitchUser] = {}
+
 ## Cache for the current user so that no roundtrip has to be done every time get_current_user will be called
 var _current_user: TwitchUser
 
@@ -150,6 +152,7 @@ func _on_unauthenticated() -> void:
 
 ## Get data about a user by USER_ID see get_user for by username
 func get_user_by_id(user_id: String) -> TwitchUser:
+	if _user_cache.has(user_id): return _user_cache[user_id]
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
@@ -158,11 +161,15 @@ func get_user_by_id(user_id: String) -> TwitchUser:
 	opt.id = [user_id] as Array[String]
 	var user_data : TwitchGetUsers.Response = await api.get_users(opt)
 	if user_data.data.is_empty(): return null
-	return user_data.data[0]
+	var user: TwitchUser = user_data.data[0]
+	_user_cache[user_id] = user
+	return user
 
 
 ## Get data about a user by USERNAME see get_user_by_id for by user_id
 func get_user(username: String) -> TwitchUser:
+	username = username.trim_prefix("@")
+	if _user_cache.has(username): return _user_cache[username]
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
@@ -172,7 +179,10 @@ func get_user(username: String) -> TwitchUser:
 	if user_data.data.is_empty():
 		_log.e("Username was not found: %s" % username)
 		return null
-	return user_data.data[0]
+	var user: TwitchUser = user_data.data[0]
+	_user_cache[username] = user
+	return user
+
 
 
 ## Get data about a currently authenticated user (caches the value)
