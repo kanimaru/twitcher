@@ -93,8 +93,8 @@ func _on_event(type: StringName, data: Dictionary) -> void:
 	if type == TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE.value:
 		if where & WhereFlag.CHAT != WhereFlag.CHAT: return
 		var message : String = data.message.text
-		var username : String = data.chatter_user_name
-		var channel_name : String = data.broadcaster_user_name
+		var username : String = data.chatter_user_login
+		var channel_name : String = data.broadcaster_user_login
 		if not _should_handle(message, username, channel_name): return
 		var chat_message = TwitchChatMessage.from_json(data)
 		_handle_command(username, message, channel_name, chat_message)
