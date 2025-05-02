@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://c4vxnmsvwsytd" path="res://example/eventsub.gd" id="1_xhllw"]
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="2_rsm4n"]
-[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://twitch_oauth_setting.tres" id="3_33cbv"]
+[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://addons/twitcher/twitch_oauth_setting.tres" id="3_33cbv"]
 [ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="4_ln4am"]
-[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://default_oauth_token.tres" id="5_5jcsy"]
+[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://addons/twitcher/default_oauth_token.tres" id="5_5jcsy"]
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="5_t2qpq"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="8_7v820"]
 [ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="8_33cbv"]

@@ -144,8 +144,8 @@ text = "Auth File Path:"
 [node name="OauthSettingFileSelect" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/GameSetting" instance=ExtResource("3_dbhpx")]
 unique_name_in_owner = true
 layout_mode = 2
-default_path = "res://twitch_oauth_setting.tres"
-path = "res://twitch_oauth_setting.tres"
+default_path = "res://addons/twitcher/twitch_oauth_setting.tres"
+path = "res://addons/twitcher/twitch_oauth_setting.tres"
 filters = PackedStringArray("*.tres", "*.res")
 
 [node name="TokenLabel" type="Label" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/GameSetting"]
@@ -155,8 +155,8 @@ text = "Token File Path:"
 [node name="TokenFileSelect" parent="Layout/PanelContainer/MarginContainer/VBoxContainer/GameSetting" instance=ExtResource("3_dbhpx")]
 unique_name_in_owner = true
 layout_mode = 2
-default_path = "res://twitch_oauth_token.tres"
-path = "res://twitch_oauth_token.tres"
+default_path = "res://addons/twitcher/default_oauth_token.tres"
+path = "res://addons/twitcher/default_oauth_token.tres"
 filters = PackedStringArray("*.tres", "*.res")
 
 [node name="HSeparator" type="HSeparator" parent="Layout/PanelContainer/MarginContainer/VBoxContainer"]
