@@ -122,6 +122,7 @@ func _init() -> void:
 	_client.connection_url = eventsub_live_server_url
 	_client.message_received.connect(_data_received)
 	_client.connection_established.connect(_on_connection_established)
+	_client.connection_closed.connect(_on_connection_closed)
 	_test_client.connection_url = eventsub_test_server_url
 	_test_client.message_received.connect(_data_received)
 
@@ -172,6 +173,10 @@ func _on_connection_established() -> void:
 		_log.i("Connection established -> resubscribe to: [%s]" % [_subscriptions])
 		for sub in _subscriptions: _add_action(sub, true)
 	_execute_action_stack()
+
+
+func _on_connection_closed() -> void:
+	session = null
 
 
 func open_connection() -> void:

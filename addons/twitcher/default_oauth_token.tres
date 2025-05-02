@@ -6,5 +6,5 @@
 [resource]
 script = ExtResource("2_phbii")
 _crypto_key_provider = ExtResource("1_byqke")
-_identifier = "Auth-4924"
+_identifier = "DefaultAuth"
 _cache_path = "user://auth.conf"

@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="1_6jm7q"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="1_yq54x"]
-[ext_resource type="Resource" uid="uid://fcmfkstye4bq" path="res://addons/twitcher/auth/preset_overlay_scopes.tres" id="2_n5rs1"]
-[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://twitch_oauth_setting.tres" id="2_v2pwk"]
+[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://addons/twitcher/twitch_oauth_setting.tres" id="2_v2pwk"]
+[ext_resource type="Resource" uid="uid://fcmfkstye4bq" path="res://addons/twitcher/auth/preset_overlay_scopes.tres" id="3_n5rs1"]
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="3_x3t7l"]
-[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://default_oauth_token.tres" id="4_j0p3d"]
+[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://addons/twitcher/default_oauth_token.tres" id="4_j0p3d"]
 [ext_resource type="Script" uid="uid://bf0wi70haua35" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="8_v2pwk"]
 [ext_resource type="Script" uid="uid://blnbogtrshw4r" path="res://addons/twitcher/auth/twitch_token_handler.gd" id="9_n5rs1"]
 [ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="10_bqnqx"]
@@ -20,12 +20,13 @@ fallback_texture = ExtResource("11_j0p3d")
 [node name="TwitchService" type="Node"]
 script = ExtResource("1_6jm7q")
 oauth_setting = ExtResource("2_v2pwk")
+scopes = ExtResource("3_n5rs1")
 token = ExtResource("4_j0p3d")
 
 [node name="EventSub" type="Node" parent="." node_paths=PackedStringArray("api")]
 script = ExtResource("3_x3t7l")
 api = NodePath("../API")
-scopes = ExtResource("2_n5rs1")
+scopes = ExtResource("3_n5rs1")
 
 [node name="API" type="Node" parent="."]
 script = ExtResource("1_yq54x")
@@ -36,12 +37,12 @@ oauth_setting = ExtResource("2_v2pwk")
 script = ExtResource("10_bqnqx")
 oauth_setting = ExtResource("2_v2pwk")
 token = ExtResource("4_j0p3d")
-scopes = ExtResource("2_n5rs1")
+scopes = ExtResource("3_n5rs1")
 
 [node name="OAuth" type="Node" parent="Auth" node_paths=PackedStringArray("token_handler")]
 script = ExtResource("8_v2pwk")
 oauth_setting = ExtResource("2_v2pwk")
-scopes = ExtResource("2_n5rs1")
+scopes = ExtResource("3_n5rs1")
 token_handler = NodePath("../TokenHandler")
 
 [node name="TokenHandler" type="Node" parent="Auth"]
