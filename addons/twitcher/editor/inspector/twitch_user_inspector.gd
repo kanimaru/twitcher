@@ -30,6 +30,7 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 			authorize_editor.oauth_setting = TwitchEditorSettings.editor_oauth_setting
 			authorize_editor.oauth_token = TwitchEditorSettings.editor_oauth_token
 			authorize_editor.disabled = not TwitchEditorSettings.editor_oauth_setting.is_valid()
+			authorize_editor.authorized.connect(_on_authorized.bind(object))
 			
 			var hbox: HBoxContainer = HBoxContainer.new()
 			hbox.add_child(info_label)
@@ -39,3 +40,7 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 		
 	return false
 	
+
+func _on_authorized(object: Object) -> void:
+	EditorInterface.get_inspector().edit(null)
+	EditorInterface.get_inspector().edit(object)
