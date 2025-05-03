@@ -36,6 +36,8 @@ var current_setup_window: Node
 func _enter_tree():
 	_log.i("Start Twitcher loading...")
 	TwitchEditorSettings.setup()
+	
+	token_inspector.token_info_scene = preload("res://addons/twitcher/editor/inspector/twitch_token_info.tscn")
 		
 	add_tool_menu_item(REGENERATE_API_LABEL, generate_api)
 	add_tool_menu_item(OPEN_SETUP_LABEL, open_setup)

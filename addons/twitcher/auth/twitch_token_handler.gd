@@ -37,3 +37,14 @@ func _validate_token() -> void:
 	if response_data["expires_in"] <= 0:
 		refresh_tokens()
 		return
+
+
+func revoke_token() -> void:
+	var request = _http_client.request("https://id.twitch.tv/oauth2/revoke", HTTPClient.METHOD_POST, 
+		{ "Content-Type": "application/x-www-form-urlencoded" }, 
+		"client_id=%s&token=%s" % [oauth_setting.client_id, await token.get_access_token()])
+	var response: BufferedHTTPClient.ResponseData = await _http_client.wait_for_request(request)
+	if response.error:
+		var response_message = response.response_data.get_string_from_utf8()
+		logError("Couldn't revoke Token cause of: %s" % response_message)
+	token.remove_tokens()
