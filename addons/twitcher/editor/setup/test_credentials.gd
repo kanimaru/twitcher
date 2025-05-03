@@ -14,11 +14,9 @@ signal authorized
 
 func _ready() -> void:
 	pressed.connect(_pressed)
-	update_oauth_setting(oauth_setting)
-	update_oauth_token(oauth_token)
-	twitch_auth.oauth_setting = TwitchEditorSettings.editor_oauth_setting
-	twitch_auth.token = TwitchEditorSettings.editor_oauth_token
-
+	oauth_setting = TwitchEditorSettings.editor_oauth_setting
+	oauth_token = TwitchEditorSettings.editor_oauth_token
+	
 
 func _pressed() -> void:
 	TwitchTweens.loading(self)

@@ -37,8 +37,6 @@ var _requesting_token: bool = false
 var _expiration_check_timer: Timer
 
 func _ready() -> void:
-	if token == null: token = OAuthToken.new()
-	
 	_http_client = OAuthHTTPClient.new()
 	_http_client.name = "OAuthTokenClient"
 	add_child(_http_client)
@@ -51,6 +49,8 @@ func _ready() -> void:
 	
 	
 func _enter_tree() -> void:
+	if token == null: token = OAuthToken.new()
+	
 	# When the token changed externally it need's to update the refresh timeout
 	token.changed.connect(update_expiration_check)
 
