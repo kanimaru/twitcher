@@ -238,32 +238,47 @@ func get_subscriptions() -> Array[TwitchEventsubConfig]:
 
 #region Chat
 
-func chat(message: String, target_broadcaster_id: String = "", sender_id: String = "") -> void:
-	if sender_id == "":
-		var current_user = await get_current_user()
-		sender_id = current_user.id
-	if target_broadcaster_id == "": 
-		var current_user = await get_current_user()
-		target_broadcaster_id = current_user.id
-	var body = TwitchSendChatMessage.Body.create(target_broadcaster_id, sender_id, message)
+func chat(message: String, broadcaster: TwitchUser = null, sender: TwitchUser = null) -> void:
+	var current_user = await get_current_user()
+	if not sender:
+		if not current_user: return
+		sender = current_user
+	if not broadcaster: 
+		if not current_user: return
+		broadcaster = current_user
+	var body = TwitchSendChatMessage.Body.create(broadcaster.id, sender.id, message)
 	api.send_chat_message(body)
 
 
 ## Sends out a shoutout to a specific user
-func shoutout(user: TwitchUser) -> void:
-	var broadcaster_id = api.default_broadcaster_login
-	if broadcaster_id == "": return
-	api.send_a_shoutout(broadcaster_id, user.id, broadcaster_id)
+func shoutout(user: TwitchUser, broadcaster: TwitchUser = null, moderator: TwitchUser = null) -> void:
+	var current_user: TwitchUser = await get_current_user()
+	
+	if not broadcaster:
+		if not current_user: return
+		broadcaster = current_user
+		
+	if not moderator:
+		if not current_user: return
+		moderator = current_user
+	api.send_a_shoutout(broadcaster.id, moderator.id, user.id)
 
 
 ## Sends a announcement message to the chat
-func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY):
-	var broadcaster_id = api.default_broadcaster_login
-	if broadcaster_id == "": return
+func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, broadcaster: TwitchUser = null, moderator: TwitchUser = null):
+	var current_user: TwitchUser = await get_current_user()
+	if not broadcaster:
+		if not current_user: return
+		broadcaster = current_user
+	
+	if not moderator:
+		if not current_user: return
+		moderator = current_user
+	
 	var body = TwitchSendChatAnnouncement.Body.new()
 	body.message = message
 	body.color = color.value
-	api.send_chat_announcement(body, broadcaster_id, broadcaster_id)
+	api.send_chat_announcement(body, moderator.id, broadcaster.id)
 
 
 ## Add a new command handler and register it for a command.
