@@ -10,13 +10,13 @@ const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor
 
 @onready var twitch_auth: TwitchAuth = %TwitchAuth
 
+signal authorized
+
 func _ready() -> void:
 	pressed.connect(_pressed)
-	update_oauth_setting(oauth_setting)
-	update_oauth_token(oauth_token)
-	twitch_auth.oauth_setting = TwitchEditorSettings.editor_oauth_setting
-	twitch_auth.token = TwitchEditorSettings.editor_oauth_token
-
+	oauth_setting = TwitchEditorSettings.editor_oauth_setting
+	oauth_token = TwitchEditorSettings.editor_oauth_token
+	
 
 func _pressed() -> void:
 	TwitchTweens.loading(self)
@@ -27,6 +27,7 @@ func _pressed() -> void:
 			test_response.text = "Credentials are valid!"
 			test_response.add_theme_color_override(&"font_color", Color.GREEN)
 		TwitchTweens.flash(self, Color.GREEN)
+		authorized.emit()
 	else:
 		if test_response:
 			test_response.text = "Credentials are invalid!"

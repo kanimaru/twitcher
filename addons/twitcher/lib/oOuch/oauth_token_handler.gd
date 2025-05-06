@@ -25,7 +25,7 @@ signal unauthenticated()
 @export var oauth_setting: OAuthSetting
 
 ## Holds the current set of tokens
-@export var token: OAuthToken
+@export var token: OAuthToken: set = _update_token
 
 ## Client to request new tokens
 var _http_client : OAuthHTTPClient
@@ -37,8 +37,6 @@ var _requesting_token: bool = false
 var _expiration_check_timer: Timer
 
 func _ready() -> void:
-	if token == null: token = OAuthToken.new()
-	
 	_http_client = OAuthHTTPClient.new()
 	_http_client.name = "OAuthTokenClient"
 	add_child(_http_client)
@@ -51,12 +49,23 @@ func _ready() -> void:
 	
 	
 func _enter_tree() -> void:
-	# When the token changed externally it need's to update the refresh timeout
-	token.changed.connect(update_expiration_check)
+	if not is_instance_valid(token):
+		token = OAuthToken.new()
+	else:
+		token.changed.connect(update_expiration_check)
 
 
 func _exit_tree() -> void:
-	token.changed.disconnect(update_expiration_check)
+	if is_instance_valid(token):
+		token.changed.disconnect(update_expiration_check)
+
+
+func _update_token(val: OAuthToken) -> void:
+	if is_instance_valid(token) and is_inside_tree():
+		token.changed.disconnect(update_expiration_check)
+	token = val
+	if is_instance_valid(token) and is_inside_tree():
+		token.changed.connect(update_expiration_check)
 
 
 func update_expiration_check() -> void:
@@ -69,7 +78,7 @@ func update_expiration_check() -> void:
 	logDebug("Refresh token (%s) in %s seconds" % [token._identifier, roundf(_expiration_check_timer.wait_time)])
 
 
-## Checks if tokens expires and starts refreshing it. (called often hold footprint small)
+## Checks if tokens expires and starts refreshing it. (called often hold footprintt small)
 func _check_token_refresh() -> void:
 	if _requesting_token: return
 

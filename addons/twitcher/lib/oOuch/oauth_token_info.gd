@@ -1,11 +1,9 @@
 @tool
 extends Node
 
-const Token = preload("res://addons/twitcher/lib/oOuch/oauth_token.gd")
-
 signal revoked
 
-@export var token: Token
+@export var token: OAuthToken: set = _update_token
 
 @onready var title: Label = %Title
 @onready var token_valid_value: Label = %TokenValidValue
@@ -19,10 +17,27 @@ func _ready() -> void:
 	if token == null:
 		_reset_token()
 		return
-	token.changed.connect(_on_token_changed)
 	update_token_view()
 	revoke_button.pressed.connect(_on_revoke_pressed)
 	reload_button.pressed.connect(_on_reload_pressed)
+	
+	
+func _enter_tree() -> void:
+	if is_instance_valid(token):
+		token.changed.connect(_on_token_changed)
+	
+	
+func _exit_tree() -> void:
+	if is_instance_valid(token):
+		token.changed.disconnect(_on_token_changed)
+	
+	
+func _update_token(val: OAuthToken) -> void:
+	if is_instance_valid(token):
+		token.changed.disconnect(_on_token_changed)
+	token = val
+	if is_instance_valid(token) and is_inside_tree():
+		token.changed.connect(_on_token_changed)
 	
 	
 func update_token_view() -> void:

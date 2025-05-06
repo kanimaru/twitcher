@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://c7qvkjw425jaf"]
+
+[ext_resource type="PackedScene" uid="uid://6d2jst8ga4le" path="res://addons/twitcher/lib/oOuch/oauth_token_info.tscn" id="1_0mxfe"]
+[ext_resource type="Script" uid="uid://c8no6da8ae0xt" path="res://addons/twitcher/editor/inspector/twitch_token_info.gd" id="2_kejyg"]
+
+[node name="TokenInfo" instance=ExtResource("1_0mxfe")]
+script = ExtResource("2_kejyg")
