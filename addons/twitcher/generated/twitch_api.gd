@@ -75,12 +75,12 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 	else:
 		request_body = JSON.stringify(body)
 
-	var request: BufferedHTTPClient.RequestData = client.request(api_host + path, method, header, request_body)
-	var response: BufferedHTTPClient.ResponseData = await client.wait_for_request(request)
+	var req: BufferedHTTPClient.RequestData = client.request(api_host + path, method, header, request_body)
+	var res: BufferedHTTPClient.ResponseData = await client.wait_for_request(req)
 
-	match response.response_code:
+	match res.response_code:
 		400:
-			var error_message: String = response.response_data.get_string_from_utf8()
+			var error_message: String = res.response_data.get_string_from_utf8()
 			_log.e("'%s' failed cause of: \n%s" % [path, error_message])
 		401: # Token expired / or missing permissions
 			_log.e("'%s' is unauthorized. It is probably your scopes." % path)
@@ -94,10 +94,10 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 			else:
 				# Give up the request after trying multiple times and
 				# return an empty response with correct error code
-				var empty_response: BufferedHTTPClient.ResponseData = client.empty_response(request)
-				empty_response.response_code = response.response_code
+				var empty_response: BufferedHTTPClient.ResponseData = client.empty_response(req)
+				empty_response.response_code = res.response_code
 				return empty_response
-	return response
+	return res
 
 
 ## Converts unix timestamp to RFC 3339 (example: 2021-10-27T00:00:00Z) when passed a string uses as is
