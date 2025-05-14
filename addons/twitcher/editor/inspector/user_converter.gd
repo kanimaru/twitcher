@@ -7,7 +7,7 @@ const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 @onready var _login: LineEdit = %Login
 @onready var _id: LineEdit = %Id
 @onready var _swap_view: Button = %SwapView
-@onready var _debounce: Timer = %Debounce
+@onready var search: Button = %Search
 
 @export var user: TwitchUser
 
@@ -33,10 +33,13 @@ signal changed(user: TwitchUser)
 
 func _ready() -> void:
 	_login.text_changed.connect(_on_login_changed)
+	_login.text_submitted.connect(_on_text_submitted)
 	_id.text_changed.connect(_on_id_changed)
+	_id.text_submitted.connect(_on_text_submitted)
 	_swap_view.pressed.connect(_on_swap_view)
-	_debounce.timeout.connect(_on_changed)
 	_load_current_user()
+	search.icon = EditorInterface.get_editor_theme().get_icon(&"Search", &"EditorIcons")
+	search.pressed.connect(_on_changed)
 
 
 ## Experimental tries to load user from api key
@@ -64,27 +67,16 @@ func _on_swap_view() -> void:
 
 func _on_id_changed(new_text: String) -> void:
 	_login.text = ""
-	TwitchTweens.loading(self)
-	_debounce.start()
+	TwitchTweens.loading(self, Color.AQUA)
 	
 	
 func _on_login_changed(new_text: String) -> void:
 	_id.text = ""
-	TwitchTweens.loading(self)
-	_debounce.start()
+	TwitchTweens.loading(self, Color.AQUA)
 
 
 func reload() -> void:
 	TwitchTweens.loading(self)
-	_on_changed()
-
-
-func update_user(user: TwitchUser) -> void:
-	user_login = user.login
-	user_id = user.id
-
-
-func _on_changed() -> void:
 	var new_user_login: String = _login.text
 	var new_user_id: String = _id.text
 	if new_user_id == "" && new_user_login == "":
@@ -106,8 +98,20 @@ func _on_changed() -> void:
 			await TwitchTweens.flash(self, Color.GREEN)
 			user_login = user.login
 			user_id = user.id
-		
-		changed.emit(user)
+			changed.emit(user)
+
+
+func update_user(user: TwitchUser) -> void:
+	user_login = user.login
+	user_id = user.id
+
+
+func _on_text_submitted(new_text: String) -> void:
+	reload()
+
+
+func _on_changed() -> void:
+	reload()
 
 
 func _get_user(get_user_opt: TwitchGetUsers.Opt) -> TwitchUser:
