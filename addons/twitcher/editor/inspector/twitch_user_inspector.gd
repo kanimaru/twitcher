@@ -9,7 +9,7 @@ const TestCredentials = preload("res://addons/twitcher/editor/setup/test_credent
 func _can_handle(object: Object) -> bool:
 	return true
 	
-	
+
 func _parse_property(object: Object, type: Variant.Type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
 	if hint_string == "TwitchUser":
 		
@@ -27,10 +27,8 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 			
 			var authorize_editor: TestCredentials = TEST_CREDENTIALS.instantiate()
 			authorize_editor.text = "Authorize Editor"
-			authorize_editor.oauth_setting = TwitchEditorSettings.editor_oauth_setting
-			authorize_editor.oauth_token = TwitchEditorSettings.editor_oauth_token
-			authorize_editor.disabled = not TwitchEditorSettings.editor_oauth_setting.is_valid()
-			authorize_editor.authorized.connect(_on_authorized.bind(object))
+			authorize_editor.authorized.connect(_on_authorized.bind(object), CONNECT_DEFERRED)
+			
 			
 			var hbox: HBoxContainer = HBoxContainer.new()
 			hbox.add_child(info_label)
