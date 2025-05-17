@@ -29,6 +29,10 @@ class RequestData extends RefCounted:
 	var body: String = ""
 	## Amount of retries
 	var retry: int
+	
+	## When you are done free the request
+	func queue_free() -> void:
+		http_request.queue_free()
 
 
 ## Contains the response data
@@ -45,6 +49,10 @@ class ResponseData extends RefCounted:
 	var response_header: Dictionary
 	## Had the response an error
 	var error: bool
+	
+	## When you are done free the request
+	func queue_free() -> void:
+		request_data.queue_free()
 
 ## When a request fails max_error_count then cancel that request -1 for endless amount of tries.
 @export var max_error_count : int = -1
@@ -93,6 +101,7 @@ func wait_for_request(request_data: RequestData) -> ResponseData:
 	if responses.has(request_data):
 		var response = responses[request_data]
 		responses.erase(request_data)
+		request_data.queue_free()
 		logDebug("response cached return directly from wait")
 		return response
 
@@ -101,6 +110,7 @@ func wait_for_request(request_data: RequestData) -> ResponseData:
 		latest_response = await request_done
 	logDebug("response received return from wait")
 	responses.erase(request_data)
+	request_data.queue_free()
 	return latest_response
 
 
