@@ -117,8 +117,6 @@ class SubscriptionAction extends RefCounted:
 
 
 func _init() -> void:
-	_log.enabled = true
-	_log.debug = true
 	_client.connection_url = eventsub_live_server_url
 	_client.message_received.connect(_data_received)
 	_client.connection_established.connect(_on_connection_established)
