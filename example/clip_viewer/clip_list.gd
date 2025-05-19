@@ -17,7 +17,6 @@ var _selected_username: String
 
 
 func _ready() -> void:
-	_log.enabled = true
 	username.text_submitted.connect(_on_text_changed)
 	search.pressed.connect(_on_search)
 
