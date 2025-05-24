@@ -170,7 +170,7 @@ func _pack_headers(headers: Dictionary) -> PackedStringArray:
 
 ## The amount of requests that are pending
 func queued_request_size() -> int:
-	var requests_size = requests.size()
+	var requests_size: int = requests.size()
 	if current_request != null:
 		requests_size += 1
 	return requests_size
