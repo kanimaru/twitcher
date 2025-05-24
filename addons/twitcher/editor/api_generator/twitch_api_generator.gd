@@ -87,6 +87,10 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 	var req: BufferedHTTPClient.RequestData = client.request(api_host + path, method, header, request_body)
 	var res: BufferedHTTPClient.ResponseData = await client.wait_for_request(req)
 
+	# Try to fix Godot TLS Bug
+	if res.result == 5:
+		return await retry(req, res, path, method, body, content_type, error_count + 1)
+
 	match res.response_code:
 		400:
 			var error_message: String = res.response_data.get_string_from_utf8()
@@ -98,15 +102,25 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 			_log.i("'%s' is unauthenticated. Refresh token." % path)
 			unauthenticated.emit()
 			await token.authorized
-			if error_count + 1 < MAX_AUTH_ERRORS:
-				return await request(path, method, body, content_type, error_count + 1)
-			else:
-				# Give up the request after trying multiple times and
-				# return an empty response with correct error code
-				var empty_response: BufferedHTTPClient.ResponseData = client.empty_response(req)
-				empty_response.response_code = res.response_code
-				return empty_response
+			return await retry(req, res, path, method, body, content_type, error_count + 1)
 	return res
+
+
+func retry(request: BufferedHTTPClient.RequestData,
+		response: BufferedHTTPClient.ResponseData,
+		path: String,
+		method: int,
+		body: Variant = "",
+		content_type: String = "",
+		error_count: int = 0) -> BufferedHTTPClient.ResponseData:
+	if error_count + 1 < MAX_AUTH_ERRORS:
+		return await request(path, method, body, content_type, error_count + 1)
+	else:
+		# Give up the request after trying multiple times and
+		# return an empty response with correct error code
+		var empty_response: BufferedHTTPClient.ResponseData = client.empty_response(request)
+		empty_response.response_code = response.response_code
+		return empty_response
 
 
 ## Converts unix timestamp to RFC 3339 (example: 2021-10-27T00:00:00Z) when passed a string uses as is
