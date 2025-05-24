@@ -1,6 +1,8 @@
 @tool
 extends HBoxContainer
 
+class_name UserConverter
+
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 
@@ -10,6 +12,8 @@ const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 @onready var search: Button = %Search
 
 @export var user: TwitchUser
+@export var token: OAuthToken
+@export var setting: OAuthSetting
 
 static var _current_user: TwitchUser
 
@@ -32,13 +36,15 @@ signal changed(user: TwitchUser)
 
 
 func _ready() -> void:
+	if token == null: token = TwitchEditorSettings.editor_oauth_token
+	if setting == null: setting = TwitchEditorSettings.editor_oauth_setting
+	
 	_login.text_changed.connect(_on_login_changed)
 	_login.text_submitted.connect(_on_text_submitted)
 	_id.text_changed.connect(_on_id_changed)
 	_id.text_submitted.connect(_on_text_submitted)
 	_swap_view.pressed.connect(_on_swap_view)
 	_load_current_user()
-	search.icon = EditorInterface.get_editor_theme().get_icon(&"Search", &"EditorIcons")
 	search.pressed.connect(_on_changed)
 
 
@@ -116,8 +122,8 @@ func _on_changed() -> void:
 
 func _get_user(get_user_opt: TwitchGetUsers.Opt) -> TwitchUser:
 	var api: TwitchAPI = TwitchAPI.new()
-	api.token = TwitchEditorSettings.editor_oauth_token
-	api.oauth_setting = TwitchEditorSettings.editor_oauth_setting
+	api.token = token
+	api.oauth_setting = setting
 	add_child(api)
 	var response: TwitchGetUsers.Response = await api.get_users(get_user_opt)
 	var data: Array[TwitchUser] = response.data
@@ -126,4 +132,3 @@ func _get_user(get_user_opt: TwitchGetUsers.Opt) -> TwitchUser:
 		return null
 	remove_child(api)
 	return data[0]
-	
