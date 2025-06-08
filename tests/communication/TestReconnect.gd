@@ -1,5 +1,7 @@
 extends Node
 
+# Experimental Not Maintained
+
 @onready var start_button: Button = %Start
 @onready var connect_button: Button = %Connect
 @onready var stop_button: Button = %Stop
@@ -10,7 +12,7 @@ var server: HTTPServer;
 var client: BufferedHTTPClient;
 
 func _ready() -> void:
-	server = HTTPServer.new(12233);
+	server = HTTPServer.new();
 	server.request_received.connect(_process_request)
 	connect_button.pressed.connect(_connect_to_server);
 	start_button.pressed.connect(_start_server);
