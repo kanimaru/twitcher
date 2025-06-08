@@ -88,6 +88,7 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 			_log.e("'%s' failed cause of: \n%s" % [path, error_message])
 		401: # Token expired / or missing permissions
 			_log.e("'%s' is unauthorized. It is probably your scopes." % path)
+			_log.d("Error: %s" % res.response_data.get_string_from_utf8())
 			unauthorized.emit()
 		403:
 			_log.i("'%s' is unauthenticated. Refresh token." % path)
