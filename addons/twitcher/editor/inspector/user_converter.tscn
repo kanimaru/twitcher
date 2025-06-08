@@ -1,13 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://cus81w3pidhjo"]
+[gd_scene load_steps=5 format=3 uid="uid://cus81w3pidhjo"]
 
 [ext_resource type="Script" uid="uid://b6qdiwr7rawx1" path="res://addons/twitcher/editor/inspector/user_converter.gd" id="1_ior8m"]
+[ext_resource type="Resource" path="user://editor_oauth_token.tres" id="2_nr3nt"]
 [ext_resource type="Texture2D" uid="uid://1e6nrtqsuc6" path="res://addons/twitcher/assets/icon_search.tres" id="2_t7vdb"]
+[ext_resource type="Resource" path="user://editor_oauth_setting.tres" id="3_f1bkq"]
 
 [node name="UserConverter" type="HBoxContainer"]
 offset_right = 40.0
 offset_bottom = 40.0
 size_flags_horizontal = 3
 script = ExtResource("1_ior8m")
+token = ExtResource("2_nr3nt")
+setting = ExtResource("3_f1bkq")
 
 [node name="Login" type="LineEdit" parent="."]
 unique_name_in_owner = true
