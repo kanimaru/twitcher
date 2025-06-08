@@ -22,8 +22,6 @@ const ChatView = preload("res://example/chat_view.gd")
 ## Help Command
 @onready var twitch_command_help: TwitchCommandHelp = %TwitchCommandHelp
 
-@export var token: OAuthToken
-
 
 func _ready() -> void:
 	if twitch_service.oauth_setting.client_id == "":
