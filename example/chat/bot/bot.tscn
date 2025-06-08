@@ -1,0 +1,225 @@
+[gd_scene load_steps=29 format=3 uid="uid://b6xlipik58bxi"]
+
+[ext_resource type="Script" uid="uid://cim8ebgflkr0p" path="res://example/chat/bot/bot.gd" id="1_kc3kp"]
+[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="2_u8kpy"]
+[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://addons/twitcher/twitch_oauth_setting.tres" id="3_3nh3c"]
+[ext_resource type="Resource" uid="uid://hqh5x62qipk8" path="res://example/chat/chat_scopes.tres" id="4_s1cft"]
+[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://addons/twitcher/default_oauth_token.tres" id="5_bb4ci"]
+[ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="6_bpdiv"]
+[ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="7_sdbsj"]
+[ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/media/twitch_media_loader.gd" id="8_goiii"]
+[ext_resource type="Texture2D" uid="uid://g1dbcjksbotw" path="res://addons/twitcher/assets/fallback_texture.tres" id="9_l026m"]
+[ext_resource type="Script" uid="uid://ddwa0dm0qhc3s" path="res://addons/twitcher/media/native_image_transformer.gd" id="10_gqc6e"]
+[ext_resource type="Script" uid="uid://dcq1bvfrqimqq" path="res://addons/twitcher/chat/twitch_chat.gd" id="11_deolv"]
+[ext_resource type="Script" uid="uid://bmluckfvgm1c2" path="res://addons/twitcher/chat/twitch_command.gd" id="11_s1cft"]
+[ext_resource type="Script" uid="uid://ch0rxi1ogjx3q" path="res://addons/twitcher/chat/twitch_command_help.gd" id="12_bb4ci"]
+[ext_resource type="ButtonGroup" uid="uid://d36vjmy3ou3y6" path="res://example/chat/bot/example_bot_button_group.tres" id="13_n5myv"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="14_b3fpp"]
+[ext_resource type="PackedScene" uid="uid://cus81w3pidhjo" path="res://addons/twitcher/editor/inspector/user_converter.tscn" id="14_u8kpy"]
+[ext_resource type="Script" uid="uid://dcrliedgr6eol" path="res://addons/twitcher/lib/oOuch/crypto_key_provider.gd" id="15_8u0n1"]
+[ext_resource type="Script" uid="uid://00xbijwpi8xa" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="16_oi22l"]
+[ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="18_rs2rn"]
+[ext_resource type="Script" uid="uid://bf0wi70haua35" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="19_uunoa"]
+[ext_resource type="Script" uid="uid://blnbogtrshw4r" path="res://addons/twitcher/auth/twitch_token_handler.gd" id="20_hm3y8"]
+[ext_resource type="Resource" uid="uid://difaqbtftaqmw" path="res://example/chat/bot/example_bot_bot_token.tres" id="21_r5t1d"]
+[ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://example/chat_view.tscn" id="22_n4nfl"]
+
+[sub_resource type="Resource" id="Resource_lcmee"]
+script = ExtResource("10_gqc6e")
+fallback_texture = ExtResource("9_l026m")
+metadata/_custom_type_script = "uid://ddwa0dm0qhc3s"
+
+[sub_resource type="LabelSettings" id="LabelSettings_58xea"]
+font_size = 20
+
+[sub_resource type="Resource" id="Resource_54bgt"]
+script = ExtResource("15_8u0n1")
+encrpytion_secret_location = "user://encryption_key.cfg"
+
+[sub_resource type="Resource" id="Resource_3nh3c"]
+script = ExtResource("16_oi22l")
+redirect_url = "http://localhost:7170"
+well_known_url = ""
+token_url = "https://id.twitch.tv/oauth2/token"
+authorization_url = "https://id.twitch.tv/oauth2/authorize"
+device_authorization_url = "https://id.twitch.tv/oauth2/device"
+cache_file = "user://auth.conf"
+client_id = "1ae0idgxbvn6vi97ls7d89cyd919oq"
+authorization_flow = 3
+_encryption_key_provider = SubResource("Resource_54bgt")
+client_secret = "qc9BNegiRcJN2PA5E109njF2ehO6kRi6odoFtPlhsEk="
+
+[sub_resource type="Resource" id="Resource_kc3kp"]
+script = ExtResource("18_rs2rn")
+used_scopes = Array[StringName]([&"user:write:chat", &"user:bot", &"channel:bot"])
+metadata/_custom_type_script = "uid://b3n3et8mebjcc"
+
+[node name="Bot" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kc3kp")
+
+[node name="TwitchService" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_u8kpy")
+oauth_setting = ExtResource("3_3nh3c")
+scopes = ExtResource("4_s1cft")
+token = ExtResource("5_bb4ci")
+
+[node name="EventSub" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+script = ExtResource("6_bpdiv")
+api = NodePath("../API")
+scopes = ExtResource("4_s1cft")
+
+[node name="API" type="Node" parent="TwitchService"]
+unique_name_in_owner = true
+script = ExtResource("7_sdbsj")
+token = ExtResource("5_bb4ci")
+oauth_setting = ExtResource("3_3nh3c")
+
+[node name="MediaLoader" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+unique_name_in_owner = true
+script = ExtResource("8_goiii")
+api = NodePath("../API")
+image_transformer = SubResource("Resource_lcmee")
+
+[node name="HelloCommand" type="Node" parent="TwitchService" node_paths=PackedStringArray("eventsub")]
+unique_name_in_owner = true
+script = ExtResource("11_s1cft")
+command = "hello"
+description = "Says hello back."
+eventsub = NodePath("")
+metadata/_custom_type_script = "uid://bmluckfvgm1c2"
+
+[node name="TwitchCommandHelp" type="Node" parent="TwitchService"]
+unique_name_in_owner = true
+script = ExtResource("12_bb4ci")
+metadata/_custom_type_script = "uid://ch0rxi1ogjx3q"
+
+[node name="BroadcasterAuth" type="Node" parent="TwitchService"]
+unique_name_in_owner = true
+script = ExtResource("14_b3fpp")
+oauth_setting = ExtResource("3_3nh3c")
+token = ExtResource("5_bb4ci")
+scopes = ExtResource("4_s1cft")
+
+[node name="OAuth" type="Node" parent="TwitchService/BroadcasterAuth" node_paths=PackedStringArray("token_handler")]
+script = ExtResource("19_uunoa")
+oauth_setting = ExtResource("3_3nh3c")
+scopes = ExtResource("4_s1cft")
+token_handler = NodePath("../TokenHandler")
+
+[node name="TokenHandler" type="Node" parent="TwitchService/BroadcasterAuth"]
+script = ExtResource("20_hm3y8")
+oauth_setting = ExtResource("3_3nh3c")
+token = ExtResource("5_bb4ci")
+
+[node name="TwitchChat" type="Node" parent="." node_paths=PackedStringArray("media_loader", "eventsub", "api")]
+unique_name_in_owner = true
+script = ExtResource("11_deolv")
+media_loader = NodePath("../TwitchService/MediaLoader")
+eventsub = NodePath("../TwitchService/EventSub")
+api = NodePath("../TwitchService/API")
+subscribe_on_ready = false
+
+[node name="Setting" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 30
+
+[node name="Broadcaster" type="PanelContainer" parent="Setting"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Setting/Broadcaster"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Setting/Broadcaster/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Broadcaster"
+label_settings = SubResource("LabelSettings_58xea")
+
+[node name="BroadcasterUsage" type="CheckBox" parent="Setting/Broadcaster/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+button_group = ExtResource("13_n5myv")
+text = "from broadcaster"
+
+[node name="BroadcasterUser" parent="Setting/Broadcaster/VBoxContainer" instance=ExtResource("14_u8kpy")]
+unique_name_in_owner = true
+layout_mode = 2
+token = ExtResource("5_bb4ci")
+
+[node name="BroadcasterStatus" type="Label" parent="Setting/Broadcaster/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "not setup"
+
+[node name="AuthorizeBroadcaster" type="Button" parent="Setting/Broadcaster/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Authorize"
+
+[node name="Bot" type="PanelContainer" parent="Setting"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Setting/Bot"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Setting/Bot/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Bot"
+label_settings = SubResource("LabelSettings_58xea")
+
+[node name="BotUsage" type="CheckBox" parent="Setting/Bot/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = ExtResource("13_n5myv")
+text = "from bot"
+
+[node name="BotUser" parent="Setting/Bot/VBoxContainer" instance=ExtResource("14_u8kpy")]
+unique_name_in_owner = true
+layout_mode = 2
+token = ExtResource("5_bb4ci")
+
+[node name="BotStatus" type="Label" parent="Setting/Bot/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "not setup"
+
+[node name="AuthorizeBot" type="Button" parent="Setting/Bot/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Authorize"
+
+[node name="BotAuth" type="Node" parent="Setting/Bot"]
+unique_name_in_owner = true
+script = ExtResource("14_b3fpp")
+oauth_setting = SubResource("Resource_3nh3c")
+force_verify = true
+token = ExtResource("21_r5t1d")
+scopes = SubResource("Resource_kc3kp")
+
+[node name="OAuth" type="Node" parent="Setting/Bot/BotAuth" node_paths=PackedStringArray("token_handler")]
+script = ExtResource("19_uunoa")
+oauth_setting = SubResource("Resource_3nh3c")
+scopes = SubResource("Resource_kc3kp")
+token_handler = NodePath("../TokenHandler")
+
+[node name="TokenHandler" type="Node" parent="Setting/Bot/BotAuth"]
+script = ExtResource("20_hm3y8")
+oauth_setting = SubResource("Resource_3nh3c")
+token = ExtResource("21_r5t1d")
+
+[node name="ChatView" parent="." instance=ExtResource("22_n4nfl")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0

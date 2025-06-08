@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="OAuthToken" load_steps=3 format=3 uid="uid://7d8vakmr7h6q"]
+
+[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="1_1nu4q"]
+[ext_resource type="Script" uid="uid://b52xp7c23ucfk" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="2_wqdhq"]
+
+[resource]
+script = ExtResource("2_wqdhq")
+_crypto_key_provider = ExtResource("1_1nu4q")
+_identifier = "Example-Broadcaster"
+_cache_path = "user://auth.conf"
+metadata/_custom_type_script = "uid://b52xp7c23ucfk"
