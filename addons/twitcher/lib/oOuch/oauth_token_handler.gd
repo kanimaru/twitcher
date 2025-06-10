@@ -158,8 +158,8 @@ func refresh_tokens() -> void:
 	_requesting_token = true
 	logInfo("use refresh (%s) token" % token._identifier)
 	if token.has_refresh_token():
-		var request_body: String = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % 
- [oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
+		var request_body: String = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % \
+		   [oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
 		var request: BufferedHTTPClient.RequestData = _http_client.request(oauth_setting.token_url, \
 			HTTPClient.METHOD_POST, HEADERS, request_body)
 		if await _handle_token_request(request):
