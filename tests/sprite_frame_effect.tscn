@@ -1,0 +1,24 @@
+﻿[gd_scene load_steps=3 format=3 uid="uid://ucvrw0jylplf"]
+
+[ext_resource type="Script" uid="uid://dkppamu55n5j1" path="res://tests/sprite_frame_effect.gd" id="1_shaxi"]
+[ext_resource type="SpriteFrames" uid="uid://da5n4t1o5ot67" path="res://documentation/create-credentials.gif" id="2_hw5pt"]
+
+[node name="SpriteFrameEffect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_shaxi")
+sprite_frame = ExtResource("2_hw5pt")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+custom_minimum_size = Vector2(400, 400)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
