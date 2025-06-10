@@ -69,13 +69,13 @@ func _update_token(val: OAuthToken) -> void:
 
 
 func update_expiration_check() -> void:
-	var current_time = Time.get_unix_time_from_system()
-	var expiration = token.get_expiration()
+	var current_time: float = Time.get_unix_time_from_system()
+	var expiration: int = token.get_expiration()
 	if expiration == 0: 
 		_expiration_check_timer.stop()
 		return
 	_expiration_check_timer.start(expiration - current_time - SECONDS_TO_CHECK_EARLIER)
-	logDebug("Refresh token (%s) in %s seconds" % [token._identifier, roundf(_expiration_check_timer.wait_time)])
+	logDebug("Refresh token (%s/%s) in %s seconds" % [token._identifier, token, roundf(_expiration_check_timer.wait_time)])
 
 
 ## Checks if tokens expires and starts refreshing it. (called often hold footprintt small)
@@ -92,7 +92,7 @@ func request_token(grant_type: String, auth_code: String = ""):
 	if _requesting_token: return
 	_requesting_token = true
 	logInfo("Request token (for %s) via '%s'" % [token._identifier, grant_type])
-	var request_params = [
+	var request_params: Array[String] = [
 		"grant_type=%s" % grant_type,
 		"client_id=%s" % oauth_setting.client_id,
 		"client_secret=%s" % oauth_setting.get_client_secret()
@@ -103,8 +103,9 @@ func request_token(grant_type: String, auth_code: String = ""):
 	if grant_type == "authorization_code":
 		request_params.append("&redirect_uri=%s" % oauth_setting.redirect_url)
 
-	var request_body = "&".join(request_params)
-	var request = _http_client.request(oauth_setting.token_url, HTTPClient.METHOD_POST, HEADERS, request_body)
+	var request_body: String = "&".join(request_params)
+	var request: BufferedHTTPClient.RequestData = _http_client.request(oauth_setting.token_url, \
+		HTTPClient.METHOD_POST, HEADERS, request_body)
 	await _handle_token_request(request)
 	_requesting_token = false
 
@@ -113,20 +114,20 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 	if _requesting_token: return
 	_requesting_token = true
 	logInfo("request token (for %s) via urn:ietf:params:oauth:grant-type:device_code" % token._identifier)
-	var parameters = [
+	var parameters: Array[String] = [
 		"client_id=%s" % oauth_setting.client_id,
 		"grant_type=%s" % grant_type,
 		"device_code=%s" % device_code_repsonse.device_code,
 		"scopes=%s" % scopes
 	]
 
-	var request_body = "&".join(parameters)
+	var request_body: String = "&".join(parameters)
 
 	# Time when the code is expired and we don't poll anymore
 	var expire_data = Time.get_unix_time_from_system() + device_code_repsonse.expires_in
 
 	while expire_data > Time.get_unix_time_from_system():
-		var request = _http_client.request(oauth_setting.token_url, HTTPClient.METHOD_POST, HEADERS, request_body)
+		var request: BufferedHTTPClient.RequestData = _http_client.request(oauth_setting.token_url, HTTPClient.METHOD_POST, HEADERS, request_body)
 		var response = await _http_client.wait_for_request(request)
 		var response_string: String = response.response_data.get_string_from_utf8()
 		var response_data = JSON.parse_string(response_string)
@@ -157,8 +158,10 @@ func refresh_tokens() -> void:
 	_requesting_token = true
 	logInfo("use refresh (%s) token" % token._identifier)
 	if token.has_refresh_token():
-		var request_body = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % [oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
-		var request = _http_client.request(oauth_setting.token_url, HTTPClient.METHOD_POST, HEADERS, request_body)
+		var request_body: String = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % 
+ [oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
+		var request: BufferedHTTPClient.RequestData = _http_client.request(oauth_setting.token_url, \
+			HTTPClient.METHOD_POST, HEADERS, request_body)
 		if await _handle_token_request(request):
 			logInfo("token (%s) got refreshed" % token._identifier)
 		else:
