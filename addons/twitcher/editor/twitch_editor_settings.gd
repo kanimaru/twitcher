@@ -61,6 +61,7 @@ static func setup() -> void:
 		_initialized = true
 		_setup_project_settings()
 		_reload_setting()
+		EditorInterface.get_editor_settings().settings_changed.connect(_reload_setting)
 	
 
 static func _setup_project_settings() -> void:
