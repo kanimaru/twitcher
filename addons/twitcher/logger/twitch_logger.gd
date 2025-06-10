@@ -12,8 +12,10 @@ var debug: bool
 var color: String
 
 
-func _init(ctx_name: String) -> void:
+func _init(ctx_name: String, active: bool = false, should_debug: bool = false) -> void:
 	context_name = ctx_name
+	enabled = active
+	debug = should_debug
 	color = string_to_hex_color(ctx_name)
 	TwitchLoggerManager.register(self)
 
@@ -32,18 +34,18 @@ func set_suffix(s: String) -> void:
 
 ## log a message on info level
 func i(text: String):
-	if is_enabled(): print_rich("I[color=%s][%s%s] %s[/color]" % [color, context_name, suffix, text])
+	if is_enabled(): print_rich("%s I[color=%s][%s%s] %s[/color]" % [Time.get_ticks_msec(), color, context_name, suffix, text])
 	#else: print(context_name, " is not enabled")
 
 
 ## log a message on error level
 func e(text: String):
-	if is_enabled(): print_rich("E[b][color=%s][%s%s] %s[/color][/b]" % [color, context_name, suffix, text])
+	if is_enabled(): print_rich("%s E[b][color=%s][%s%s] %s[/color][/b]" % [Time.get_ticks_msec(), color, context_name, suffix, text])
 	#else: print(context_name, " is not enabled")
 
 
 func d(text: String):
-	if is_enabled() && debug: print_rich("D[i][color=%s][%s%s] %s[/color][/i]" % [color, context_name, suffix, text])
+	if is_enabled() && debug: print_rich("%s D[i][color=%s][%s%s] %s[/color][/i]" % [Time.get_ticks_msec(), color, context_name, suffix, text])
 
 
 func string_to_hex_color(text: String) -> String:
