@@ -3,7 +3,6 @@ extends EditorProperty
 
 const USER_CONVERTER = preload("res://addons/twitcher/editor/inspector/user_converter.tscn")
 const UserConverter = preload("res://addons/twitcher/editor/inspector/user_converter.gd")
-const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 
 var _converter: UserConverter
 
