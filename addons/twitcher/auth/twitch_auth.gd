@@ -99,6 +99,11 @@ func authorize() -> bool:
 	return false
 
 
+func do_unsetup() -> void:
+	token_handler.revoke_token()
+	_log.d("revoked tokens on twitch side during unsetup")
+	
+
 func refresh_token() -> void:
 	auth.refresh_token()
 

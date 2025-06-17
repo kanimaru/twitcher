@@ -119,6 +119,15 @@ func setup() -> bool:
 
 	_log.i("TwitchService setup")
 	return true
+	
+	
+## Removes the token so that 
+func unsetup() -> void:
+	await propagate_call(&"do_unsetup")
+	for child in get_children():
+		if child.has_method(&"wait_unsetup"):
+			await child.wait_unsetup()
+
 
 ## Checks if the correctly setup
 func is_configured() -> bool:

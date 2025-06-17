@@ -176,6 +176,12 @@ func _on_authorized() -> void:
 func do_setup() -> void:
 	await open_connection()
 	log.i("IRC setup")
+	
+	
+## Propergated call from TwitchService
+func do_unsetup() -> void:
+	close_connection()
+	log.i("IRC unsetup")
 
 
 func open_connection() -> void:

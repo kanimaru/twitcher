@@ -148,6 +148,12 @@ func do_setup() -> void:
 	_log.i("Eventsub setup")
 
 
+## Propergated call from twitch service
+func do_unsetup() -> void:
+	close_connection()
+	_log.i("Eventsub unsetup")
+	
+
 func wait_setup() -> void:
 	await wait_for_session_established()
 
