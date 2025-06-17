@@ -49,6 +49,9 @@ func _load_oauth_setting() -> void:
 	client_id.text = setting.client_id
 	client_secret.text = setting.get_client_secret()
 	redirect_url.text = setting.redirect_url
+	
+	oauth_setting_file_select.path = TwitchEditorSettings.game_oauth_setting.resource_path
+	token_file_select.path = TwitchEditorSettings.game_oauth_token.resource_path
 
 
 func _on_link_clicked(link: Variant) -> void:
@@ -80,14 +83,14 @@ func _on_save() -> void:
 	TwitchEditorSettings.save_editor_oauth_setting()
 	TwitchEditorSettings.save_editor_oauth_token()
 	
-	var setting_path = oauth_setting_file_select.path
-	var setting = TwitchEditorSettings.editor_oauth_setting.duplicate(true)
+	var setting_path: String = oauth_setting_file_select.path
+	var setting: OAuthSetting = TwitchEditorSettings.editor_oauth_setting.duplicate(true)
 	setting.take_over_path(setting_path)
 	ResourceSaver.save(setting, setting_path)
 	TwitchEditorSettings.game_oauth_setting = setting
 	
-	var token_path = token_file_select.path
-	var token = TwitchEditorSettings.editor_oauth_token.duplicate()
+	var token_path: String = token_file_select.path
+	var token: OAuthToken = TwitchEditorSettings.editor_oauth_token.duplicate()
 	token.take_over_path(token_path)
 	ResourceSaver.save(token, token_path)
 	TwitchEditorSettings.game_oauth_token = token
