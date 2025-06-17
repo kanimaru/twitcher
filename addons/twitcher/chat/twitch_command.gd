@@ -80,12 +80,14 @@ static func create(
 
 func _enter_tree() -> void:
 	if eventsub == null: eventsub = TwitchEventsub.instance
-	eventsub.event.connect(_on_event)
+	if eventsub != null:
+		eventsub.event.connect(_on_event)
 	ALL_COMMANDS.append(self)
 
 
 func _exit_tree() -> void:
-	eventsub.event.disconnect(_on_event)
+	if eventsub != null:
+		eventsub.event.disconnect(_on_event)
 	ALL_COMMANDS.erase(self)
 
 
