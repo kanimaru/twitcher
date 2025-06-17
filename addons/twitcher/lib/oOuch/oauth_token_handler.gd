@@ -36,6 +36,7 @@ var _requesting_token: bool = false
 ## Timer to refresh tokens
 var _expiration_check_timer: Timer
 
+
 func _ready() -> void:
 	_http_client = OAuthHTTPClient.new()
 	_http_client.name = "OAuthTokenClient"
@@ -72,10 +73,11 @@ func update_expiration_check() -> void:
 	var current_time: float = Time.get_unix_time_from_system()
 	var expiration: int = token.get_expiration()
 	if expiration == 0: 
+		logDebug("Disable automate use of refresh token")
 		_expiration_check_timer.stop()
 		return
 	_expiration_check_timer.start(expiration - current_time - SECONDS_TO_CHECK_EARLIER)
-	logDebug("Refresh token (%s/%s) in %s seconds" % [token._identifier, token, roundf(_expiration_check_timer.wait_time)])
+	logDebug("start timer to refresh token (%s/%s) in %s seconds" % [token._identifier, token, roundf(_expiration_check_timer.wait_time)])
 
 
 ## Checks if tokens expires and starts refreshing it. (called often hold footprintt small)
@@ -159,7 +161,7 @@ func refresh_tokens() -> void:
 	logInfo("use refresh (%s) token" % token._identifier)
 	if token.has_refresh_token():
 		var request_body: String = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % \
-		   [oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
+ 			[oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
 		var request: BufferedHTTPClient.RequestData = _http_client.request(oauth_setting.token_url, \
 			HTTPClient.METHOD_POST, HEADERS, request_body)
 		if await _handle_token_request(request):

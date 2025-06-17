@@ -13,6 +13,8 @@ const PRESET_GAME: StringName = &"Game"
 const PRESET_OVERLAY: StringName = &"Overlay"
 const PRESET_OTHER: StringName = &"Other"
 
+static var _log : TwitchLogger = TwitchLogger.new("TwitchEditorSetting")
+
 static var _editor_oauth_token_property: ProjectSettingProperty
 static var editor_oauth_token: OAuthToken:
 	set(val): 
@@ -108,10 +110,12 @@ static func _reload_setting() -> void:
 		
 	
 static func save_editor_oauth_setting() -> void:
+	_log.d("Saves editor oauth setting")
 	ResourceSaver.save(editor_oauth_setting)
 
 	
 static func save_editor_oauth_token() -> void:
+	_log.d("Saves editor oauth token")
 	ResourceSaver.save(editor_oauth_token)
 
 	
@@ -130,6 +134,7 @@ static func is_valid() -> bool:
 
 
 static func _create_editor_oauth_token() -> void:
+	_log.i("Create new Editor Token resource")
 	var path: String = _editor_oauth_token_property.get_val()
 	var token = OAuthToken.new()
 	token._identifier = "EditorToken"
@@ -139,6 +144,7 @@ static func _create_editor_oauth_token() -> void:
 	
 	
 static func _create_editor_oauth_setting() -> void:
+	_log.i("Create new Editor Oauth settings")
 	var path: String = _editor_oauth_setting_property.get_val()
 	var setting = TwitchAuth.create_default_oauth_setting()
 	setting.take_over_path(path)
