@@ -41,8 +41,12 @@ func _pressed() -> void:
 
 
 func update_oauth_token(new_oauth_token: OAuthToken) -> void:
+	if oauth_token && oauth_token.authorized.is_connected(_on_authorized):
+		oauth_token.authorized.disconnect(_on_authorized)
+		
 	oauth_token = new_oauth_token
-	oauth_token.authorized.connect(_on_authorized)
+	if not oauth_token.authorized.is_connected(_on_authorized):
+		oauth_token.authorized.connect(_on_authorized)
 	if is_inside_tree():
 		twitch_auth.token = new_oauth_token
 
