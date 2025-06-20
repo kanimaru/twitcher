@@ -1,0 +1,13 @@
+﻿name: Notify on Release
+on: [ release, workflow_dispatch ]
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Discord notification
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      uses: Ilshidur/action-discord@master
+      with:
+        args: '[Twitcher {{ EVENT_PAYLOAD.release.name }} got released.](https://github
+        .com/kanimaru/twitcher/releases/tag/2.1.3)'
