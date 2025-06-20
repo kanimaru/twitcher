@@ -525,14 +525,15 @@ func next_page() -> {response_type}:
 func _iter_init(iter: Array) -> bool:
 	if {data_variable_name}.is_empty(): return false
 	iter[0] = {data_variable_name}[0]
-	return {data_variable_name}.size() > 0
+	_cur_iter = 1
+	return true
 	
 	
 func _iter_next(iter: Array) -> bool:
-	if {data_variable_name}.size() - 1 > _cur_iter:
-		_cur_iter += 1
+	if {data_variable_name}.size() > _cur_iter:
 		iter[0] = {data_variable_name}[_cur_iter]
-	if {data_variable_name}.size() - 1 == _cur_iter && not _has_pagination(): 
+		_cur_iter += 1
+	elif not _has_pagination(): 
 		return false
 	return true
 	
