@@ -36,9 +36,6 @@ signal changed(user: TwitchUser)
 
 
 func _ready() -> void:
-	if token == null: token = TwitchEditorSettings.editor_oauth_token
-	if setting == null: setting = TwitchEditorSettings.editor_oauth_setting
-	
 	_login.text_changed.connect(_on_login_changed)
 	_login.text_submitted.connect(_on_text_submitted)
 	_login.focus_exited.connect(_on_focus_exited)
@@ -131,8 +128,10 @@ func _on_changed() -> void:
 
 func _get_user(get_user_opt: TwitchGetUsers.Opt) -> TwitchUser:
 	var api: TwitchAPI = TwitchAPI.new()
-	api.token = token
-	api.oauth_setting = setting
+	var _token: OAuthToken = token if token else TwitchEditorSettings.editor_oauth_token
+	var _setting: OAuthSetting = setting if setting else TwitchEditorSettings.editor_oauth_setting
+	api.token = _token
+	api.oauth_setting = _setting
 	add_child(api)
 	var response: TwitchGetUsers.Response = await api.get_users(get_user_opt)
 	var data: Array[TwitchUser] = response.data
