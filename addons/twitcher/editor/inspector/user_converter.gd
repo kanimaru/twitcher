@@ -51,7 +51,8 @@ func _ready() -> void:
 func _load_current_user() -> void:
 	if _current_user == null:
 		var users: TwitchGetUsers.Opt = TwitchGetUsers.Opt.new()
-		_load_user(users)
+		_current_user = await _load_user(users)
+		
 
 
 func _on_swap_view() -> void:
@@ -96,7 +97,7 @@ func reload() -> void:
 	_load_user(users)
 	
 	
-func _load_user(users: TwitchGetUsers.Opt) -> void:
+func _load_user(users: TwitchGetUsers.Opt) -> TwitchUser:
 	TwitchTweens.loading(self)
 	if users.id != null || users.login != null:
 		user = await _get_user(users)
@@ -107,6 +108,8 @@ func _load_user(users: TwitchGetUsers.Opt) -> void:
 			user_login = user.login
 			user_id = user.id
 			changed.emit(user)
+		return user
+	return null
 
 
 func update_user(user: TwitchUser) -> void:
