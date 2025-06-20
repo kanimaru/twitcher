@@ -329,13 +329,16 @@ func paging_code(method: TwitchGenMethod) -> String:
 	if after_parameter._required:
 		code += "\t{parameter} = cursor\n"
 	else:
+		code += "\tif not opt: opt = {opt_type}.new()\n"
 		code += "\topt.{parameter} = cursor\n"
 	code += "\tparsed_result._next_page = {name}.bind({parameters})\n"
 	
+	var opt_parameter: String = get_type(method.get_optional_type(), false, true)
 	return code.format({
 		"parameter": after_parameter._name,
 		"name": method._name,
-		"parameters": method_parameter(method)
+		"parameters": method_parameter(method),
+		"opt_type": opt_parameter
 	})
 
 
