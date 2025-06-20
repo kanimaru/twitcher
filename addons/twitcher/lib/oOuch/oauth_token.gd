@@ -133,6 +133,10 @@ func is_token_valid() -> bool:
 	return current_time < _expire_date
 
 
+func _to_string() -> String:
+	return "<%s#%s>" % [_identifier, get_instance_id()]
+	
+	
 ## Get all token names within a config file
 static func get_identifiers(cache_file: String) -> PackedStringArray:
 	var _config_file: ConfigFile = ConfigFile.new()
