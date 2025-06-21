@@ -109,8 +109,12 @@ class Cheermote extends RefCounted:
 	var tier: int
 
 
-	func get_sprite_frames(_media_loader: TwitchMediaLoader, cheermote_definition: TwitchCheermoteDefinition) -> SpriteFrames:
-		var cheer_results = await _media_loader.get_cheer_tier(prefix, "%s" % tier, cheermote_definition.theme, cheermote_definition.type, cheermote_definition.scale)
+	func get_sprite_frames(_media_loader: TwitchMediaLoader, format: String = "", scale: int = 1, dark: bool = true) -> SpriteFrames:
+		var cheermote_definition: TwitchCheermoteDefinition = TwitchCheermoteDefinition.new(prefix, str(tier))
+		cheermote_definition.scale = str(scale)
+		if dark: cheermote_definition.theme_dark()
+		else: cheermote_definition.theme_light()
+		var cheer_results: TwitchMediaLoader.CheerResult = await _media_loader.get_cheer_info(cheermote_definition)
 		return cheer_results.spriteframes
 
 
