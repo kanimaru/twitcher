@@ -108,8 +108,7 @@ func show_text(message: TwitchChatMessage, current_text: String, emote_scale: in
 			TwitchChatMessage.FragmentType.text:
 				current_text += fragment.text
 			TwitchChatMessage.FragmentType.cheermote:
-				var definition : TwitchCheermoteDefinition = TwitchCheermoteDefinition.new(fragment.cheermote.prefix, "%s" % fragment.cheermote.tier)
-				var cheermote : SpriteFrames = await fragment.cheermote.get_sprite_frames(media_loader, definition)
+				var cheermote : SpriteFrames = await fragment.cheermote.get_sprite_frames(media_loader, "", emote_scale)
 				current_text += "[sprite id='f-%s']%s[/sprite]" % [fragment_id, cheermote.resource_path]
 			TwitchChatMessage.FragmentType.emote:
 				var emote : SpriteFrames = await fragment.emote.get_sprite_frames(media_loader, "", emote_scale)
