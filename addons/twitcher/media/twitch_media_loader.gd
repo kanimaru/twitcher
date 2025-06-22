@@ -165,7 +165,7 @@ func _get_emote_cache_path_spriteframe(emote_definition: TwitchEmoteDefinition) 
 
 
 func _load_emote(emote_definition : TwitchEmoteDefinition) -> BufferedHTTPClient.RequestData:
-	var request_path : String = "/emoticons/v2/%s/%s/%s/%1.1f" % [emote_definition.id, emote_definition._type, emote_definition._theme, emote_definition._scale]
+	var request_path : String = "/emoticons/v2/%s/%s/%s/%1.1f" % [emote_definition.id, emote_definition.type, emote_definition.theme, emote_definition.scale]
 	return _client.request(image_cdn_host + request_path, HTTPClient.METHOD_GET, {}, "")
 
 
