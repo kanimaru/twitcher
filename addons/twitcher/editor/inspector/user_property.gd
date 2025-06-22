@@ -15,12 +15,7 @@ func _init():
 
 func _update_property() -> void:
 	var user: TwitchUser = get_edited_object()[get_edited_property()]
-	if user == null:
-		_converter.user_id = ""
-		_converter.user_login = ""
-	else:
-		_converter.user_id = user.id
-		_converter.user_login = user.login
+	_converter.update_user(user)
 
 
 func _on_changed(user: TwitchUser) -> void:

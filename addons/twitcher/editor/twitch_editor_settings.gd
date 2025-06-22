@@ -55,6 +55,11 @@ static var project_preset: StringName:
 	set(val): _project_preset.set_val(val)
 	get: return _project_preset.get_val()
 
+static var _load_current_twitch_user: ProjectSettingProperty
+static var load_current_twitch_user: bool:
+	set(val): _load_current_twitch_user.set_val(val)
+	get: return _load_current_twitch_user.get_val()
+	
 static var _initialized: bool
 
 
@@ -87,6 +92,9 @@ static func _setup_project_settings() -> void:
 	_project_preset = ProjectSettingProperty.new("twitcher/editor/project_preset")
 	_project_preset.as_select([PRESET_GAME, PRESET_OVERLAY, PRESET_OTHER], false)
 	
+	_load_current_twitch_user = ProjectSettingProperty.new("twitcher/editor/load_current_twitch_user", true)
+	_load_current_twitch_user.as_bool("Should always load the current user when converting to TwitchUser")
+
 
 static func _reload_setting() -> void:
 	editor_oauth_setting = load(_editor_oauth_setting_property.get_val())
@@ -128,8 +136,8 @@ static func set_scope_path(path: String) -> void:
 	
 	
 static func is_valid() -> bool:
-	var token_valid = is_instance_valid(editor_oauth_token) && editor_oauth_token.is_token_valid()
-	var setting_valid = is_instance_valid(editor_oauth_setting) && editor_oauth_setting.is_valid()
+	var token_valid: bool = is_instance_valid(editor_oauth_token) && editor_oauth_token.is_token_valid()
+	var setting_valid : bool = is_instance_valid(editor_oauth_setting) && editor_oauth_setting.is_valid()
 	return token_valid && setting_valid
 
 
@@ -146,7 +154,7 @@ static func _create_editor_oauth_token() -> void:
 static func _create_editor_oauth_setting() -> void:
 	_log.i("Create new Editor Oauth settings")
 	var path: String = _editor_oauth_setting_property.get_val()
-	var setting = TwitchAuth.create_default_oauth_setting()
+	var setting: OAuthSetting = TwitchAuth.create_default_oauth_setting()
 	setting.take_over_path(path)
 	editor_oauth_setting = setting
 	save_editor_oauth_setting()
