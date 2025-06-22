@@ -83,6 +83,10 @@ func _enter_tree() -> void:
 	if eventsub != null:
 		eventsub.event.connect(_on_event)
 	ALL_COMMANDS.append(self)
+	
+	for prefix: String in command_prefixes:
+		if prefix.length() > 1:
+			push_error("TwitchCommand supports only 1 character for command prefix. '%s' is used by %s" % [prefix, get_path()])
 
 
 func _exit_tree() -> void:
