@@ -153,7 +153,8 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 ## Uses the refresh token if possible to refresh all tokens
 func refresh_tokens() -> void:
 	if not oauth_setting.is_valid(): 
-		logDebug("Try to refresh token (%s) but oauth settings are invalid. Can't refresh token." % token)
+		logError("Try to refresh token (%s) but oauth settings are invalid. Can't refresh token." % token)
+		_expiration_check_timer.stop()
 		return
 
 	if _requesting_token: return
