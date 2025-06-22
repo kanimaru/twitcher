@@ -11,14 +11,18 @@ class_name TwitchCommandHelp
 var _current_user: TwitchUser
 
 
+func _enter_tree() -> void:
+	super._enter_tree()
+	if twitch_api == null: twitch_api = TwitchAPI.instance
+	if twitch_api == null:
+		push_error("Command is missing TwitchAPI to answer!")
+		return
+
+
 func _ready() -> void:
 	if command == "": command = "help"
 	
-	command_received.connect(_on_command_receive)
-	if twitch_api == null: twitch_api = TwitchAPI.instance
-	if twitch_api == null: 
-		push_error("Command is missing TwitchAPI to answer!")
-		return
+	command_received.connect(_on_command_receive)		
 	
 	var response: TwitchGetUsers.Response = await twitch_api.get_users(TwitchGetUsers.Opt.new())
 	_current_user = response.data[0]
@@ -80,4 +84,3 @@ func _is_command_in_args(command: TwitchCommand, args: Array[String]) -> bool:
 		if command.aliases.has(arg):
 			return true
 	return false
-		
