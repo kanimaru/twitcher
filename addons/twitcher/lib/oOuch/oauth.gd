@@ -211,8 +211,8 @@ func _start_login_process(response_type: String) -> void:
 
 ## Starts the device flow.
 func _start_device_login_process():
-	var scopes = scopes.used_scopes
-	var device_code_response = await _fetch_device_code_response(scopes)
+	var scopes: String = " ".join(scopes.used_scopes)
+	var device_code_response: OAuthDeviceCodeResponse = await _fetch_device_code_response(scopes)
 	device_code_requested.emit(device_code_response)
 
 	# print the information instead of opening the browser so that the developer can decide if
