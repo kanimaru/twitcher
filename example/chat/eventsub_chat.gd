@@ -50,7 +50,7 @@ func _ready() -> void:
 
 func _on_hello(from_username: String, info: TwitchCommandInfo, args: PackedStringArray) -> void:
 	var message: TwitchChatMessage = info.original_message as TwitchChatMessage
-	twitch_chat.send_message("Hello to you too %s" % from_username, message.message_id)
+	twitch_chat.send_message("Hello to you too %s" % message.chatter_user_name, message.message_id)
 	
 
 func _on_chat_message(message: TwitchChatMessage) -> void:
