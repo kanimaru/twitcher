@@ -19,31 +19,31 @@ static var _editor_oauth_token_property: ProjectSettingProperty
 static var editor_oauth_token: OAuthToken:
 	set(val): 
 		editor_oauth_token = val
-		_editor_oauth_token_property.set_val(val.resource_path)
+		if not _reloading: _editor_oauth_token_property.set_val(val.resource_path)
 		
 static var _editor_oauth_setting_property: ProjectSettingProperty
 static var editor_oauth_setting: OAuthSetting:
 	set(val): 
 		editor_oauth_setting = val
-		_editor_oauth_setting_property.set_val(val.resource_path)
+		if not _reloading: _editor_oauth_setting_property.set_val(val.resource_path)
 	
 static var _game_oauth_token_property: ProjectSettingProperty
 static var game_oauth_token: OAuthToken:
 	set(val): 
 		game_oauth_token = val
-		_game_oauth_token_property.set_val(val.resource_path)
+		if not _reloading: _game_oauth_token_property.set_val(val.resource_path)
 		
 static var _game_oauth_setting_property: ProjectSettingProperty
 static var game_oauth_setting: OAuthSetting:
 	set(val): 
 		game_oauth_setting = val
-		_game_oauth_setting_property.set_val(val.resource_path)
+		if not _reloading: _game_oauth_setting_property.set_val(val.resource_path)
 
 static var _scope_property: ProjectSettingProperty
 static var scopes: TwitchOAuthScopes:
 	set(val): 
 		scopes = val
-		_scope_property.set_val(val.resource_path)
+		if not _reloading: _scope_property.set_val(val.resource_path)
 
 static var _show_setup_on_startup: ProjectSettingProperty
 static var show_setup_on_startup: bool:
@@ -61,6 +61,7 @@ static var load_current_twitch_user: bool:
 	get: return _load_current_twitch_user.get_val()
 	
 static var _initialized: bool
+static var _reloading: bool
 
 
 static func setup() -> void:
@@ -68,7 +69,7 @@ static func setup() -> void:
 		_initialized = true
 		_setup_project_settings()
 		_reload_setting()
-		EditorInterface.get_editor_settings().settings_changed.connect(_reload_setting)
+		ProjectSettings.settings_changed.connect(_reload_setting)
 	
 
 static func _setup_project_settings() -> void:
@@ -97,6 +98,7 @@ static func _setup_project_settings() -> void:
 
 
 static func _reload_setting() -> void:
+	_reloading = true
 	editor_oauth_setting = load(_editor_oauth_setting_property.get_val())
 	editor_oauth_token = load(_editor_oauth_token_property.get_val())
 	game_oauth_setting = load(_game_oauth_setting_property.get_val())
@@ -115,6 +117,7 @@ static func _reload_setting() -> void:
 	var scope_path: String = get_scope_path()
 	if scope_path and FileAccess.file_exists(scope_path):
 		scopes = load(scope_path)
+	_reloading = false
 		
 	
 static func save_editor_oauth_setting() -> void:
