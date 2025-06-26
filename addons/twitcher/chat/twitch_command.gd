@@ -51,6 +51,8 @@ enum WhereFlag {
 @export var allowed_users: Array[String] = []
 ## All chatrooms where the command listens to
 @export var listen_to_chatrooms: Array[String] = []
+## Determines if the aliases and commands should be case sensitive or not
+@export var case_insensitive: bool = true
 
 ## The eventsub to listen for chatmessages
 @export var eventsub: TwitchEventsub
@@ -64,7 +66,8 @@ static func create(
 		permission_level: int = PermissionFlag.EVERYONE,
 		where: int = WhereFlag.CHAT,
 		allowed_users: Array[String] = [],
-		listen_to_chatrooms: Array[String] = []) -> TwitchCommand:
+		listen_to_chatrooms: Array[String] = [],
+		case_insensitive: bool = true) -> TwitchCommand:
 	var command := TwitchCommand.new()
 	command.eventsub = eventsub
 	command.command = cmd_name
@@ -75,6 +78,7 @@ static func create(
 	command.where = where
 	command.allowed_users = allowed_users
 	command.listen_to_chatrooms = listen_to_chatrooms
+	command.case_insensitive = case_insensitive
 	return command
 
 
@@ -124,10 +128,19 @@ func _should_handle(message: String, username: String, channel_name: String) -> 
 
 	# remove the command symbol in front
 	message = message.right(-1)
-	var split : PackedStringArray = message.split(" ", true, 1)
-	var current_command := split[0]
-	if current_command != command && not aliases.has(current_command): return false
-	return true
+	var split: PackedStringArray = message.split(" ", true, 1)
+	var current_command: String = split[0] 
+	var alias_compare_function: Callable = func(cmd) -> bool:
+		if case_insensitive:
+			return current_command.nocasecmp_to(cmd) == 0
+		else:
+			return current_command.casecmp_to(cmd) == 0
+	
+	var is_alias: bool = aliases.any(alias_compare_function)
+	var is_command: bool = alias_compare_function.call(command)
+
+	return is_command || is_alias
+	
 
 
 func _handle_command(from_username: String, raw_message: String, to_user: String, data: Variant) -> void:	
