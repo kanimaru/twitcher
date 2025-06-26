@@ -109,7 +109,7 @@ func _on_child_exiting(node: Node) -> void:
 func setup() -> bool:
 	if is_instance_valid(auth): 
 		if not await auth.authorize(): return false
-	else:
+	elif not token.is_token_valid():
 		push_error("Authorization Node got removed, can't setup twitch service")
 		return false
 	await propagate_call(&"do_setup")
