@@ -40,10 +40,13 @@ func _ready() -> void:
 	twitch_chat.message_received.connect(_on_chat_message)
 	chat_view.message_sent.connect(_on_sent_message)
 	hello_command.command_received.connect(_on_hello)
+	hello_command.cooldown.connect(_on_hello_cooldown)
 	
 	# Alternative use programatical way to listen to commands
-	var command = twitch_service.add_command("lurk", func(from_username: String, info: TwitchCommandInfo, args: PackedStringArray): twitch_service.chat("Thanks for the lurk")) 
+	var command = twitch_service.add_command("lurk", func(from_username: String, info: TwitchCommandInfo, args: PackedStringArray): twitch_service.chat("Thanks for the lurk"))
 	command.description = "Go into a passive lurk mode"
+	command.user_cooldown = 10
+	command.cooldown.connect(_on_lurk_cooldown)
 		
 	twitch_chat.subscribe()
 
@@ -51,6 +54,16 @@ func _ready() -> void:
 func _on_hello(from_username: String, info: TwitchCommandInfo, args: PackedStringArray) -> void:
 	var message: TwitchChatMessage = info.original_message as TwitchChatMessage
 	twitch_chat.send_message("Hello to you too %s" % message.chatter_user_name, message.message_id)
+	
+	
+func _on_hello_cooldown(from_username: String, info: TwitchCommandInfo, args: PackedStringArray, cooldown_remaining_in_s: float) -> void:
+	var message: TwitchChatMessage = info.original_message as TwitchChatMessage
+	twitch_chat.send_message("I'm right now tired of greeting peoples wait %d seconds before I greet again!" % cooldown_remaining_in_s, message.message_id)
+
+
+func _on_lurk_cooldown(from_username: String, info: TwitchCommandInfo, args: PackedStringArray, cooldown_remaining_in_s: float) -> void:
+	var message: TwitchChatMessage = info.original_message as TwitchChatMessage
+	twitch_chat.send_message("You can't go to lurk for the next %d seconds!" % cooldown_remaining_in_s, message.message_id)
 	
 
 func _on_chat_message(message: TwitchChatMessage) -> void:

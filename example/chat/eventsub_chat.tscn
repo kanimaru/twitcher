@@ -72,12 +72,12 @@ script = ExtResource("11_aprrr")
 api = NodePath("../API")
 image_transformer = SubResource("Resource_rohya")
 
-[node name="HelloCommand" type="Node" parent="TwitchService" node_paths=PackedStringArray("eventsub")]
+[node name="HelloCommand" type="Node" parent="TwitchService"]
 unique_name_in_owner = true
 script = ExtResource("7_blt2c")
 command = "hello"
 description = "Says hello back."
-eventsub = NodePath("../EventSub")
+global_cooldown = 10.0
 metadata/_custom_type_script = "uid://bmluckfvgm1c2"
 
 [node name="TwitchChat" type="Node" parent="." node_paths=PackedStringArray("media_loader", "eventsub", "api")]

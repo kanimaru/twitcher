@@ -5,6 +5,9 @@ extends Twitcher
 ## A single command like !lurk 
 class_name TwitchCommand
 
+## Constant to convert from seconds to milliseconds
+const S_TO_MS = 1000
+
 static var ALL_COMMANDS: Array[TwitchCommand] = []
 
 ## Called when the command got received in the right format
@@ -12,6 +15,9 @@ signal command_received(from_username: String, info: TwitchCommandInfo, args: Pa
 
 ## Called when the command got received in the wrong format
 signal received_invalid_command(from_username: String, info: TwitchCommandInfo, args: PackedStringArray)
+
+## Called when the user tries to use the command that is still on cooldown (remaining cooldown in seconds)
+signal cooldown(from_username: String, info: TwitchCommandInfo, args: PackedStringArray, cooldown_remaining_in_s: float)
 
 ## Required permission to execute the command
 enum PermissionFlag {
@@ -53,9 +59,18 @@ enum WhereFlag {
 @export var listen_to_chatrooms: Array[String] = []
 ## Determines if the aliases and commands should be case sensitive or not
 @export var case_insensitive: bool = true
+## Cooldown per user
+@export var user_cooldown: float = 0
+## Global cooldown for the command
+@export var global_cooldown: float = 0
 
 ## The eventsub to listen for chatmessages
 @export var eventsub: TwitchEventsub
+
+## Cooldowns per user Key: Username | Value: Time until it can be used again
+var _user_cooldowns: Dictionary[String, float] = {}
+## Time until it can be used again
+var _global_cooldown: float
 
 static func create(
 		eventsub: TwitchEventsub,
@@ -151,6 +166,8 @@ func _handle_command(from_username: String, raw_message: String, to_user: String
 	var arg_array : PackedStringArray = []
 	var command = cmd_msg[0]
 	var info = TwitchCommandInfo.new(self, to_user, from_username, arg_array, data)
+	
+	# Handle Argument parsing
 	if cmd_msg.size() > 1:
 		message = cmd_msg[1]
 		arg_array.append_array(message.split(" ", false))
@@ -165,11 +182,28 @@ func _handle_command(from_username: String, raw_message: String, to_user: String
 			if user_perm_flags & permission_level == 0:
 				received_invalid_command.emit(from_username, info, arg_array)
 				return
-	if arg_array.size() == 0:
-		if args_min > 0:
-			received_invalid_command.emit(from_username, info, arg_array)
+	if arg_array.size() == 0 && args_min > 0:
+		received_invalid_command.emit(from_username, info, arg_array)
+		return
+		
+	# Handle Cooldowns
+	if user_cooldown > 0:
+		var current_user_cooldown: float = _user_cooldowns.get_or_add(from_username, 0)
+		if current_user_cooldown >= Time.get_ticks_msec():
+			var cooldown_left: float = (current_user_cooldown - Time.get_ticks_msec()) / 1000
+			cooldown.emit(from_username, info, arg_array, cooldown_left)
 			return
-
+		_user_cooldowns.set(from_username, Time.get_ticks_msec() + (user_cooldown * S_TO_MS))
+	
+	if global_cooldown > 0:
+		if _global_cooldown >= Time.get_ticks_msec():
+			var cooldown_left: float = (_global_cooldown - Time.get_ticks_msec()) / 1000
+			cooldown.emit(from_username, info, arg_array, cooldown_left)
+			return
+		_global_cooldown = Time.get_ticks_msec() + (global_cooldown * S_TO_MS)
+	
+	# Executing the command
+	if arg_array.size() == 0:
 		var empty_args: Array[String] = []
 		if args_max > 0:
 			command_received.emit(from_username, info, empty_args)
