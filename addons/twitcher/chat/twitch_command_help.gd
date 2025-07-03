@@ -22,11 +22,13 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	if command == "": command = "help"
 	
-	command_received.connect(_on_command_receive)		
+	command_received.connect(_on_command_receive)
 	
-	var response: TwitchGetUsers.Response = await twitch_api.get_users(TwitchGetUsers.Opt.new())
-	_current_user = response.data[0]
-	if sender_user == null: sender_user = _current_user
+	# Only when you have a user in the token otherwise twitch returns a 400
+	if twitch_api.token.type == OAuthToken.USER_ACCESS_TOKEN:
+		var response: TwitchGetUsers.Response = await twitch_api.get_users(TwitchGetUsers.Opt.new())
+		_current_user = response.data[0]
+		if sender_user == null: sender_user = _current_user
 	
 	
 func _on_command_receive(from_username: String, info: TwitchCommandInfo, args: PackedStringArray) -> void:
@@ -42,8 +44,8 @@ func _on_command_receive(from_username: String, info: TwitchCommandInfo, args: P
 	else:
 		var help_message: String = _generate_help_message(args, true)
 		var message: Dictionary = info.original_message
-		if message["to_user_id"] != _current_user.id:
-			push_error("Can't answer the whisper message receiver is not the user that will be used as sender!")
+		if _current_user != null && message["to_user_id"] != _current_user.id:
+			push_error("Can't answer the whisper message. Receiver is not the user that will be used as sender!")
 			return
 		var message_body: TwitchSendWhisper.Body = TwitchSendWhisper.Body.new()
 		message_body.message = help_message
