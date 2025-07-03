@@ -192,16 +192,22 @@ func _handle_token_request(request: OAuthHTTPClient.RequestData) -> bool:
 func _update_tokens_from_response(result: Dictionary):
 	var scopes: Array[String] = []
 	for scope in result.get("scope", []): scopes.append(scope)
-
+	var type: StringName = &"" 
+	if oauth_setting.authorization_flow == OAuth.AuthorizationFlow.CLIENT_CREDENTIALS:
+		type = OAuthToken.APP_ACCESS_TOKEN
+	else:
+		type = OAuthToken.USER_ACCESS_TOKEN
+		
 	update_tokens(result["access_token"], \
 		result.get("refresh_token", ""), \
 		result.get("expires_in", -1), \
-		scopes)
+		scopes,
+		type)
 
 
 ## Updates the token. Result is the response data of an token request.
-func update_tokens(access_token: String, refresh_token: String = "", expires_in: int = -1, scopes: Array[String] = []):
-	token.update_values(access_token, refresh_token, expires_in, scopes)
+func update_tokens(access_token: String, refresh_token: String = "", expires_in: int = -1, scopes: Array[String] = [], type: StringName = &""):
+	token.update_values(access_token, refresh_token, expires_in, scopes, type)
 	token_resolved.emit(token)
 	logInfo("token (%s) resolved" % token)
 

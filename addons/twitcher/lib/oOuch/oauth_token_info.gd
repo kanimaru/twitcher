@@ -11,6 +11,7 @@ signal revoked
 @onready var token_scope_value: Node = %TokenScopeValue
 @onready var reload_button: Button = %ReloadButton
 @onready var revoke_button: Button = %RevokeButton
+@onready var token_type: Label = %TokenType
 
 
 func _ready() -> void:
@@ -56,6 +57,8 @@ func update_token_view() -> void:
 		refresh_token_value.text = "Not Available"
 		refresh_token_value.add_theme_color_override(&"font_color", Color.YELLOW)
 		refresh_token_value.button_pressed = false
+
+	token_type.text = token._type
 
 	for scope in token.get_scopes():
 		var scope_name = Label.new()

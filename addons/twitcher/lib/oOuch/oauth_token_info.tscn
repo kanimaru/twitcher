@@ -43,6 +43,14 @@ unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 
+[node name="TokenTypeTitle" type="Label" parent="VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Type:"
+
+[node name="TokenType" type="Label" parent="VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="TokenScopeTitle" type="Label" parent="VBoxContainer/GridContainer"]
 layout_mode = 2
 text = "Token Scope:"
