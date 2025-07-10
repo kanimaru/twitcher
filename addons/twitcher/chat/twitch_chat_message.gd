@@ -54,7 +54,7 @@ class Message extends RefCounted:
 
 class Fragment extends RefCounted:
 	## The type of message fragment. See "TwitchChatMessage.FRAGMENT_TYPE_*"
-	var type: MessageType
+	var type: FragmentType
 	## Message text in fragment.
 	var text: String
 	## Optional. Metadata pertaining to the cheermote.
