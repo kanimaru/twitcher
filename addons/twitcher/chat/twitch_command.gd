@@ -167,6 +167,14 @@ func _handle_command(from_username: String, raw_message: String, to_user: String
 	var command = cmd_msg[0]
 	var info = TwitchCommandInfo.new(self, to_user, from_username, arg_array, data)
 	
+	# Handle Permission check
+	var premission_required = permission_level != 0
+	if premission_required:
+		var user_perm_flags = _get_perm_flag_from_tags(data)
+		if user_perm_flags & permission_level == 0:
+			received_invalid_command.emit(from_username, info, arg_array)
+			return
+	
 	# Handle Argument parsing
 	if cmd_msg.size() > 1:
 		message = cmd_msg[1]
@@ -176,12 +184,6 @@ func _handle_command(from_username: String, raw_message: String, to_user: String
 		if to_much_arguments && args_max != -1 || to_less_arguments:
 			received_invalid_command.emit(from_username, info, arg_array)
 			return
-		var premission_required = permission_level != 0
-		if premission_required:
-			var user_perm_flags = _get_perm_flag_from_tags(data)
-			if user_perm_flags & permission_level == 0:
-				received_invalid_command.emit(from_username, info, arg_array)
-				return
 	if arg_array.size() == 0 && args_min > 0:
 		received_invalid_command.emit(from_username, info, arg_array)
 		return
