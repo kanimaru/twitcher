@@ -27,6 +27,7 @@ signal received(data: Dictionary)
 
 
 func _ready() -> void:
+	if eventsub == null: eventsub = TwitchEventsub.instance
 	_update_eventsub(eventsub)
 
 
