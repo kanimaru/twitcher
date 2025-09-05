@@ -58,7 +58,7 @@ func update_token_view() -> void:
 		refresh_token_value.add_theme_color_override(&"font_color", Color.YELLOW)
 		refresh_token_value.button_pressed = false
 
-	token_type.text = token._type
+	token_type.text = token.type
 
 	for scope in token.get_scopes():
 		var scope_name = Label.new()
