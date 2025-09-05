@@ -39,7 +39,7 @@ theme_override_constants/separation = 20
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
-text = "For basic use cases an autoload is the easiest way to setup Twitcher. Adds an autoload named [b]Twitch[/b]
+text = "For backwards compatibility, don't use it when you not actually need it! Adds an autoload named [b]Twitch[/b] you will need to modify the Scene with your configurations when you want to use Twitcher this way.
 
 [i]Advantage:[/i]
 + easy access everywhere
@@ -72,6 +72,7 @@ theme_override_constants/separation = 20
 [node name="LoadCurrentTwitchUser" type="CheckButton" parent="ScrollContainer/Container"]
 unique_name_in_owner = true
 layout_mode = 2
+button_pressed = true
 text = "Should TwitchUser Inspector automatically load the current user when empty?"
 
 [node name="HSeparator3" type="HSeparator" parent="ScrollContainer/Container"]
