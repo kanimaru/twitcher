@@ -36,13 +36,13 @@ var _requests_in_progress : Array[StringName]
 var _cached_badges : Dictionary = {}
 ## Emote definition for global and the channel.
 var _cached_emotes : Dictionary = {}
-## Key: String Cheer Prefix | Value: TwitchCheermote
+## Key: String Cheer Key(Prefix) | Value: TwitchCheermote
 var _cached_cheermotes: Dictionary[String, TwitchCheermote] = {}
 
 ## All cached emotes, badges, cheermotes
 ## Is needed that the garbage collector isn't deleting our cache.
 var _cached_images : Array[SpriteFrames] = []
-var _host_parser = RegEx.create_from_string("(https://.*?)/")
+var _host_parser: RegEx = RegEx.create_from_string("(https://.*?)/")
 var static_image_transformer = TwitchImageTransformer.new()
 var _client: BufferedHTTPClient
 
@@ -72,12 +72,12 @@ func _load_cache() -> void:
 
 func _cache_directory(path: String):
 	DirAccess.make_dir_recursive_absolute(path)
-	var files = DirAccess.get_files_at(path)
+	var files: PackedStringArray = DirAccess.get_files_at(path)
 	for file in files:
 		if file.ends_with(".res"):
-			var res_path = path.path_join(file)
+			var res_path: String = path.path_join(file)
 			var sprite_frames: SpriteFrames = ResourceLoader.load(res_path, "SpriteFrames")
-			var spriteframe_path = res_path.trim_suffix(".res")
+			var spriteframe_path: String = res_path.trim_suffix(".res")
 			sprite_frames.take_over_path(spriteframe_path)
 			_cached_images.append(sprite_frames)
 
@@ -284,9 +284,10 @@ func preload_cheemote() -> void:
 	if not _cached_cheermotes.is_empty(): return
 	_log.i("Preload cheermotes")
 	var cheermote_response: TwitchGetCheermotes.Response = await api.get_cheermotes(null)
-	for data: TwitchCheermote in cheermote_response.data:
-		_log.d("- found %s" % data.prefix)
-		_cached_cheermotes[data.prefix] = data
+	for cheermote: TwitchCheermote in cheermote_response.data:
+		_log.d("- found %s" % cheermote.prefix)
+		var key: String = _get_cheermote_key(cheermote) 
+		_cached_cheermotes[key] = cheermote
 
 
 func all_cheermotes() -> Array[TwitchCheermote]:
@@ -299,8 +300,9 @@ func all_cheermotes() -> Array[TwitchCheermote]:
 ## Can be null when not found.
 func get_cheer_info(cheermote_definition: TwitchCheermoteDefinition) -> CheerResult:
 	await preload_cheemote()
-	var cheermote : TwitchCheermote = _cached_cheermotes[cheermote_definition.prefix]
-	for cheertier: TwitchCheermote.Tiers in cheermote.tiers:
+	var key: String = _get_cheermote_key(cheermote_definition)
+	var cheermote : TwitchCheermote = _cached_cheermotes[key]
+	for cheertier : TwitchCheermote.Tiers in cheermote.tiers:
 		if cheertier.id == cheermote_definition.tier:
 			var sprite_frames: SpriteFrames = await _get_cheermote_sprite_frames(cheertier, cheermote_definition)
 			return CheerResult.new(cheermote, cheertier, sprite_frames)
@@ -309,8 +311,8 @@ func get_cheer_info(cheermote_definition: TwitchCheermoteDefinition) -> CheerRes
 
 ## Finds the tier depending on the given number
 func find_cheer_tier(number: int, cheer_data: TwitchCheermote) -> TwitchCheermote.Tiers:
-	var current_tier: TwitchCheermote.Tiers = cheer_data.tiers[0]
-	for tier: TwitchCheermote.Tiers in cheer_data.tiers:
+	var current_tier : TwitchCheermote.Tiers = cheer_data.tiers[0]
+	for tier : TwitchCheermote.Tiers in cheer_data.tiers:
 		if tier.min_bits < number && current_tier.min_bits < tier.min_bits:
 			current_tier = tier
 	return current_tier
@@ -322,7 +324,8 @@ func get_cheermotes(cheermote_definition: TwitchCheermoteDefinition) -> Dictiona
 	await preload_cheemote()
 	var response : Dictionary[TwitchCheermote.Tiers, SpriteFrames] = {}
 	var requests : Dictionary[TwitchCheermote.Tiers, BufferedHTTPClient.RequestData] = {}
-	var cheer : TwitchCheermote = _cached_cheermotes[cheermote_definition.prefix]
+	var key : String = _get_cheermote_key(cheermote_definition)
+	var cheer : TwitchCheermote = _cached_cheermotes[key]
 	for tier : TwitchCheermote.Tiers in cheer.tiers:
 		var id = cheermote_definition.get_id()
 		if ResourceLoader.has_cached(id): 
@@ -374,6 +377,12 @@ func _request_cheermote(cheer_tier: TwitchCheermote.Tiers, cheermote: TwitchChee
 	var host : String = host_result.get_string(1)
 	return _client.request(img_path, HTTPClient.METHOD_GET, {}, "")
 	
+	
+## Get's the caching key from cheermote (TwitchCheermote or TwitchCheermoteDefinition)
+func _get_cheermote_key(cheermote: Variant) -> String:
+	if "prefix" in cheermote:
+		return cheermote.prefix.to_lower()
+	return "%s" % cheermote
 
 #endregion
 
