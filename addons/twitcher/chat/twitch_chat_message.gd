@@ -9,14 +9,14 @@ enum FragmentType {
 	mention = 3
 }
 
-const FRAGMENT_TYPES = ["text", "cheermote", "emote", "mention"]
+const FRAGMENT_TYPES: PackedStringArray = ["text", "cheermote", "emote", "mention"]
 
 enum EmoteFormat {
 	animated = 0,
 	_static = 1
 }
 
-const EMOTE_FORMATES = ["animated", "static"]
+const EMOTE_FORMATES: PackedStringArray = ["animated", "static"]
 
 enum MessageType {
 	## Normal chat message
@@ -33,7 +33,7 @@ enum MessageType {
 	power_ups_gigantified_emote = 5
 }
 
-const MESSAGE_TYPES = ["text", "channel_points_highlighted", "channel_points_sub_only", "user_intro", "power_ups_message_effect", "power_ups_gigantified_emote"]
+const MESSAGE_TYPES: PackedStringArray = ["text", "channel_points_highlighted", "channel_points_sub_only", "user_intro", "power_ups_message_effect", "power_ups_gigantified_emote"]
 
 class Message extends RefCounted:
 	## The chat message in plain text.

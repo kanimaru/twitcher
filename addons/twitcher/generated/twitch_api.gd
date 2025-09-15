@@ -11,7 +11,7 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchAPI")
 static var instance: TwitchAPI
 
 ## Maximal tries to reauthrorize before giving up the request.
-const MAX_AUTH_ERRORS = 3
+const MAX_AUTH_ERRORS: int = 3
 
 ## Called when the API returns unauthenticated mostly cause the accesstoken is expired
 signal unauthenticated
@@ -1422,6 +1422,8 @@ func get_eventsub_subscriptions(opt: TwitchGetEventsubSubscriptions.Opt) -> Twit
 		path += "after=" + str(optionals.after) + "&"
 	if optionals.has("status"):
 		path += "status=" + str(optionals.status) + "&"
+	if optionals.has("subscription_id"):
+		path += "subscription_id=" + str(optionals.subscription_id) + "&"
 	if optionals.has("type"):
 		path += "type=" + str(optionals.type) + "&"
 	if optionals.has("user_id"):
@@ -1781,6 +1783,23 @@ func get_hype_train_events(opt: TwitchGetHypeTrainEvents.Opt, broadcaster_id: St
 		if not opt: opt = TwitchGetHypeTrainEvents.Opt.new()
 		opt.after = cursor
 		parsed_result._next_page = get_hype_train_events.bind(opt, broadcaster_id)
+	return parsed_result
+
+	
+## BETA Gets the status of a Hype Train for the specified broadcaster.
+## 
+## broadcaster_id - The User ID of the channel broadcaster. 
+##
+## https://dev.twitch.tv/docs/api/reference#get-hype-train-status
+func get_hype_train_status(broadcaster_id: String) -> TwitchGetHypeTrainStatus.Response:
+	var path = "/hypetrain/status?"
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	
+	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	
+	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
+	var parsed_result: TwitchGetHypeTrainStatus.Response = TwitchGetHypeTrainStatus.Response.from_json(result)
+	parsed_result.response = response
 	return parsed_result
 
 	

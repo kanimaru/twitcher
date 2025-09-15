@@ -91,7 +91,7 @@ func _parse_properties(component: TwitchGenComponent, schema: Dictionary) -> voi
 		
 			
 		if property.has("properties"):
-			var sub_component = _add_sub_component(classname, field._description, component, property)
+			var sub_component: TwitchGenComponent = _add_sub_component(classname, field._description, component, property)
 			field._type = sub_component._ref
 		
 		## Arrays that has custom types
@@ -102,7 +102,7 @@ func _parse_properties(component: TwitchGenComponent, schema: Dictionary) -> voi
 			if items.has("$ref"):
 				field._type = items.get("$ref")
 			elif items.has("properties"):
-				var sub_component = _add_sub_component(classname, field._description, component, items)				
+				var sub_component: TwitchGenComponent = _add_sub_component(classname, field._description, component, items)				
 				field._type = sub_component._ref
 
 		component.add_field(field)
@@ -128,8 +128,8 @@ func _parsing_paths() -> void:
 	for path in paths:
 		var method_specs = paths[path]
 		for http_verb: String in method_specs:
-			var method_spec = method_specs[http_verb] as Dictionary
-			var method = _parse_method(http_verb, method_spec)
+			var method_spec: Dictionary = method_specs[http_verb] as Dictionary
+			var method: TwitchGenMethod = _parse_method(http_verb, method_spec)
 			method._path = path
 			if method._contains_optional:
 				var component : TwitchGenComponent = method.get_optional_component()
@@ -217,7 +217,7 @@ func _get_param_type(schema: Dictionary) -> String:
 	if not schema.has("type"):
 		return "Variant" # Maybe ugly
 
-	var type = schema["type"]
+	var type: String = schema["type"].to_lower()
 	var format = schema.get("format", "")
 	match type:
 		"object":
@@ -234,7 +234,7 @@ func _get_param_type(schema: Dictionary) -> String:
 			return "int"
 		"number":
 			return "float" if format == "float" else "int"
-		"boolean":
+		"boolean", "bool":
 			return "bool"
 		"array":
 			var ref: String = schema["items"].get("$ref", "")

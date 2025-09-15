@@ -48,6 +48,12 @@ class Opt extends TwitchData:
 			user_id = val
 			track_data(&"user_id", val)
 	
+	## Returns an array with the subscription matching the ID (as long as it is owned by the client making the request), or an empty array if there is no matching subscription.
+	@export var subscription_id: String:
+		set(val): 
+			subscription_id = val
+			track_data(&"subscription_id", val)
+	
 	## The cursor used to get the next page of results. The `pagination` object in the response contains the cursor's value.
 	@export var after: String:
 		set(val): 
@@ -70,6 +76,8 @@ class Opt extends TwitchData:
 			result.type = d["type"]
 		if d.get("user_id", null) != null:
 			result.user_id = d["user_id"]
+		if d.get("subscription_id", null) != null:
+			result.subscription_id = d["subscription_id"]
 		if d.get("after", null) != null:
 			result.after = d["after"]
 		return result

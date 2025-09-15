@@ -20,7 +20,7 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchAPI")
 static var instance: TwitchAPI
 
 ## Maximal tries to reauthrorize before giving up the request.
-const MAX_AUTH_ERRORS = 3
+const MAX_AUTH_ERRORS: int = 3
 
 ## Called when the API returns unauthenticated mostly cause the accesstoken is expired
 signal unauthenticated
