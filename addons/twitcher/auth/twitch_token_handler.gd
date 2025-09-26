@@ -24,8 +24,9 @@ func _check_token_refresh() -> void:
 ## Calles the validation endpoint of Twtich to make sure
 func _validate_token() -> void:
 	_last_validation_check = Time.get_ticks_msec() + 60 * 60 * 1000;
+	var access_token = token._access_token # we need to use the internal access token here cause the get_access_token method won't returned until the token is authorized 
 	var validation_request = _http_client.request("https://id.twitch.tv/oauth2/validate", HTTPClient.METHOD_GET, {
-		"Authorization": "OAuth %s" % await token.get_access_token()
+		"Authorization": "OAuth %s" % access_token
 	}, "")
 	var response = await _http_client.wait_for_request(validation_request)
 	if response.response_code != 200:
@@ -37,6 +38,10 @@ func _validate_token() -> void:
 	if response_data["expires_in"] <= 0:
 		refresh_tokens()
 		return
+	else:
+		# update expire date
+		token._expire_date = Time.get_unix_time_from_system() + response_data["expires_in"]
+		token.emit_changed()
 
 
 func revoke_token() -> void:

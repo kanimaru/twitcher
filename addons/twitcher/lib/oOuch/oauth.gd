@@ -276,6 +276,10 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 		token_handler.update_tokens(token_request["access_token"])
 		logInfo("Received Access Token update it")
 		server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success!</body></html>".to_utf8_buffer())
+		
+		# We didn't include the expire date in the update_tokens method above so we need to validate it
+		if token_handler is TwitchTokenHandler:
+			await token_handler._validate_token()
 
 #endregion
 #region AuthCodeFlow
