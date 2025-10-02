@@ -92,9 +92,6 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 		return await retry(req, res, path, method, body, content_type, error_count + 1)
 
 	match res.response_code:
-		400:
-			var error_message: String = res.response_data.get_string_from_utf8()
-			_log.e("'%s' failed cause of: \\n%s" % [path, error_message])
 		401: # Token expired / or missing permissions
 			_log.e("'%s' is unauthorized. It is probably your scopes." % path)
 			unauthorized.emit()
@@ -121,6 +118,13 @@ func retry(request: BufferedHTTPClient.RequestData,
 		var empty_response: BufferedHTTPClient.ResponseData = client.empty_response(request)
 		empty_response.response_code = response.response_code
 		return empty_response
+
+
+func _handle_error(method_name: String, response: BufferedHTTPClient.ResponseData) -> void:
+	var error_json: String = response.response_data.get_string_from_utf8()
+	var error = JSON.parse_string(error_json)
+	push_error("Problems while calling %s: " % method_name, error["message"])
+	_log.d(error_json)
 
 
 ## Converts unix timestamp to RFC 3339 (example: 2021-10-27T00:00:00Z) when passed a string uses as is
@@ -359,6 +363,7 @@ parsed_result.response = response
 
 
 func method_code(method: TwitchGenMethod) -> String:
+	print("GENERATE METHOD ", method._name)
 	return """
 	
 ## {summary}
@@ -369,6 +374,10 @@ func method_code(method: TwitchGenMethod) -> String:
 func {name}({parameters}) -> {result_type}:
 	{path_code}
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_{method}, {body_variable}, "{content_type}")
+	if response.response_code >= 400: 
+		_handle_error("{name}", response)
+		return null
+		
 	{response_code}
 """.format({
 			"summary": method._summary,

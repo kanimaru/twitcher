@@ -83,9 +83,6 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 		return await retry(req, res, path, method, body, content_type, error_count + 1)
 
 	match res.response_code:
-		400:
-			var error_message: String = res.response_data.get_string_from_utf8()
-			_log.e("'%s' failed cause of: \n%s" % [path, error_message])
 		401: # Token expired / or missing permissions
 			_log.e("'%s' is unauthorized. It is probably your scopes." % path)
 			unauthorized.emit()
@@ -114,6 +111,13 @@ func retry(request: BufferedHTTPClient.RequestData,
 		return empty_response
 
 
+func _handle_error(method_name: String, response: BufferedHTTPClient.ResponseData) -> void:
+	var error_json: String = response.response_data.get_string_from_utf8()
+	var error = JSON.parse_string(error_json)
+	push_error("Problems while calling %s: " % method_name, error["message"])
+	_log.d(error_json)
+
+
 ## Converts unix timestamp to RFC 3339 (example: 2021-10-27T00:00:00Z) when passed a string uses as is
 static func get_rfc_3339_date_format(time: Variant) -> String:
 	if typeof(time) == TYPE_INT:
@@ -132,6 +136,10 @@ func start_commercial(body: TwitchStartCommercial.Body) -> TwitchStartCommercial
 	var path = "/channels/commercial?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("start_commercial", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchStartCommercial.Response = TwitchStartCommercial.Response.from_json(result)
@@ -149,6 +157,10 @@ func get_ad_schedule(broadcaster_id: String) -> TwitchGetAdSchedule.Response:
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_ad_schedule", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetAdSchedule.Response = TwitchGetAdSchedule.Response.from_json(result)
@@ -166,6 +178,10 @@ func snooze_next_ad(broadcaster_id: String) -> TwitchSnoozeNextAd.Response:
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("snooze_next_ad", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchSnoozeNextAd.Response = TwitchSnoozeNextAd.Response.from_json(result)
@@ -196,6 +212,10 @@ func get_extension_analytics(opt: TwitchGetExtensionAnalytics.Opt) -> TwitchGetE
 		path += "type=" + str(optionals.type) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_extension_analytics", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetExtensionAnalytics.Response = TwitchGetExtensionAnalytics.Response.from_json(result)
@@ -231,6 +251,10 @@ func get_game_analytics(opt: TwitchGetGameAnalytics.Opt) -> TwitchGetGameAnalyti
 		path += "type=" + str(optionals.type) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_game_analytics", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetGameAnalytics.Response = TwitchGetGameAnalytics.Response.from_json(result)
@@ -262,6 +286,10 @@ func get_bits_leaderboard(opt: TwitchGetBitsLeaderboard.Opt) -> TwitchGetBitsLea
 		path += "user_id=" + str(optionals.user_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_bits_leaderboard", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetBitsLeaderboard.Response = TwitchGetBitsLeaderboard.Response.from_json(result)
@@ -282,6 +310,10 @@ func get_cheermotes(opt: TwitchGetCheermotes.Opt) -> TwitchGetCheermotes.Respons
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_cheermotes", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetCheermotes.Response = TwitchGetCheermotes.Response.from_json(result)
@@ -309,6 +341,10 @@ func get_extension_transactions(opt: TwitchGetExtensionTransactions.Opt, extensi
 			path += "id=" + str(param) + "&" 
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_extension_transactions", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetExtensionTransactions.Response = TwitchGetExtensionTransactions.Response.from_json(result)
@@ -333,6 +369,10 @@ func get_channel_information(broadcaster_id: Array[String]) -> TwitchGetChannelI
 		path += "broadcaster_id=" + str(param) + "&" 
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_channel_information", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChannelInformation.Response = TwitchGetChannelInformation.Response.from_json(result)
@@ -350,6 +390,10 @@ func modify_channel_information(body: TwitchModifyChannelInformation.Body, broad
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("modify_channel_information", response)
+		return null
+		
 	return response
 
 	
@@ -363,6 +407,10 @@ func get_channel_editors(broadcaster_id: String) -> TwitchGetChannelEditors.Resp
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_channel_editors", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChannelEditors.Response = TwitchGetChannelEditors.Response.from_json(result)
@@ -388,6 +436,10 @@ func get_followed_channels(opt: TwitchGetFollowedChannels.Opt, user_id: String) 
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_followed_channels", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetFollowedChannels.Response = TwitchGetFollowedChannels.Response.from_json(result)
@@ -418,6 +470,10 @@ func get_channel_followers(opt: TwitchGetChannelFollowers.Opt, broadcaster_id: S
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_channel_followers", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChannelFollowers.Response = TwitchGetChannelFollowers.Response.from_json(result)
@@ -440,6 +496,10 @@ func create_custom_rewards(body: TwitchCreateCustomRewards.Body, broadcaster_id:
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("create_custom_rewards", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreateCustomRewards.Response = TwitchCreateCustomRewards.Response.from_json(result)
@@ -459,6 +519,10 @@ func delete_custom_reward(id: String, broadcaster_id: String) -> BufferedHTTPCli
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("delete_custom_reward", response)
+		return null
+		
 	return response
 
 	
@@ -480,6 +544,10 @@ func get_custom_reward(opt: TwitchGetCustomReward.Opt, broadcaster_id: String) -
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_custom_reward", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetCustomReward.Response = TwitchGetCustomReward.Response.from_json(result)
@@ -499,6 +567,10 @@ func update_custom_reward(body: TwitchUpdateCustomReward.Body, id: String, broad
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_custom_reward", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateCustomReward.Response = TwitchUpdateCustomReward.Response.from_json(result)
@@ -532,6 +604,10 @@ func get_custom_reward_redemption(opt: TwitchGetCustomRewardRedemption.Opt, rewa
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_custom_reward_redemption", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetCustomRewardRedemption.Response = TwitchGetCustomRewardRedemption.Response.from_json(result)
@@ -560,6 +636,10 @@ func update_redemption_status(body: TwitchUpdateRedemptionStatus.Body, id: Array
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_redemption_status", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateRedemptionStatus.Response = TwitchUpdateRedemptionStatus.Response.from_json(result)
@@ -577,6 +657,10 @@ func get_charity_campaign(broadcaster_id: String) -> TwitchGetCharityCampaign.Re
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_charity_campaign", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetCharityCampaign.Response = TwitchGetCharityCampaign.Response.from_json(result)
@@ -600,6 +684,10 @@ func get_charity_campaign_donations(opt: TwitchGetCharityCampaignDonations.Opt, 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_charity_campaign_donations", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetCharityCampaignDonations.Response = TwitchGetCharityCampaignDonations.Response.from_json(result)
@@ -630,6 +718,10 @@ func get_chatters(opt: TwitchGetChatters.Opt, moderator_id: String, broadcaster_
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_chatters", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChatters.Response = TwitchGetChatters.Response.from_json(result)
@@ -652,6 +744,10 @@ func get_channel_emotes(broadcaster_id: String) -> TwitchGetChannelEmotes.Respon
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_channel_emotes", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChannelEmotes.Response = TwitchGetChannelEmotes.Response.from_json(result)
@@ -668,6 +764,10 @@ func get_global_emotes() -> TwitchGetGlobalEmotes.Response:
 	var path = "/chat/emotes/global?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_global_emotes", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetGlobalEmotes.Response = TwitchGetGlobalEmotes.Response.from_json(result)
@@ -689,6 +789,10 @@ func get_emote_sets(emote_set_id: Array[String]) -> TwitchGetEmoteSets.Response:
 		path += "emote_set_id=" + str(param) + "&" 
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_emote_sets", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetEmoteSets.Response = TwitchGetEmoteSets.Response.from_json(result)
@@ -706,6 +810,10 @@ func get_channel_chat_badges(broadcaster_id: String) -> TwitchGetChannelChatBadg
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_channel_chat_badges", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChannelChatBadges.Response = TwitchGetChannelChatBadges.Response.from_json(result)
@@ -722,6 +830,10 @@ func get_global_chat_badges() -> TwitchGetGlobalChatBadges.Response:
 	var path = "/chat/badges/global?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_global_chat_badges", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetGlobalChatBadges.Response = TwitchGetGlobalChatBadges.Response.from_json(result)
@@ -743,6 +855,10 @@ func get_chat_settings(opt: TwitchGetChatSettings.Opt, broadcaster_id: String) -
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_chat_settings", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChatSettings.Response = TwitchGetChatSettings.Response.from_json(result)
@@ -762,6 +878,10 @@ func update_chat_settings(body: TwitchUpdateChatSettings.Body, moderator_id: Str
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_chat_settings", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateChatSettings.Response = TwitchUpdateChatSettings.Response.from_json(result)
@@ -779,6 +899,10 @@ func get_shared_chat_session(broadcaster_id: String) -> TwitchGetSharedChatSessi
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_shared_chat_session", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetSharedChatSession.Response = TwitchGetSharedChatSession.Response.from_json(result)
@@ -802,6 +926,10 @@ func get_user_emotes(opt: TwitchGetUserEmotes.Opt, user_id: String) -> TwitchGet
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_user_emotes", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetUserEmotes.Response = TwitchGetUserEmotes.Response.from_json(result)
@@ -826,6 +954,10 @@ func send_chat_announcement(body: TwitchSendChatAnnouncement.Body, moderator_id:
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("send_chat_announcement", response)
+		return null
+		
 	return response
 
 	
@@ -843,6 +975,10 @@ func send_a_shoutout(from_broadcaster_id: String, moderator_id: String, to_broad
 	path += "to_broadcaster_id=" + str(to_broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("send_a_shoutout", response)
+		return null
+		
 	return response
 
 	
@@ -855,6 +991,10 @@ func send_chat_message(body: TwitchSendChatMessage.Body) -> TwitchSendChatMessag
 	var path = "/chat/messages?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("send_chat_message", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchSendChatMessage.Response = TwitchSendChatMessage.Response.from_json(result)
@@ -876,6 +1016,10 @@ func get_user_chat_color(user_id: Array[String]) -> TwitchGetUserChatColor.Respo
 		path += "user_id=" + str(param) + "&" 
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_user_chat_color", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetUserChatColor.Response = TwitchGetUserChatColor.Response.from_json(result)
@@ -913,6 +1057,10 @@ func update_user_chat_color(color: String, user_id: String) -> BufferedHTTPClien
 	path += "user_id=" + str(user_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, "", "")
+	if response.response_code >= 400: 
+		_handle_error("update_user_chat_color", response)
+		return null
+		
 	return response
 
 	
@@ -930,6 +1078,10 @@ func create_clip(opt: TwitchCreateClip.Opt, broadcaster_id: String) -> TwitchCre
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("create_clip", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreateClip.Response = TwitchCreateClip.Response.from_json(result)
@@ -968,6 +1120,10 @@ func get_clips(opt: TwitchGetClips.Opt) -> TwitchGetClips.Response:
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_clips", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetClips.Response = TwitchGetClips.Response.from_json(result)
@@ -989,6 +1145,10 @@ func get_conduits() -> TwitchGetConduits.Response:
 	var path = "/eventsub/conduits?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_conduits", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetConduits.Response = TwitchGetConduits.Response.from_json(result)
@@ -1005,6 +1165,10 @@ func create_conduits(body: TwitchCreateConduits.Body) -> TwitchCreateConduits.Re
 	var path = "/eventsub/conduits?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("create_conduits", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreateConduits.Response = TwitchCreateConduits.Response.from_json(result)
@@ -1021,6 +1185,10 @@ func update_conduits(body: TwitchUpdateConduits.Body) -> TwitchUpdateConduits.Re
 	var path = "/eventsub/conduits?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_conduits", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateConduits.Response = TwitchUpdateConduits.Response.from_json(result)
@@ -1038,6 +1206,10 @@ func delete_conduit(id: String) -> BufferedHTTPClient.ResponseData:
 	path += "id=" + str(id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("delete_conduit", response)
+		return null
+		
 	return response
 
 	
@@ -1057,6 +1229,10 @@ func get_conduit_shards(opt: TwitchGetConduitShards.Opt, conduit_id: String) -> 
 		path += "status=" + str(optionals.status) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_conduit_shards", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetConduitShards.Response = TwitchGetConduitShards.Response.from_json(result)
@@ -1078,6 +1254,10 @@ func update_conduit_shards(body: TwitchUpdateConduitShards.Body) -> TwitchUpdate
 	var path = "/eventsub/conduits/shards?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_conduit_shards", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateConduitShards.Response = TwitchUpdateConduitShards.Response.from_json(result)
@@ -1098,6 +1278,10 @@ func get_content_classification_labels(opt: TwitchGetContentClassificationLabels
 		path += "locale=" + str(optionals.locale) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_content_classification_labels", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetContentClassificationLabels.Response = TwitchGetContentClassificationLabels.Response.from_json(result)
@@ -1130,6 +1314,10 @@ func get_drops_entitlements(opt: TwitchGetDropsEntitlements.Opt) -> TwitchGetDro
 		path += "user_id=" + str(optionals.user_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_drops_entitlements", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetDropsEntitlements.Response = TwitchGetDropsEntitlements.Response.from_json(result)
@@ -1151,6 +1339,10 @@ func update_drops_entitlements(body: TwitchUpdateDropsEntitlements.Body) -> Twit
 	var path = "/entitlements/drops?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_drops_entitlements", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateDropsEntitlements.Response = TwitchUpdateDropsEntitlements.Response.from_json(result)
@@ -1180,6 +1372,10 @@ func get_extension_configuration_segment(opt: TwitchGetExtensionConfigurationSeg
 		path += "broadcaster_id=" + str(optionals.broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_extension_configuration_segment", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetExtensionConfigurationSegment.Response = TwitchGetExtensionConfigurationSegment.Response.from_json(result)
@@ -1196,6 +1392,10 @@ func set_extension_configuration_segment(body: TwitchSetExtensionConfigurationSe
 	var path = "/extensions/configurations?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("set_extension_configuration_segment", response)
+		return null
+		
 	return response
 
 	
@@ -1209,6 +1409,10 @@ func set_extension_required_configuration(body: TwitchSetExtensionRequiredConfig
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("set_extension_required_configuration", response)
+		return null
+		
 	return response
 
 	
@@ -1221,6 +1425,10 @@ func send_extension_pubsub_message(body: TwitchSendExtensionPubSubMessage.Body) 
 	var path = "/extensions/pubsub?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("send_extension_pubsub_message", response)
+		return null
+		
 	return response
 
 	
@@ -1240,6 +1448,10 @@ func get_extension_live_channels(opt: TwitchGetExtensionLiveChannels.Opt, extens
 		path += "first=" + str(optionals.first) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_extension_live_channels", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetExtensionLiveChannels.Response = TwitchGetExtensionLiveChannels.Response.from_json(result)
@@ -1261,6 +1473,10 @@ func get_extension_secrets() -> TwitchGetExtensionSecrets.Response:
 	var path = "/extensions/jwt/secrets?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_extension_secrets", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetExtensionSecrets.Response = TwitchGetExtensionSecrets.Response.from_json(result)
@@ -1282,6 +1498,10 @@ func create_extension_secret(opt: TwitchCreateExtensionSecret.Opt, extension_id:
 		path += "delay=" + str(optionals.delay) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("create_extension_secret", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreateExtensionSecret.Response = TwitchCreateExtensionSecret.Response.from_json(result)
@@ -1299,6 +1519,10 @@ func send_extension_chat_message(body: TwitchSendExtensionChatMessage.Body, broa
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("send_extension_chat_message", response)
+		return null
+		
 	return response
 
 	
@@ -1316,6 +1540,10 @@ func get_extensions(opt: TwitchGetExtensions.Opt, extension_id: String) -> Twitc
 		path += "extension_version=" + str(optionals.extension_version) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_extensions", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetExtensions.Response = TwitchGetExtensions.Response.from_json(result)
@@ -1337,6 +1565,10 @@ func get_released_extensions(opt: TwitchGetReleasedExtensions.Opt, extension_id:
 		path += "extension_version=" + str(optionals.extension_version) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_released_extensions", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetReleasedExtensions.Response = TwitchGetReleasedExtensions.Response.from_json(result)
@@ -1357,6 +1589,10 @@ func get_extension_bits_products(opt: TwitchGetExtensionBitsProducts.Opt) -> Twi
 		path += "should_include_all=" + str(optionals.should_include_all) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_extension_bits_products", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetExtensionBitsProducts.Response = TwitchGetExtensionBitsProducts.Response.from_json(result)
@@ -1373,6 +1609,10 @@ func update_extension_bits_product(body: TwitchUpdateExtensionBitsProduct.Body) 
 	var path = "/bits/extensions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_extension_bits_product", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateExtensionBitsProduct.Response = TwitchUpdateExtensionBitsProduct.Response.from_json(result)
@@ -1389,6 +1629,10 @@ func create_eventsub_subscription(body: TwitchCreateEventSubSubscription.Body) -
 	var path = "/eventsub/subscriptions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("create_eventsub_subscription", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreateEventSubSubscription.Response = TwitchCreateEventSubSubscription.Response.from_json(result)
@@ -1406,6 +1650,10 @@ func delete_eventsub_subscription(id: String) -> BufferedHTTPClient.ResponseData
 	path += "id=" + str(id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("delete_eventsub_subscription", response)
+		return null
+		
 	return response
 
 	
@@ -1430,6 +1678,10 @@ func get_eventsub_subscriptions(opt: TwitchGetEventsubSubscriptions.Opt) -> Twit
 		path += "user_id=" + str(optionals.user_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_eventsub_subscriptions", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetEventSubSubscriptions.Response = TwitchGetEventSubSubscriptions.Response.from_json(result)
@@ -1459,6 +1711,10 @@ func get_top_games(opt: TwitchGetTopGames.Opt) -> TwitchGetTopGames.Response:
 		path += "first=" + str(optionals.first) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_top_games", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetTopGames.Response = TwitchGetTopGames.Response.from_json(result)
@@ -1494,6 +1750,10 @@ func get_games(opt: TwitchGetGames.Opt) -> TwitchGetGames.Response:
 			path += "name=" + str(param) + "&" 
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_games", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetGames.Response = TwitchGetGames.Response.from_json(result)
@@ -1511,6 +1771,10 @@ func get_creator_goals(broadcaster_id: String) -> TwitchGetCreatorGoals.Response
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_creator_goals", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetCreatorGoals.Response = TwitchGetCreatorGoals.Response.from_json(result)
@@ -1530,6 +1794,10 @@ func get_channel_guest_star_settings(moderator_id: String, broadcaster_id: Strin
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_channel_guest_star_settings", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChannelGuestStarSettings.Response = TwitchGetChannelGuestStarSettings.Response.from_json(result)
@@ -1547,6 +1815,10 @@ func update_channel_guest_star_settings(body: TwitchUpdateChannelGuestStarSettin
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_channel_guest_star_settings", response)
+		return null
+		
 	return response
 
 	
@@ -1562,6 +1834,10 @@ func get_guest_star_session(moderator_id: String, broadcaster_id: String) -> Twi
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_guest_star_session", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetGuestStarSession.Response = TwitchGetGuestStarSession.Response.from_json(result)
@@ -1579,6 +1855,10 @@ func create_guest_star_session(broadcaster_id: String) -> TwitchCreateGuestStarS
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("create_guest_star_session", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreateGuestStarSession.Response = TwitchCreateGuestStarSession.Response.from_json(result)
@@ -1598,6 +1878,10 @@ func end_guest_star_session(session_id: String, broadcaster_id: String) -> Buffe
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("end_guest_star_session", response)
+		return null
+		
 	return response
 
 	
@@ -1615,6 +1899,10 @@ func get_guest_star_invites(moderator_id: String, session_id: String, broadcaste
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_guest_star_invites", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetGuestStarInvites.Response = TwitchGetGuestStarInvites.Response.from_json(result)
@@ -1638,6 +1926,10 @@ func send_guest_star_invite(guest_id: String, moderator_id: String, session_id: 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("send_guest_star_invite", response)
+		return null
+		
 	return response
 
 	
@@ -1657,6 +1949,10 @@ func delete_guest_star_invite(guest_id: String, moderator_id: String, session_id
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("delete_guest_star_invite", response)
+		return null
+		
 	return response
 
 	
@@ -1678,6 +1974,10 @@ func assign_guest_star_slot(guest_id: String, moderator_id: String, session_id: 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("assign_guest_star_slot", response)
+		return null
+		
 	return response
 
 	
@@ -1701,6 +2001,10 @@ func update_guest_star_slot(opt: TwitchUpdateGuestStarSlot.Opt, moderator_id: St
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, "", "")
+	if response.response_code >= 400: 
+		_handle_error("update_guest_star_slot", response)
+		return null
+		
 	return response
 
 	
@@ -1726,6 +2030,10 @@ func delete_guest_star_slot(opt: TwitchDeleteGuestStarSlot.Opt, guest_id: String
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("delete_guest_star_slot", response)
+		return null
+		
 	return response
 
 	
@@ -1755,10 +2063,14 @@ func update_guest_star_slot_settings(opt: TwitchUpdateGuestStarSlotSettings.Opt,
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, "", "")
+	if response.response_code >= 400: 
+		_handle_error("update_guest_star_slot_settings", response)
+		return null
+		
 	return response
 
 	
-## Gets information about the broadcaster’s current or most recent Hype Train event.
+## DEPRECATED Gets information about the broadcaster’s current or most recent Hype Train event.
 ## 
 ## broadcaster_id - The ID of the broadcaster that’s running the Hype Train. This ID must match the User ID in the user access token. 
 ##
@@ -1774,6 +2086,10 @@ func get_hype_train_events(opt: TwitchGetHypeTrainEvents.Opt, broadcaster_id: St
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_hype_train_events", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetHypeTrainEvents.Response = TwitchGetHypeTrainEvents.Response.from_json(result)
@@ -1786,7 +2102,7 @@ func get_hype_train_events(opt: TwitchGetHypeTrainEvents.Opt, broadcaster_id: St
 	return parsed_result
 
 	
-## BETA Gets the status of a Hype Train for the specified broadcaster.
+## NEW Gets the status of a Hype Train for the specified broadcaster.
 ## 
 ## broadcaster_id - The User ID of the channel broadcaster. 
 ##
@@ -1796,6 +2112,10 @@ func get_hype_train_status(broadcaster_id: String) -> TwitchGetHypeTrainStatus.R
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_hype_train_status", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetHypeTrainStatus.Response = TwitchGetHypeTrainStatus.Response.from_json(result)
@@ -1813,6 +2133,10 @@ func check_automod_status(body: TwitchCheckAutoModStatus.Body, broadcaster_id: S
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("check_automod_status", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCheckAutoModStatus.Response = TwitchCheckAutoModStatus.Response.from_json(result)
@@ -1829,6 +2153,10 @@ func manage_held_automod_messages(body: TwitchManageHeldAutoModMessages.Body) ->
 	var path = "/moderation/automod/message?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("manage_held_automod_messages", response)
+		return null
+		
 	return response
 
 	
@@ -1844,6 +2172,10 @@ func get_automod_settings(moderator_id: String, broadcaster_id: String) -> Twitc
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_automod_settings", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetAutoModSettings.Response = TwitchGetAutoModSettings.Response.from_json(result)
@@ -1863,6 +2195,10 @@ func update_automod_settings(body: TwitchUpdateAutoModSettings.Body, moderator_i
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_automod_settings", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateAutoModSettings.Response = TwitchUpdateAutoModSettings.Response.from_json(result)
@@ -1892,6 +2228,10 @@ func get_banned_users(opt: TwitchGetBannedUsers.Opt, broadcaster_id: String) -> 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_banned_users", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetBannedUsers.Response = TwitchGetBannedUsers.Response.from_json(result)
@@ -1916,6 +2256,10 @@ func ban_user(body: TwitchBanUser.Body, moderator_id: String, broadcaster_id: St
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("ban_user", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchBanUser.Response = TwitchBanUser.Response.from_json(result)
@@ -1937,6 +2281,10 @@ func unban_user(moderator_id: String, user_id: String, broadcaster_id: String) -
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("unban_user", response)
+		return null
+		
 	return response
 
 	
@@ -1968,6 +2316,10 @@ func get_unban_requests(opt: TwitchGetUnbanRequests.Opt, moderator_id: String, s
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_unban_requests", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetUnbanRequests.Response = TwitchGetUnbanRequests.Response.from_json(result)
@@ -2003,6 +2355,10 @@ func resolve_unban_requests(opt: TwitchResolveUnbanRequests.Opt, moderator_id: S
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, "", "")
+	if response.response_code >= 400: 
+		_handle_error("resolve_unban_requests", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchResolveUnbanRequests.Response = TwitchResolveUnbanRequests.Response.from_json(result)
@@ -2028,6 +2384,10 @@ func get_blocked_terms(opt: TwitchGetBlockedTerms.Opt, moderator_id: String, bro
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_blocked_terms", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetBlockedTerms.Response = TwitchGetBlockedTerms.Response.from_json(result)
@@ -2052,6 +2412,10 @@ func add_blocked_term(body: TwitchAddBlockedTerm.Body, moderator_id: String, bro
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("add_blocked_term", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchAddBlockedTerm.Response = TwitchAddBlockedTerm.Response.from_json(result)
@@ -2073,6 +2437,10 @@ func remove_blocked_term(id: String, moderator_id: String, broadcaster_id: Strin
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("remove_blocked_term", response)
+		return null
+		
 	return response
 
 	
@@ -2092,6 +2460,10 @@ func delete_chat_messages(opt: TwitchDeleteChatMessages.Opt, moderator_id: Strin
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("delete_chat_messages", response)
+		return null
+		
 	return response
 
 	
@@ -2111,6 +2483,10 @@ func get_moderated_channels(opt: TwitchGetModeratedChannels.Opt, user_id: String
 		path += "first=" + str(optionals.first) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_moderated_channels", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetModeratedChannels.Response = TwitchGetModeratedChannels.Response.from_json(result)
@@ -2143,6 +2519,10 @@ func get_moderators(opt: TwitchGetModerators.Opt, broadcaster_id: String) -> Twi
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_moderators", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetModerators.Response = TwitchGetModerators.Response.from_json(result)
@@ -2167,6 +2547,10 @@ func add_channel_moderator(user_id: String, broadcaster_id: String) -> BufferedH
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("add_channel_moderator", response)
+		return null
+		
 	return response
 
 	
@@ -2182,6 +2566,10 @@ func remove_channel_moderator(user_id: String, broadcaster_id: String) -> Buffer
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("remove_channel_moderator", response)
+		return null
+		
 	return response
 
 	
@@ -2205,6 +2593,10 @@ func get_vips(opt: TwitchGetVips.Opt, broadcaster_id: String) -> TwitchGetVIPs.R
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_vips", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetVIPs.Response = TwitchGetVIPs.Response.from_json(result)
@@ -2229,6 +2621,10 @@ func add_channel_vip(user_id: String, broadcaster_id: String) -> BufferedHTTPCli
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("add_channel_vip", response)
+		return null
+		
 	return response
 
 	
@@ -2244,6 +2640,10 @@ func remove_channel_vip(user_id: String, broadcaster_id: String) -> BufferedHTTP
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("remove_channel_vip", response)
+		return null
+		
 	return response
 
 	
@@ -2259,6 +2659,10 @@ func update_shield_mode_status(body: TwitchUpdateShieldModeStatus.Body, moderato
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_shield_mode_status", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateShieldModeStatus.Response = TwitchUpdateShieldModeStatus.Response.from_json(result)
@@ -2278,6 +2682,10 @@ func get_shield_mode_status(moderator_id: String, broadcaster_id: String) -> Twi
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_shield_mode_status", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetShieldModeStatus.Response = TwitchGetShieldModeStatus.Response.from_json(result)
@@ -2297,6 +2705,10 @@ func warn_chat_user(body: TwitchWarnChatUser.Body, moderator_id: String, broadca
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("warn_chat_user", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchWarnChatUser.Response = TwitchWarnChatUser.Response.from_json(result)
@@ -2324,6 +2736,10 @@ func get_polls(opt: TwitchGetPolls.Opt, broadcaster_id: String) -> TwitchGetPoll
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_polls", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetPolls.Response = TwitchGetPolls.Response.from_json(result)
@@ -2345,6 +2761,10 @@ func create_poll(body: TwitchCreatePoll.Body) -> TwitchCreatePoll.Response:
 	var path = "/polls?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("create_poll", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreatePoll.Response = TwitchCreatePoll.Response.from_json(result)
@@ -2361,6 +2781,10 @@ func end_poll(body: TwitchEndPoll.Body) -> TwitchEndPoll.Response:
 	var path = "/polls?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("end_poll", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchEndPoll.Response = TwitchEndPoll.Response.from_json(result)
@@ -2388,6 +2812,10 @@ func get_predictions(opt: TwitchGetPredictions.Opt, broadcaster_id: String) -> T
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_predictions", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetPredictions.Response = TwitchGetPredictions.Response.from_json(result)
@@ -2409,6 +2837,10 @@ func create_prediction(body: TwitchCreatePrediction.Body) -> TwitchCreatePredict
 	var path = "/predictions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("create_prediction", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreatePrediction.Response = TwitchCreatePrediction.Response.from_json(result)
@@ -2425,6 +2857,10 @@ func end_prediction(body: TwitchEndPrediction.Body) -> TwitchEndPrediction.Respo
 	var path = "/predictions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("end_prediction", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchEndPrediction.Response = TwitchEndPrediction.Response.from_json(result)
@@ -2447,6 +2883,10 @@ func start_a_raid(opt: TwitchStartARaid.Opt) -> TwitchStartRaid.Response:
 		path += "to_broadcaster_id=" + str(optionals.to_broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+	if response.response_code >= 400: 
+		_handle_error("start_a_raid", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchStartRaid.Response = TwitchStartRaid.Response.from_json(result)
@@ -2464,6 +2904,10 @@ func cancel_a_raid(broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("cancel_a_raid", response)
+		return null
+		
 	return response
 
 	
@@ -2491,6 +2935,10 @@ func get_channel_stream_schedule(opt: TwitchGetChannelStreamSchedule.Opt, broadc
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_channel_stream_schedule", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChannelStreamSchedule.Response = TwitchGetChannelStreamSchedule.Response.from_json(result)
@@ -2512,6 +2960,10 @@ func get_channel_icalendar(broadcaster_id: String) -> BufferedHTTPClient.Respons
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_channel_icalendar", response)
+		return null
+		
 	return response
 
 	
@@ -2535,6 +2987,10 @@ func update_channel_stream_schedule(opt: TwitchUpdateChannelStreamSchedule.Opt, 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, "", "")
+	if response.response_code >= 400: 
+		_handle_error("update_channel_stream_schedule", response)
+		return null
+		
 	return response
 
 	
@@ -2548,6 +3004,10 @@ func create_channel_stream_schedule_segment(body: TwitchCreateChannelStreamSched
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("create_channel_stream_schedule_segment", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreateChannelStreamScheduleSegment.Response = TwitchCreateChannelStreamScheduleSegment.Response.from_json(result)
@@ -2567,6 +3027,10 @@ func update_channel_stream_schedule_segment(body: TwitchUpdateChannelStreamSched
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_channel_stream_schedule_segment", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateChannelStreamScheduleSegment.Response = TwitchUpdateChannelStreamScheduleSegment.Response.from_json(result)
@@ -2586,6 +3050,10 @@ func delete_channel_stream_schedule_segment(id: String, broadcaster_id: String) 
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("delete_channel_stream_schedule_segment", response)
+		return null
+		
 	return response
 
 	
@@ -2605,6 +3073,10 @@ func search_categories(opt: TwitchSearchCategories.Opt, query: String) -> Twitch
 		path += "first=" + str(optionals.first) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("search_categories", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchSearchCategories.Response = TwitchSearchCategories.Response.from_json(result)
@@ -2635,6 +3107,10 @@ func search_channels(opt: TwitchSearchChannels.Opt, query: String) -> TwitchSear
 		path += "live_only=" + str(optionals.live_only) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("search_channels", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchSearchChannels.Response = TwitchSearchChannels.Response.from_json(result)
@@ -2657,6 +3133,10 @@ func get_stream_key(broadcaster_id: String) -> TwitchGetStreamKey.Response:
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_stream_key", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetStreamKey.Response = TwitchGetStreamKey.Response.from_json(result)
@@ -2699,6 +3179,10 @@ func get_streams(opt: TwitchGetStreams.Opt) -> TwitchGetStreams.Response:
 			path += "user_login=" + str(param) + "&" 
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_streams", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetStreams.Response = TwitchGetStreams.Response.from_json(result)
@@ -2727,6 +3211,10 @@ func get_followed_streams(opt: TwitchGetFollowedStreams.Opt, user_id: String) ->
 		path += "first=" + str(optionals.first) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_followed_streams", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetFollowedStreams.Response = TwitchGetFollowedStreams.Response.from_json(result)
@@ -2748,6 +3236,10 @@ func create_stream_marker(body: TwitchCreateStreamMarker.Body) -> TwitchCreateSt
 	var path = "/streams/markers?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("create_stream_marker", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCreateStreamMarker.Response = TwitchCreateStreamMarker.Response.from_json(result)
@@ -2776,6 +3268,10 @@ func get_stream_markers(opt: TwitchGetStreamMarkers.Opt) -> TwitchGetStreamMarke
 		path += "video_id=" + str(optionals.video_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_stream_markers", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetStreamMarkers.Response = TwitchGetStreamMarkers.Response.from_json(result)
@@ -2810,6 +3306,10 @@ func get_broadcaster_subscriptions(opt: TwitchGetBroadcasterSubscriptions.Opt, b
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_broadcaster_subscriptions", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetBroadcasterSubscriptions.Response = TwitchGetBroadcasterSubscriptions.Response.from_json(result)
@@ -2834,6 +3334,10 @@ func check_user_subscription(user_id: String, broadcaster_id: String) -> TwitchC
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("check_user_subscription", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchCheckUserSubscription.Response = TwitchCheckUserSubscription.Response.from_json(result)
@@ -2860,6 +3364,10 @@ func get_all_stream_tags(opt: TwitchGetAllStreamTags.Opt) -> TwitchGetAllStreamT
 			path += "tag_id=" + str(param) + "&" 
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_all_stream_tags", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetAllStreamTags.Response = TwitchGetAllStreamTags.Response.from_json(result)
@@ -2882,6 +3390,10 @@ func get_stream_tags(broadcaster_id: String) -> TwitchGetStreamTags.Response:
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_stream_tags", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetStreamTags.Response = TwitchGetStreamTags.Response.from_json(result)
@@ -2899,6 +3411,10 @@ func get_channel_teams(broadcaster_id: String) -> TwitchGetChannelTeams.Response
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_channel_teams", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetChannelTeams.Response = TwitchGetChannelTeams.Response.from_json(result)
@@ -2921,6 +3437,10 @@ func get_teams(opt: TwitchGetTeams.Opt) -> TwitchGetTeams.Response:
 		path += "name=" + str(optionals.name) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_teams", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetTeams.Response = TwitchGetTeams.Response.from_json(result)
@@ -2947,6 +3467,10 @@ func get_users(opt: TwitchGetUsers.Opt) -> TwitchGetUsers.Response:
 			path += "login=" + str(param) + "&" 
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_users", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetUsers.Response = TwitchGetUsers.Response.from_json(result)
@@ -2967,6 +3491,10 @@ func update_user(opt: TwitchUpdateUser.Opt) -> TwitchUpdateUser.Response:
 		path += "description=" + str(optionals.description) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, "", "")
+	if response.response_code >= 400: 
+		_handle_error("update_user", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateUser.Response = TwitchUpdateUser.Response.from_json(result)
@@ -2990,6 +3518,10 @@ func get_user_block_list(opt: TwitchGetUserBlockList.Opt, broadcaster_id: String
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_user_block_list", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetUserBlockList.Response = TwitchGetUserBlockList.Response.from_json(result)
@@ -3018,6 +3550,10 @@ func block_user(opt: TwitchBlockUser.Opt, target_user_id: String) -> BufferedHTT
 		path += "source_context=" + str(optionals.source_context) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, "", "")
+	if response.response_code >= 400: 
+		_handle_error("block_user", response)
+		return null
+		
 	return response
 
 	
@@ -3031,6 +3567,10 @@ func unblock_user(target_user_id: String) -> BufferedHTTPClient.ResponseData:
 	path += "target_user_id=" + str(target_user_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("unblock_user", response)
+		return null
+		
 	return response
 
 	
@@ -3043,6 +3583,10 @@ func get_user_extensions() -> TwitchGetUserExtensions.Response:
 	var path = "/users/extensions/list?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_user_extensions", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetUserExtensions.Response = TwitchGetUserExtensions.Response.from_json(result)
@@ -3063,6 +3607,10 @@ func get_user_active_extensions(opt: TwitchGetUserActiveExtensions.Opt) -> Twitc
 		path += "user_id=" + str(optionals.user_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_user_active_extensions", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetUserActiveExtensions.Response = TwitchGetUserActiveExtensions.Response.from_json(result)
@@ -3079,6 +3627,10 @@ func update_user_extensions(body: TwitchUpdateUserExtensions.Body) -> TwitchUpda
 	var path = "/users/extensions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("update_user_extensions", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchUpdateUserExtensions.Response = TwitchUpdateUserExtensions.Response.from_json(result)
@@ -3119,6 +3671,10 @@ func get_videos(opt: TwitchGetVideos.Opt) -> TwitchGetVideos.Response:
 		path += "user_id=" + str(optionals.user_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+	if response.response_code >= 400: 
+		_handle_error("get_videos", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchGetVideos.Response = TwitchGetVideos.Response.from_json(result)
@@ -3145,6 +3701,10 @@ func delete_videos(id: Array[String]) -> TwitchDeleteVideos.Response:
 		path += "id=" + str(param) + "&" 
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+	if response.response_code >= 400: 
+		_handle_error("delete_videos", response)
+		return null
+		
 	
 	var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
 	var parsed_result: TwitchDeleteVideos.Response = TwitchDeleteVideos.Response.from_json(result)
@@ -3164,4 +3724,8 @@ func send_whisper(body: TwitchSendWhisper.Body, from_user_id: String, to_user_id
 	path += "to_user_id=" + str(to_user_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+	if response.response_code >= 400: 
+		_handle_error("send_whisper", response)
+		return null
+		
 	return response
