@@ -207,7 +207,7 @@ func _update_tokens_from_response(result: Dictionary):
 
 ## Updates the token. Result is the response data of an token request.
 func update_tokens(access_token: String, refresh_token: String = "", expires_in: int = -1, scopes: Array[String] = [], type: StringName = &""):
-	token.update_values(access_token, refresh_token, expires_in, scopes, type)
+	token.update_values(access_token.trim_prefix(OAuth.DEBUGGER_PROTECTION), refresh_token, expires_in, scopes, type)
 	token_resolved.emit(token)
 	logInfo("token (%s) resolved" % token)
 

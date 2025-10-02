@@ -9,6 +9,9 @@ const OAuthHTTPServer = preload("res://addons/twitcher/lib/http/http_server.gd")
 const OAuthHTTPClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd")
 const OAuthDeviceCodeResponse = preload("./oauth_device_code_response.gd")
 
+## A static string in front of the sensible data to prevent accidental leak of tokens during debug sessions
+const DEBUGGER_PROTECTION: String = "                                                               "
+
 ## Called when the authorization for AuthCodeFlow is complete to handle the auth code
 signal _auth_succeed(code: String)
 
@@ -30,6 +33,8 @@ signal token_changed(access_token: String)
 @export var shell_parameter: Array[String] = []
 ## Some oauth provide doesn't return the provided scopes so you can disable the scope check
 @export var check_scope_changed: bool = true
+## Should the Twitch special handling be activated (Twitch is behaving differntly as the normal Oauth provider and needs SpEcIal treatment)
+@export var enable_twitch_hacks: bool = true
 
 var login_in_process: bool
 ## Special solution just for twitch ignore it in all other providers
@@ -272,8 +277,19 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 		if parts.size() < 2:
 			return  # Not a valid request
 		var json_body = parts[1]
-		var token_request = JSON.parse_string(json_body)
-		token_handler.update_tokens(token_request["access_token"])
+		var token_request: Variant = JSON.parse_string(json_body)
+		if token_request["state"] != _current_state:
+			server.send_response(client, "200 OK", "<html><head><title>Login</title></head><body>Unsuccessful someone tampered with the state! See <a href='https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow'>Twitch Documentation</a> for more information.</body></html>".to_utf8_buffer())
+			return
+		
+		var scopes: PackedStringArray = token_request["scope"].split(" ")
+		if enable_twitch_hacks && token_handler is TwitchTokenHandler:
+				var token: String = OAuth.DEBUGGER_PROTECTION + token_request["access_token"]
+				var validation_response: BufferedHTTPClient.ResponseData = await token_handler.validate_token(token)
+				var validation_data: Variant = JSON.parse_string(validation_response.response_data.get_string_from_utf8())
+				token_handler.update_tokens(token, "", validation_data["expires_in"], scopes)
+		else:
+			token_handler.update_tokens(token_request["access_token"], "", token_request["expires_in"], scopes)
 		logInfo("Received Access Token update it")
 		server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success!</body></html>".to_utf8_buffer())
 
