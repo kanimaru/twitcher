@@ -18,6 +18,10 @@ class Definition extends Object:
 	func get_category() -> String:
 		if categroy: return categroy
 		return value.substr(0, value.find(":"))
+		
+		
+	func _to_string() -> String:
+		return value
 
 
 static var ANALYTICS_READ_EXTENSIONS = Definition.new(&"analytics:read:extensions", "View analytics data for the Twitch Extensions owned by the authenticated account.")
@@ -185,7 +189,14 @@ static func get_grouped_scopes() -> Dictionary:
 		var category_name = scope.get_category()
 		var category = result.get_or_add(category_name, [])
 		category.append(scope)
+		
+	for scopes_in_category: Array in result.values():
+		scopes_in_category.sort_custom(sort_scopes)
 	return result
+
+
+static func sort_scopes(scope1: Definition, scope2: Definition) -> bool:
+	return String(scope1.value) < String(scope2.value)
 
 
 static func get_all_scopes() -> Array[Definition]:
