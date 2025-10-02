@@ -35,9 +35,9 @@ signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
 		update_configuration_warnings()
 
 ## Takes care to authorize the user
-@onready var auth: OAuth
+var auth: OAuth
 ## Takes care to fetch and refresh oauth tokens
-@onready var token_handler: TwitchTokenHandler
+var token_handler: TwitchTokenHandler
 
 
 var is_authenticated: bool:
