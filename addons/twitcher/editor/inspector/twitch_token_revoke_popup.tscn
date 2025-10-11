@@ -5,10 +5,10 @@
 [ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="3_4n8su"]
 [ext_resource type="Script" uid="uid://b52xp7c23ucfk" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="4_iycl8"]
 
-[sub_resource type="Resource" id="Resource_twsgi"]
+[sub_resource type="Resource" id="Resource_4n8su"]
 script = ExtResource("4_iycl8")
 _crypto_key_provider = ExtResource("3_4n8su")
-_identifier = "Auth-2409"
+_identifier = "Auth-357"
 _cache_path = "user://auth.conf"
 
 [node name="TokenRevokePopup" type="Window"]
@@ -26,7 +26,7 @@ grow_vertical = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_bottom = 50
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
@@ -70,5 +70,5 @@ text = "Revoke Locally"
 [node name="TwitchTokenHandler" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("2_iycl8")
-token = SubResource("Resource_twsgi")
+token = SubResource("Resource_4n8su")
 metadata/_custom_type_script = "uid://blnbogtrshw4r"
