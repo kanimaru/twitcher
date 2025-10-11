@@ -14,6 +14,9 @@ extends Control
 @onready var _configuration_warning: Label = %ConfigurationWarning
 @onready var _scroll_container: ScrollContainer = %ScrollContainer
 
+var message: String:
+	get(): return _input_line.text
+	set(val): _input_line.text = val
 
 ## When a message should be send
 signal message_sent(message: String)
@@ -31,7 +34,7 @@ func show_configuration_warning() -> void:
 	_configuration_warning.show()
 
 
-func show_message(message: String) -> void:
+func show_message(msg: String) -> void:
 	# Create the message container
 	var chat_message : RichTextLabel = RichTextLabel.new()
 	chat_message.bbcode_enabled = true # Enable BBCode for color and sprites etc.
@@ -43,8 +46,8 @@ func show_message(message: String) -> void:
 	_chat_container.add_child(chat_message) # Add the complete message to the container
 	
 	# Perpare all the sprites for the richtext label
-	message = sprite_effect.prepare_message(message, chat_message)
-	chat_message.text = _get_time() + " " + message
+	msg = sprite_effect.prepare_message(msg, chat_message)
+	chat_message.text = _get_time() + " " + msg
 	
 	_clean_old_messages()
 	
@@ -67,9 +70,9 @@ func _get_time() -> String:
 
 
 func _send_message() -> void:
-	var message : String = _input_line.text # Get the message from the input
+	var msg : String = _input_line.text # Get the message from the input
 	_input_line.text = "" # clean the input
-	message_sent.emit(message) # send the message to channel
+	message_sent.emit(msg) # send the message to channel
 
 
 ## Callback when user pressed enter in text input

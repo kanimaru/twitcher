@@ -21,7 +21,9 @@ const ChatView = preload("res://example/chat_view.gd")
 @onready var hello_command: TwitchCommand = %HelloCommand
 ## Help Command
 @onready var twitch_command_help: TwitchCommandHelp = %TwitchCommandHelp
-
+## Send bot button
+@onready var bot_send: Button = %BotSend
+@onready var bot: TwitchBot = %TwitchBot
 
 func _ready() -> void:
 	if twitch_service.oauth_setting.client_id == "":
@@ -43,27 +45,32 @@ func _ready() -> void:
 	hello_command.cooldown.connect(_on_hello_cooldown)
 	
 	# Alternative use programatical way to listen to commands
-	var command = twitch_service.add_command("lurk", func(from_username: String, info: TwitchCommandInfo, args: PackedStringArray): twitch_service.chat("Thanks for the lurk"))
+	var command: TwitchCommand = twitch_service.add_command("lurk", func(_from_username: String, _info: TwitchCommandInfo, _args: PackedStringArray) -> void: twitch_service.chat("Thanks for the lurk"))
 	command.description = "Go into a passive lurk mode"
 	command.user_cooldown = 10
 	command.cooldown.connect(_on_lurk_cooldown)
 		
 	twitch_chat.subscribe()
+	
+	bot_send.pressed.connect(_on_bot_send)
 
 
-func _on_hello(from_username: String, info: TwitchCommandInfo, args: PackedStringArray) -> void:
-	var message: TwitchChatMessage = info.original_message as TwitchChatMessage
-	twitch_chat.send_message("Hello to you too %s" % message.chatter_user_name, message.message_id)
+func _on_hello(_from_username: String, info: TwitchCommandInfo, _args: PackedStringArray) -> void:
+	if info.original_message is TwitchChatMessage:
+		var message: TwitchChatMessage = info.original_message
+		twitch_chat.send_message("Hello to you too %s" % message.chatter_user_name, message.message_id)
 	
 	
-func _on_hello_cooldown(from_username: String, info: TwitchCommandInfo, args: PackedStringArray, cooldown_remaining_in_s: float) -> void:
-	var message: TwitchChatMessage = info.original_message as TwitchChatMessage
-	twitch_chat.send_message("I'm right now tired of greeting peoples wait %d seconds before I greet again!" % cooldown_remaining_in_s, message.message_id)
+func _on_hello_cooldown(_from_username: String, info: TwitchCommandInfo, _args: PackedStringArray, cooldown_remaining_in_s: float) -> void:
+	if info.original_message is TwitchChatMessage:
+		var message: TwitchChatMessage = info.original_message
+		twitch_chat.send_message("I'm right now tired of greeting peoples wait %d seconds before I greet again!" % cooldown_remaining_in_s, message.message_id)
 
 
-func _on_lurk_cooldown(from_username: String, info: TwitchCommandInfo, args: PackedStringArray, cooldown_remaining_in_s: float) -> void:
-	var message: TwitchChatMessage = info.original_message as TwitchChatMessage
-	twitch_chat.send_message("You can't go to lurk for the next %d seconds!" % cooldown_remaining_in_s, message.message_id)
+func _on_lurk_cooldown(_from_username: String, info: TwitchCommandInfo, _args: PackedStringArray, cooldown_remaining_in_s: float) -> void:
+	if info.original_message is TwitchChatMessage:
+		var message: TwitchChatMessage = info.original_message
+		twitch_chat.send_message("You can't go to lurk for the next %d seconds!" % cooldown_remaining_in_s, message.message_id)
 	
 
 func _on_chat_message(message: TwitchChatMessage) -> void:
@@ -134,3 +141,10 @@ func show_text(message: TwitchChatMessage, current_text: String, emote_scale: in
 
 func _on_sent_message(message: String) -> void:
 	twitch_chat.send_message(message) # send the message to channel
+
+
+func _on_bot_send() -> void:
+	var message: String = chat_view.message
+	bot.send_message(message)
+	chat_view.message = ""
+	
