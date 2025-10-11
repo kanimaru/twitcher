@@ -67,7 +67,7 @@ func _ensure_children() -> void:
 	if token_handler == null:
 		token_handler = TwitchTokenHandler.new()
 		token_handler.name = "TokenHandler"
-
+		
 	if auth == null:
 		auth = OAuth.new()
 		auth.name = "OAuth"
@@ -76,10 +76,11 @@ func _ensure_children() -> void:
 
 	if not auth.is_inside_tree():
 		add_child(auth)
-		auth.owner = owner
+		auth.owner = get_tree().edited_scene_root if Engine.is_editor_hint() else owner
+		
 	if not token_handler.is_inside_tree():
 		add_child(token_handler)
-		token_handler.owner = owner
+		token_handler.owner = get_tree().edited_scene_root if Engine.is_editor_hint() else owner
 
 
 func _sync_childs() -> void:
