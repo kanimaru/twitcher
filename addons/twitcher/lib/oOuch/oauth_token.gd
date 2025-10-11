@@ -40,8 +40,16 @@ var _refresh_token: String = ""
 ## Called when the token was resolved / accesstoken got refreshed
 signal authorized
 
+## Update the visual representation of the scopes (don't use it for actually changing scopes it wont work!) 
+# Client credential flow doesn't return used scopes and I wanted to give the use feedback over the scopes
+func _update_scopes(scopes: Array[StringName]) -> void:
+	for scope in scopes: _scopes.append(scope)
+	_persist_tokens()
+	emit_changed()
 
-func update_values(access_token: String, refresh_token: String, expire_in: int, scopes: Array[String], token_type: StringName):
+
+## Updates the data in the scopes and persist it  
+func update_values(access_token: String, refresh_token: String, expire_in: int, scopes: Array[String], token_type: StringName) -> void:
 	_expire_date = roundi(Time.get_unix_time_from_system() + expire_in)
 	_access_token = access_token
 	_refresh_token = refresh_token

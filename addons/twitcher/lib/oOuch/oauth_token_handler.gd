@@ -77,7 +77,7 @@ func update_expiration_check() -> void:
 		_expiration_check_timer.stop()
 		return
 	_expiration_check_timer.start(expiration - current_time - SECONDS_TO_CHECK_EARLIER)
-	logDebug("start timer to refresh token (%s) in %s seconds" % [token, roundf(_expiration_check_timer.wait_time)])
+	logDebug("token got updated -> update timer to next refresh of token (%s) in %s seconds" % [token, roundf(_expiration_check_timer.wait_time)])
 
 
 ## Checks if tokens expires and starts refreshing it. (called often hold footprintt small)
@@ -90,8 +90,11 @@ func _check_token_refresh() -> void:
 
 
 ## Requests the tokens
-func request_token(grant_type: String, auth_code: String = ""):
-	if _requesting_token: return
+func request_token(grant_type: String, auth_code: String = "") -> OAuthToken:
+	if _requesting_token: 
+		await token_resolved
+		return token
+		
 	_requesting_token = true
 	logInfo("Request token (for %s) via '%s'" % [token, grant_type])
 	var request_params: Array[String] = [
@@ -110,6 +113,7 @@ func request_token(grant_type: String, auth_code: String = ""):
 		HTTPClient.METHOD_POST, HEADERS, request_body)
 	await _handle_token_request(request)
 	_requesting_token = false
+	return token
 
 
 func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes: String, grant_type: String = "urn:ietf:params:oauth:grant-type:device_code") -> void:

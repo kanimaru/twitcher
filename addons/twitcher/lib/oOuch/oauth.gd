@@ -132,7 +132,7 @@ func login() -> bool:
 		AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
 			await _start_login_process("code")
 		AuthorizationFlow.CLIENT_CREDENTIALS:
-			await token_handler.request_token("client_credentials")
+			await _start_client_credential_process()
 		AuthorizationFlow.IMPLICIT_FLOW:
 			await _start_login_process("token")
 		AuthorizationFlow.DEVICE_CODE_FLOW:
@@ -347,6 +347,15 @@ func _handle_error(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, quer
 	logError(msg)
 	server.send_response(client, "400 BAD REQUEST",  msg.to_utf8_buffer())
 
+#endregion
+#region ClientCredentialFlow
+func _start_client_credential_process() -> void:
+	var token = await token_handler.request_token("client_credentials")
+	if enable_twitch_hacks:
+		# There is a reason why this is in twitch hacks =__= 
+		# aka client credentials doesn't give you the scopes anywhere
+		token._update_scopes(scopes.used_scopes)
+	
 #endregion
 
 func _handle_other_requests(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, fist_line: String) -> void:
