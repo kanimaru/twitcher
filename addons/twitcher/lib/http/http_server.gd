@@ -78,7 +78,7 @@ class Server extends TCPServer:
 			if error != OK:
 				HTTPServer.logError("Could not poll client %d: %s" % [_port, error_string(error)])
 				client_error_occured.emit(client, error)
-			elif peer.get_available_bytes() > 0:
+			elif peer.get_status() == StreamPeerTCP.STATUS_CONNECTED and peer.get_available_bytes() > 0:
 				request_received.emit(client)
 	
 	

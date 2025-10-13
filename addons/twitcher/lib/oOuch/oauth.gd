@@ -104,6 +104,9 @@ func _setup_nodes() -> void:
 	_login_timeout_timer.timeout.connect(_on_login_timeout)
 	add_child(_login_timeout_timer)
 
+func do_unsetup() -> void:
+	_last_login_attempt = 0
+
 ## Depending on the authorization_flow it gets resolves the token via the different
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.

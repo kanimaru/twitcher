@@ -128,6 +128,8 @@ func unsetup() -> void:
 		if child.has_method(&"wait_unsetup"):
 			await child.wait_unsetup()
 
+func do_unsetup() -> void:
+	_current_user = null
 
 ## Checks if the correctly setup
 func is_configured() -> bool:
