@@ -3,6 +3,7 @@
 [![Godot Asset Library](https://img.shields.io/badge/Godot%20Asset%20Library-Twitcher-blue?style=flat-square)](https://godotengine.org/asset-library/asset/2629) <!-- Replace YOUR_ASSET_ID -->
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://github.com/kanimaru/twitcher/blob/v2/LICENSE) <!-- Assuming MIT License -->
 [![Twitch](https://img.shields.io/badge/Support_on_Twitch-kani_dev-purple?style=flat-square&logo=twitch)](https://www.twitch.tv/kani_dev/)
+[![Documentation](https://img.shields.io/badge/Twitcher-Documentation-purple?style=flat-square&logo=readthedocs)](https://twitcher.kani.dev/)
 
 **Seamless Twitch Integration for Godot 4.4+**
 
