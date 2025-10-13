@@ -346,26 +346,13 @@ func paging_code(method: TwitchGenMethod) -> String:
 	})
 
 
-func response_code(method: TwitchGenMethod) -> String:
-	var code: String = ""
-	var result_type = get_type(method._result_type, false, true)
-	if result_type != "BufferedHTTPClient.ResponseData":
-		code = """
-var result: Variant = JSON.parse_string(response.response_data.get_string_from_utf8())
-var parsed_result: {result_type} = {result_type}.from_json(result)
-parsed_result.response = response
-""".format({ 'result_type': result_type })
-		if method._has_paging: code += paging_code(method)
-		code += "return parsed_result"
-	else:
-		code = "return response"
-	return code
-
-
 func method_code(method: TwitchGenMethod) -> String:
 	print("GENERATE METHOD ", method._name)
-	return """
 	
+	var result_type = get_type(method._result_type, false, true)
+
+	var template = """
+
 ## {summary}
 ## 
 {parameter_doc}
@@ -374,12 +361,29 @@ func method_code(method: TwitchGenMethod) -> String:
 func {name}({parameters}) -> {result_type}:
 	{path_code}
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_{method}, {body_variable}, "{content_type}")
+"""
+
+	if result_type == "BufferedHTTPClient.ResponseData":
+		template += """
 	if response.response_code >= 400: 
 		_handle_error("{name}", response)
-		return null
+	return response
+"""
+	else:
+		template += """
+	var result: Variant = {}
+	if response.response_code >= 400: 
+		_handle_error("{name}", response)
+	else:
+		result = JSON.parse_string(response.response_data.get_string_from_utf8())
 		
-	{response_code}
-""".format({
+	var parsed_result: {result_type} = {result_type}.from_json(result)
+	parsed_result.response = response
+	{paging_code}
+	return parsed_result
+"""	
+	
+	return template.format({
 			"summary": method._summary,
 			"parameter_doc": parameter_doc(method),
 			"doc_url": method._doc_url,
@@ -390,7 +394,7 @@ func {name}({parameters}) -> {result_type}:
 			"content_type": get_type(method._content_type, false, true),
 			"method": method._http_verb.to_upper(),
 			"body_variable": "body" if method._contains_body else "\"\"",
-			"response_code": ident(response_code(method), 1),
+			"paging_code": ident(paging_code(method), 1) if method._has_paging else ""
 		})
 
 
