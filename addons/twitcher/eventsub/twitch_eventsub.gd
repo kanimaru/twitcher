@@ -150,6 +150,8 @@ func do_setup() -> void:
 
 ## Propergated call from twitch service
 func do_unsetup() -> void:
+	for subscription in _subscriptions:
+		unsubscribe(subscription)
 	close_connection()
 	_log.i("Eventsub unsetup")
 	
@@ -281,13 +283,18 @@ func _subscribe(subscription: TwitchEventsubConfig) -> String:
 	_log.i("Now listening to '%s' events." % data.type)
 
 	var result = JSON.parse_string(eventsub_response.response.response_data.get_string_from_utf8())
-	return result.data[0].id
+	var subscription_id = result.data[0].id
+	subscription.id = subscription_id
+	return subscription_id
 
 
 ## Unsubscribes from an eventsub in case of an error returns false
 func _unsubscribe(subscription: TwitchEventsubConfig) -> bool:
 	var response = await api.delete_eventsub_subscription(subscription.id)
-	return response.error || response.response_code != 200
+	if response == null:
+		return false
+	else:
+		return response.error || response.response_code != 200
 
 
 func _data_received(data : PackedByteArray) -> void:
