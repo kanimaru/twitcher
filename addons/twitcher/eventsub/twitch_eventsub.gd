@@ -291,10 +291,7 @@ func _subscribe(subscription: TwitchEventsubConfig) -> String:
 ## Unsubscribes from an eventsub in case of an error returns false
 func _unsubscribe(subscription: TwitchEventsubConfig) -> bool:
 	var response = await api.delete_eventsub_subscription(subscription.id)
-	if response == null:
-		return false
-	else:
-		return response.error || response.response_code != 200
+	return response.error || response.response_code != 200
 
 
 func _data_received(data : PackedByteArray) -> void:
