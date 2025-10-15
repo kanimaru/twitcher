@@ -70,16 +70,21 @@ class Server extends TCPServer:
 			_process_request(client)
 			_handle_disconnect(client)
 	
-	
 	func _process_request(client: Client) -> void:
 		var peer := client.peer
-		if peer.get_status() == StreamPeerTCP.STATUS_CONNECTED:
-			var error = peer.poll()
-			if error != OK:
-				HTTPServer.logError("Could not poll client %d: %s" % [_port, error_string(error)])
-				client_error_occured.emit(client, error)
-			elif peer.get_status() == StreamPeerTCP.STATUS_CONNECTED and peer.get_available_bytes() > 0:
-				request_received.emit(client)
+
+		var error := peer.poll()
+		if error != OK:
+			HTTPServer.logError("Could not poll client %d: %s" % [_port, error_string(error)])
+			client_error_occured.emit(client, error)
+			return
+
+		if peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+			return
+
+		var avail := peer.get_available_bytes()
+		if avail > 0:
+			request_received.emit(client)
 	
 	
 	func _handle_connect() -> void:
