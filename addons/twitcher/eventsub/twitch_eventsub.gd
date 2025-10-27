@@ -207,6 +207,15 @@ func subscribe(eventsub_config: TwitchEventsubConfig) -> void:
 	_empty_connections = 0
 	
 	
+## Returns a list of subscriptions of the given type or empty if none.
+func get_subscription_by_type(type: TwitchEventsubDefinition.Type) -> Array[TwitchEventsubConfig]:
+	var result: Array[TwitchEventsubConfig] = []
+	for subscription in _subscriptions: 
+		if subscription.type == type:
+			result.append(subscription)
+	return result
+	
+	
 func has_subscription(eventsub_definition: TwitchEventsubDefinition, condition: Dictionary) -> bool:
 	for subscription: TwitchEventsubConfig in _subscriptions:
 		if subscription.definition == eventsub_definition && subscription.condition == condition:

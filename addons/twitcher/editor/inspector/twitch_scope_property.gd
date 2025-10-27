@@ -1,6 +1,6 @@
 extends EditorProperty
 
-const TITLE_SETTING := preload("res://addons/twitcher/assets/title_label_settings.tres")
+const TITLE_SETTING: LabelSettings = preload("uid://bnsxy6gcm8q11")
 
 var _scope_checkboxes: Dictionary[StringName, CheckBox]
 var grid: GridContainer = GridContainer.new();

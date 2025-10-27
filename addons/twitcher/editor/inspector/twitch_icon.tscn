@@ -1,0 +1,46 @@
+[gd_scene load_steps=2 format=3 uid="uid://dl3p3kb50dlxd"]
+
+[ext_resource type="Script" uid="uid://b7lnsgy0s2c4s" path="res://addons/twitcher/editor/inspector/twitch_icon.gd" id="1_kqhbg"]
+
+[node name="TwitchIcon" type="Button"]
+custom_minimum_size = Vector2(112, 112)
+anchors_preset = -1
+anchor_left = 0.451
+anchor_top = 0.414
+anchor_right = 0.549
+anchor_bottom = 0.633
+offset_left = 0.447937
+offset_top = -0.272034
+offset_right = -0.448059
+offset_bottom = -30.1841
+grow_horizontal = 2
+grow_vertical = 2
+tooltip_text = "Twitch API doesn't allow to update the icons via API you need to visit the Twitch UI for that"
+script = ExtResource("1_kqhbg")
+title = "Title"
+
+[node name="Image" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -0.5
+offset_right = 0.5
+offset_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Title"
+horizontal_alignment = 1

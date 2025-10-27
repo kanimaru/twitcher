@@ -1,0 +1,356 @@
+[gd_scene load_steps=7 format=3 uid="uid://b8wtfcis561kc"]
+
+[ext_resource type="Script" uid="uid://c1ywjkps543oc" path="res://addons/twitcher/editor/inspector/twitch_reward_info.gd" id="1_kni7l"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/twitcher_title_label_settings.tres" id="2_rdy0d"]
+[ext_resource type="PackedScene" uid="uid://dl3p3kb50dlxd" path="res://addons/twitcher/editor/inspector/twitch_icon.tscn" id="2_toepa"]
+[ext_resource type="LabelSettings" uid="uid://3kr4x2rxu4kd" path="res://addons/twitcher/assets/twitcher_description_label_settings.tres" id="3_rdy0d"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_toepa"]
+font_color = Color(1, 1, 1, 0.227451)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b8j3v"]
+
+[node name="RewardInpsector" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kni7l")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Name"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="ID" type="Label" parent="VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+label_settings = SubResource("LabelSettings_toepa")
+horizontal_alignment = 2
+
+[node name="Title" type="LineEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Description"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="Description" type="TextEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="ViewerTextLabel" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Require Viewer to Enter Text"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="RequireViewerText" type="CheckButton" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "If enabled, a required text field will appear to viewers in the reward."
+autowrap_mode = 3
+
+[node name="CostTitle" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Cost"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="Cost" type="SpinBox" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 100000.0
+value = 1.0
+rounded = true
+allow_greater = true
+custom_arrow_step = 110.0
+
+[node name="CostInfo" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Tip: Viewers earn 220 points per hour on average. Subs earn multipliers up to 2x."
+label_settings = ExtResource("3_rdy0d")
+autowrap_mode = 3
+
+[node name="IconTitle" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Reward Icon"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="IconContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Icon28" parent="VBoxContainer/IconContainer" instance=ExtResource("2_toepa")]
+unique_name_in_owner = true
+layout_mode = 2
+title = "28x28"
+
+[node name="Icon56" parent="VBoxContainer/IconContainer" instance=ExtResource("2_toepa")]
+unique_name_in_owner = true
+layout_mode = 2
+title = "56x56"
+
+[node name="Icon112" parent="VBoxContainer/IconContainer" instance=ExtResource("2_toepa")]
+unique_name_in_owner = true
+layout_mode = 2
+title = "112x112"
+
+[node name="IconInfo" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Icons should be PNGs with transparent backgrounds and a maximum file size of 25kb. Can only be updated via Twitch UI."
+label_settings = ExtResource("3_rdy0d")
+autowrap_mode = 3
+
+[node name="BackgroundColorTitle" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Background Color"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="BackgroundColor" type="ColorPickerButton" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Background"
+edit_alpha = false
+
+[node name="SkipRewardQueueTitle" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Skip Reward Requests Queue"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="SkipRewardQueue" type="CheckButton" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "If enabled, only future viewer requests will skip the queue for review."
+autowrap_mode = 3
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CooldownTitle" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Cooldown & Limits"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="CooldownTimeTitle" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Redemption Cooldown Time"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="CooldownTime" type="SpinBox" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 60.0
+value = 1.0
+rounded = true
+allow_greater = true
+
+[node name="CooldownTimeUnit" type="OptionButton" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 4
+popup/item_0/text = "Seconds"
+popup/item_0/id = 0
+popup/item_1/text = "Minutes"
+popup/item_1/id = 1
+popup/item_2/text = "Hours"
+popup/item_2/id = 2
+popup/item_3/text = "Days"
+popup/item_3/id = 3
+
+[node name="CooldownTimeInfo" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "Time between redemptions, up to 7 days"
+label_settings = ExtResource("3_rdy0d")
+autowrap_mode = 3
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxEmpty_b8j3v")
+
+[node name="LimitPerStreamTitle" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Limit Redemptions Per Stream"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="LimitPerStream" type="SpinBox" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+rounded = true
+allow_greater = true
+
+[node name="LimitPerStreamInfo" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Max total redemptions for viewers"
+label_settings = ExtResource("3_rdy0d")
+autowrap_mode = 3
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxEmpty_b8j3v")
+
+[node name="LimitPerStreamPerUserTitle" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Limit Redemptions Per User Per Stream"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="LimitPerStreamPerUser" type="SpinBox" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+rounded = true
+allow_greater = true
+
+[node name="LimitPerStreamPerUserInfo" type="Label" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Max individual redemptions per viewer per stream"
+label_settings = ExtResource("3_rdy0d")
+autowrap_mode = 3
+
+[node name="HSeparator3" type="HSeparator" parent="VBoxContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxEmpty_b8j3v")
+
+[node name="HBoxContainer2" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="Enable" type="CheckButton" parent="VBoxContainer/HBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reward Enabled"
+
+[node name="Pause" type="CheckButton" parent="VBoxContainer/HBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reward Paused"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/HBoxContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="TempTitle" type="Label" parent="VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "Temporary Infos from the current Stream:"
+label_settings = ExtResource("2_rdy0d")
+autowrap_mode = 3
+
+[node name="InStock" type="CheckButton" parent="VBoxContainer/HBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Is in stock"
+
+[node name="OtherTempContainer" type="GridContainer" parent="VBoxContainer/HBoxContainer2/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="CurrentStreamTitle" type="Label" parent="VBoxContainer/HBoxContainer2/VBoxContainer/OtherTempContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Redeemed during current stream:"
+
+[node name="CurrentStream" type="SpinBox" parent="VBoxContainer/HBoxContainer2/VBoxContainer/OtherTempContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+editable = false
+
+[node name="CooldownExpireAtTitle" type="Label" parent="VBoxContainer/HBoxContainer2/VBoxContainer/OtherTempContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cooldown Expired at:"
+
+[node name="CooldownExpireAt" type="Label" parent="VBoxContainer/HBoxContainer2/VBoxContainer/OtherTempContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "-"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Delete" type="Button" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+self_modulate = Color(1, 0.4, 0.4, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Delete from Twitch"
+
+[node name="Load" type="Button" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+self_modulate = Color(0.926993, 0.496872, 1.92523e-06, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Import from Twitch"
+
+[node name="Save" type="Button" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+self_modulate = Color(0.69, 1, 0.4, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Save to Twitch"

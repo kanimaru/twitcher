@@ -13,8 +13,8 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 
 
 class ScopeValidation extends EditorProperty:
-	const WARNING_LABEL_SETTINGS = preload("res://addons/twitcher/assets/warning_label_settings.tres")
-	const INFO_LABEL_SETTINGS = preload("res://addons/twitcher/assets/info_label_settings.tres")
+	const WARNING_LABEL_SETTINGS = preload("uid://cng881nsuud80")
+	const INFO_LABEL_SETTINGS = preload("uid://d12dapnv7b00n")
 	var _warning_label: Label = Label.new();
 	var _apply_scopes: Button = Button.new();
 	var _needed_scopes: Dictionary = {}

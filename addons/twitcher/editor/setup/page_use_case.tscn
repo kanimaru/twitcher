@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c7pja1druikbn"]
 
 [ext_resource type="Script" uid="uid://cjni881olloyf" path="res://addons/twitcher/editor/setup/page_use_case.gd" id="1_2qemh"]
-[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/title_label_settings.tres" id="1_r6qea"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/twitcher_title_label_settings.tres" id="1_r6qea"]
 [ext_resource type="ButtonGroup" uid="uid://bkocyfdqvh4t" path="res://addons/twitcher/editor/setup/use_case_button_group.tres" id="1_vqr26"]
 [ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="4_c6y6e"]
 

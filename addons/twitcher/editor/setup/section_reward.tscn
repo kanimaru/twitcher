@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://d2x3efon6jftb"]
+
+[ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="1_i70mb"]
+[ext_resource type="Script" uid="uid://byv7ndmkuf3pf" path="res://addons/twitcher/editor/setup/section_reward.gd" id="1_p2e20"]
+
+[node name="SectionReward" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_p2e20")
+
+[node name="Label" type="RichTextLabel" parent="."]
+layout_mode = 2
+bbcode_enabled = true
+text = "You can download all the Channel Point Rewards as Resources for easier maintaining / easier access to the ID etc. 
+[i]Info: Only rewards created with this application can be updated here. [b]All other rewards are readonly.[/b][/i]"
+fit_content = true
+
+[node name="FileSelect" parent="." instance=ExtResource("1_i70mb")]
+unique_name_in_owner = true
+layout_mode = 2
+default_path = "res://"
+path = "res://tests/rewards"
+placeholder = "Target folder for Reward Resources"
+pick_folder = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="FetchAllRewards" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Fetch All Rewards"
+
+[node name="FetchManageableRewards" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Fetch Own Rewards"
+
+[node name="Info" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2

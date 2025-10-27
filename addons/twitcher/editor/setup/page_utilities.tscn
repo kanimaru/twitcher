@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://d4l63q706mkhw"]
+[gd_scene load_steps=5 format=3 uid="uid://d4l63q706mkhw"]
 
-[ext_resource type="Script" uid="uid://dw37fk6mah3jk" path="res://addons/twitcher/editor/setup/page_utilities.gd" id="1_sexj5"]
-[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/title_label_settings.tres" id="1_yi5sa"]
-[ext_resource type="LabelSettings" uid="uid://cng881nsuud80" path="res://addons/twitcher/assets/warning_label_settings.tres" id="3_fj7h2"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/twitcher_title_label_settings.tres" id="1_yi5sa"]
+[ext_resource type="PackedScene" uid="uid://d2x3efon6jftb" path="res://addons/twitcher/editor/setup/section_reward.tscn" id="2_fj7h2"]
+[ext_resource type="PackedScene" uid="uid://dapavtqnns1e3" path="res://addons/twitcher/editor/setup/section_autoload.tscn" id="3_0gkmy"]
+[ext_resource type="Script" uid="uid://xha65i7thgq1" path="res://addons/twitcher/editor/setup/section_load_current_twitch_user.gd" id="4_0gkmy"]
 
 [node name="Utilities" type="MarginContainer"]
 anchors_preset = 15
@@ -14,7 +15,6 @@ theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
-script = ExtResource("1_sexj5")
 metadata/_tab_index = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
@@ -35,35 +35,15 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="AutoloadDescription" type="RichTextLabel" parent="ScrollContainer/Container"]
-unique_name_in_owner = true
+[node name="SectionReward" parent="ScrollContainer/Container" instance=ExtResource("2_fj7h2")]
 layout_mode = 2
-bbcode_enabled = true
-text = "For backwards compatibility, don't use it when you not actually need it! Adds an autoload named [b]Twitch[/b] you will need to modify the Scene with your configurations when you want to use Twitcher this way.
 
-[i]Advantage:[/i]
-+ easy access everywhere
-[i]Disadvantage:[/i]
-- It will be always initialized, even when you want to test a small scene standalone Tiwtcher will do authorization, subscribing to eventsub etc.
-
-[b]Alternative:[/b]
-The first nodes in the scene tree of every major nodes like TwitchAPI, TwitchEventsub, TwitchChat, TwitchMediaLoader and TwitchService are available as Singleton via their instance variable.
-
-Example
-[code]TwitchAPI.instance.get_users(...)[/code]"
-fit_content = true
-
-[node name="AutoloadInstall" type="Button" parent="ScrollContainer/Container"]
-unique_name_in_owner = true
+[node name="HSeparator4" type="HSeparator" parent="ScrollContainer/Container"]
 layout_mode = 2
-text = "Install Autoload"
+theme_override_constants/separation = 20
 
-[node name="AutoloadInfo" type="Label" parent="ScrollContainer/Container"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 100)
+[node name="SectionAutoload" parent="ScrollContainer/Container" instance=ExtResource("3_0gkmy")]
 layout_mode = 2
-label_settings = ExtResource("3_fj7h2")
-autowrap_mode = 3
 
 [node name="HSeparator2" type="HSeparator" parent="ScrollContainer/Container"]
 layout_mode = 2
@@ -74,33 +54,8 @@ unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Should TwitchUser Inspector automatically load the current user when empty?"
+script = ExtResource("4_0gkmy")
 
 [node name="HSeparator3" type="HSeparator" parent="ScrollContainer/Container"]
 layout_mode = 2
 theme_override_constants/separation = 20
-
-[node name="AutoloadDescription2" type="RichTextLabel" parent="ScrollContainer/Container"]
-visible = false
-layout_mode = 2
-bbcode_enabled = true
-text = "For a game with Twitch integration you probably want to read the chat from the streamer to act on the commands. For that the streamer need to authorize your application. For the authorization flow use the [url=https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#device-code-grant-flow]Device Code Flow[/url] so that you don't share the client secret in the code.
-
-
-[b]Hints:[/b]
-- Take care that you take the least amount of scopes for the game otherwise you could scare the streamer away.
-[i]Advantage:[/i]
-+ easy access everywhere
-[i]Disadvantage:[/i]
-- It will be always initialized, even when you want to test a small scene standalone Tiwtcher will do authorization, subscribing to eventsub etc.
-
-[b]Alternative:[/b]
-The first nodes in the scene tree of every major nodes like TwitchAPI, TwitchEventsub, TwitchChat, TwitchMediaLoader and TwitchService are available as Singleton via their instance variable.
-
-Example
-[code]TwitchAPI.instance.get_users(...)[/code]"
-fit_content = true
-
-[node name="Button" type="Button" parent="ScrollContainer/Container"]
-visible = false
-layout_mode = 2
-text = "Add Game Example"

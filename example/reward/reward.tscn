@@ -1,0 +1,120 @@
+[gd_scene load_steps=23 format=3 uid="uid://cq68ix72qp4na"]
+
+[ext_resource type="Script" uid="uid://dj4o4imls2qf7" path="res://example/reward/reward.gd" id="1_nglx5"]
+[ext_resource type="Script" uid="uid://b8b32wrju6f63" path="res://addons/twitcher/reward/twitch_redeem_listener.gd" id="2_c15mw"]
+[ext_resource type="Script" uid="uid://yxws8ofwmdiy" path="res://addons/twitcher/reward/twitch_reward.gd" id="3_6xjoe"]
+[ext_resource type="Resource" uid="uid://b4fwut0o3j5mt" path="res://example/reward/test_reward.tres" id="4_pxvpx"]
+[ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="5_16j2x"]
+[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://addons/twitcher/twitch_oauth_setting.tres" id="6_gdbdh"]
+[ext_resource type="Script" uid="uid://cjug64e3433g0" path="res://addons/twitcher/eventsub/twitch_eventsub_config.gd" id="7_gdbdh"]
+[ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="7_vw544"]
+[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://addons/twitcher/default_oauth_token.tres" id="8_uxmlm"]
+[ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="9_n1aky"]
+[ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="10_jq4m5"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="11_sbe7b"]
+[ext_resource type="Script" uid="uid://bf0wi70haua35" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="12_prrw3"]
+[ext_resource type="Script" uid="uid://blnbogtrshw4r" path="res://addons/twitcher/auth/twitch_token_handler.gd" id="13_j65q3"]
+[ext_resource type="Script" uid="uid://d4lyup0vy1wtu" path="res://addons/twitcher/media/twitch_media_loader.gd" id="14_pxvpx"]
+[ext_resource type="Texture2D" uid="uid://g1dbcjksbotw" path="res://addons/twitcher/assets/fallback_texture.tres" id="15_16j2x"]
+[ext_resource type="Script" uid="uid://6v8jnfjwbnhm" path="res://addons/twitcher/media/twitch_image_transformer.gd" id="16_gdbdh"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/twitcher_title_label_settings.tres" id="17_16j2x"]
+
+[sub_resource type="Resource" id="Resource_16j2x"]
+script = ExtResource("7_vw544")
+used_scopes = Array[StringName]([&"channel:manage:redemptions"])
+metadata/_custom_type_script = "uid://b3n3et8mebjcc"
+
+[sub_resource type="Resource" id="Resource_uxmlm"]
+script = ExtResource("7_gdbdh")
+type = 37
+condition = {
+"broadcaster_user_id": "132799162"
+}
+
+[sub_resource type="Resource" id="Resource_n1aky"]
+script = ExtResource("7_gdbdh")
+type = 38
+condition = {
+"broadcaster_user_id": "132799162"
+}
+
+[sub_resource type="Resource" id="Resource_vw544"]
+script = ExtResource("16_gdbdh")
+fallback_texture = ExtResource("15_16j2x")
+
+[node name="Reward" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nglx5")
+
+[node name="TwitchService" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("5_16j2x")
+oauth_setting = ExtResource("6_gdbdh")
+scopes = SubResource("Resource_16j2x")
+token = ExtResource("8_uxmlm")
+
+[node name="Eventsub" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+unique_name_in_owner = true
+script = ExtResource("9_n1aky")
+api = NodePath("../API")
+_subscriptions = Array[ExtResource("7_gdbdh")]([SubResource("Resource_uxmlm"), SubResource("Resource_n1aky")])
+scopes = SubResource("Resource_16j2x")
+
+[node name="API" type="Node" parent="TwitchService"]
+unique_name_in_owner = true
+script = ExtResource("10_jq4m5")
+token = ExtResource("8_uxmlm")
+oauth_setting = ExtResource("6_gdbdh")
+
+[node name="TwitchAuth" type="Node" parent="TwitchService"]
+script = ExtResource("11_sbe7b")
+oauth_setting = ExtResource("6_gdbdh")
+token = ExtResource("8_uxmlm")
+scopes = SubResource("Resource_16j2x")
+metadata/_custom_type_script = "uid://iv0mgv0lu8b0"
+
+[node name="OAuth" type="Node" parent="TwitchService/TwitchAuth" node_paths=PackedStringArray("token_handler")]
+script = ExtResource("12_prrw3")
+oauth_setting = ExtResource("6_gdbdh")
+scopes = SubResource("Resource_16j2x")
+token_handler = NodePath("../TokenHandler")
+
+[node name="TokenHandler" type="Node" parent="TwitchService/TwitchAuth"]
+script = ExtResource("13_j65q3")
+oauth_setting = ExtResource("6_gdbdh")
+token = ExtResource("8_uxmlm")
+
+[node name="TwitchMediaLoader" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+unique_name_in_owner = true
+script = ExtResource("14_pxvpx")
+api = NodePath("../API")
+image_transformer = SubResource("Resource_vw544")
+metadata/_custom_type_script = "uid://d4lyup0vy1wtu"
+
+[node name="TwitchRedeemListener" type="Node" parent="." node_paths=PackedStringArray("eventsub", "api")]
+unique_name_in_owner = true
+script = ExtResource("2_c15mw")
+rewards_to_listen = Array[ExtResource("3_6xjoe")]([ExtResource("4_pxvpx")])
+eventsub = NodePath("../TwitchService/Eventsub")
+api = NodePath("../TwitchService/API")
+metadata/_custom_type_script = "uid://b8b32wrju6f63"
+
+[node name="Instructions" type="Label" parent="."]
+layout_mode = 2
+text = "By starting this example. Twitcher will register a new Reward in your stream. You can redeem it to check if everything is working."
+label_settings = ExtResource("17_16j2x")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Users that redeemed this Reward:"
+label_settings = ExtResource("17_16j2x")
+
+[node name="UserRedeemedList" type="ItemList" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+max_columns = 3

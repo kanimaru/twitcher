@@ -1,9 +1,10 @@
 @tool
 extends Node
 
+const TestCredentials = preload("res://addons/twitcher/editor/setup/test_credentials.gd")
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
-const TWITCH_SERVICE = preload("res://addons/twitcher/twitch_service.tscn")
+const TWITCH_SERVICE: PackedScene = preload("res://addons/twitcher/twitch_service.tscn")
 
 @onready var authorization_explaination: RichTextLabel = %AuthExplain
 
@@ -18,6 +19,7 @@ const TWITCH_SERVICE = preload("res://addons/twitcher/twitch_service.tscn")
 
 @onready var o_auth_save: Button = %OAuthSave
 @onready var test_response: Label = %TestResponse
+@onready var test_credentials: TestCredentials = %TestCredentials
 
 var has_changes: bool:
 	set(val): 
@@ -66,6 +68,10 @@ func _on_text_changed(val: String) -> void:
 	setting.redirect_url = redirect_url.text
 	has_changes = true
 	
+
+func show_response_message(msg: String) -> void:
+	test_response.text = msg
+
 
 func reset_response_message() -> void:
 	test_response.text = ""

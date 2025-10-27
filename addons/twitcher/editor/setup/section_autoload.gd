@@ -1,5 +1,5 @@
 @tool
-extends MarginContainer
+extends Control
 
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 
@@ -11,7 +11,6 @@ const setting_value: String = "*" + script_path
 @onready var autoload_install: Button = %AutoloadInstall
 @onready var autoload_info: Label = %AutoloadInfo
 @onready var autoload_description: RichTextLabel = %AutoloadDescription
-@onready var load_current_twitch_user: CheckButton = %LoadCurrentTwitchUser
 
 
 func _ready() -> void:
@@ -20,8 +19,7 @@ func _ready() -> void:
 	})
 	autoload_install.pressed.connect(_on_install_autoload_pressed)
 	_update_install_autoload()
-	load_current_twitch_user.button_pressed = TwitchEditorSettings.load_current_twitch_user
-	load_current_twitch_user.toggled.connect(_on_toggle_load_current_twitch_user)
+
 	
 	
 func _update_install_autoload() -> void:
@@ -77,7 +75,3 @@ func _install_autload() -> void:
 	else:
 		autoload_info.text = "Failed to save project settings.\nError code: %s" % error_string(err)
 		printerr("Failed to save project settings! Error: ", error_string(err))
-
-
-func _on_toggle_load_current_twitch_user(toggled_on: bool) -> void:
-	TwitchEditorSettings.load_current_twitch_user = toggled_on

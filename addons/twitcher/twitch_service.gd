@@ -200,15 +200,21 @@ func get_user(username: String) -> TwitchUser:
 func get_current_user() -> TwitchUser:
 	if _current_user != null:
 		return _current_user
-		
+	_current_user = await get_current_user_via_api(api)
+	return _current_user
+	
+	
+## Helper Method to be used in the Editor Scripts
+static func get_current_user_via_api(api: TwitchAPI) -> TwitchUser:
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 		
 	var user_data : TwitchGetUsers.Response = await api.get_users(null)
-	_current_user = user_data.data[0]
-	return _current_user
-
+	var user: TwitchUser = user_data.data[0]
+	return user
+	
+	
 ## Get the image of an user
 func load_profile_image(user: TwitchUser) -> ImageTexture:
 	return await media_loader.load_profile_image(user)

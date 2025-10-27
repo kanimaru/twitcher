@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://dapavtqnns1e3"]
+
+[ext_resource type="Script" uid="uid://dtvfyi2jygibd" path="res://addons/twitcher/editor/setup/section_autoload.gd" id="1_jhiqg"]
+[ext_resource type="LabelSettings" uid="uid://cng881nsuud80" path="res://addons/twitcher/assets/twitcher_warning_label_settings.tres" id="2_xfy68"]
+
+[node name="SectionAutoload" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jhiqg")
+
+[node name="AutoloadDescription" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "For backwards compatibility, don't use it when you not actually need it! Adds an autoload named [b]Twitch[/b] you will need to modify the Scene with your configurations when you want to use Twitcher this way.
+
+[i]Advantage:[/i]
++ easy access everywhere
+[i]Disadvantage:[/i]
+- It will be always initialized, even when you want to test a small scene standalone Tiwtcher will do authorization, subscribing to eventsub etc.
+
+[b]Alternative:[/b]
+The first nodes in the scene tree of every major nodes like TwitchAPI, TwitchEventsub, TwitchChat, TwitchMediaLoader and TwitchService are available as Singleton via their instance variable.
+
+Example
+[code]TwitchAPI.instance.get_users(...)[/code]"
+fit_content = true
+
+[node name="AutoloadInstall" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Install Autoload"
+
+[node name="AutoloadInfo" type="Label" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+label_settings = ExtResource("2_xfy68")
+autowrap_mode = 3

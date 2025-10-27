@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://1e6nrtqsuc6" path="res://addons/twitcher/assets/icon_search.tres" id="2_t7vdb"]
 
 [node name="UserConverter" type="HBoxContainer"]
+modulate = Color(1, 1, 0, 1)
 offset_right = 40.0
 offset_bottom = 40.0
 size_flags_horizontal = 3

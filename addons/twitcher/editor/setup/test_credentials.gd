@@ -9,6 +9,8 @@ const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor
 @export var test_response: Label
 
 @onready var twitch_auth: TwitchAuth = %TwitchAuth
+@onready var o_auth: OAuth = %OAuth
+@onready var token_handler: TwitchTokenHandler = %TokenHandler
 
 signal authorized
 
@@ -24,6 +26,13 @@ func _notification(what: int) -> void:
 
 
 func _pressed() -> void:
+	test_response.text = "Authorizing..."
+	if o_auth.login_in_process:
+		test_response.text = "Another login trial is in process. Wait for timeout!"
+		if await token_handler.token_resolved == null:
+			test_response.text = "Login unsuccessful!"
+	
+
 	TwitchTweens.loading(self)
 	await twitch_auth.authorize()
 	

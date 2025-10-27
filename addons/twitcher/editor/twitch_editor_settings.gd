@@ -59,6 +59,11 @@ static var _load_current_twitch_user: ProjectSettingProperty
 static var load_current_twitch_user: bool:
 	set(val): _load_current_twitch_user.set_val(val)
 	get: return _load_current_twitch_user.get_val()
+
+static var _reward_folder: ProjectSettingProperty
+static var reward_folder: String:
+	set(val): _reward_folder.set_val(val)
+	get: return _reward_folder.get_val()
 	
 static var _initialized: bool
 static var _reloading: bool
@@ -95,6 +100,9 @@ static func _setup_project_settings() -> void:
 	
 	_load_current_twitch_user = ProjectSettingProperty.new("twitcher/editor/load_current_twitch_user", true)
 	_load_current_twitch_user.as_bool("Should always load the current user when converting to TwitchUser")
+	
+	_reward_folder = ProjectSettingProperty.new("twitcher/editor/reward_folder", "res://")
+	_reward_folder.as_dir()
 
 
 static func _reload_setting() -> void:
