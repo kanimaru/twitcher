@@ -24,7 +24,7 @@ class_name TwitchUserBlockList
 	set(val): 
 		display_name = val
 		track_data(&"display_name", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

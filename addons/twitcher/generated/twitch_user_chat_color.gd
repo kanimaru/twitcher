@@ -30,7 +30,7 @@ class_name TwitchUserChatColor
 	set(val): 
 		color = val
 		track_data(&"color", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

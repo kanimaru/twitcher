@@ -34,7 +34,7 @@ class Body extends TwitchData:
 		set(val): 
 			prediction_window = val
 			track_data(&"prediction_window", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.

@@ -11,7 +11,9 @@ var _field_map: Dictionary[String, TwitchGenField] = {}
 var _parent_component: TwitchGenComponent
 var _sub_components: Dictionary[String, TwitchGenComponent] = {}
 var _is_root: bool
-var _is_response: bool
+var _is_response: bool:
+	get(): return _classname.contains("Response")
+	
 var _has_paging: bool
 var _filename: String:
 	get(): return _classname.to_snake_case() + ".gd"

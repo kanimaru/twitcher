@@ -102,7 +102,7 @@ class_name TwitchStream
 	set(val): 
 		is_mature = val
 		track_data(&"is_mature", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

@@ -22,7 +22,7 @@ class Body extends TwitchData:
 		set(val): 
 			shards = val
 			track_data(&"shards", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.
@@ -204,7 +204,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			transport = val
 			track_data(&"transport", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -264,7 +264,7 @@ class ResponseTransport extends TwitchData:
 		set(val): 
 			disconnected_at = val
 			track_data(&"disconnected_at", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -319,7 +319,7 @@ class ResponseErrors extends TwitchData:
 		set(val): 
 			code = val
 			track_data(&"code", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

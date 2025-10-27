@@ -18,7 +18,7 @@ class_name TwitchCheermoteImages
 	set(val): 
 		dark = val
 		track_data(&"dark", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

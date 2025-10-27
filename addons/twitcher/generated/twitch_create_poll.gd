@@ -46,7 +46,7 @@ class Body extends TwitchData:
 		set(val): 
 			channel_points_per_vote = val
 			track_data(&"channel_points_per_vote", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.

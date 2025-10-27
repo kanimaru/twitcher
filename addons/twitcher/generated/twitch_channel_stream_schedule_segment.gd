@@ -48,7 +48,7 @@ class_name TwitchChannelStreamScheduleSegment
 	set(val): 
 		is_recurring = val
 		track_data(&"is_recurring", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

@@ -36,7 +36,7 @@ class_name TwitchHypeTrainEvent
 	set(val): 
 		event_data = val
 		track_data(&"event_data", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

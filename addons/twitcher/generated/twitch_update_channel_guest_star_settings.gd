@@ -45,7 +45,7 @@ class Body extends TwitchData:
 		set(val): 
 			regenerate_browser_sources = val
 			track_data(&"regenerate_browser_sources", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.

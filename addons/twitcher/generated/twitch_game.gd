@@ -30,7 +30,7 @@ class_name TwitchGame
 	set(val): 
 		igdb_id = val
 		track_data(&"igdb_id", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

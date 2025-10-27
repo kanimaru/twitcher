@@ -18,7 +18,7 @@ class_name TwitchExtensionSecret
 	set(val): 
 		secrets = val
 		track_data(&"secrets", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

@@ -36,7 +36,7 @@ class_name TwitchExtensionLiveChannel
 	set(val): 
 		title = val
 		track_data(&"title", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

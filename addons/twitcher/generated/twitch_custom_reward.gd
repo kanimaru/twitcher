@@ -126,7 +126,7 @@ class_name TwitchCustomReward
 	set(val): 
 		cooldown_expires_at = val
 		track_data(&"cooldown_expires_at", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

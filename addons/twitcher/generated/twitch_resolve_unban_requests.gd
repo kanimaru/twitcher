@@ -131,7 +131,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			resolution_text = val
 			track_data(&"resolution_text", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

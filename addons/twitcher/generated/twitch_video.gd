@@ -112,7 +112,7 @@ class_name TwitchVideo
 	set(val): 
 		muted_segments = val
 		track_data(&"muted_segments", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

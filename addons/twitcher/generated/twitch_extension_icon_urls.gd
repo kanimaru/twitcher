@@ -24,7 +24,7 @@ class_name TwitchExtensionIconUrls
 	set(val): 
 		_300x200 = val
 		track_data(&"_300x200", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

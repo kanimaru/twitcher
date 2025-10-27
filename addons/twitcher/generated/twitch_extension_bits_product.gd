@@ -42,7 +42,7 @@ class_name TwitchExtensionBitsProduct
 	set(val): 
 		is_broadcast = val
 		track_data(&"is_broadcast", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

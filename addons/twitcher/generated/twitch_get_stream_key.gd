@@ -44,7 +44,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			stream_key = val
 			track_data(&"stream_key", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

@@ -82,7 +82,7 @@ class_name TwitchBroadcasterSubscription
 	set(val): 
 		user_login = val
 		track_data(&"user_login", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

@@ -60,7 +60,7 @@ class_name TwitchBannedUser
 	set(val): 
 		moderator_name = val
 		track_data(&"moderator_name", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

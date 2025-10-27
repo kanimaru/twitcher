@@ -58,7 +58,7 @@ class_name TwitchUserSubscription
 	set(val): 
 		tier = val
 		track_data(&"tier", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

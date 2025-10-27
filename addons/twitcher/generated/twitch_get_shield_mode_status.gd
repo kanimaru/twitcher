@@ -68,7 +68,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			last_activated_at = val
 			track_data(&"last_activated_at", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

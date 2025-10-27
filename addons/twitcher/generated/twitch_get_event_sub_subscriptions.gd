@@ -123,7 +123,7 @@ class ResponsePagination extends TwitchData:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

@@ -28,7 +28,7 @@ class Body extends TwitchData:
 		set(val): 
 			extension_version = val
 			track_data(&"extension_version", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.

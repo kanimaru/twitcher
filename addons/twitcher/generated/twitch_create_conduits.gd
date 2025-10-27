@@ -16,7 +16,7 @@ class Body extends TwitchData:
 		set(val): 
 			shard_count = val
 			track_data(&"shard_count", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.
@@ -77,7 +77,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			shard_count = val
 			track_data(&"shard_count", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

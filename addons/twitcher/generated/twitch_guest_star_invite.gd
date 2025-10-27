@@ -52,7 +52,7 @@ class_name TwitchGuestStarInvite
 	set(val): 
 		is_audio_available = val
 		track_data(&"is_audio_available", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

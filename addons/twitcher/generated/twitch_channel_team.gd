@@ -78,7 +78,7 @@ class_name TwitchChannelTeam
 	set(val): 
 		id = val
 		track_data(&"id", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

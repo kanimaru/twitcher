@@ -71,7 +71,7 @@ class_name TwitchEventSubSubscription
 	set(val): 
 		cost = val
 		track_data(&"cost", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

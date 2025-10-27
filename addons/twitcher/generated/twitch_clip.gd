@@ -110,7 +110,7 @@ class_name TwitchClip
 	set(val): 
 		is_featured = val
 		track_data(&"is_featured", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

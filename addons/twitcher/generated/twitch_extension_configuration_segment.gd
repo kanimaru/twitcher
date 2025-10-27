@@ -34,7 +34,7 @@ class_name TwitchExtensionConfigurationSegment
 	set(val): 
 		version = val
 		track_data(&"version", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

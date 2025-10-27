@@ -65,7 +65,7 @@ class_name TwitchGuest
 	set(val): 
 		video_settings = val
 		track_data(&"video_settings", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

@@ -36,7 +36,7 @@ class_name TwitchUserExtensionComponentUpdate
 	set(val): 
 		y = val
 		track_data(&"y", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

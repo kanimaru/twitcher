@@ -42,7 +42,7 @@ class_name TwitchCharityCampaignDonation
 	set(val): 
 		amount = val
 		track_data(&"amount", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

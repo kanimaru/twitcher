@@ -163,7 +163,7 @@ class_name TwitchExtension
 	set(val): 
 		allowlisted_panel_urls = val
 		track_data(&"allowlisted_panel_urls", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

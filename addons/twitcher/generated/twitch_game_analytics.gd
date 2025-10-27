@@ -30,7 +30,7 @@ class_name TwitchGameAnalytics
 	set(val): 
 		date_range = val
 		track_data(&"date_range", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

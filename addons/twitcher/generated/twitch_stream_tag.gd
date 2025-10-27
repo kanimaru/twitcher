@@ -30,7 +30,7 @@ class_name TwitchStreamTag
 	set(val): 
 		localization_descriptions = val
 		track_data(&"localization_descriptions", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

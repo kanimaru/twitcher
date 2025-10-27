@@ -22,7 +22,7 @@ class Body extends TwitchData:
 		set(val): 
 			length = val
 			track_data(&"length", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.
@@ -92,7 +92,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			retry_after = val
 			track_data(&"retry_after", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

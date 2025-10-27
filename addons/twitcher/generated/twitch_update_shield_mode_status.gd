@@ -16,7 +16,7 @@ class Body extends TwitchData:
 		set(val): 
 			is_active = val
 			track_data(&"is_active", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.
@@ -95,7 +95,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			last_activated_at = val
 			track_data(&"last_activated_at", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

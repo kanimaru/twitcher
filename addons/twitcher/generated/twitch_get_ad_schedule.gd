@@ -74,7 +74,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			preroll_free_time = val
 			track_data(&"preroll_free_time", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

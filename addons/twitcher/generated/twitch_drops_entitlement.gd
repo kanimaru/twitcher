@@ -51,7 +51,7 @@ class_name TwitchDropsEntitlement
 	set(val): 
 		last_updated = val
 		track_data(&"last_updated", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

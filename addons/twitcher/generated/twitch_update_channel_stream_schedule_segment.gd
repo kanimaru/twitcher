@@ -50,7 +50,7 @@ class Body extends TwitchData:
 		set(val): 
 			timezone = val
 			track_data(&"timezone", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.
@@ -137,7 +137,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			vacation = val
 			track_data(&"vacation", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -183,7 +183,7 @@ class ResponseVacation extends TwitchData:
 		set(val): 
 			end_time = val
 			track_data(&"end_time", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

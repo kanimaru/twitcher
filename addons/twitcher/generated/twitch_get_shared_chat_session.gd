@@ -68,7 +68,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			updated_at = val
 			track_data(&"updated_at", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -108,7 +108,7 @@ class ResponseParticipants extends TwitchData:
 		set(val): 
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

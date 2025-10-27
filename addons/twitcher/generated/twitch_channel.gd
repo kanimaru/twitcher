@@ -80,7 +80,7 @@ class_name TwitchChannel
 	set(val): 
 		started_at = val
 		track_data(&"started_at", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

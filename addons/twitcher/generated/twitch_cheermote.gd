@@ -48,7 +48,7 @@ class_name TwitchCheermote
 	set(val): 
 		is_charitable = val
 		track_data(&"is_charitable", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

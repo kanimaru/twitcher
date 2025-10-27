@@ -24,7 +24,7 @@ class_name TwitchChatter
 	set(val): 
 		user_name = val
 		track_data(&"user_name", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

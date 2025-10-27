@@ -90,7 +90,7 @@ class_name TwitchChatSettings
 	set(val): 
 		unique_chat_mode = val
 		track_data(&"unique_chat_mode", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

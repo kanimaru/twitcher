@@ -62,7 +62,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			current = val
 			track_data(&"current", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -137,7 +137,7 @@ class ResponseCurrent extends TwitchData:
 		set(val): 
 			top_contributions = val
 			track_data(&"top_contributions", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -243,7 +243,7 @@ class ResponseTopContributions extends TwitchData:
 		set(val): 
 			is_shared_train = val
 			track_data(&"is_shared_train", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -307,7 +307,7 @@ class ResponseSharedTrainParticipants extends TwitchData:
 		set(val): 
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -352,7 +352,7 @@ class ResponseAllTimeHigh extends TwitchData:
 		set(val): 
 			achieved_at = val
 			track_data(&"achieved_at", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -397,7 +397,7 @@ class ResponseSharedAllTimeHigh extends TwitchData:
 		set(val): 
 			achieved_at = val
 			track_data(&"achieved_at", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

@@ -64,7 +64,7 @@ class Body extends TwitchData:
 		set(val): 
 			swearing = val
 			track_data(&"swearing", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.

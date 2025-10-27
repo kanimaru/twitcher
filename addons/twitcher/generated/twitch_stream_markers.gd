@@ -42,7 +42,7 @@ class_name TwitchStreamMarkers
 	set(val): 
 		markers = val
 		track_data(&"markers", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

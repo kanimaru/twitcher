@@ -117,7 +117,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			transport = val
 			track_data(&"transport", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -177,7 +177,7 @@ class ResponseTransport extends TwitchData:
 		set(val): 
 			disconnected_at = val
 			track_data(&"disconnected_at", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -212,7 +212,7 @@ class ResponsePagination extends TwitchData:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

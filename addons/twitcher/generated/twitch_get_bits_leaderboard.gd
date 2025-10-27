@@ -68,7 +68,7 @@ class ResponseDateRange extends TwitchData:
 		set(val): 
 			ended_at = val
 			track_data(&"ended_at", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

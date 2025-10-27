@@ -30,7 +30,7 @@ class_name TwitchUserExtensionPanel
 	set(val): 
 		name = val
 		track_data(&"name", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

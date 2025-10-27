@@ -18,7 +18,7 @@ class_name TwitchCheermoteImageTheme
 	set(val): 
 		static_format = val
 		track_data(&"static_format", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

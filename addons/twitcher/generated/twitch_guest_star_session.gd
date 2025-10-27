@@ -18,7 +18,7 @@ class_name TwitchGuestStarSession
 	set(val): 
 		guests = val
 		track_data(&"guests", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

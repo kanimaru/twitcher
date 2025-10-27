@@ -83,7 +83,7 @@ class_name TwitchPrediction
 	set(val): 
 		locked_at = val
 		track_data(&"locked_at", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

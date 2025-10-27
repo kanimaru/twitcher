@@ -54,7 +54,7 @@ class_name TwitchGlobalEmote
 	set(val): 
 		theme_mode = val
 		track_data(&"theme_mode", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

@@ -44,7 +44,7 @@ class Body extends TwitchData:
 		set(val): 
 			for_source_only = val
 			track_data(&"for_source_only", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.
@@ -121,7 +121,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			drop_reason = val
 			track_data(&"drop_reason", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -159,7 +159,7 @@ class ResponseDropReason extends TwitchData:
 		set(val): 
 			message = val
 			track_data(&"message", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

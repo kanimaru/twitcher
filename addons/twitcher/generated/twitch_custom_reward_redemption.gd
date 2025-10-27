@@ -76,7 +76,7 @@ class_name TwitchCustomRewardRedemption
 	set(val): 
 		redeemed_at = val
 		track_data(&"redeemed_at", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

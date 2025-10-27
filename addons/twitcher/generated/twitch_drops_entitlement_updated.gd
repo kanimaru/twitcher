@@ -24,7 +24,7 @@ class_name TwitchDropsEntitlementUpdated
 	set(val): 
 		ids = val
 		track_data(&"ids", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

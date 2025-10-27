@@ -54,7 +54,7 @@ class Body extends TwitchData:
 		set(val): 
 			is_branded_content = val
 			track_data(&"is_branded_content", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.

@@ -18,7 +18,7 @@ class_name TwitchChatBadge
 	set(val): 
 		versions = val
 		track_data(&"versions", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

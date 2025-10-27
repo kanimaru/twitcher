@@ -73,7 +73,7 @@ class ResponseData extends TwitchData:
 		set(val): 
 			pagination = val
 			track_data(&"pagination", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -166,7 +166,7 @@ class ResponseVacation extends TwitchData:
 		set(val): 
 			end_time = val
 			track_data(&"end_time", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
@@ -196,7 +196,7 @@ class ResponsePagination extends TwitchData:
 		set(val): 
 			cursor = val
 			track_data(&"cursor", val)
-	
+	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.

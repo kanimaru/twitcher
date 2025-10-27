@@ -36,7 +36,7 @@ class_name TwitchBitsLeaderboard
 	set(val): 
 		score = val
 		track_data(&"score", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

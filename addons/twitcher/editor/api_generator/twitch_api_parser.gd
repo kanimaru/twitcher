@@ -4,7 +4,7 @@ extends Twitcher
 
 class_name TwitchAPIParser
 
-const SWAGGER_API = "https://raw.githubusercontent.com/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json"
+const SWAGGER_API: String = "https://raw.githubusercontent.com/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json"
 
 var definition: Dictionary = {}
 var component_map: Dictionary[String, TwitchGenComponent] = {}
@@ -23,7 +23,7 @@ class ComponentRepo extends RefCounted:
 	
 	
 	func get_comp(component_name: String) -> TwitchGenComponent:
-		var component = _component.get_component(component_name)
+		var component: TwitchGenComponent = _component.get_component(component_name)
 		if component != null: return component
 		return _component_map.get(component_name)
 	
@@ -73,7 +73,6 @@ func _parsing_components() -> void:
 		var ref = "#/components/schemas/" + schema_name
 		var component = TwitchGenComponent.new(schema_name, ref)
 		component._is_root = true
-		component._is_response = true
 		_parse_properties(component, schema)
 		_add_component(ref, component)
 		

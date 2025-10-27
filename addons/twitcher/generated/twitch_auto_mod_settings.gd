@@ -72,7 +72,7 @@ class_name TwitchAutoModSettings
 	set(val): 
 		sex_based_terms = val
 		track_data(&"sex_based_terms", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

@@ -18,7 +18,7 @@ class_name TwitchAutoModStatus
 	set(val): 
 		is_permitted = val
 		track_data(&"is_permitted", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

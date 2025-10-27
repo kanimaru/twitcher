@@ -42,7 +42,7 @@ class Body extends TwitchData:
 		set(val): 
 			winning_outcome_id = val
 			track_data(&"winning_outcome_id", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.

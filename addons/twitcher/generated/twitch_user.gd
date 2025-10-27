@@ -85,7 +85,7 @@ class_name TwitchUser
 	set(val): 
 		created_at = val
 		track_data(&"created_at", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

@@ -94,7 +94,7 @@ class Body extends TwitchData:
 		set(val): 
 			should_redemptions_skip_request_queue = val
 			track_data(&"should_redemptions_skip_request_queue", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.

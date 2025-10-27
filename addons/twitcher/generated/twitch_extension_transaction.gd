@@ -68,7 +68,7 @@ class_name TwitchExtensionTransaction
 	set(val): 
 		product_data = val
 		track_data(&"product_data", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

@@ -25,7 +25,7 @@ class Body extends TwitchData:
 		set(val): 
 			fulfillment_status = val
 			track_data(&"fulfillment_status", val)
-	var response: BufferedHTTPClient.ResponseData
+	
 	
 	
 	## Constructor with all required fields.

@@ -41,7 +41,7 @@ class_name TwitchUserExtension
 	set(val): 
 		type = val
 		track_data(&"type", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.

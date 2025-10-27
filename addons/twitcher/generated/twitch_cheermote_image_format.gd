@@ -36,7 +36,7 @@ class_name TwitchCheermoteImageFormat
 	set(val): 
 		_1_5 = val
 		track_data(&"_1_5", val)
-var response: BufferedHTTPClient.ResponseData
+
 
 
 ## Constructor with all required fields.
