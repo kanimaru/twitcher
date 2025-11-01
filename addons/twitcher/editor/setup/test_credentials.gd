@@ -26,27 +26,32 @@ func _notification(what: int) -> void:
 
 
 func _pressed() -> void:
-	test_response.text = "Authorizing..."
-	if o_auth.login_in_process:
-		test_response.text = "Another login trial is in process. Wait for timeout!"
-		if await token_handler.token_resolved == null:
-			test_response.text = "Login unsuccessful!"
+	if test_response:
+		_set_test_response("Authorizing...")
+		if o_auth.login_in_process:
+			_set_test_response("Another login trial is in process. Wait for timeout!", Color.YELLOW)
+			if await token_handler.token_resolved == null:
+				_set_test_response("Login unsuccessful!", Color.RED)
 	
-
 	TwitchTweens.loading(self)
 	await twitch_auth.authorize()
 	
 	if twitch_auth.token.is_token_valid():
-		if test_response:
-			test_response.text = "Credentials are valid!"
-			test_response.add_theme_color_override(&"font_color", Color.GREEN)
+		_set_test_response("Credentials are valid!", Color.GREEN)
 		TwitchTweens.flash(self, Color.GREEN)
 		authorized.emit()
 	else:
-		if test_response:
-			test_response.text = "Credentials are invalid!"
-			test_response.add_theme_color_override(&"font_color", Color.RED)
+		_set_test_response("Credentials are invalid!", Color.RED)
 		TwitchTweens.flash(self, Color.RED)
+
+
+func _set_test_response(info: String, color: Color = Color.TRANSPARENT) -> void:
+	if test_response:
+		test_response.text = info
+		if color == Color.TRANSPARENT:
+			test_response.remove_theme_color_override(&"font_color")
+		else:
+			test_response.add_theme_color_override(&"font_color", color)
 
 
 func update_oauth_token(new_oauth_token: OAuthToken) -> void:
