@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TwitchReward" load_steps=7 format=3 uid="uid://b4fwut0o3j5mt"]
+[gd_resource type="Resource" script_class="TwitchReward" load_steps=7 format=3 uid="uid://dwmef3hbrom4k"]
 
 [ext_resource type="Texture2D" uid="uid://co54e4bvuxyg4" path="res://addons/twitcher/assets/default-1.png" id="1_0fr4b"]
 [ext_resource type="Script" uid="uid://cnmohrdxqihr0" path="res://addons/twitcher/generated/twitch_user.gd" id="1_w4quj"]
@@ -26,7 +26,7 @@ id = ""
 broadcaster_user = SubResource("Resource_mykuy")
 title = "Twitcher Test Reward"
 description = ""
-cost = 1000
+cost = 1
 default_image_1 = ExtResource("1_0fr4b")
 default_image_2 = ExtResource("2_w4quj")
 default_image_4 = ExtResource("3_mykuy")

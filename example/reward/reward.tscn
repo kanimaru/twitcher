@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dj4o4imls2qf7" path="res://example/reward/reward.gd" id="1_nglx5"]
 [ext_resource type="Script" uid="uid://b8b32wrju6f63" path="res://addons/twitcher/reward/twitch_redeem_listener.gd" id="2_c15mw"]
 [ext_resource type="Script" uid="uid://yxws8ofwmdiy" path="res://addons/twitcher/reward/twitch_reward.gd" id="3_6xjoe"]
-[ext_resource type="Resource" uid="uid://b4fwut0o3j5mt" path="res://example/reward/test_reward.tres" id="4_pxvpx"]
+[ext_resource type="Resource" path="res://example/reward/test_reward.tres" id="4_pxvpx"]
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="5_16j2x"]
 [ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://addons/twitcher/twitch_oauth_setting.tres" id="6_gdbdh"]
 [ext_resource type="Script" uid="uid://cjug64e3433g0" path="res://addons/twitcher/eventsub/twitch_eventsub_config.gd" id="7_gdbdh"]
