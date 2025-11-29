@@ -10,6 +10,14 @@ const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor
 ## When the poll doesn't end after the offical endtime + POLL_TIMEOUT_MS. The wait loop for poll end 
 ## event will be stopped to prevent endless loops.
 const POLL_TIMEOUT_MS: int = 30000
+@export var user_cache_ttl: int = 3600 # 1 hour
+
+class UserCacheEntry extends RefCounted:
+	var user: TwitchUser
+	var timestamp: int
+	func _init(u: TwitchUser, t: int):
+		user = u
+		timestamp = t
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 
@@ -43,10 +51,12 @@ static var instance: TwitchService
 @onready var irc: TwitchIRC
 @onready var media_loader: TwitchMediaLoader
 
-var _user_cache: Dictionary[String, TwitchUser] = {}
+var _user_cache: Dictionary[String, UserCacheEntry] = {}
 
 ## Cache for the current user so that no roundtrip has to be done every time get_current_user will be called
 var _current_user: TwitchUser
+## Cache TTL for the current user. When it expires it fetches the current user again.
+var _current_user_timestamp: int = 0
 
 var _commands: Dictionary[String, TwitchCommand] = {}
 
@@ -121,7 +131,6 @@ func setup() -> bool:
 	return true
 	
 	
-## Removes the token so that 
 func unsetup() -> void:
 	await propagate_call(&"do_unsetup")
 	for child in get_children():
@@ -130,6 +139,7 @@ func unsetup() -> void:
 
 func do_unsetup() -> void:
 	_current_user = null
+	_current_user_timestamp = 0
 
 ## Checks if the correctly setup
 func is_configured() -> bool:
@@ -160,10 +170,19 @@ func _on_unauthenticated() -> void:
 #
 #region User
 
+func _update_user_cache(user: TwitchUser) -> void:
+	var entry: UserCacheEntry = UserCacheEntry.new(user, int(Time.get_unix_time_from_system()))
+	_user_cache[user.id] = entry
+	_user_cache[user.login] = entry
+
 
 ## Get data about a user by USER_ID see get_user for by username
-func get_user_by_id(user_id: String) -> TwitchUser:
-	if _user_cache.has(user_id): return _user_cache[user_id]
+func get_user_by_id(user_id: String, force_refresh: bool = false) -> TwitchUser:
+	if not force_refresh and _user_cache.has(user_id):
+		var entry: UserCacheEntry = _user_cache[user_id]
+		if Time.get_unix_time_from_system() - entry.timestamp < user_cache_ttl:
+			return entry.user
+
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
@@ -173,14 +192,18 @@ func get_user_by_id(user_id: String) -> TwitchUser:
 	var user_data : TwitchGetUsers.Response = await api.get_users(opt)
 	if user_data.data.is_empty(): return null
 	var user: TwitchUser = user_data.data[0]
-	_user_cache[user_id] = user
+	_update_user_cache(user)
 	return user
 
 
 ## Get data about a user by USERNAME see get_user_by_id for by user_id
-func get_user(username: String) -> TwitchUser:
+func get_user(username: String, force_refresh: bool = false) -> TwitchUser:
 	username = username.trim_prefix("@")
-	if _user_cache.has(username): return _user_cache[username]
+	if not force_refresh and _user_cache.has(username):
+		var entry: UserCacheEntry = _user_cache[username]
+		if Time.get_unix_time_from_system() - entry.timestamp < user_cache_ttl:
+			return entry.user
+
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
@@ -191,16 +214,18 @@ func get_user(username: String) -> TwitchUser:
 		_log.e("Username was not found: %s" % username)
 		return null
 	var user: TwitchUser = user_data.data[0]
-	_user_cache[username] = user
+	_update_user_cache(user)
 	return user
 
 
 
 ## Get data about a currently authenticated user (caches the value)
-func get_current_user() -> TwitchUser:
-	if _current_user != null:
-		return _current_user
+func get_current_user(force_refresh: bool = false) -> TwitchUser:
+	if not force_refresh and _current_user != null:
+		if Time.get_unix_time_from_system() - _current_user_timestamp < user_cache_ttl:
+			return _current_user
 	_current_user = await get_current_user_via_api(api)
+	_current_user_timestamp = int(Time.get_unix_time_from_system())
 	return _current_user
 	
 	

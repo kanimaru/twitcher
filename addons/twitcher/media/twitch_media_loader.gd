@@ -29,6 +29,7 @@ const FALLBACK_PROFILE = preload("res://addons/twitcher/assets/no_profile.png")
 @export_global_dir var cache_emote: String = "user://emotes"
 @export_global_dir var cache_badge: String = "user://badges"
 @export_global_dir var cache_cheermote: String = "user://cheermote"
+@export_global_dir var cache_profile: String = "user://profiles"
 
 ## All requests that are currently in progress
 var _requests_in_progress : Array[StringName]
@@ -395,6 +396,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 
 
 func load_image(url: String) -> Image:
+	if url.is_empty(): return Image.new()
 	var request : BufferedHTTPClient.RequestData = _client.request(url, HTTPClient.METHOD_GET, {}, "")
 	var response : BufferedHTTPClient.ResponseData = await _client.wait_for_request(request)
 	var temp_file : FileAccess = FileAccess.create_temp(FileAccess.ModeFlags.WRITE_READ, "image_", url.get_extension(), true)
@@ -406,32 +408,67 @@ func load_image(url: String) -> Image:
 
 ## Get the image of an user
 func load_profile_image(user: TwitchUser) -> ImageTexture:
-	if user == null: return fallback_profile
+	if user == null or user.profile_image_url.is_empty(): return fallback_profile
+	
+	# Use User ID for filename to prevent orphans
+	var cache_filename: String = "%s.res" % user.id
+	var cache_path: String = cache_profile.path_join(cache_filename)
+	var current_hash: String = user.profile_image_url.md5_text()
+	
+	# Check if we have a cached resource
+	if FileAccess.file_exists(cache_path):
+		var cached_res = ResourceLoader.load(cache_path)
+		if cached_res is ImageTexture:
+			# Validate hash to ensure image hasn't changed
+			if cached_res.has_meta("url_hash") and cached_res.get_meta("url_hash") == current_hash:
+				cached_res.take_over_path(user.profile_image_url)
+				return cached_res
+	
+	# If not on disk or hash mismatch, check memory cache (ResourceLoader) just in case
 	if ResourceLoader.has_cached(user.profile_image_url):
 		return ResourceLoader.load(user.profile_image_url)
+
+	# Download the image
 	var request := _client.request(user.profile_image_url, HTTPClient.METHOD_GET, {}, "")
 	var response_data := await _client.wait_for_request(request)
 	var texture : ImageTexture = ImageTexture.new()
 	var response := response_data.response_data
+	
 	if not response.is_empty():
 		var img := Image.new()
-		var content_type: String = response_data.response_header["Content-Type"]
+		var content_type: String = response_data.response_header.get("Content-Type", "")
+		var extension: String = user.profile_image_url.get_extension()
 		var error: Error
-		if content_type.containsn("image/png"): 
+		
+		if content_type.containsn("image/png") or extension == "png": 
 			error = img.load_png_from_buffer(response)
-		elif content_type.containsn("image/jpeg"):
+		elif content_type.containsn("image/jpeg") or extension == "jpg" or extension == "jpeg":
 			error = img.load_jpg_from_buffer(response)
 		else:
-			push_error("Unknown content type: \"%s\"" % content_type)
-			return fallback_profile
+			# Fallback try both
+			error = img.load_png_from_buffer(response)
+			if error != OK:
+				error = img.load_jpg_from_buffer(response)
+				
 		if error != OK:
 			push_error("Can't load profile picture of %s cause of %s" % [user.display_name, error_string(error)])
 			return fallback_profile
+			
 		texture.set_image(img)
+		
+		# Save to disk cache as .res with metadata
+		texture.set_meta("url_hash", current_hash)
+		DirAccess.make_dir_recursive_absolute(cache_profile)
+		var save_err: Error = ResourceSaver.save(texture, cache_path, ResourceSaver.SaverFlags.FLAG_COMPRESS)
+			
+		if save_err != OK:
+			_log.e("Failed to save profile image to cache: %s" % cache_path)
+
 	else:
 		# Don't use `texture = fallback_profile` as texture cause the path will be taken over
 		# for caching purpose!
 		texture.set_image(fallback_profile.get_image())
+	
 	texture.take_over_path(user.profile_image_url)
 	return texture
 
