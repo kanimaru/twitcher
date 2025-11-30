@@ -9,6 +9,7 @@ extends Node
 class_name TwitchBot
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchBot")
+static var _instance: TwitchBot
 
 const TWITCH_BOT_SCOPES = preload("res://addons/twitcher/chat/twitch_bot_scopes.tres")
 
@@ -44,6 +45,14 @@ func _ready() -> void:
 	_update_setting(oauth_setting)
 	
 	
+func _enter_tree() -> void:
+	if _instance == null: _instance = self
+	
+	
+func _exit_tree() -> void:
+	if _instance == self: _instance = null
+	
+	
 func _on_enter_child(node: Node) -> void:
 	if node is TwitchAuth: _bot_auth = node
 	if node is TwitchAPI: _bot_api = node
@@ -69,8 +78,15 @@ func _ensure_children() -> void:
 	# Reset the API. The default shouldn't be the Bot API. It has way to less scopes!
 	if TwitchAPI.instance == _bot_api:
 		TwitchAPI.instance = null
-	
-	
+
+
+## Sends a message as the bot user the target broadcaster default to the sender user.
+## for_source_only: see https://dev.twitch.tv/docs/api/reference/#send-chat-message
+static func chat(message: String, reply_parent_message_id: String = "", for_source_only = true, broadcaster: TwitchUser = null) -> void:
+	if _instance != null:
+		_instance.send_message(message, reply_parent_message_id, for_source_only, broadcaster)
+
+
 ## Sends a message as the bot user the target broadcaster default to the sender user.
 ## for_source_only: see https://dev.twitch.tv/docs/api/reference/#send-chat-message
 func send_message(message: String, reply_parent_message_id: String = "", for_source_only = true, broadcaster: TwitchUser = null) -> void:
