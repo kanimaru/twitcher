@@ -10,6 +10,7 @@ const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor
 ## When the poll doesn't end after the offical endtime + POLL_TIMEOUT_MS. The wait loop for poll end 
 ## event will be stopped to prevent endless loops.
 const POLL_TIMEOUT_MS: int = 30000
+## Time in seconds how long the user should be cached before getting reloaded
 @export var user_cache_ttl: int = 3600 # 1 hour
 
 class UserCacheEntry extends RefCounted:
