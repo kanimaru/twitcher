@@ -13,12 +13,15 @@ const POLL_TIMEOUT_MS: int = 30000
 ## Time in seconds how long the user should be cached before getting reloaded
 @export var user_cache_ttl: int = 3600 # 1 hour
 
+## Profile cache for a single TwitchUser to prevent frequent image downloads.
+## Stores the user data and the expiration timestamp.
 class UserCacheEntry extends RefCounted:
 	var user: TwitchUser
-	var timestamp: int
-	func _init(u: TwitchUser, t: int):
+	## The timestamp (unix time) when this entry expires
+	var time_to_live: int
+	func _init(u: TwitchUser, ttl: int):
 		user = u
-		timestamp = t
+		time_to_live = ttl
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchService")
 
@@ -172,7 +175,7 @@ func _on_unauthenticated() -> void:
 #region User
 
 func _update_user_cache(user: TwitchUser) -> void:
-	var entry: UserCacheEntry = UserCacheEntry.new(user, int(Time.get_unix_time_from_system()))
+	var entry: UserCacheEntry = UserCacheEntry.new(user, int(Time.get_unix_time_from_system()) + user_cache_ttl)
 	_user_cache[user.id] = entry
 	_user_cache[user.login] = entry
 
@@ -181,7 +184,7 @@ func _update_user_cache(user: TwitchUser) -> void:
 func get_user_by_id(user_id: String, force_refresh: bool = false) -> TwitchUser:
 	if not force_refresh and _user_cache.has(user_id):
 		var entry: UserCacheEntry = _user_cache[user_id]
-		if Time.get_unix_time_from_system() - entry.timestamp < user_cache_ttl:
+		if Time.get_unix_time_from_system() < entry.time_to_live:
 			return entry.user
 
 	if api == null:
@@ -202,7 +205,7 @@ func get_user(username: String, force_refresh: bool = false) -> TwitchUser:
 	username = username.trim_prefix("@")
 	if not force_refresh and _user_cache.has(username):
 		var entry: UserCacheEntry = _user_cache[username]
-		if Time.get_unix_time_from_system() - entry.timestamp < user_cache_ttl:
+		if Time.get_unix_time_from_system() < entry.time_to_live:
 			return entry.user
 
 	if api == null:
