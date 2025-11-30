@@ -9,8 +9,13 @@ static var _log: TwitchLogger = TwitchLogger.new("TwitchRedeemListener")
 
 static var _open_tracked_redemptions: Dictionary[String, TwitchRedemption] = {}
 
+## List of all rewards to listen for.
 @export var rewards_to_listen: Array[TwitchReward] = []
+## Eventsub to listen for the redemption's. (Can be empty will automatically look for first [TwitchEventsub] 
+## in the scene tree)
 @export var eventsub: TwitchEventsub
+## API to fullfill or deny redemptions. (Can be empty will automatically look for first [TwitchAPI]  in the 
+## scene tree)
 @export var api: TwitchAPI
 
 ## Should the node automatically subscribe to the needed eventsubs in the ready function. 

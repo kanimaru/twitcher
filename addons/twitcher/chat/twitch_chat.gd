@@ -15,15 +15,14 @@ static var instance: TwitchChat
 		update_configuration_warnings()
 ## Can be null. Then the owner of the access token will be used to send message aka the current user.
 @export var sender_user: TwitchUser
+## Media loader it uses for emotes and badges. (Can be empty will automatically look for first [TwitchMediaLoader] 
+## in the scene tree)  
 @export var media_loader: TwitchMediaLoader
-@export var eventsub: TwitchEventsub:
-	set(val):
-		eventsub = val
-		update_configuration_warnings()
-@export var api: TwitchAPI:
-	set(val):
-		api = val
-		update_configuration_warnings()
+## Eventsub to listen for the chat messages. (Can be empty will automatically look for first [TwitchEventsub] 
+## in the scene tree)
+@export var eventsub: TwitchEventsub
+## API to send messages. (Can be empty will automatically look for first [TwitchAPI] in the scene tree)
+@export var api: TwitchAPI
 
 ## Should it subscribe on ready
 @export var subscribe_on_ready: bool = true
@@ -107,10 +106,6 @@ func send_message(message: String, reply_parent_message_id: String = "") -> Arra
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
-	if eventsub == null:
-		result.append("TwitchEventsub not assigned")
-	if api == null:
-		result.append("TwitchAPI not assigned")
 	if broadcaster_user == null:
 		result.append("Target broadcaster not specified")
 	return result

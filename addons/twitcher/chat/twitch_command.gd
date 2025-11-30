@@ -6,7 +6,7 @@ extends Twitcher
 class_name TwitchCommand
 
 ## Constant to convert from seconds to milliseconds
-const S_TO_MS = 1000
+const S_TO_MS: int = 1000
 
 static var ALL_COMMANDS: Array[TwitchCommand] = []
 
@@ -64,7 +64,8 @@ enum WhereFlag {
 ## Global cooldown for the command
 @export var global_cooldown: float = 0
 
-## The eventsub to listen for chatmessages
+## Eventsub to listen for the chat messages. (Can be empty will automatically look for first [TwitchEventsub] 
+## in the scene tree)
 @export var eventsub: TwitchEventsub
 
 ## Cooldowns per user Key: Username | Value: Time until it can be used again

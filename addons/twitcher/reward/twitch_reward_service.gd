@@ -84,11 +84,11 @@ func save_reward(twitch_reward: TwitchReward) -> SaveError:
 			twitch_reward.id = ""
 	
 	if twitch_reward.id == "":
-		var create = TwitchCreateCustomRewards.Body.new()
+		var create: TwitchCreateCustomRewards.Body = TwitchCreateCustomRewards.Body.new()
 		create.title = twitch_reward.title
 		create.prompt = twitch_reward.description
 		create.cost = twitch_reward.cost
-		var color = twitch_reward.background_color.to_html(false)
+		var color: String = twitch_reward.background_color.to_html(false)
 		if color: create.background_color = "#" + color
 		create.is_enabled = twitch_reward.is_enabled
 		create.is_user_input_required = twitch_reward.is_user_input_required
@@ -114,11 +114,11 @@ func save_reward(twitch_reward: TwitchReward) -> SaveError:
 		else:
 			return SaveError.UNKNOWN
 	else:
-		var update = TwitchUpdateCustomReward.Body.new()
+		var update: TwitchUpdateCustomReward.Body = TwitchUpdateCustomReward.Body.new()
 		update.title = twitch_reward.title
 		update.prompt = twitch_reward.description
 		update.cost = twitch_reward.cost
-		var color = twitch_reward.background_color.to_html(false)
+		var color: String = twitch_reward.background_color.to_html(false)
 		if color: update.background_color = "#" + color
 		update.is_enabled = twitch_reward.is_enabled
 		update.is_user_input_required = twitch_reward.is_user_input_required
@@ -177,4 +177,3 @@ func _get_custom_reward(twitch_reward: TwitchReward) -> TwitchCustomReward:
 			EditorInterface.get_editor_toaster().push_toast(msg, EditorToaster.SEVERITY_WARNING)
 		return null
 	return reward_response.data[0]
-	

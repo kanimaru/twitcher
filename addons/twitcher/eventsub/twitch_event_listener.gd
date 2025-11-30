@@ -10,9 +10,11 @@ extends Twitcher
 class_name TwitchEventListener
 static var _log : TwitchLogger = TwitchLogger.new("TwitchEventListener")
 
+## Eventsub to listen the events. (Can be empty will automatically look for first [TwitchEventsub] in the scene tree)
 @export var eventsub: TwitchEventsub:
 	set = _update_eventsub
 
+## The subscription to listen for (needs to be subscribed by the eventsub node)
 @export var subscription: TwitchEventsubDefinition.Type:
 	set(val):
 		subscription = val
@@ -66,8 +68,6 @@ func _on_received(type: String, data: Dictionary):
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
-	if eventsub == null:
-		result.append("'EventSub' is missing")
 	if subscription == null:
 		result.append("'Subscription' is missing")
 	return result
