@@ -64,7 +64,8 @@ signal session_id_received(id: String)
 ## Will be called when an event is sent from Twitch.
 signal event(type: StringName, data: Dictionary)
 
-## Will be called when an event is sent from Twitch. Same like event signal but better named and easier to use in inline awaits.
+## Will be called when an event is sent from Twitch. Same like event signal but better named and easier to use in 
+## inline awaits.
 signal event_received(event: Event)
 
 ## Will be called when an event got revoked from your subscription by Twitch.
@@ -74,12 +75,18 @@ signal events_revoked(type: StringName, status: String)
 signal message_received(message: Variant)
 
 
+## The api used to create the subscriptions (Can be empty will automatically look for first [TwitchAPI] in the 
+## scene tree)  
 @export var api: TwitchAPI
+## All subscriptions this eventsub should subscribe to
 @export var _subscriptions: Array[TwitchEventsubConfig] = []
-@export var scopes: OAuthScopes
+## Live twitch server you don't need to touch it except you want to implement a proxy in between for example
 @export var eventsub_live_server_url: String = "wss://eventsub.wss.twitch.tv/ws"
+## Test server in combination of TwitchCLI
 @export var eventsub_test_server_url: String = "ws://127.0.0.1:8080/ws"
+## Enables the test server usage
 @export var use_test_server: bool
+## Ignores messages that are older than this value. Twitch can send messages multiple time.
 @export var ignore_message_eventsub_in_seconds: int = 600
 
 var _client: WebsocketClient = WebsocketClient.new()

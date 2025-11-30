@@ -3,7 +3,8 @@ extends TwitchCommand
 
 class_name TwitchCommandHelp
 
-## Used to determine the Sender User if empty and to send the message back
+## Used to determine the Sender User if empty and to send the message back (Can be empty will automatically look for
+## first [TwitchAPI] in the scene tree)
 @export var twitch_api: TwitchAPI
 ## Sender User that will send the answers on the command. Can be empty then the current user will be used
 @export var sender_user: TwitchUser
