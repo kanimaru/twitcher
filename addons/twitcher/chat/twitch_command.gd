@@ -43,6 +43,17 @@ static func create(
 	return command
 
 
+func _enter_tree() -> void:
+	super._enter_tree()
+	ALL_COMMANDS.append(self)
+	
+	
+func _exit_tree() -> void:
+	super._exit_tree()
+	ALL_COMMANDS.erase(self)
+	
+
+
 func add_alias(alias: String) -> void:
 	aliases.append(alias)
 	
@@ -125,4 +136,3 @@ func _get_configuration_warnings() -> PackedStringArray:
 
 func _to_string() -> String:
 	return "%s%s" % [command_prefixes[0], command]
-	

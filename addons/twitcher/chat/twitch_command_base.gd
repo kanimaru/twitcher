@@ -6,7 +6,7 @@ extends Twitcher
 class_name TwitchCommandBase
 
 ## Constant to convert from seconds to milliseconds
-const S_TO_MS = 1000
+const S_TO_MS: int = 1000
 
 static var ALL_COMMANDS: Array[TwitchCommandBase] = []
 
@@ -97,17 +97,12 @@ func _enter_tree() -> void:
 	if eventsub == null: eventsub = TwitchEventsub.instance
 	if eventsub != null:
 		eventsub.event.connect(_on_event)
-	ALL_COMMANDS.append(self)
 	
 
 func _exit_tree() -> void:
 	if eventsub != null:
 		eventsub.event.disconnect(_on_event)
-	ALL_COMMANDS.erase(self)
 
-
-## TODO ADD REGEX to data
-## CHECK REGEX in is should_handle pass it to data
 
 func _on_event(type: StringName, data: Dictionary) -> void:
 	if type == TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE.value:
