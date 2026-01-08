@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Twitcher"
-run/main_scene="res://example/chat/eventsub_chat.tscn"
+run/main_scene="uid://5lyf04rwo1mf"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="uid://pnr400301dhc"
 
