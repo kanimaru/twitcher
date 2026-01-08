@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://bf3mvh373suhc" path="res://addons/twitcher/chat/twitch_bot.gd" id="15_pbrhu"]
 [ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="16_dvnvn"]
 [ext_resource type="Script" uid="uid://b52xp7c23ucfk" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="17_04pvb"]
+[ext_resource type="Script" uid="uid://cnmohrdxqihr0" path="res://addons/twitcher/generated/twitch_user.gd" id="18_ctuqi"]
 [ext_resource type="Script" uid="uid://ch0rxi1ogjx3q" path="res://addons/twitcher/chat/twitch_command_help.gd" id="18_vxv1r"]
 [ext_resource type="Script" uid="uid://dcrliedgr6eol" path="res://addons/twitcher/lib/oOuch/crypto_key_provider.gd" id="19_y6r6o"]
 [ext_resource type="Script" uid="uid://00xbijwpi8xa" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="20_axcmk"]
@@ -28,9 +29,49 @@
 script = ExtResource("14_jftlh")
 metadata/_custom_type_script = "uid://ddwa0dm0qhc3s"
 
+[sub_resource type="Resource" id="Resource_pbrhu"]
+script = ExtResource("18_ctuqi")
+id = "132799162"
+login = "kani_dev"
+display_name = "kani_dev"
+broadcaster_type = "affiliate"
+description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
+created_at = "2016-08-21T18:50:12Z"
+
+[sub_resource type="Resource" id="Resource_dvnvn"]
+script = ExtResource("18_ctuqi")
+id = "132799162"
+login = "kani_dev"
+display_name = "kani_dev"
+broadcaster_type = "affiliate"
+description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
+created_at = "2016-08-21T18:50:12Z"
+
 [sub_resource type="Resource" id="Resource_ckg27"]
 script = ExtResource("17_04pvb")
 _identifier = "Bot-Token"
+
+[sub_resource type="Resource" id="Resource_04pvb"]
+script = ExtResource("18_ctuqi")
+id = "132799162"
+login = "kani_dev"
+display_name = "kani_dev"
+broadcaster_type = "affiliate"
+description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
+created_at = "2016-08-21T18:50:12Z"
+
+[sub_resource type="Resource" id="Resource_ctuqi"]
+script = ExtResource("18_ctuqi")
+id = "132799162"
+login = "kani_dev"
+display_name = "kani_dev"
+broadcaster_type = "affiliate"
+description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
+created_at = "2016-08-21T18:50:12Z"
 
 [sub_resource type="Resource" id="Resource_ss7yp"]
 script = ExtResource("19_y6r6o")
@@ -103,6 +144,8 @@ metadata/_custom_type_script = "uid://bmluckfvgm1c2"
 [node name="TwitchChat" type="Node" parent="." unique_id=33770585 node_paths=PackedStringArray("media_loader", "eventsub", "api")]
 unique_name_in_owner = true
 script = ExtResource("15_jftlh")
+broadcaster_user = SubResource("Resource_pbrhu")
+sender_user = SubResource("Resource_dvnvn")
 media_loader = NodePath("../TwitchService/MediaLoader")
 eventsub = NodePath("../TwitchService/EventSub")
 api = NodePath("../TwitchService/API")
@@ -137,6 +180,8 @@ unique_name_in_owner = true
 script = ExtResource("15_pbrhu")
 oauth_setting = ExtResource("3_jftlh")
 bot_token = SubResource("Resource_ckg27")
+sender = SubResource("Resource_04pvb")
+receiver = SubResource("Resource_ctuqi")
 metadata/_custom_type_script = "uid://bf3mvh373suhc"
 
 [node name="BotApi" type="Node" parent="TwitchBot" unique_id=2079389825]
@@ -146,17 +191,12 @@ oauth_setting = SubResource("Resource_2xldo")
 
 [node name="BotAuth" type="Node" parent="TwitchBot" unique_id=225169434]
 script = ExtResource("6_2pnhe")
-oauth_setting = SubResource("Resource_2xldo")
-token = SubResource("Resource_ckg27")
 scopes = ExtResource("21_33yhv")
 
 [node name="OAuth" type="Node" parent="TwitchBot/BotAuth" unique_id=586844356 node_paths=PackedStringArray("token_handler")]
 script = ExtResource("7_y0pkj")
-oauth_setting = SubResource("Resource_2xldo")
 scopes = ExtResource("21_33yhv")
 token_handler = NodePath("../TokenHandler")
 
 [node name="TokenHandler" type="Node" parent="TwitchBot/BotAuth" unique_id=1445620425]
 script = ExtResource("8_tvr5c")
-oauth_setting = SubResource("Resource_2xldo")
-token = SubResource("Resource_ckg27")
