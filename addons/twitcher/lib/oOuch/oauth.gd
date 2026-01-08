@@ -113,6 +113,7 @@ func do_unsetup() -> void:
 func login() -> bool:
 	if not is_node_ready(): await ready
 	_setup_nodes()
+	token_handler.token.load_tokens() # Load it because the setter is not always called within the token
 	if token_handler.is_token_valid() && not _got_scopes_changed(): return true
 	logDebug("Token is valid (%s) and not scopes changed (%s)" % [ token_handler.is_token_valid(), _got_scopes_changed()])
 

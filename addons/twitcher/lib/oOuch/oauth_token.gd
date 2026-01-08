@@ -22,7 +22,7 @@ const USER_ACCESS_TOKEN: StringName = &"User Access Token"
 @export var _cache_path: String = "user://auth.conf":
 	set(val):
 		_cache_path = val
-		_load_tokens()
+		load_tokens()
 
 ## Returns if its an user access token or app accesstoken
 var type: StringName
@@ -39,6 +39,7 @@ var _refresh_token: String = ""
 
 ## Called when the token was resolved / accesstoken got refreshed
 signal authorized
+
 
 ## Update the visual representation of the scopes (don't use it for actually changing scopes it wont work!) 
 # Client credential flow doesn't return used scopes and I wanted to give the use feedback over the scopes
@@ -74,7 +75,7 @@ func _persist_tokens():
 
 
 ## Loads the tokens and returns the information if the file got created
-func _load_tokens() -> bool:
+func load_tokens() -> bool:
 	var status: Error = _config_file.load(_cache_path)
 	if status == OK && _config_file.has_section(_identifier):
 		_expire_date = _config_file.get_value(_identifier, "expire_date", 0)

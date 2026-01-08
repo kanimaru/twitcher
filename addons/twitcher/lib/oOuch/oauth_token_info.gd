@@ -74,7 +74,7 @@ func _on_revoke_pressed() -> void:
 
 func _on_reload_pressed() -> void:
 	_reset_token()
-	token._load_tokens()
+	token.load_tokens()
 
 
 func _reset_token() -> void:
