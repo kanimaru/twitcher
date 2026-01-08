@@ -3,7 +3,7 @@ extends Control
 ## Basic example to show clips of a streamer
 ## It's not possible to show the clip itself, atleast as much as I know
 
-const CLIP_THUMBNAIL = preload("res://example/clip_viewer/clip_thumbnail.tscn")
+const CLIP_THUMBNAIL = preload("res://addons/twitcher/example/clip_viewer/clip_thumbnail.tscn")
 
 var _log = TwitchLogger.new("ClipThumbnail")
 

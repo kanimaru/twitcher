@@ -1,6 +1,6 @@
 extends Control
 
-const TEST_REWARD: TwitchReward = preload("res://example/reward/test_reward.tres")
+const TEST_REWARD: TwitchReward = preload("res://addons/twitcher/example/reward/test_reward.tres")
 
 const BTN_ACCEPT: String = "Accept"
 const BTN_CANCEL: String = "Cancel"

@@ -7,7 +7,7 @@ extends Control
 # - ClientID / ClientSecret
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-const ChatView = preload("res://example/chat_view.gd")
+const ChatView = preload("res://addons/twitcher/example/chat_view.gd")
 
 ## View to display everything
 @onready var chat_view: ChatView = %ChatView

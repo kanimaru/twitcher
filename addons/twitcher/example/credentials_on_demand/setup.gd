@@ -6,8 +6,8 @@ extends Control
 #
 # Disclaimer: When you provide such a service please take care to save the secrets encrypted!
 
-const Auth = preload("res://example/credentials_on_demand/auth.gd")
-const ChatView = preload("res://example/chat_view.gd")
+const Auth = preload("res://addons/twitcher/example/credentials_on_demand/auth.gd")
+const ChatView = preload("res://addons/twitcher/example/chat_view.gd")
 
 @onready var auth: Auth = %Auth
 @onready var chat_view: ChatView = %ChatView

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TwitchReward" load_steps=7 format=3 uid="uid://dwmef3hbrom4k"]
+[gd_resource type="Resource" script_class="TwitchReward" format=3 uid="uid://dwmef3hbrom4k"]
 
 [ext_resource type="Texture2D" uid="uid://co54e4bvuxyg4" path="res://addons/twitcher/assets/default-1.png" id="1_0fr4b"]
 [ext_resource type="Script" uid="uid://cnmohrdxqihr0" path="res://addons/twitcher/generated/twitch_user.gd" id="1_w4quj"]
