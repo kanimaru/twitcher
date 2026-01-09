@@ -51,11 +51,22 @@ func _on_command_receive(from_username: String, info: TwitchCommandInfo, args: P
 		var message_body: TwitchSendWhisper.Body = TwitchSendWhisper.Body.new()
 		message_body.message = help_message
 		twitch_api.send_whisper(message_body, message["to_user_id"], message["from_user_id"])
-		
+
+
+## Needed because when you debug and change code etc. Godot will add the commands multiple times.
+func cleanup_redundant_commands() -> void:
+	var command_set: Dictionary = {}
+	for command in TwitchCommand.ALL_COMMANDS:
+		command_set[command.command] = command
+	var sanatized_commands: Array = command_set.values()
+	TwitchCommand.ALL_COMMANDS.assign(sanatized_commands)
+	
 		
 func _generate_help_message(args: Array[String], whisper_only: bool) -> String:
 	var message: String = ""
 	var show_details: bool = not args.is_empty()
+		
+	cleanup_redundant_commands()
 		
 	for command in TwitchCommand.ALL_COMMANDS:
 		if command == self: continue
