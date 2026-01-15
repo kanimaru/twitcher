@@ -1,5 +1,4 @@
 @tool
-class_name TwitchPollListener
 extends Twitcher
 
 ## Helps to listen for polls running on Twitch streams. 
@@ -11,6 +10,19 @@ extends Twitcher
 ## - [signal poll_completed]: A poll has ended normaly. Poll is still shown on stream.[br] 
 ## - [signal poll_terminated]: A poll has ended early (before the duration has run out). Poll is still shown on stream.[br]
 ## - [signal poll_archived]: A poll was either (terminated or completed) and is not shown on stream anymore.
+class_name TwitchPollListener
+static var _log: TwitchLogger = TwitchLogger.new("TwitchPollListener")
+
+
+## The [TwitchEventSub] for subscribing. If left empty, the Node attempts to fetch the [TwitchEventsub] itself.
+@export var eventsub: TwitchEventsub
+## The [TwitchAPI] for API calls. If left empty, the Node attempts to fetch the [TwitchAPI] itself.
+@export var api: TwitchAPI
+## Should the node automatically subscribe to the needed eventsubs in the ready function. 
+@export var ensure_subscriptions_on_ready: bool = true
+## The Broadcaster User. If left empty the Node will attempt to fetch it from [method TwitchService.get_current_user_via_api]
+@export var broadcaster: TwitchUser
+
 
 ## Emits the raw json response from the [enum TwitchEventsubDefinition.Type]s [member TwitchEventsubDefinition.CHANNEL_POLL_BEGIN] , [member TwitchEventsubDefinition.CHANNEL_POLL_PROGRESS] and [member TwitchEventsubDefinition.CHANNEL_POLL_END].
 signal poll_json(poll_json: Dictionary)
@@ -24,41 +36,26 @@ signal poll_completed(poll: TwitchPoll)
 signal poll_terminated(poll: TwitchPoll)
 ## Emits a [TwitchPoll] object when a poll is archived.
 signal poll_archived(poll: TwitchPoll)
-# [TwitchPollListener]'s [TwitchLogger]
-static var _log: TwitchLogger = TwitchLogger.new("TwitchPollListener")
-## The [TwitchEventSub] for subscribing. If left empty, the Node attempts to fetch the [TwitchEventsub] itself.
-@export var eventsub: TwitchEventsub
-## The [TwitchAPI] for API calls. If left empty, the Node attempts to fetch the [TwitchAPI] itself.
-@export var api: TwitchAPI
-## Should the node automatically subscribe to the needed eventsubs in the ready function. 
-@export var ensure_subscriptions_on_ready: bool = true
-## The Broadcaster User. If left empty the Node will attempt to fetch it from [method TwitchService.get_current_user_via_api]
-@export var broadcaster: TwitchUser
-
-
-func _enter_tree() -> void:
-	if eventsub == null: 
-		_log.d("TwitchEventsub was not set. Fetching...")
-		eventsub = TwitchEventsub.instance
-	if api == null: 
-		_log.d("TwitchAPI was not set. Fetching...")
-		api = TwitchAPI.instance
-	if not broadcaster:
-		_log.d("Broadcaster not set. Fetching...")
-		broadcaster = await TwitchService.get_current_user_via_api(api)
 
 
 func _ready() -> void:
+	if eventsub == null: eventsub = TwitchEventsub.instance
+	if api == null: api = TwitchAPI.instance
+	if not broadcaster: broadcaster = await TwitchService.get_current_user_via_api(api)
+	
 	if not Engine.is_editor_hint() && ensure_subscriptions_on_ready:
 		_log.d("Ensuring subscription configuration on TwitchEventsub.")
-		_ensure_subscriptions()
+		ensure_subscriptions()
+	
 	if eventsub != null: 
 		_log.d("Connecting to eventsub!")
 		eventsub.event.connect(_on_event)
+	else:
+		_log.e("Eventsub missing can't connect TwitchPollListener!")
 
 
-# Ensures the selected [TwitchEventSub] is subscribed to the right [TwitchEventsubDefinition.Type].
-func _ensure_subscriptions() -> void:
+## Ensures the selected [TwitchEventSub] is subscribed to the right [TwitchEventsubDefinition.Type].
+func ensure_subscriptions() -> void:
 	var begin_subscription: Array[TwitchEventsubConfig] = eventsub.get_subscription_by_type(TwitchEventsubDefinition.Type.CHANNEL_POLL_BEGIN)
 	var end_subscription: Array[TwitchEventsubConfig] = eventsub.get_subscription_by_type(TwitchEventsubDefinition.Type.CHANNEL_POLL_END)
 	var progress_subscription: Array[TwitchEventsubConfig] = eventsub.get_subscription_by_type(TwitchEventsubDefinition.Type.CHANNEL_POLL_PROGRESS)
@@ -66,15 +63,18 @@ func _ensure_subscriptions() -> void:
 	if begin_subscription.is_empty():
 		var config: TwitchEventsubConfig = TwitchEventsubConfig.create(TwitchEventsubDefinition.CHANNEL_POLL_BEGIN, config_dict)
 		eventsub.subscribe(config)
+		_log.d("No subscription for Poll Begin found. Subscribing!")
 	if end_subscription.is_empty():
 		var config: TwitchEventsubConfig = TwitchEventsubConfig.create(TwitchEventsubDefinition.CHANNEL_POLL_END, config_dict)
 		eventsub.subscribe(config)
+		_log.d("No subscription for Poll End found. Subscribing!")
 	if progress_subscription.is_empty():
 		var config: TwitchEventsubConfig = TwitchEventsubConfig.create(TwitchEventsubDefinition.CHANNEL_POLL_PROGRESS, config_dict)
 		eventsub.subscribe(config)
+		_log.d("No subscription for Poll Progress found. Subscribing!")
+		
 
-
-# Receives and handles the Signal from the selected [TwitchEventSub].
+## Receives and handles the Signal from the selected [TwitchEventSub].
 func _on_event(type: StringName, data: Dictionary) -> void:
 	if type == TwitchEventsubDefinition.CHANNEL_POLL_BEGIN.value:
 		var poll: TwitchPoll = TwitchPoll.from_json(data)
