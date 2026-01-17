@@ -51,7 +51,6 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	super._exit_tree()
 	ALL_COMMANDS.erase(self)
-	
 
 
 func add_alias(alias: String) -> void:
@@ -60,7 +59,7 @@ func add_alias(alias: String) -> void:
 
 func _should_handle(info: TwitchCommandInfo) -> bool:
 	if not super._should_handle(info): return false
-	var message = info.text_message
+	var message: String = info.text_message
 	if not command_prefixes.has(message.left(1)): return false
 
 	# remove the command symbol in front
@@ -80,21 +79,21 @@ func _should_handle(info: TwitchCommandInfo) -> bool:
 
 
 func _handle_command(info: TwitchCommandInfo) -> void:
-	var message = info.text_message
+	var message: String = info.text_message
 	# remove the command symbol in front
 	message = message.right(-1)
-	var cmd_msg = message.split(" ", true, 1)
+	var cmd_msg: Array[String] = message.split(" ", true, 1)
 	
-	var command = cmd_msg[0]
+	var command: String = cmd_msg[0]
 	if not _can_handle_command(info):
 		return
 		
-	var arguments = info.arguments
+	var arguments: PackedStringArray = info.arguments
 	# Handle Argument parsing
 	if cmd_msg.size() > 1:
 		arguments.append_array(cmd_msg[1].split(" ", false))
-		var to_less_arguments = arguments.size() < args_min
-		var to_much_arguments = arguments.size() > args_max
+		var to_less_arguments: bool = arguments.size() < args_min
+		var to_much_arguments: bool = arguments.size() > args_max
 		if to_much_arguments && args_max != -1 || to_less_arguments:
 			received_invalid_command.emit(info.username, info, arguments)
 			return
@@ -111,19 +110,6 @@ func _handle_command(info: TwitchCommandInfo) -> void:
 			command_received.emit(info.username, info, empty_args)
 	else:
 		command_received.emit(info.username, info, arguments)
-
-
-func _get_perm_flag_from_tags(data : Variant) -> int:
-	var flag: int = 0
-	if data is TwitchChatMessage:
-		var message: TwitchChatMessage = data as TwitchChatMessage
-		for badge in message.badges:
-			match badge.set_id:
-				"broadcaster": flag += PermissionFlag.STREAMER
-				"vip": flag += PermissionFlag.VIP
-				"moderator": flag += PermissionFlag.MOD
-				"subscriber": flag += PermissionFlag.SUB
-	return flag
 
 
 func _get_configuration_warnings() -> PackedStringArray:

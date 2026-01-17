@@ -29,8 +29,7 @@ enum PermissionFlag {
 	SUB = 2,
 	MOD = 4,
 	STREAMER = 8,
-	MOD_STREAMER = 12, # Mods and the streamer
-	NON_REGULAR = 15 # Everyone but regular viewers
+	LEAD_MOD = 16
 }
 
 ## Where the command should be accepted
@@ -46,7 +45,8 @@ enum WhereFlag {
 @export_multiline var description: String
 
 ## Wich role of user is allowed to use it
-@export var permission_level: PermissionFlag = PermissionFlag.EVERYONE
+@export_flags("VIP:1", "Subscriber:2", "Moderator:4", "Lead Moderator:16", "Streamer:8", "Mods & Streamer:28", "Non Regulars:31") 
+var permission_level: int = PermissionFlag.EVERYONE
 ## Where is it allowed to use chat or whisper or both
 @export var where: WhereFlag = WhereFlag.CHAT
 ## All allowed users empty array means everyone
@@ -56,9 +56,9 @@ enum WhereFlag {
 ## Determines if the aliases and commands should be case sensitive or not
 @export var case_insensitive: bool = true
 ## Cooldown per user
-@export var user_cooldown: float = 0
+@export var user_cooldown: float = 0.0
 ## Global cooldown for the command
-@export var global_cooldown: float = 0
+@export var global_cooldown: float = 0.0
 
 ## The eventsub to listen for chatmessages
 @export var eventsub: TwitchEventsub
@@ -134,9 +134,9 @@ func _should_handle(info: TwitchCommandInfo) -> bool:
 
 func _has_permission(from_username: String, data: Variant) -> bool:
 	# Handle Permission check
-	var premission_required = permission_level != 0
+	var premission_required: bool = permission_level != 0
 	if premission_required:
-		var user_perm_flags = _get_perm_flag_from_tags(data)
+		var user_perm_flags: int = _get_perm_flag_from_tags(data)
 		if user_perm_flags & permission_level == 0:
 			return false
 	return true
@@ -179,7 +179,7 @@ func _handle_command(info: TwitchCommandInfo) -> void:
 	
 ## Checks if the parsed command can be handled
 func _can_handle_command(info: TwitchCommandInfo) -> bool:
-	if not _has_permission(info.username, info.data):
+	if not _has_permission(info.username, info.original_message):
 		invalid_permission.emit(info.from_username, info, info.arguments)
 		return false
 			
@@ -205,4 +205,5 @@ func _get_perm_flag_from_tags(data : Variant) -> int:
 				"vip": flag += PermissionFlag.VIP
 				"moderator": flag += PermissionFlag.MOD
 				"subscriber": flag += PermissionFlag.SUB
+				"lead_moderator": flag += PermissionFlag.LEAD_MOD
 	return flag
