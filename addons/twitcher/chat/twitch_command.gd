@@ -82,7 +82,7 @@ func _handle_command(info: TwitchCommandInfo) -> void:
 	var message: String = info.text_message
 	# remove the command symbol in front
 	message = message.right(-1)
-	var cmd_msg: Array[String] = message.split(" ", true, 1)
+	var cmd_msg: PackedStringArray = message.split(" ", true, 1)
 	
 	var command: String = cmd_msg[0]
 	if not _can_handle_command(info):
