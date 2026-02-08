@@ -1,7 +1,7 @@
 @tool
 extends EditorInspectorPlugin
 
-const BufferedHttpClient: BufferedHTTPClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd")
+const BufferedHttpClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd")
 const EncryptionKeyProvider: CryptoKeyProvider = preload("res://addons/twitcher/lib/oOuch/default_key_provider.tres")
 
 
