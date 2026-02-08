@@ -22,6 +22,11 @@ class_name OAuthSetting
 	set(val): 
 		client_id = val
 		emit_changed()
+## Client Secret to authorize (optional depending on flow)
+@export_custom(PROPERTY_HINT_PASSWORD, "encrypted") var client_secret: String:
+	set(val): 
+		client_secret = val if val != null || val != "" else ""
+		emit_changed()
 ## Defines the authorization flow.
 @export var authorization_flow: OAuth.AuthorizationFlow = OAuth.AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
 	set(val):
@@ -41,11 +46,6 @@ var redirect_port: int:
 		if redirect_port == 0 and redirect_url != "": _update_redirect_url(redirect_url)
 		return redirect_port
 
-## Client Secret to authorize (optional depending on flow)
-@export_storage var client_secret: String:
-	set(val): 
-		client_secret = val if val != null || val != "" else ""
-		emit_changed()
 		
 
 var _crypto: Crypto = Crypto.new()

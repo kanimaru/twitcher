@@ -1,7 +1,7 @@
 @tool
 extends EditorInspectorPlugin
 
-const BufferedHttpClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd")
+const BufferedHttpClient: BufferedHTTPClient = preload("res://addons/twitcher/lib/http/buffered_http_client.gd")
 const EncryptionKeyProvider: CryptoKeyProvider = preload("res://addons/twitcher/lib/oOuch/default_key_provider.tres")
 
 
@@ -13,51 +13,11 @@ func _parse_property(object: Object, type: Variant.Type, name: String, hint_type
 	if name == "well_known_url":
 		add_property_editor("well_known_url", WellKnownUriProperty.new())
 		return true
-	if name == "client_id":
-		add_property_editor("client_secret", SecretProperty.new(), true, "Client Secret")
 	return false
 
 
-class SecretProperty extends EditorProperty:
-	var _line_edit: LineEdit = LineEdit.new()
-
-
-	func _init() -> void:
-		_line_edit.secret = true
-		_line_edit.text_submitted.connect(_on_text_changed)
-		_line_edit.focus_exited.connect(_on_focus_exited)
-		add_child(_line_edit)
-		add_focusable(_line_edit)
-
-
-	func _update_property() -> void:
-		var secret = get_edited_object()[get_edited_property()]
-		
-		if secret == "": _line_edit.text = ""
-		var value_raw := Marshalls.base64_to_raw(secret)
-		var value_bytes := EncryptionKeyProvider.decrypt(value_raw)
-		_line_edit.text = value_bytes.get_string_from_utf8()
-
-
-	func _on_focus_exited() -> void:
-		_save()
-
-
-	func _on_text_changed(_new_text: String) -> void:
-		_save()
-
-
-	func _save() -> void:
-		var plain_value = _line_edit.text
-		if plain_value == "":
-			emit_changed(get_edited_property(), "")
-			return
-		var encrypted_value := EncryptionKeyProvider.encrypt(plain_value.to_utf8_buffer())
-		emit_changed(get_edited_property(), Marshalls.raw_to_base64(encrypted_value))
-
-
 class WellKnownUriProperty extends EditorProperty:
-	var _url_regex = RegEx.create_from_string("((https?://)?([^:/]+))(:([0-9]+))?(/.*)?")
+	var _url_regex: RegEx = RegEx.create_from_string("((https?://)?([^:/]+))(:([0-9]+))?(/.*)?")
 
 	var _container: VBoxContainer
 	var _well_known_url: LineEdit
@@ -110,6 +70,6 @@ class WellKnownUriProperty extends EditorProperty:
 
 	func _on_submit_clicked() -> void:
 		_submit.disabled = true
-		var wellknownurl = _well_known_url.text if _well_known_url.text != "" else _well_known_url.placeholder_text
+		var wellknownurl: String = _well_known_url.text if _well_known_url.text != "" else _well_known_url.placeholder_text
 		await load_from_wellknown(wellknownurl)
 		_submit.disabled = false
