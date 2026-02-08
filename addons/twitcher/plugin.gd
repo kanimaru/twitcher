@@ -102,5 +102,5 @@ func generate_api() -> void:
 	remove_child(parser)
 
 func is_magick_available() -> bool:
-	var transformer = MagicImageTransformer.new()
+	var transformer: MagicImageTransformer = MagicImageTransformer.new()
 	return transformer.is_supported()
