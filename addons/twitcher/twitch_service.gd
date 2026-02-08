@@ -10,8 +10,6 @@ const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor
 ## When the poll doesn't end after the offical endtime + POLL_TIMEOUT_MS. The wait loop for poll end 
 ## event will be stopped to prevent endless loops.
 const POLL_TIMEOUT_MS: int = 30000
-## Time in seconds how long the user should be cached before getting reloaded
-@export var user_cache_ttl: int = 3600 # 1 hour
 
 ## Profile cache for a single TwitchUser to prevent frequent image downloads.
 ## Stores the user data and the expiration timestamp.
@@ -48,6 +46,9 @@ static var instance: TwitchService
 		if val != null:
 			_set_in_child("token", val)
 			update_configuration_warnings()
+			
+## Time in seconds how long the user should be cached before getting reloaded
+@export var user_cache_ttl: int = 3600 # 1 hour
 
 @onready var auth: TwitchAuth
 @onready var eventsub: TwitchEventsub
