@@ -114,7 +114,7 @@ func retry(request: BufferedHTTPClient.RequestData,
 func _handle_error(method_name: String, response: BufferedHTTPClient.ResponseData) -> void:
 	var error_json: String = response.response_data.get_string_from_utf8()
 	var error = JSON.parse_string(error_json)
-	push_error("Problems while calling %s: " % method_name, error["message"])
+	push_error("Problems while calling %s: " % method_name, error["message"] if error and "message" in error else "")
 	_log.d(error_json)
 
 
