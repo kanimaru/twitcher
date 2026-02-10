@@ -180,7 +180,7 @@ func _handle_command(info: TwitchCommandInfo) -> void:
 ## Checks if the parsed command can be handled
 func _can_handle_command(info: TwitchCommandInfo) -> bool:
 	if not _has_permission(info.username, info.original_message):
-		invalid_permission.emit(info.from_username, info, info.arguments)
+		invalid_permission.emit(info.username, info, info.arguments)
 		return false
 			
 	if is_on_cooldown(info.username):
