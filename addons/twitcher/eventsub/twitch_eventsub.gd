@@ -54,6 +54,14 @@ class Event extends RefCounted:
 		get(): return message.payload.event
 	var message: TwitchNotificationMessage
 	
+	var typed_data: Variant:
+		get(): 
+			if "Event" in type.response_script:
+				return type.response_script.Event.from_json(data)
+			else:
+				return type.response_script.EventV2.from_json(data)
+
+
 	func _init(notification_message: TwitchNotificationMessage) -> void: 
 		message = notification_message
 

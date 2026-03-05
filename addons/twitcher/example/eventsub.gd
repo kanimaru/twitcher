@@ -22,11 +22,11 @@ func _ready() -> void:
 		&"broadcaster_user_id": current_user.id,
 		&"moderator_user_id": current_user.id
 	})
-	channel_follow_event_listener.received.connect(_on_event)
+	channel_follow_event_listener.typed_data_received.connect(_on_event)
 
 
-func _on_event(data: Dictionary) -> void:
-	show_follow(data["user_name"])
+func _on_event(follow_data: TwitchESChannelFollow.Event) -> void:
+	show_follow(follow_data.user_name)
 	
 	
 func show_follow(username: String) -> void:
@@ -34,5 +34,3 @@ func show_follow(username: String) -> void:
 	var tween = get_tree().create_tween()
 	tween.tween_property(thx.label_settings, ^"font_color", Color.WHITE, 1).from(Color.TRANSPARENT)
 	tween.tween_property(thx.label_settings, ^"font_color", Color.TRANSPARENT, 1)
-	
-	

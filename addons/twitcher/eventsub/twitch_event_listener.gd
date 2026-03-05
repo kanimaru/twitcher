@@ -26,7 +26,8 @@ var subscription_definition: TwitchEventsubDefinition
 
 ## Called when the event got received
 signal received(data: Dictionary)
-
+## Called when the event got received, with the eventsub data parsed into an object
+signal typed_data_received(data: Variant)
 
 func _ready() -> void:
 	if eventsub == null: eventsub = TwitchEventsub.instance
@@ -43,14 +44,14 @@ func _exit_tree() -> void:
 
 func start_listening() -> void:
 	_log.d("start listening %s" % subscription_definition.get_readable_name())
-	if eventsub != null && not eventsub.event.is_connected(_on_received):
-		eventsub.event.connect(_on_received)
+	if eventsub != null && not eventsub.event_received.is_connected(_on_received):
+		eventsub.event_received.connect(_on_received)
 
 
 func stop_listening() -> void:
 	_log.d("stop listening %s" % subscription_definition.get_readable_name())
-	if eventsub != null && eventsub.event.is_connected(_on_received):
-		eventsub.event.disconnect(_on_received)
+	if eventsub != null && eventsub.event_received.is_connected(_on_received):
+		eventsub.event_received.disconnect(_on_received)
 
 
 func _update_eventsub(val: TwitchEventsub):
@@ -61,9 +62,11 @@ func _update_eventsub(val: TwitchEventsub):
 	start_listening()
 
 
-func _on_received(type: String, data: Dictionary):
-	if type == subscription_definition.value:
-		received.emit(data)
+func _on_received(event: TwitchEventsub.Event):
+	if event.type == subscription_definition:
+		# Need for backward compatibility
+		received.emit(event.data)
+		typed_data_received.emit(event.typed_data)
 
 
 func _get_configuration_warnings() -> PackedStringArray:
