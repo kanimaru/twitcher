@@ -4,7 +4,8 @@ extends Twitcher
 
 class_name TwitchAPIParser
 
-const SWAGGER_API: String = "https://raw.githubusercontent.com/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json"
+@export
+var api: String
 
 var definition: Dictionary = {}
 var component_map: Dictionary[String, TwitchGenComponent] = {}
@@ -31,7 +32,7 @@ class ComponentRepo extends RefCounted:
 	func _init(component: TwitchGenComponent, component_map: Dictionary[String, TwitchGenComponent]) -> void:
 		_component = component
 		_component_map = component_map
-
+	
 
 func _ready() -> void:
 	client.name = "APIGeneratorClient"
@@ -50,7 +51,7 @@ func parse_api() -> void:
 func _load_swagger_definition() -> Dictionary:
 	add_child(client)
 	client.max_error_count = 3
-	var request = client.request(SWAGGER_API, HTTPClient.METHOD_GET, {}, "")
+	var request: BufferedHTTPClient.RequestData = client.request(api, HTTPClient.METHOD_GET, {}, "")
 	var response_data = await client.wait_for_request(request)
 
 	if response_data.error:
@@ -71,8 +72,11 @@ func _parsing_components() -> void:
 			continue
 			
 		var ref = "#/components/schemas/" + schema_name
-		var component = TwitchGenComponent.new(schema_name, ref)
+		var component: TwitchGenComponent = TwitchGenComponent.new()
+		component._ref = ref
+		component._classname = schema_name
 		component._is_root = true
+		component._root_component = component
 		_parse_properties(component, schema)
 		_add_component(ref, component)
 		
@@ -88,6 +92,11 @@ func _parse_properties(component: TwitchGenComponent, schema: Dictionary) -> voi
 		
 		var classname: String = property_name.capitalize().replace(" ", "")
 		
+		if property.has("allOf"):
+			# Just take the first one to stay insane
+			var obj = property["allOf"][0]
+			if obj.has("$ref"):
+				field._type = obj.get("$ref")
 			
 		if property.has("properties"):
 			var sub_component: TwitchGenComponent = _add_sub_component(classname, field._description, component, property)
@@ -112,13 +121,24 @@ func _parse_properties(component: TwitchGenComponent, schema: Dictionary) -> voi
 		field._is_required = true
 
 
+## Check if the name already exists as subcomponents
+func _get_component_name(classname: String, parent_component: TwitchGenComponent) -> String:
+	var existing_component: TwitchGenComponent = parent_component.get_component_recursive(classname)
+	while existing_component:
+		return parent_component._classname + "_" + classname
+	return classname
+
+
 func _add_sub_component(classname: String, description: String, parent_component: TwitchGenComponent, properties: Dictionary) -> TwitchGenComponent:
 	var ref: String = parent_component._ref + "/" + classname
-	var sub_component = TwitchGenComponent.new(classname, ref)
+	classname = _get_component_name(classname, parent_component)
+	var sub_component: TwitchGenComponent = TwitchGenComponent.new()
+	sub_component._ref = ref
+	sub_component._classname = classname
 	sub_component._description = description
-	_parse_properties(sub_component, properties)
 	parent_component.add_component(sub_component)
 	_add_component(ref, sub_component)
+	_parse_properties(sub_component, properties)
 	return sub_component
 
 

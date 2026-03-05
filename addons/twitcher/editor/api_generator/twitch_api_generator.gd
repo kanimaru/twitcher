@@ -150,14 +150,13 @@ func prepare_component(component: TwitchGenComponent) -> void:
 			if grouped_files.has(base_name):
 				push_error("That file shouldn't exist: %s" % base_name)
 			component._classname = "Twitch" + component._classname
-			grouped_files[base_name] = component
+			grouped_files[base_name.to_lower()] = component
 		else:
-			var file: GroupedComponent = grouped_files.get(base_name, GroupedComponent.new())
+			var file: GroupedComponent = grouped_files.get_or_add(base_name.to_lower(), GroupedComponent.new())
 			file.base_name = "Twitch" + base_name
 			file.components.append(component)
-			grouped_files[base_name] = file
 			component._classname = component._classname.trim_prefix(base_name)
-			component.set_meta("fqdn", file.base_name + "." + component._classname)
+			component._fqdn = func(): return file.base_name + "." + component._classname
 			var sub_components_to_update: Array[TwitchGenComponent] = component._sub_components.values().duplicate()
 			for sub_component in sub_components_to_update:
 				sub_component._classname = component._classname + sub_component._classname
@@ -347,8 +346,6 @@ func paging_code(method: TwitchGenMethod) -> String:
 
 
 func method_code(method: TwitchGenMethod) -> String:
-	print("GENERATE METHOD ", method._name)
-	
 	var result_type = get_type(method._result_type, false, true)
 
 	var template = """
@@ -382,7 +379,7 @@ func {name}({parameters}) -> {result_type}:
 	{paging_code}
 	return parsed_result
 """	
-	
+		
 	return template.format({
 			"summary": method._summary,
 			"parameter_doc": parameter_doc(method),
@@ -574,9 +571,7 @@ func get_type(type: String, is_array: bool = false, full_qualified: bool = false
 	var result_type : String = ""
 	if type.begins_with("#"):
 		var component: TwitchGenComponent = parser.get_component_by_ref(type)
-		result_type = component._classname
-		if full_qualified and component.has_meta("fqdn"):
-			result_type = component.get_meta("fqdn")
+		result_type = component._classname if not full_qualified else component._fqdn.call()
 	else:
 		result_type = type
 	return result_type if not is_array else "Array[%s]" % result_type

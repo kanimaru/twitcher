@@ -1,12 +1,17 @@
 extends Control
 
-@onready var twitch_api_generator: TwitchAPIGenerator = %TwitchAPIGenerator
-@onready var twitch_api_parser: TwitchAPIParser = %TwitchAPIParser
+@export var twitch_api_generator: Node # Some Generator
+@export var twitch_api_parser: TwitchAPIParser
+@export var show_components: bool = true
+@export var show_methods: bool = true
+
 @onready var methods_tree: Tree = %Methods
 @onready var components_tree: Tree = %Components
 @onready var show: Button = %Show
 @onready var component_search: LineEdit = %ComponentSearch
 @onready var method_search: LineEdit = %MethodSearch
+@onready var method_box: VBoxContainer = %MethodBox
+@onready var component_box: VBoxContainer = %ComponentBox
 
 @onready var generate: Button = %Generate
 #@onready var twitch_api: TwitchAPI = %TwitchAPI
@@ -18,6 +23,8 @@ var method_item_map : Dictionary[String, TreeItem] = {}
 
 
 func _ready() -> void:
+	if not show_components: component_box.hide()
+	if not show_methods: method_box.hide()
 	generate.pressed.connect(_on_generate)
 	request.pressed.connect(_on_request)
 	show.pressed.connect(_show_api)
