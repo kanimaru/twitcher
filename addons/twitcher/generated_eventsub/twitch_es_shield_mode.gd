@@ -76,3 +76,4 @@ static func from_json(d: Dictionary) -> TwitchESShieldMode:
 	if d.get("ended_at", null) != null:
 		result.ended_at = d["ended_at"]
 	return result
+

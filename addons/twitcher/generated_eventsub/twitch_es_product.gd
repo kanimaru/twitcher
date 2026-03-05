@@ -44,3 +44,4 @@ static func from_json(d: Dictionary) -> TwitchESProduct:
 	if d.get("in_development", null) != null:
 		result.in_development = d["in_development"]
 	return result
+

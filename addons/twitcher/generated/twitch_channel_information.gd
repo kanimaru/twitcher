@@ -119,3 +119,4 @@ static func from_json(d: Dictionary) -> TwitchChannelInformation:
 	if d.get("is_branded_content", null) != null:
 		result.is_branded_content = d["is_branded_content"]
 	return result
+

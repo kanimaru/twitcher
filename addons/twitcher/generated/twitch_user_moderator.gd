@@ -45,3 +45,4 @@ static func from_json(d: Dictionary) -> TwitchUserModerator:
 	if d.get("user_name", null) != null:
 		result.user_name = d["user_name"]
 	return result
+

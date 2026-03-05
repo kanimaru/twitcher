@@ -61,3 +61,4 @@ static func from_json(d: Dictionary) -> TwitchESOutcomes:
 		for value in d["top_predictors"]:
 			result.top_predictors.append(TwitchESTopPredictors.from_json(value))
 	return result
+

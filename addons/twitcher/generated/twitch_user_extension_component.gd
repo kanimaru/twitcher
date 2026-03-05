@@ -67,3 +67,4 @@ static func from_json(d: Dictionary) -> TwitchUserExtensionComponent:
 	if d.get("y", null) != null:
 		result.y = d["y"]
 	return result
+

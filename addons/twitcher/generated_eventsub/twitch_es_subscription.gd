@@ -76,3 +76,4 @@ static func from_json(d: Dictionary) -> TwitchESSubscription:
 	if d.get("transport", null) != null:
 		result.transport = TwitchESTransport.from_json(d["transport"])
 	return result
+

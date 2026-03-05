@@ -54,3 +54,4 @@ static func from_json(d: Dictionary) -> TwitchGame:
 	if d.get("igdb_id", null) != null:
 		result.igdb_id = d["igdb_id"]
 	return result
+

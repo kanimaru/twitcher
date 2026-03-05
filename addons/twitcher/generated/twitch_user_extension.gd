@@ -69,3 +69,4 @@ static func from_json(d: Dictionary) -> TwitchUserExtension:
 		for value in d["type"]:
 			result.type.append(value)
 	return result
+

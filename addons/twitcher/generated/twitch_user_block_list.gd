@@ -45,3 +45,4 @@ static func from_json(d: Dictionary) -> TwitchUserBlockList:
 	if d.get("display_name", null) != null:
 		result.display_name = d["display_name"]
 	return result
+

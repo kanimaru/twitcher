@@ -44,3 +44,4 @@ static func from_json(d: Dictionary) -> TwitchESReward:
 	if d.get("prompt", null) != null:
 		result.prompt = d["prompt"]
 	return result
+

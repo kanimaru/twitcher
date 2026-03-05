@@ -36,3 +36,4 @@ static func from_json(d: Dictionary) -> TwitchESTwitchImage:
 	if d.get("url_4x", null) != null:
 		result.url_4x = d["url_4x"]
 	return result
+

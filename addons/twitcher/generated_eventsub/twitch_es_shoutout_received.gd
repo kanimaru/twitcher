@@ -76,3 +76,4 @@ static func from_json(d: Dictionary) -> TwitchESShoutoutReceived:
 	if d.get("started_at", null) != null:
 		result.started_at = d["started_at"]
 	return result
+

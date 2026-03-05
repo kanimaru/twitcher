@@ -36,3 +36,4 @@ static func from_json(d: Dictionary) -> TwitchESEmotes:
 	if d.get("id", null) != null:
 		result.id = d["id"]
 	return result
+

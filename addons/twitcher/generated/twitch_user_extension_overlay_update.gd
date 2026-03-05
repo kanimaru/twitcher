@@ -43,3 +43,4 @@ static func from_json(d: Dictionary) -> TwitchUserExtensionOverlayUpdate:
 	if d.get("version", null) != null:
 		result.version = d["version"]
 	return result
+

@@ -54,3 +54,4 @@ static func from_json(d: Dictionary) -> TwitchUserChatColor:
 	if d.get("color", null) != null:
 		result.color = d["color"]
 	return result
+

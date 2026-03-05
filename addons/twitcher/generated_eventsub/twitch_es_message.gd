@@ -29,3 +29,4 @@ static func from_json(d: Dictionary) -> TwitchESMessage:
 		for value in d["emotes"]:
 			result.emotes.append(TwitchESEmotes.from_json(value))
 	return result
+

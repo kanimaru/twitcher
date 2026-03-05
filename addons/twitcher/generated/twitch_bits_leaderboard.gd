@@ -63,3 +63,4 @@ static func from_json(d: Dictionary) -> TwitchBitsLeaderboard:
 	if d.get("score", null) != null:
 		result.score = d["score"]
 	return result
+

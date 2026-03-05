@@ -36,3 +36,4 @@ static func from_json(d: Dictionary) -> TwitchAutoModStatus:
 	if d.get("is_permitted", null) != null:
 		result.is_permitted = d["is_permitted"]
 	return result
+

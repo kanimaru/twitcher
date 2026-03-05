@@ -52,3 +52,4 @@ static func from_json(d: Dictionary) -> TwitchESTopPredictors:
 	if d.get("channel_points_used", null) != null:
 		result.channel_points_used = d["channel_points_used"]
 	return result
+

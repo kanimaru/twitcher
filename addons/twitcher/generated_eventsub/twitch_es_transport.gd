@@ -60,3 +60,4 @@ static func from_json(d: Dictionary) -> TwitchESTransport:
 	if d.get("disconnected_at", null) != null:
 		result.disconnected_at = d["disconnected_at"]
 	return result
+

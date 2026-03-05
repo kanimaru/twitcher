@@ -393,7 +393,7 @@ class Badges extends TwitchData:
 class Message extends TwitchData:
 
 	## The chat message in plain text.
-	@export var text: Dictionary:
+	@export var text: String:
 		set(val): 
 			text = val
 			track_data(&"text", val)
@@ -474,7 +474,7 @@ class Fragments extends TwitchData:
 class Cheermote extends TwitchData:
 
 	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is “Cheer” and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
-	@export var prefix: Dictionary:
+	@export var prefix: String:
 		set(val): 
 			prefix = val
 			track_data(&"prefix", val)

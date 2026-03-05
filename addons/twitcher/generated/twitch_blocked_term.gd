@@ -85,3 +85,4 @@ static func from_json(d: Dictionary) -> TwitchBlockedTerm:
 	if d.get("expires_at", null) != null:
 		result.expires_at = d["expires_at"]
 	return result
+

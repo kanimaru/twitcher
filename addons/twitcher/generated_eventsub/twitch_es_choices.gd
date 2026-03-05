@@ -52,3 +52,4 @@ static func from_json(d: Dictionary) -> TwitchESChoices:
 	if d.get("votes", null) != null:
 		result.votes = d["votes"]
 	return result
+

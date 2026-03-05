@@ -54,7 +54,7 @@ class Event extends TwitchData:
 			track_data(&"id", val)
 	
 	## Entitlement object.
-	@export var data: Array[Variant]:
+	@export var data: Array[Data]:
 		set(val): 
 			data = val
 			track_data(&"data", val)
@@ -67,6 +67,98 @@ class Event extends TwitchData:
 			result.id = d["id"]
 		if d.get("data", null) != null:
 			for value in d["data"]:
-				result.data.append(value)
+				result.data.append(Data.from_json(value))
+		return result
+	
+
+
+## Entitlement object.
+## #/components/schemas/DropEntitlementGrantEvent/Data
+class Data extends TwitchData:
+
+	## The ID of the organization that owns the game that has Drops enabled.
+	@export var organization_id: String:
+		set(val): 
+			organization_id = val
+			track_data(&"organization_id", val)
+	
+	## Twitch category ID of the game that was being played when this benefit was entitled.
+	@export var category_id: String:
+		set(val): 
+			category_id = val
+			track_data(&"category_id", val)
+	
+	## The category name.
+	@export var category_name: String:
+		set(val): 
+			category_name = val
+			track_data(&"category_name", val)
+	
+	## The campaign this entitlement is associated with.
+	@export var campaign_id: String:
+		set(val): 
+			campaign_id = val
+			track_data(&"campaign_id", val)
+	
+	## Twitch user ID of the user who was granted the entitlement.
+	@export var user_id: String:
+		set(val): 
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The user display name of the user who was granted the entitlement.
+	@export var user_name: String:
+		set(val): 
+			user_name = val
+			track_data(&"user_name", val)
+	
+	## The user login of the user who was granted the entitlement.
+	@export var user_login: String:
+		set(val): 
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## Unique identifier of the entitlement. Use this to de-duplicate entitlements.
+	@export var entitlement_id: String:
+		set(val): 
+			entitlement_id = val
+			track_data(&"entitlement_id", val)
+	
+	## Identifier of the Benefit.
+	@export var benefit_id: String:
+		set(val): 
+			benefit_id = val
+			track_data(&"benefit_id", val)
+	
+	## UTC timestamp in ISO format when this entitlement was granted on Twitch.
+	@export var created_at: String:
+		set(val): 
+			created_at = val
+			track_data(&"created_at", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> Data:
+		var result: Data = Data.new()
+		if d.get("organization_id", null) != null:
+			result.organization_id = d["organization_id"]
+		if d.get("category_id", null) != null:
+			result.category_id = d["category_id"]
+		if d.get("category_name", null) != null:
+			result.category_name = d["category_name"]
+		if d.get("campaign_id", null) != null:
+			result.campaign_id = d["campaign_id"]
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("entitlement_id", null) != null:
+			result.entitlement_id = d["entitlement_id"]
+		if d.get("benefit_id", null) != null:
+			result.benefit_id = d["benefit_id"]
+		if d.get("created_at", null) != null:
+			result.created_at = d["created_at"]
 		return result
 	

@@ -7,6 +7,109 @@ class_name TwitchGetVips
 	
 
 
+## 
+## #/components/schemas/GetVIPsResponse
+class Response extends TwitchData:
+
+	## The list of VIPs. The list is empty if the broadcaster doesn’t have VIP users.
+	@export var data: Array[TwitchUserVip]:
+		set(val): 
+			data = val
+			track_data(&"data", val)
+	
+	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
+	@export var pagination: ResponsePagination:
+		set(val): 
+			pagination = val
+			track_data(&"pagination", val)
+	var response: BufferedHTTPClient.ResponseData
+	
+	
+	## Constructor with all required fields.
+	static func create(_data: Array[TwitchUserVip]) -> Response:
+		var response: Response = Response.new()
+		response.data = _data
+		return response
+	
+	
+	static func from_json(d: Dictionary) -> Response:
+		var result: Response = Response.new()
+		if d.get("data", null) != null:
+			for value in d["data"]:
+				result.data.append(TwitchUserVip.from_json(value))
+		if d.get("pagination", null) != null:
+			result.pagination = ResponsePagination.from_json(d["pagination"])
+		return result
+	
+	
+	
+	func _has_pagination() -> bool:
+		if pagination == null: return false
+		if pagination.cursor == null || pagination.cursor == "": return false
+		return true
+	
+	var _next_page: Callable
+	var _cur_iter: int = 0
+	
+	
+	func next_page() -> Response:
+		var response: Response = await _next_page.call()
+		_cur_iter = 0
+		_next_page = response._next_page
+		data = response.data
+		pagination = response.pagination
+	
+		return response
+	
+	
+	func _iter_init(iter: Array) -> bool:
+		if data.is_empty(): return false
+		iter[0] = data[0]
+		_cur_iter = 1
+		return true
+		
+		
+	func _iter_next(iter: Array) -> bool:
+		if data.size() > _cur_iter:
+			iter[0] = data[_cur_iter]
+			_cur_iter += 1
+		elif not _has_pagination(): 
+			return false
+		return true
+		
+		
+	func _iter_get(iter: Variant) -> Variant:
+		if data.size() - 1 == _cur_iter && _has_pagination():
+			await next_page()
+		return iter
+
+
+## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
+## #/components/schemas/GetVIPsResponse/Pagination
+class ResponsePagination extends TwitchData:
+
+	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
+	@export var cursor: String:
+		set(val): 
+			cursor = val
+			track_data(&"cursor", val)
+	var response: BufferedHTTPClient.ResponseData
+	
+	
+	## Constructor with all required fields.
+	static func create() -> ResponsePagination:
+		var response_pagination: ResponsePagination = ResponsePagination.new()
+		return response_pagination
+	
+	
+	static func from_json(d: Dictionary) -> ResponsePagination:
+		var result: ResponsePagination = ResponsePagination.new()
+		if d.get("cursor", null) != null:
+			result.cursor = d["cursor"]
+		return result
+	
+
+
 ## All optional parameters for TwitchAPI.get_vips
 ## #/components/schemas/GetVipsOpt
 class Opt extends TwitchData:

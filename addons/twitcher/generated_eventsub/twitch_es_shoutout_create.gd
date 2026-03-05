@@ -116,3 +116,4 @@ static func from_json(d: Dictionary) -> TwitchESShoutoutCreate:
 	if d.get("target_cooldown_ends_at", null) != null:
 		result.target_cooldown_ends_at = d["target_cooldown_ends_at"]
 	return result
+

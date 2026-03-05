@@ -28,3 +28,4 @@ static func from_json(d: Dictionary) -> TwitchESChannelPointsVoting:
 	if d.get("amount_per_vote", null) != null:
 		result.amount_per_vote = d["amount_per_vote"]
 	return result
+

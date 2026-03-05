@@ -28,3 +28,4 @@ static func from_json(d: Dictionary) -> TwitchESMaxPerUserPerStream:
 	if d.get("value", null) != null:
 		result.value = d["value"]
 	return result
+

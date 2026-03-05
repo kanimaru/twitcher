@@ -52,3 +52,4 @@ static func from_json(d: Dictionary) -> TwitchESTopContributions:
 	if d.get("total", null) != null:
 		result.total = d["total"]
 	return result
+

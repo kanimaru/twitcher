@@ -28,3 +28,4 @@ static func from_json(d: Dictionary) -> TwitchESGlobalCooldown:
 	if d.get("seconds", null) != null:
 		result.seconds = d["seconds"]
 	return result
+

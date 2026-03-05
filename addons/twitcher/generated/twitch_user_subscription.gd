@@ -91,3 +91,4 @@ static func from_json(d: Dictionary) -> TwitchUserSubscription:
 	if d.get("tier", null) != null:
 		result.tier = d["tier"]
 	return result
+

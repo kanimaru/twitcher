@@ -42,3 +42,4 @@ static func from_json(d: Dictionary) -> TwitchExtensionIconUrls:
 	if d.get("_300x200", null) != null:
 		result._300x200 = d["_300x200"]
 	return result
+

@@ -173,3 +173,4 @@ static func from_json(d: Dictionary) -> TwitchClip:
 	if d.get("is_featured", null) != null:
 		result.is_featured = d["is_featured"]
 	return result
+

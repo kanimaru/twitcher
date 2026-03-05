@@ -84,3 +84,4 @@ static func from_json(d: Dictionary) -> TwitchDropsEntitlement:
 	if d.get("last_updated", null) != null:
 		result.last_updated = d["last_updated"]
 	return result
+
