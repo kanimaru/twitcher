@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://c2ixi5g2j175x"]
+
+[ext_resource type="Script" uid="uid://tky6yo1twqm0" path="res://addons/twitcher/editor/inspector/twitch_bot_auth_notification.gd" id="1_nu231"]
+[ext_resource type="PackedScene" uid="uid://bfksyo3klyvdn" path="res://addons/twitcher/editor/setup/test_credentials.tscn" id="2_crmvf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_swea6"]
+line_spacing = 1.0
+font_size = 18
+
+[sub_resource type="LabelSettings" id="LabelSettings_dhdh5"]
+
+[node name="TwitchBotAuthNotification" type="Window" unique_id=1078730458]
+disable_3d = true
+oversampling_override = 1.0
+title = "Bot Authorization"
+initial_position = 1
+size = Vector2i(500, 250)
+content_scale_mode = 1
+script = ExtResource("1_nu231")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1699151478]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1189354245]
+layout_mode = 2
+
+[node name="Sender" type="Label" parent="MarginContainer/VBoxContainer" unique_id=2091881859]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 6
+text = "In this step you give scopes to your bot account and authorize it. Please take care that you authorize with the sender user!
+You may have to logout!"
+label_settings = SubResource("LabelSettings_swea6")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=2103814119]
+layout_mode = 2
+
+[node name="Cancel" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=507704452]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
+
+[node name="TestCredentials" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1209387193 node_paths=PackedStringArray("test_response") instance=ExtResource("2_crmvf")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Authorize"
+test_response = NodePath("../../Response")
+
+[node name="TwitchAuth" parent="MarginContainer/VBoxContainer/HBoxContainer/TestCredentials" index="0" unique_id=1792468348]
+force_verify = true
+scopes = null
+
+[node name="OAuth" parent="MarginContainer/VBoxContainer/HBoxContainer/TestCredentials/TwitchAuth" index="0" unique_id=1235100632]
+scopes = null
+
+[node name="Response" type="Label" parent="MarginContainer/VBoxContainer" unique_id=265236612]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_dhdh5")
+
+[editable path="MarginContainer/VBoxContainer/HBoxContainer/TestCredentials"]
