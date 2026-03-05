@@ -12,12 +12,19 @@ const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor
 @onready var o_auth: OAuth = %OAuth
 @onready var token_handler: TwitchTokenHandler = %TokenHandler
 
+var scopes: OAuthScopes:
+	set(val): 
+		scopes = val
+		if twitch_auth: twitch_auth.scopes = scopes
+
 signal authorized
+
 
 func _ready() -> void:
 	pressed.connect(_pressed)
 	oauth_setting = TwitchEditorSettings.editor_oauth_setting
 	oauth_token = TwitchEditorSettings.editor_oauth_token
+	twitch_auth.scopes = scopes
 	
 	
 func _notification(what: int) -> void:
@@ -34,7 +41,7 @@ func _pressed() -> void:
 				_set_test_response("Login unsuccessful!", Color.RED)
 	
 	TwitchTweens.loading(self)
-	await twitch_auth.authorize()
+	await twitch_auth.authorize(true)
 	
 	if twitch_auth.token.is_token_valid():
 		_set_test_response("Credentials are valid!", Color.GREEN)

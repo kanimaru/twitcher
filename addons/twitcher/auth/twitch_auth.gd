@@ -92,9 +92,11 @@ func _sync_childs() -> void:
 	auth.force_verify = &"true" if force_verify else &"false"
 	
 
-func authorize() -> bool:
+## Authorize twitch if it is logged in it will shortcut and return true
+## force: do the login even when already logged in
+func authorize(force: bool = false) -> bool:
 	_sync_childs()
-	if await auth.login():
+	if await auth.login(force):
 		token_handler.process_mode = Node.PROCESS_MODE_INHERIT
 		return true
 	return false
