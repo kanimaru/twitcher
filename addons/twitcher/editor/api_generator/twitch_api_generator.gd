@@ -273,7 +273,7 @@ func method_parameter(method: TwitchGenMethod, with_type: bool = false, fully_qu
 	
 	
 func path_code(method: TwitchGenMethod) -> String:
-	var body_code : String = "var path = \"%s?\"\n" % method._path
+	var body_code : String = "var path: String = \"%s?\"\n" % method._path
 	
 	if method._contains_optional:
 		body_code += "var optionals: Dictionary[StringName, Variant] = {}\n"
@@ -594,7 +594,7 @@ func write_output_file(file_output: String, content: String) -> void:
 		var error_message = error_string(FileAccess.get_open_error());
 		push_error("Failed to open output file: %s\n%s" % [file_output, error_message])
 		return
-	file.store_string(content)
+	file.store_string(content + "\n")
 	file.flush()
 	file.close()
 	

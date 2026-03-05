@@ -463,7 +463,7 @@ func write_output_file(file_output: String, content: String) -> void:
 		var error_message = error_string(FileAccess.get_open_error());
 		push_error("Failed to open output file: %s\n%s" % [file_output, error_message])
 		return
-	file.store_string(content)
+	file.store_string(content + "\n")
 	file.flush()
 	file.close()
 	
