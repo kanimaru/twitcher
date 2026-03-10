@@ -47,7 +47,9 @@ func load_users_clips(username: String) -> void:
 func _show_clips(clips: TwitchGetClips.Response) -> void:
 	_log.i("Show %s clips" % clips.data.size())
 	
-	for clip: TwitchClip in clips.data:
+	var clip_count: int = 0
+	for clip_promise in clips:
+		var clip: TwitchClip = await clip_promise
 		_log.i("Load clip: %s" % clip.id)
 		var image: Image = await twitch_media_loader.load_image(clip.thumbnail_url)
 		var texture2d: ImageTexture = ImageTexture.new()
@@ -56,6 +58,8 @@ func _show_clips(clips: TwitchGetClips.Response) -> void:
 		thumbnail.title = clip.title
 		thumbnail.texture = texture2d
 		clip_container.add_child(thumbnail)
+		clip_count += 1
+	_log.i("Load %s clips" % clip_count)
 
 
 func _clear_clips() -> void:
