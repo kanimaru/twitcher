@@ -110,11 +110,12 @@ func do_unsetup() -> void:
 ## Depending on the authorization_flow it gets resolves the token via the different
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
-func login() -> bool:
+## force: a login request
+func login(force: bool = false) -> bool:
 	if not is_node_ready(): await ready
 	_setup_nodes()
 	token_handler.token.load_tokens() # Load it because the setter is not always called within the token
-	if token_handler.is_token_valid() && not _got_scopes_changed(): return true
+	if token_handler.is_token_valid() && not _got_scopes_changed() and not force: return true
 	logDebug("Token is valid (%s) and not scopes changed (%s)" % [ token_handler.is_token_valid(), _got_scopes_changed()])
 
 	if login_in_process:
