@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://bmf1q3s7wpfj2"]
+[gd_scene format=3 uid="uid://c2ixi5g2j175x"]
 
-[ext_resource type="Script" path="res://addons/twitcher/editor/inspector/twitch_bot_auth_notification.gd" id="1_nu231"]
+[ext_resource type="Script" uid="uid://tky6yo1twqm0" path="res://addons/twitcher/editor/inspector/twitch_bot_auth_notification.gd" id="1_nu231"]
 [ext_resource type="PackedScene" uid="uid://bfksyo3klyvdn" path="res://addons/twitcher/editor/setup/test_credentials.tscn" id="2_crmvf"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_swea6"]

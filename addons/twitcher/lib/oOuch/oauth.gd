@@ -12,11 +12,18 @@ const OAuthDeviceCodeResponse = preload("./oauth_device_code_response.gd")
 ## A static string in front of the sensible data to prevent accidental leak of tokens during debug sessions
 const DEBUGGER_PROTECTION: String = "                                                               "
 
+# Auth types to identify which flow is runnin
+const _AUTHTYPE_CODE: StringName = &"code"
+const _AUTHTYPE_TOKEN: StringName = &"token"
+
+## Used when the User denies the request for permission
+const ERROR_USER_DENY: StringName = &"userdeny"
+
 ## Called when the authorization for AuthCodeFlow is complete to handle the auth code
 signal _auth_succeed(code: String)
 
 ## In case the authorization wasn't succesfull
-signal auth_error(error: String, error_description: String)
+signal auth_error(error: StringName, error_description: String)
 
 ## The requested devicecode to show to the user for authorization
 signal device_code_requested(device_code: OAuthDeviceCodeResponse)
@@ -39,7 +46,7 @@ signal token_changed(access_token: String)
 var login_in_process: bool
 ## Special solution just for twitch ignore it in all other providers
 var force_verify: String
-var _query_parser = RegEx.create_from_string("GET (.*?/?)\\??(.*?)? HTTP/1\\.1.*?")
+var _query_parser: RegEx = RegEx.create_from_string("GET (.*?/?)\\??(.*?)? HTTP/1\\.1.*?")
 var _auth_http_server: OAuthHTTPServer
 var _last_login_attempt: int
 ## State for the current authcode request to compare with
@@ -110,11 +117,12 @@ func do_unsetup() -> void:
 ## Depending on the authorization_flow it gets resolves the token via the different
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
-func login() -> bool:
+## force: a login request
+func login(force: bool = false) -> bool:
 	if not is_node_ready(): await ready
 	_setup_nodes()
 	token_handler.token.load_tokens() # Load it because the setter is not always called within the token
-	if token_handler.is_token_valid() && not _got_scopes_changed(): return true
+	if token_handler.is_token_valid() && not _got_scopes_changed() and not force: return true
 	logDebug("Token is valid (%s) and not scopes changed (%s)" % [ token_handler.is_token_valid(), _got_scopes_changed()])
 
 	if login_in_process:
@@ -134,11 +142,11 @@ func login() -> bool:
 	logInfo("do login")
 	match oauth_setting.authorization_flow:
 		AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
-			await _start_login_process("code")
+			await _start_login_process(_AUTHTYPE_CODE)
 		AuthorizationFlow.CLIENT_CREDENTIALS:
 			await _start_client_credential_process()
 		AuthorizationFlow.IMPLICIT_FLOW:
-			await _start_login_process("token")
+			await _start_login_process(_AUTHTYPE_TOKEN)
 		AuthorizationFlow.DEVICE_CODE_FLOW:
 			await _start_device_login_process()
 
@@ -150,8 +158,8 @@ func login() -> bool:
 func _got_scopes_changed() -> bool:
 	if not check_scope_changed: return false
 	
-	var existing_scopes = token_handler.get_scopes()
-	var requested_scopes = scopes.used_scopes
+	var existing_scopes: PackedStringArray = token_handler.get_scopes()
+	var requested_scopes: Array[StringName] = scopes.used_scopes
 	if existing_scopes.size() != requested_scopes.size():
 		return true
 
@@ -175,13 +183,13 @@ func _start_login_process(response_type: String) -> void:
 
 	_auth_http_server.start_listening()
 
-	if response_type == "code":
+	if response_type == _AUTHTYPE_CODE:
 		_auth_http_server.request_received.connect(_process_code_request.bind(_auth_http_server))
-	elif response_type == "token":
+	elif response_type == _AUTHTYPE_TOKEN:
 		_auth_http_server.request_received.connect(_process_implicit_request.bind(_auth_http_server))
 
 	_current_state = _crypto.generate_random_bytes(16).hex_encode()
-	var query_param = "&".join([
+	var query_param: String = "&".join([
 			"force_verify=%s" % force_verify.uri_encode(),
 			"response_type=%s" % response_type.uri_encode(),
 			"client_id=%s" % oauth_setting.client_id.uri_encode(),
@@ -190,7 +198,7 @@ func _start_login_process(response_type: String) -> void:
 			"state=%s" % _current_state
 		])
 
-	var url = oauth_setting.authorization_url + "?" + query_param
+	var url: String = oauth_setting.authorization_url + "?" + query_param
 	logInfo("start login process to get token for scopes %s" % (",".join(scopes.used_scopes)))
 	logDebug("login to %s" % url)
 	if not shell_command.is_empty():
@@ -201,19 +209,20 @@ func _start_login_process(response_type: String) -> void:
 		OS.shell_open(url)
 		
 	logDebug("waiting for user to login.")
-	if response_type == "code":
+	if response_type == _AUTHTYPE_CODE:
 		var auth_code = await _auth_succeed
 		if auth_code == "":
 			logDebug("Auth code was empty. Abort Login.")
 			return
 		token_handler.request_token("authorization_code", auth_code)
-		await token_handler.token_resolved
-		_auth_http_server.request_received.disconnect(_process_code_request.bind(_auth_http_server))
-	elif response_type == "token":
-		await token_handler.token_resolved
-		_auth_http_server.request_received.disconnect(_process_implicit_request.bind(_auth_http_server))
-	logInfo("authorization is done stop server")
+
+
+func _stop_server(authtype: StringName) -> void:
+	match authtype:
+		_AUTHTYPE_CODE: _auth_http_server.request_received.disconnect(_process_code_request.bind(_auth_http_server))
+		_AUTHTYPE_TOKEN: _auth_http_server.request_received.disconnect(_process_implicit_request.bind(_auth_http_server))
 	_auth_http_server.stop_listening()
+	logInfo("authorization is done stop server")
 
 #region DeviceCodeFlow
 
@@ -234,8 +243,9 @@ func _start_device_login_process():
 func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 	logInfo("Start device code flow")
 	logDebug("Request Scopes: %s" % scopes)
-	var body = "client_id=%s&scopes=%s" % [oauth_setting.client_id, scopes.uri_encode()]
-	var request = _client.request(oauth_setting.device_authorization_url, HTTPClient.METHOD_POST, {
+	var body: String = "client_id=%s&scopes=%s" % [oauth_setting.client_id, scopes.uri_encode()]
+	var request: BufferedHTTPClient.RequestData = _client.request(oauth_setting.device_authorization_url, HTTPClient
+	.METHOD_POST, {
 		"Content-Type": "application/x-www-form-urlencoded"
 	}, body)
 
@@ -243,7 +253,7 @@ func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 	if initial_response_data.response_code != 200:
 		logError("Couldn't initiate device code flow response code %s" % initial_response_data.response_code)
 	var initial_response_string = initial_response_data.response_data.get_string_from_ascii()
-	var initial_response_dict = JSON.parse_string(initial_response_string) as Dictionary
+	var initial_response_dict: Dictionary = JSON.parse_string(initial_response_string) as Dictionary
 	return OAuthDeviceCodeResponse.new(initial_response_dict)
 
 #endregion
@@ -251,51 +261,103 @@ func _fetch_device_code_response(scopes: String) -> OAuthDeviceCodeResponse:
 
 ## Handles the response after auth endpoint redirects to our server with the response
 func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServer) -> void:
-	var request = client.peer.get_utf8_string(client.peer.get_available_bytes())
-	if request == "":
+	var request: String = client.peer.get_utf8_string(client.peer.get_available_bytes())
+	if request.is_empty():
 		logError("Empty response. Check if your redirect URL is set to %s." % oauth_setting.redirect_url)
 		client.peer.disconnect_from_host()
 		return
 
-	var first_linebreak = request.find("\n")
-	var first_line = request.substr(0, first_linebreak)
+	var first_linebreak: int = request.find("\n")
+	var first_line: String = request.substr(0, first_linebreak).strip_edges()
+	
 	if first_line.begins_with("GET"):
-		var matcher = _query_parser.search(first_line)
+		var matcher: RegExMatch = _query_parser.search(first_line)
 		if matcher == null:
-			logDebug("Response from auth server was not right expected redirect url. It's ok browser asked probably for favicon etc.")
+			logDebug("Response from auth server did not match expected redirect url. Browser likely requested favicon.ico.")
 			return
-		var redirect_path = oauth_setting.redirect_path
-		var request_path = matcher.get_string(1)
-		if redirect_path == request_path:
-			server.send_response(client, "200 OK", ("<html><head><title>Login</title></head><body>
-				<script>
-					var params = Object.fromEntries(new URLSearchParams(window.location.hash.substring(1)));
-					fetch('" + oauth_setting.redirect_url + "', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params) })
-					.then(window.close);
-				</script>
-				Redirect Token to Godot
-			</body></html>").to_utf8_buffer())
-		logInfo("Send Response to send it via POST")
+			
+		# Use begins_with instead of == because a user decline appends query strings to the path
+		var request_path: String = matcher.get_string(1)
+		if request_path.begins_with(oauth_setting.redirect_path):
+			# Use GDScript multiline strings for cleaner HTML/JS injection
+			var html_response: String = """<html>
+				<head><title>Twitch Login</title></head>
+				<body>
+					<p>Completing authentication, please wait...</p>
+					<script>
+						// Twitch passes success tokens in hash (#) and errors in query string (?)
+						const hashParams = new URLSearchParams(window.location.hash.substring(1));
+						const queryParams = new URLSearchParams(window.location.search);
+						
+						// Merge both into a single dictionary
+						const params = Object.fromEntries(new Map([...queryParams, ...hashParams]));
+						
+						fetch('%s', { 
+							method: 'POST', 
+							headers: { 'Content-Type': 'application/json' }, 
+							body: JSON.stringify(params) 
+						})
+						.then(() => window.close())
+						.catch(err => console.error('Failed to send payload to Godot:', err));
+					</script>
+				</body>
+			</html>""" % oauth_setting.redirect_url
+			
+			server.send_response(client, "200 OK", html_response.to_utf8_buffer())
+		logInfo("Sent GET response containing JS to extract tokens/errors via POST.")
+		
 	elif first_line.begins_with("POST"):
-		var parts = request.split("\r\n\r\n")
+		var parts: PackedStringArray = request.split("\r\n\r\n", true, 1)
 		if parts.size() < 2:
 			return  # Not a valid request
-		var json_body = parts[1]
-		var token_request: Variant = JSON.parse_string(json_body)
-		if token_request["state"] != _current_state:
-			server.send_response(client, "200 OK", "<html><head><title>Login</title></head><body>Unsuccessful someone tampered with the state! See <a href='https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow'>Twitch Documentation</a> for more information.</body></html>".to_utf8_buffer())
+			
+		var json_body: String = parts[1]
+		var token_request: Dictionary = JSON.parse_string(json_body)
+		
+		# 1. State Validation (Safe Access)
+		if token_request.get("state", "") != _current_state:
+			var err_html := "<html><body><h2>Error</h2><p>Unsuccessful: someone tampered with the state!</p></body></html>"
+			server.send_response(client, "400 Bad Request", err_html.to_utf8_buffer())
+			logError("State mismatch. Possible CSRF attack or invalid session.")
+			_stop_server(_AUTHTYPE_TOKEN)
+			return
+			
+		# 2. Handle User Declines / OAuth Errors
+		if token_request.has("error"):
+			var error_desc: String = token_request.get("error_description", "User denied access.")
+			# Replace + with spaces for readability in HTML
+			error_desc = error_desc.replace("+", " ") 
+			var err_html := "<html><body><h2>Authentication Cancelled</h2><p>%s</p><script>setTimeout(window.close, 3000);</script></body></html>" % error_desc
+			
+			server.send_response(client, "200 OK", err_html.to_utf8_buffer())
+			logError("Twitch Auth Failed: " + error_desc)
+			auth_error.emit(ERROR_USER_DENY, error_desc)
+			_stop_server(_AUTHTYPE_TOKEN)
 			return
 		
-		var scopes: PackedStringArray = token_request["scope"].split(" ")
-		if enable_twitch_hacks && token_handler is TwitchTokenHandler:
-				var token: String = OAuth.DEBUGGER_PROTECTION + token_request["access_token"]
-				var validation_response: BufferedHTTPClient.ResponseData = await token_handler.validate_token(token)
-				var validation_data: Variant = JSON.parse_string(validation_response.response_data.get_string_from_utf8())
-				token_handler.update_tokens(token, "", validation_data["expires_in"], scopes)
+		if not token_request.has("access_token"):
+			server.send_response(client, "400 Bad Request", "<html><body>Missing access token!</body></html>".to_utf8_buffer())
+			_stop_server(_AUTHTYPE_TOKEN)
+			return
+
+		# 3. Handle Successful Token
+		var scopes: PackedStringArray = token_request.get("scope", "").split(" ", false)
+		var access_token: String = token_request.get("access_token")
+		var expires_in: int = int(token_request.get("expires_in", 0))
+
+		if enable_twitch_hacks and token_handler is TwitchTokenHandler:
+			var token: String = OAuth.DEBUGGER_PROTECTION + access_token
+			var validation_response: BufferedHTTPClient.ResponseData = await token_handler.validate_token(token)
+			
+			if validation_response.response_data:
+				var validation_data: Dictionary = JSON.parse_string(validation_response.response_data.get_string_from_utf8())
+				token_handler.update_tokens(token, "", validation_data.get("expires_in", expires_in), scopes)
 		else:
-			token_handler.update_tokens(token_request["access_token"], "", token_request["expires_in"], scopes)
-		logInfo("Received Access Token update it")
-		server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success!</body></html>".to_utf8_buffer())
+			token_handler.update_tokens(access_token, "", expires_in, scopes)
+			
+		logInfo("Received Access Token and updated successfully.")
+		server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success! You may close this window.</body></html>".to_utf8_buffer())
+		_stop_server(_AUTHTYPE_TOKEN)
 
 #endregion
 #region AuthCodeFlow
@@ -313,14 +375,14 @@ func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServ
 
 	# Firstline contains request path and parameters
 	var first_line = request.substr(0, request.find("\n"))
-	var matcher = _query_parser.search(first_line)
+	var matcher: RegExMatch = _query_parser.search(first_line)
 	if matcher == null:
 		logDebug("Response from auth server was not right expected query params. It's ok browser asked probably for favicon etc.")
 		client.peer.disconnect_from_host()
 		return
 
-	var query_params_str = matcher.get_string(2)
-	var query_params = parse_query(query_params_str)
+	var query_params_str: String = matcher.get_string(2)
+	var query_params: Dictionary = parse_query(query_params_str)
 
 	var state = query_params.get("state")
 	if query_params.has("error"):
@@ -336,20 +398,24 @@ func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServ
 func _handle_success(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, query_params : Dictionary) -> void:
 	logInfo("Authentication success. Send auth code.")
 	if query_params.has("code"):
-		var succes_page = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/success-page.txt")
+		var succes_page: PackedByteArray = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/success-page.txt")
 		server.send_response(client, "200 OK", succes_page)
 		_auth_succeed.emit(query_params['code'])
 	else:
-		var error_page = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/error-page.txt")
+		var error_page: PackedByteArray = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/error-page.txt")
 		server.send_response(client, "200 OK", error_page)
 		logError("Auth code expected wasn't send!")
+	_stop_server(_AUTHTYPE_CODE)
 
 
 ## Handles the error in case that Auth API has a problem
 func _handle_error(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, query_params : Dictionary) -> void:
-	var msg = "Error %s: %s" % [query_params["error"], query_params["error_description"]]
+	var msg: String = "Error %s: %s" % [query_params["error"], query_params["error_description"]]
 	logError(msg)
 	server.send_response(client, "400 BAD REQUEST",  msg.to_utf8_buffer())
+	# TODO Maybe this method can send more then ERROR_USER_DENY errors open an issue on Github if you encounter another error
+	auth_error.emit(ERROR_USER_DENY, query_params["error_description"]) 
+	_stop_server(_AUTHTYPE_CODE)
 
 #endregion
 #region ClientCredentialFlow
@@ -369,19 +435,19 @@ func _handle_other_requests(server: OAuthHTTPServer, client: OAuthHTTPServer.Cli
 
 
 ## Parses a query string and returns a dictionary with the parameters.
-static func parse_query(query: String) -> Dictionary:
-	var parameters = Dictionary()
+static func parse_query(query: String) -> Dictionary[String, String]:
+	var parameters: Dictionary[String, String] = {}
 	# Split the query by '&' to separate different parameters.
-	var pairs = query.split("&")
+	var pairs: PackedStringArray = query.split("&")
 	# Iterate over each pair of key-value.
 	for pair in pairs:
 		# Split the pair by '=' to separate the key from the value.
 		var kv = pair.split("=")
 		if kv.size() == 2:
-			var key = kv[0].strip_edges()
-			var value = kv[1].strip_edges()
-			var decoded_key = key.uri_decode()
-			var decoded_value = value.uri_decode()
+			var key: String = kv[0].strip_edges()
+			var value: String = kv[1].strip_edges()
+			var decoded_key: String = key.uri_decode()
+			var decoded_value: String = value.uri_decode()
 			parameters[decoded_key] = decoded_value
 	return parameters
 
