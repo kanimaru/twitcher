@@ -1,4 +1,4 @@
-﻿[gd_scene format=3 uid="uid://cgwt1lw0v40v4"]
+[gd_scene format=3 uid="uid://cgwt1lw0v40v4"]
 
 [ext_resource type="PackedScene" uid="uid://dv5tn00eptanx" path="res://addons/twitcher/example/api_generator/generate_api.tscn" id="1_gngsp"]
 [ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/twitcher_title_label_settings.tres" id="1_u4s0c"]
