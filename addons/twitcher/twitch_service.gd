@@ -359,10 +359,10 @@ func remove_command(command: String) -> void:
 
 
 ## Whispers to another user.
-## @deprecated not supported by twitch anymore
-func whisper(message: String, username: String) -> void:
-	_log.e("Whipser from bots aren't supported by Twitch anymore. See https://dev.twitch.tv/docs/irc/chat-commands/ at /w")
-
+func whisper(message: String, to_user_id: String) -> void:
+	var body: TwitchSendWhisper.Body = TwitchSendWhisper.Body.create(message)
+	var current_user: TwitchUser = await get_current_user()
+	await api.send_whisper(body, current_user.id, to_user_id)
 
 ## Returns the definition of emotes for given channel or for the global emotes.
 ## Key: EmoteID as String | Value: TwitchGlobalEmote / TwitchChannelEmote
