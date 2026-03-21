@@ -372,7 +372,7 @@ func _wait_for_cheeremote(request: BufferedHTTPClient.RequestData, cheer_id: Str
 
 
 func _request_cheermote(cheer_tier: TwitchCheermote.Tiers, cheermote: TwitchCheermoteDefinition) -> BufferedHTTPClient.RequestData:
-	var img_path : String = cheer_tier.images[cheermote.theme][cheermote.type][cheermote.scale]
+	var img_path : String = cheer_tier.images[cheermote.theme][cheermote.type]["_" + cheermote.scale]
 	var host_result : RegExMatch = _host_parser.search(img_path)
 	if host_result == null: return null
 	var host : String = host_result.get_string(1)
