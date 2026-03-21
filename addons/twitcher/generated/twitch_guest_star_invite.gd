@@ -85,3 +85,4 @@ static func from_json(d: Dictionary) -> TwitchGuestStarInvite:
 	if d.get("is_audio_available", null) != null:
 		result.is_audio_available = d["is_audio_available"]
 	return result
+

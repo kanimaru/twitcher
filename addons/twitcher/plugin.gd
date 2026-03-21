@@ -21,8 +21,10 @@ const TwitchRewardInspector = preload("res://addons/twitcher/editor/inspector/tw
 const EncryptionInspector = preload("uid://dlcq0bqmlypko")
 const TwitchBotInspector = preload("uid://d2m042af2shx8")
 
-var generator: TwitchAPIGenerator 
-var parser: TwitchAPIParser 
+var generator_eventsub: TwitchEventsubGenerator
+var generator_api: TwitchAPIGenerator 
+var parser_eventsub: TwitchAPIParser 
+var parser_api: TwitchAPIParser 
 
 var gif_importer_imagemagick: GifImporterImagemagick = GifImporterImagemagick.new()
 var gif_importer_native: GifImporterNative = GifImporterNative.new()
@@ -95,15 +97,27 @@ func open_setup() -> void:
 
 
 func generate_api() -> void:
-	generator = TwitchAPIGenerator.new()
-	parser = TwitchAPIParser.new()
-	generator.parser = parser
-	add_child(generator)
-	add_child(parser)
-	await parser.parse_api()
-	generator.generate_api()
-	remove_child(generator)
-	remove_child(parser)
+	generator_eventsub = TwitchEventsubGenerator.new()
+	generator_api = TwitchAPIGenerator.new()
+	parser_eventsub = TwitchAPIParser.new()
+	parser_eventsub.api = "https://raw.githubusercontent.com/kanimaru/twitch-eventsub-swagger/refs/heads/master/twitch_eventsub_swagger.json"
+	parser_api = TwitchAPIParser.new()
+	parser_api.api = "https://raw.githubusercontent.com/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json"
+	
+	generator_eventsub.parser = parser_eventsub
+	generator_api.parser = parser_api
+	add_child(generator_eventsub)
+	add_child(generator_api)
+	add_child(parser_eventsub)
+	add_child(parser_api)
+	await parser_eventsub.parse_api()
+	await parser_api.parse_api()
+	generator_api.generate_api()
+	generator_eventsub.generate_api()
+	remove_child(generator_api)
+	remove_child(parser_api)
+	remove_child(parser_eventsub)
+	
 
 func is_magick_available() -> bool:
 	var transformer: MagicImageTransformer = MagicImageTransformer.new()

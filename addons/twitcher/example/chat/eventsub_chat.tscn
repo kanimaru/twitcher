@@ -49,11 +49,7 @@ description = "The Kani is a unique lifeform that has developed to a software ar
 profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
 created_at = "2016-08-21T18:50:12Z"
 
-[sub_resource type="Resource" id="Resource_ckg27"]
-script = ExtResource("17_04pvb")
-_identifier = "Bot-Token"
-
-[sub_resource type="Resource" id="Resource_04pvb"]
+[sub_resource type="Resource" id="Resource_vsu0o"]
 script = ExtResource("18_ctuqi")
 id = "132799162"
 login = "kani_dev"
@@ -62,6 +58,20 @@ broadcaster_type = "affiliate"
 description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
 profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/7e6b3d9f-3498-4662-b71b-19fd314148c3-profile_image-300x300.png"
 created_at = "2016-08-21T18:50:12Z"
+
+[sub_resource type="Resource" id="Resource_ckg27"]
+script = ExtResource("17_04pvb")
+_identifier = "Bot-Token"
+
+[sub_resource type="Resource" id="Resource_63ovb"]
+script = ExtResource("18_ctuqi")
+id = "1051589814"
+login = "kanis_shadow"
+display_name = "kanis_shadow"
+broadcaster_type = "affiliate"
+description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/3cede29a-790f-4585-8e14-e4e489c39f32-profile_image-300x300.png"
+created_at = "2024-03-13T13:35:32Z"
 
 [sub_resource type="Resource" id="Resource_ctuqi"]
 script = ExtResource("18_ctuqi")
@@ -76,16 +86,16 @@ created_at = "2016-08-21T18:50:12Z"
 [sub_resource type="Resource" id="Resource_ss7yp"]
 script = ExtResource("19_y6r6o")
 
-[sub_resource type="Resource" id="Resource_vsu0o"]
+[sub_resource type="Resource" id="Resource_vrhtu"]
 script = ExtResource("20_axcmk")
 token_url = "https://id.twitch.tv/oauth2/token"
 authorization_url = "https://id.twitch.tv/oauth2/authorize"
 device_authorization_url = "https://id.twitch.tv/oauth2/device"
 cache_file = "user://auth.conf"
 client_id = "1ae0idgxbvn6vi97ls7d89cyd919oq"
+client_secret = "qc9BNegiRcJN2PA5E109njF2ehO6kRi6odoFtPlhsEk="
 authorization_flow = 3
 _encryption_key_provider = SubResource("Resource_ss7yp")
-client_secret = "qc9BNegiRcJN2PA5E109njF2ehO6kRi6odoFtPlhsEk="
 
 [node name="Chat" type="Control" unique_id=1713418221]
 layout_mode = 3
@@ -175,6 +185,7 @@ text = "Send with Bot"
 [node name="TwitchCommandHelp" type="Node" parent="." unique_id=1068178198]
 unique_name_in_owner = true
 script = ExtResource("18_vxv1r")
+sender_user = SubResource("Resource_vsu0o")
 metadata/_custom_type_script = "uid://ch0rxi1ogjx3q"
 
 [node name="TwitchBot" type="Node" parent="." unique_id=555269224]
@@ -182,28 +193,28 @@ unique_name_in_owner = true
 script = ExtResource("15_pbrhu")
 oauth_setting = ExtResource("3_jftlh")
 bot_token = SubResource("Resource_ckg27")
-sender = SubResource("Resource_04pvb")
+sender = SubResource("Resource_63ovb")
 receiver = SubResource("Resource_ctuqi")
 metadata/_custom_type_script = "uid://bf3mvh373suhc"
 
 [node name="BotApi" type="Node" parent="TwitchBot" unique_id=2079389825]
 script = ExtResource("9_otx6d")
 token = SubResource("Resource_ckg27")
-oauth_setting = SubResource("Resource_vsu0o")
+oauth_setting = SubResource("Resource_vrhtu")
 
 [node name="BotAuth" type="Node" parent="TwitchBot" unique_id=225169434]
 script = ExtResource("6_2pnhe")
-oauth_setting = SubResource("Resource_vsu0o")
+oauth_setting = SubResource("Resource_vrhtu")
 token = SubResource("Resource_ckg27")
 scopes = ExtResource("21_33yhv")
 
 [node name="OAuth" type="Node" parent="TwitchBot/BotAuth" unique_id=586844356 node_paths=PackedStringArray("token_handler")]
 script = ExtResource("7_y0pkj")
-oauth_setting = SubResource("Resource_vsu0o")
+oauth_setting = SubResource("Resource_vrhtu")
 scopes = ExtResource("21_33yhv")
 token_handler = NodePath("../TokenHandler")
 
 [node name="TokenHandler" type="Node" parent="TwitchBot/BotAuth" unique_id=1445620425]
 script = ExtResource("8_tvr5c")
-oauth_setting = SubResource("Resource_vsu0o")
+oauth_setting = SubResource("Resource_vrhtu")
 token = SubResource("Resource_ckg27")

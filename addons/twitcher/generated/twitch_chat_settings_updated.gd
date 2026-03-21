@@ -130,3 +130,4 @@ static func from_json(d: Dictionary) -> TwitchChatSettingsUpdated:
 	if d.get("unique_chat_mode", null) != null:
 		result.unique_chat_mode = d["unique_chat_mode"]
 	return result
+

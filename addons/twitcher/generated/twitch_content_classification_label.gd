@@ -45,3 +45,4 @@ static func from_json(d: Dictionary) -> TwitchContentClassificationLabel:
 	if d.get("name", null) != null:
 		result.name = d["name"]
 	return result
+

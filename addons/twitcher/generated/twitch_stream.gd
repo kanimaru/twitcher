@@ -97,6 +97,8 @@ class_name TwitchStream
 		tags = val
 		track_data(&"tags", val)
 
+## **IMPORTANT** This field is deprecated and returns only `false`.  
+##   
 ## A Boolean value that indicates whether the stream is meant for mature audiences.
 @export var is_mature: bool:
 	set(val): 
@@ -161,3 +163,4 @@ static func from_json(d: Dictionary) -> TwitchStream:
 	if d.get("is_mature", null) != null:
 		result.is_mature = d["is_mature"]
 	return result
+

@@ -11,7 +11,7 @@ class_name TwitchCreateClip
 ## #/components/schemas/CreateClipResponse
 class Response extends TwitchData:
 
-	## 
+	## A list containing the created clip.
 	@export var data: Array[ResponseData]:
 		set(val): 
 			data = val
@@ -35,10 +35,16 @@ class Response extends TwitchData:
 	
 
 
-## 
+## A list containing the created clip.
 ## #/components/schemas/CreateClipResponse/Data
 class ResponseData extends TwitchData:
 
+	## An ID that uniquely identifies the clip.
+	@export var id: String:
+		set(val): 
+			id = val
+			track_data(&"id", val)
+	
 	## A URL that you can use to edit the clip’s title, identify the part of the clip to publish, and publish the clip. [Learn More](https://help.twitch.tv/s/article/how-to-use-clips)  
 	##   
 	## The URL is valid for up to 24 hours or until the clip is published, whichever comes first.
@@ -46,29 +52,23 @@ class ResponseData extends TwitchData:
 		set(val): 
 			edit_url = val
 			track_data(&"edit_url", val)
-	
-	## An ID that uniquely identifies the clip.
-	@export var id: String:
-		set(val): 
-			id = val
-			track_data(&"id", val)
 	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
-	static func create(_edit_url: String, _id: String) -> ResponseData:
+	static func create(_id: String, _edit_url: String) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
-		response_data.edit_url = _edit_url
 		response_data.id = _id
+		response_data.edit_url = _edit_url
 		return response_data
 	
 	
 	static func from_json(d: Dictionary) -> ResponseData:
 		var result: ResponseData = ResponseData.new()
-		if d.get("edit_url", null) != null:
-			result.edit_url = d["edit_url"]
 		if d.get("id", null) != null:
 			result.id = d["id"]
+		if d.get("edit_url", null) != null:
+			result.edit_url = d["edit_url"]
 		return result
 	
 
@@ -77,11 +77,17 @@ class ResponseData extends TwitchData:
 ## #/components/schemas/CreateClipOpt
 class Opt extends TwitchData:
 
-	## A Boolean value that determines whether the API captures the clip at the moment the viewer requests it or after a delay. If **false** (default), Twitch captures the clip at the moment the viewer requests it (this is the same clip experience as the Twitch UX). If **true**, Twitch adds a delay before capturing the clip (this basically shifts the capture window to the right slightly).
-	@export var has_delay: bool:
+	## The title of the clip.
+	@export var title: String:
 		set(val): 
-			has_delay = val
-			track_data(&"has_delay", val)
+			title = val
+			track_data(&"title", val)
+	
+	## The length of the clip in seconds. Possible values range from 5 to 60 inclusively with a precision of 0.1\. The default is 30.
+	@export var duration: float:
+		set(val): 
+			duration = val
+			track_data(&"duration", val)
 	
 	
 	
@@ -93,7 +99,9 @@ class Opt extends TwitchData:
 	
 	static func from_json(d: Dictionary) -> Opt:
 		var result: Opt = Opt.new()
-		if d.get("has_delay", null) != null:
-			result.has_delay = d["has_delay"]
+		if d.get("title", null) != null:
+			result.title = d["title"]
+		if d.get("duration", null) != null:
+			result.duration = d["duration"]
 		return result
 	

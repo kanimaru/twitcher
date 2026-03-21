@@ -37,3 +37,4 @@ static func from_json(d: Dictionary) -> TwitchGuestStarSession:
 		for value in d["guests"]:
 			result.guests.append(TwitchGuest.from_json(value))
 	return result
+

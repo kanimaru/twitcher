@@ -43,3 +43,4 @@ static func from_json(d: Dictionary) -> TwitchDropsEntitlementUpdated:
 		for value in d["ids"]:
 			result.ids.append(value)
 	return result
+

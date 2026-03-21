@@ -147,4 +147,3 @@ func _on_bot_send() -> void:
 	var message: String = chat_view.message
 	bot.send_message(message)
 	chat_view.message = ""
-	

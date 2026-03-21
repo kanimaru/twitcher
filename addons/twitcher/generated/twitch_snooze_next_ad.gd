@@ -45,14 +45,14 @@ class ResponseData extends TwitchData:
 			snooze_count = val
 			track_data(&"snooze_count", val)
 	
-	## The UTC timestamp when the broadcaster will gain an additional snooze, in RFC3339 format.
-	@export var snooze_refresh_at: String:
+	## The UTC timestamp when the broadcaster will gain an additional snooze, in RFC3339 format. Can be `0`.
+	@export var snooze_refresh_at: int:
 		set(val): 
 			snooze_refresh_at = val
 			track_data(&"snooze_refresh_at", val)
 	
-	## The UTC timestamp of the broadcaster’s next scheduled ad, in RFC3339 format.
-	@export var next_ad_at: String:
+	## The UTC timestamp of the broadcaster’s next scheduled ad, in RFC3339 format. `0` if the channel has no ad scheduled or is not live.
+	@export var next_ad_at: int:
 		set(val): 
 			next_ad_at = val
 			track_data(&"next_ad_at", val)
@@ -60,7 +60,7 @@ class ResponseData extends TwitchData:
 	
 	
 	## Constructor with all required fields.
-	static func create(_snooze_count: int, _snooze_refresh_at: String, _next_ad_at: String) -> ResponseData:
+	static func create(_snooze_count: int, _snooze_refresh_at: int, _next_ad_at: int) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.snooze_count = _snooze_count
 		response_data.snooze_refresh_at = _snooze_refresh_at

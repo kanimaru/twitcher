@@ -99,3 +99,4 @@ static func from_json(d: Dictionary) -> TwitchBannedUser:
 	if d.get("moderator_name", null) != null:
 		result.moderator_name = d["moderator_name"]
 	return result
+

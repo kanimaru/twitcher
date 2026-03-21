@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://cgwt1lw0v40v4"]
+
+[ext_resource type="PackedScene" uid="uid://dv5tn00eptanx" path="res://addons/twitcher/example/api_generator/generate_api.tscn" id="1_gngsp"]
+[ext_resource type="LabelSettings" uid="uid://bnsxy6gcm8q11" path="res://addons/twitcher/assets/twitcher_title_label_settings.tres" id="1_u4s0c"]
+[ext_resource type="Script" uid="uid://cetl2un34bjb1" path="res://addons/twitcher/editor/api_generator/twitch_api_generator.gd" id="2_hjk3t"]
+[ext_resource type="Script" uid="uid://o7q04krfh33l" path="res://addons/twitcher/editor/api_generator/twitch_api_parser.gd" id="2_poxsx"]
+[ext_resource type="Script" uid="uid://bj2377topmg0d" path="res://addons/twitcher/editor/eventsub_generator/twitch_eventsub_generator.gd" id="4_u4s0c"]
+
+[node name="GenerateAllApis" type="HSplitContainer" unique_id=2086038291]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="API" type="VBoxContainer" parent="." unique_id=1434607501]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleApi" type="Label" parent="API" unique_id=806575706]
+layout_mode = 2
+text = "Generate API"
+label_settings = ExtResource("1_u4s0c")
+
+[node name="GenerateApi" parent="API" unique_id=1262997986 node_paths=PackedStringArray("twitch_api_generator", "twitch_api_parser") instance=ExtResource("1_gngsp")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+twitch_api_generator = NodePath("APIGenerator")
+twitch_api_parser = NodePath("SwaggerParser")
+
+[node name="SwaggerParser" type="Node" parent="API/GenerateApi" unique_id=2010591668]
+script = ExtResource("2_poxsx")
+api = "https://raw.githubusercontent.com/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json"
+metadata/_custom_type_script = "uid://o7q04krfh33l"
+
+[node name="APIGenerator" type="Node" parent="API/GenerateApi" unique_id=1059014868]
+script = ExtResource("2_hjk3t")
+metadata/_custom_type_script = "uid://cetl2un34bjb1"
+
+[node name="Eventsub" type="VBoxContainer" parent="." unique_id=315686516]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleEventsub" type="Label" parent="Eventsub" unique_id=252105182]
+layout_mode = 2
+text = "Generate Eventsub"
+label_settings = ExtResource("1_u4s0c")
+
+[node name="GenerateEventsub" parent="Eventsub" unique_id=601183042 node_paths=PackedStringArray("twitch_api_generator", "twitch_api_parser") instance=ExtResource("1_gngsp")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+twitch_api_generator = NodePath("EvenstubGenerator")
+twitch_api_parser = NodePath("SwaggerParser")
+show_methods = false
+
+[node name="EvenstubGenerator" type="Node" parent="Eventsub/GenerateEventsub" unique_id=1159761619 node_paths=PackedStringArray("parser")]
+script = ExtResource("4_u4s0c")
+parser = NodePath("../SwaggerParser")
+
+[node name="SwaggerParser" type="Node" parent="Eventsub/GenerateEventsub" unique_id=997119488]
+script = ExtResource("2_poxsx")
+api = "https://raw.githubusercontent.com/kanimaru/twitch-eventsub-swagger/refs/heads/master/twitch_eventsub_swagger.json"
+metadata/_custom_type_script = "uid://o7q04krfh33l"

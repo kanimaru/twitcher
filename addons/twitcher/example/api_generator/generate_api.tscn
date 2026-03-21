@@ -1,10 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://dv5tn00eptanx"]
+[gd_scene format=3 uid="uid://dv5tn00eptanx"]
 
-[ext_resource type="Script" uid="uid://bw5x033fuxtfc" path="res://example/api_generator/generate_api.gd" id="1_0mr4e"]
-[ext_resource type="Script" uid="uid://cetl2un34bjb1" path="res://addons/twitcher/editor/api_generator/twitch_api_generator.gd" id="2_ompdd"]
-[ext_resource type="Script" uid="uid://o7q04krfh33l" path="res://addons/twitcher/editor/api_generator/twitch_api_parser.gd" id="3_gdrv2"]
+[ext_resource type="Script" uid="uid://bw5x033fuxtfc" path="res://addons/twitcher/example/api_generator/generate_api.gd" id="1_0mr4e"]
 
-[node name="GenerateApi" type="VBoxContainer"]
+[node name="GenerateApi" type="VBoxContainer" unique_id=1262997986]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -12,51 +10,50 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_0mr4e")
 
-[node name="Generate" type="Button" parent="."]
+[node name="Generate" type="Button" parent="." unique_id=1601093795]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"ActionButton"
 text = "Generate"
 
-[node name="Request" type="Button" parent="."]
+[node name="Request" type="Button" parent="." unique_id=25484309]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"ActionButton"
 text = "Request"
 
-[node name="TwitchAPIGenerator" type="Node" parent="." node_paths=PackedStringArray("parser")]
-unique_name_in_owner = true
-script = ExtResource("2_ompdd")
-parser = NodePath("../TwitchAPIParser")
-metadata/_custom_type_script = "uid://cetl2un34bjb1"
-
-[node name="TwitchAPIParser" type="Node" parent="."]
-unique_name_in_owner = true
-script = ExtResource("3_gdrv2")
-metadata/_custom_type_script = "uid://o7q04krfh33l"
-
-[node name="Show" type="Button" parent="."]
+[node name="Show" type="Button" parent="." unique_id=548805506]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Show"
 
-[node name="MethodSearch" type="LineEdit" parent="."]
+[node name="MethodBox" type="VBoxContainer" parent="." unique_id=1195657144]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MethodSearch" type="LineEdit" parent="MethodBox" unique_id=965300475]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Method Name"
 
-[node name="Methods" type="Tree" parent="."]
+[node name="Methods" type="Tree" parent="MethodBox" unique_id=1481865306]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 columns = 4
 
-[node name="ComponentSearch" type="LineEdit" parent="."]
+[node name="ComponentBox" type="VBoxContainer" parent="." unique_id=1602084086]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ComponentSearch" type="LineEdit" parent="ComponentBox" unique_id=312460836]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Ref or Classname"
 
-[node name="Components" type="Tree" parent="."]
+[node name="Components" type="Tree" parent="ComponentBox" unique_id=1998599501]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3

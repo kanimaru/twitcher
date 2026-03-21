@@ -44,11 +44,13 @@ func get_optional_type() -> String:
 
 
 func get_optional_component() -> TwitchGenComponent:
-	var component = TwitchGenComponent.new(get_optional_classname(), get_optional_type())
+	var component: TwitchGenComponent = TwitchGenComponent.new()
+	component._ref = get_optional_type()
+	component._classname = get_optional_classname()
 	component._description = "All optional parameters for TwitchAPI.%s" % _name
 	component._is_root = true
 	for parameter: TwitchGenParameter in _optional_parameters:
-		var field = TwitchGenField.new()
+		var field: TwitchGenField = TwitchGenField.new()
 		field._name = parameter._name
 		field._type = parameter._type
 		field._description = parameter._description

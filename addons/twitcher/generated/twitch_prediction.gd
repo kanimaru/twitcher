@@ -132,3 +132,4 @@ static func from_json(d: Dictionary) -> TwitchPrediction:
 	if d.get("locked_at", null) != null:
 		result.locked_at = d["locked_at"]
 	return result
+

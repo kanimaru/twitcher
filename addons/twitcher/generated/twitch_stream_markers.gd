@@ -26,34 +26,20 @@ class_name TwitchStreamMarkers
 		track_data(&"user_login", val)
 
 ## A list of videos that contain markers. The list contains a single video.
-@export var videos: Array[Variant]:
+@export var videos: Array[Videos]:
 	set(val): 
 		videos = val
 		track_data(&"videos", val)
 
-## An ID that identifies this video.
-@export var video_id: String:
-	set(val): 
-		video_id = val
-		track_data(&"video_id", val)
-
-## The list of markers in this video. The list in ascending order by when the marker was created.
-@export var markers: Array[Markers]:
-	set(val): 
-		markers = val
-		track_data(&"markers", val)
-
 
 
 ## Constructor with all required fields.
-static func create(_user_id: String, _user_name: String, _user_login: String, _videos: Array[Variant], _video_id: String, _markers: Array[Markers]) -> TwitchStreamMarkers:
+static func create(_user_id: String, _user_name: String, _user_login: String, _videos: Array[Videos]) -> TwitchStreamMarkers:
 	var twitch_stream_markers: TwitchStreamMarkers = TwitchStreamMarkers.new()
 	twitch_stream_markers.user_id = _user_id
 	twitch_stream_markers.user_name = _user_name
 	twitch_stream_markers.user_login = _user_login
 	twitch_stream_markers.videos = _videos
-	twitch_stream_markers.video_id = _video_id
-	twitch_stream_markers.markers = _markers
 	return twitch_stream_markers
 
 
@@ -67,18 +53,50 @@ static func from_json(d: Dictionary) -> TwitchStreamMarkers:
 		result.user_login = d["user_login"]
 	if d.get("videos", null) != null:
 		for value in d["videos"]:
-			result.videos.append(value)
-	if d.get("video_id", null) != null:
-		result.video_id = d["video_id"]
-	if d.get("markers", null) != null:
-		for value in d["markers"]:
-			result.markers.append(Markers.from_json(value))
+			result.videos.append(Videos.from_json(value))
 	return result
 
 
 
+## A list of videos that contain markers. The list contains a single video.
+## #/components/schemas/StreamMarkers/Videos
+class Videos extends TwitchData:
+
+	## An ID that identifies this video.
+	@export var video_id: String:
+		set(val): 
+			video_id = val
+			track_data(&"video_id", val)
+	
+	## The list of markers in this video. The list in ascending order by when the marker was created.
+	@export var markers: Array[Markers]:
+		set(val): 
+			markers = val
+			track_data(&"markers", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create(_video_id: String, _markers: Array[Markers]) -> Videos:
+		var videos: Videos = Videos.new()
+		videos.video_id = _video_id
+		videos.markers = _markers
+		return videos
+	
+	
+	static func from_json(d: Dictionary) -> Videos:
+		var result: Videos = Videos.new()
+		if d.get("video_id", null) != null:
+			result.video_id = d["video_id"]
+		if d.get("markers", null) != null:
+			for value in d["markers"]:
+				result.markers.append(Markers.from_json(value))
+		return result
+	
+
+
 ## The list of markers in this video. The list in ascending order by when the marker was created.
-## #/components/schemas/StreamMarkers/Markers
+## #/components/schemas/StreamMarkers/Videos/Markers
 class Markers extends TwitchData:
 
 	## An ID that identifies this marker.

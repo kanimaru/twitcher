@@ -57,3 +57,4 @@ static func from_json(d: Dictionary) -> TwitchExtensionConfigurationSegment:
 	if d.get("version", null) != null:
 		result.version = d["version"]
 	return result
+

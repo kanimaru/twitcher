@@ -146,7 +146,7 @@ class ResponseData extends TwitchData:
 		
 		
 	func _iter_get(iter: Variant) -> Variant:
-		if segments.size() - 1 == _cur_iter && _has_pagination():
+		if segments.size() == _cur_iter && _has_pagination():
 			await next_page()
 		return iter
 

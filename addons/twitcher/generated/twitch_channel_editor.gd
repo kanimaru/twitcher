@@ -45,3 +45,4 @@ static func from_json(d: Dictionary) -> TwitchChannelEditor:
 	if d.get("created_at", null) != null:
 		result.created_at = d["created_at"]
 	return result
+

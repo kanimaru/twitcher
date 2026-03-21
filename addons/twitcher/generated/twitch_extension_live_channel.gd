@@ -63,3 +63,4 @@ static func from_json(d: Dictionary) -> TwitchExtensionLiveChannel:
 	if d.get("title", null) != null:
 		result.title = d["title"]
 	return result
+

@@ -54,3 +54,4 @@ static func from_json(d: Dictionary) -> TwitchStreamTag:
 	if d.get("localization_descriptions", null) != null:
 		result.localization_descriptions = d["localization_descriptions"]
 	return result
+

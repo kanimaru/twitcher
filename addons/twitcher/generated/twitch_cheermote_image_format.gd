@@ -58,3 +58,4 @@ static func from_json(d: Dictionary) -> TwitchCheermoteImageFormat:
 	if d.get("_1_5", null) != null:
 		result._1_5 = d["_1_5"]
 	return result
+

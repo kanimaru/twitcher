@@ -117,3 +117,4 @@ static func from_json(d: Dictionary) -> TwitchAutoModSettings:
 	if d.get("sex_based_terms", null) != null:
 		result.sex_based_terms = d["sex_based_terms"]
 	return result
+

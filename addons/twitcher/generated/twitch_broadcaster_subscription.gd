@@ -130,3 +130,4 @@ static func from_json(d: Dictionary) -> TwitchBroadcasterSubscription:
 	if d.get("user_login", null) != null:
 		result.user_login = d["user_login"]
 	return result
+

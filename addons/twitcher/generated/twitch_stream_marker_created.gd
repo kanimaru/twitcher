@@ -54,3 +54,4 @@ static func from_json(d: Dictionary) -> TwitchStreamMarkerCreated:
 	if d.get("description", null) != null:
 		result.description = d["description"]
 	return result
+

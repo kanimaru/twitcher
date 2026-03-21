@@ -133,7 +133,7 @@ static func get_rfc_3339_date_format(time: Variant) -> String:
 ##
 ## https://dev.twitch.tv/docs/api/reference#start-commercial
 func start_commercial(body: TwitchStartCommercial.Body) -> TwitchStartCommercial.Response:
-	var path = "/channels/commercial?"
+	var path: String = "/channels/commercial?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 
@@ -155,7 +155,7 @@ func start_commercial(body: TwitchStartCommercial.Body) -> TwitchStartCommercial
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-ad-schedule
 func get_ad_schedule(broadcaster_id: String) -> TwitchGetAdSchedule.Response:
-	var path = "/channels/ads?"
+	var path: String = "/channels/ads?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -178,7 +178,7 @@ func get_ad_schedule(broadcaster_id: String) -> TwitchGetAdSchedule.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#snooze-next-ad
 func snooze_next_ad(broadcaster_id: String) -> TwitchSnoozeNextAd.Response:
-	var path = "/channels/ads/schedule/snooze?"
+	var path: String = "/channels/ads/schedule/snooze?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
@@ -201,7 +201,7 @@ func snooze_next_ad(broadcaster_id: String) -> TwitchSnoozeNextAd.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-analytics
 func get_extension_analytics(opt: TwitchGetExtensionAnalytics.Opt) -> TwitchGetExtensionAnalytics.Response:
-	var path = "/analytics/extensions?"
+	var path: String = "/analytics/extensions?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -242,7 +242,7 @@ func get_extension_analytics(opt: TwitchGetExtensionAnalytics.Opt) -> TwitchGetE
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-game-analytics
 func get_game_analytics(opt: TwitchGetGameAnalytics.Opt) -> TwitchGetGameAnalytics.Response:
-	var path = "/analytics/games?"
+	var path: String = "/analytics/games?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -283,7 +283,7 @@ func get_game_analytics(opt: TwitchGetGameAnalytics.Opt) -> TwitchGetGameAnalyti
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-bits-leaderboard
 func get_bits_leaderboard(opt: TwitchGetBitsLeaderboard.Opt) -> TwitchGetBitsLeaderboard.Response:
-	var path = "/bits/leaderboard?"
+	var path: String = "/bits/leaderboard?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("count"):
@@ -315,7 +315,7 @@ func get_bits_leaderboard(opt: TwitchGetBitsLeaderboard.Opt) -> TwitchGetBitsLea
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-cheermotes
 func get_cheermotes(opt: TwitchGetCheermotes.Opt) -> TwitchGetCheermotes.Response:
-	var path = "/bits/cheermotes?"
+	var path: String = "/bits/cheermotes?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("broadcaster_id"):
@@ -341,7 +341,7 @@ func get_cheermotes(opt: TwitchGetCheermotes.Opt) -> TwitchGetCheermotes.Respons
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-transactions
 func get_extension_transactions(opt: TwitchGetExtensionTransactions.Opt, extension_id: String) -> TwitchGetExtensionTransactions.Response:
-	var path = "/extensions/transactions?"
+	var path: String = "/extensions/transactions?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
@@ -379,7 +379,7 @@ func get_extension_transactions(opt: TwitchGetExtensionTransactions.Opt, extensi
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-information
 func get_channel_information(broadcaster_id: Array[String]) -> TwitchGetChannelInformation.Response:
-	var path = "/channels?"
+	var path: String = "/channels?"
 	
 	for param in broadcaster_id:
 		path += "broadcaster_id=" + str(param) + "&" 
@@ -404,7 +404,7 @@ func get_channel_information(broadcaster_id: Array[String]) -> TwitchGetChannelI
 ##
 ## https://dev.twitch.tv/docs/api/reference#modify-channel-information
 func modify_channel_information(body: TwitchModifyChannelInformation.Body, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/channels?"
+	var path: String = "/channels?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
@@ -420,7 +420,7 @@ func modify_channel_information(body: TwitchModifyChannelInformation.Body, broad
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-editors
 func get_channel_editors(broadcaster_id: String) -> TwitchGetChannelEditors.Response:
-	var path = "/channels/editors?"
+	var path: String = "/channels/editors?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -443,7 +443,7 @@ func get_channel_editors(broadcaster_id: String) -> TwitchGetChannelEditors.Resp
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-followed-channels
 func get_followed_channels(opt: TwitchGetFollowedChannels.Opt, user_id: String) -> TwitchGetFollowedChannels.Response:
-	var path = "/channels/followed?"
+	var path: String = "/channels/followed?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "user_id=" + str(user_id) + "&"
@@ -479,7 +479,7 @@ func get_followed_channels(opt: TwitchGetFollowedChannels.Opt, user_id: String) 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-followers
 func get_channel_followers(opt: TwitchGetChannelFollowers.Opt, broadcaster_id: String) -> TwitchGetChannelFollowers.Response:
-	var path = "/channels/followers?"
+	var path: String = "/channels/followers?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -515,7 +515,7 @@ func get_channel_followers(opt: TwitchGetChannelFollowers.Opt, broadcaster_id: S
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-custom-rewards
 func create_custom_rewards(body: TwitchCreateCustomRewards.Body, broadcaster_id: String) -> TwitchCreateCustomRewards.Response:
-	var path = "/channel_points/custom_rewards?"
+	var path: String = "/channel_points/custom_rewards?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
@@ -539,7 +539,7 @@ func create_custom_rewards(body: TwitchCreateCustomRewards.Body, broadcaster_id:
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-custom-reward
 func delete_custom_reward(id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/channel_points/custom_rewards?"
+	var path: String = "/channel_points/custom_rewards?"
 	path += "id=" + str(id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -556,7 +556,7 @@ func delete_custom_reward(id: String, broadcaster_id: String) -> BufferedHTTPCli
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-custom-reward
 func get_custom_reward(opt: TwitchGetCustomReward.Opt, broadcaster_id: String) -> TwitchGetCustomReward.Response:
-	var path = "/channel_points/custom_rewards?"
+	var path: String = "/channel_points/custom_rewards?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("id"):
@@ -588,7 +588,7 @@ func get_custom_reward(opt: TwitchGetCustomReward.Opt, broadcaster_id: String) -
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-custom-reward
 func update_custom_reward(body: TwitchUpdateCustomReward.Body, id: String, broadcaster_id: String) -> TwitchUpdateCustomReward.Response:
-	var path = "/channel_points/custom_rewards?"
+	var path: String = "/channel_points/custom_rewards?"
 	path += "id=" + str(id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -613,7 +613,7 @@ func update_custom_reward(body: TwitchUpdateCustomReward.Body, id: String, broad
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-custom-reward-redemption
 func get_custom_reward_redemption(opt: TwitchGetCustomRewardRedemption.Opt, reward_id: String, broadcaster_id: String) -> TwitchGetCustomRewardRedemption.Response:
-	var path = "/channel_points/custom_rewards/redemptions?"
+	var path: String = "/channel_points/custom_rewards/redemptions?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "reward_id=" + str(reward_id) + "&"
@@ -658,7 +658,7 @@ func get_custom_reward_redemption(opt: TwitchGetCustomRewardRedemption.Opt, rewa
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-redemption-status
 func update_redemption_status(body: TwitchUpdateRedemptionStatus.Body, id: Array[String], reward_id: String, broadcaster_id: String) -> TwitchUpdateRedemptionStatus.Response:
-	var path = "/channel_points/custom_rewards/redemptions?"
+	var path: String = "/channel_points/custom_rewards/redemptions?"
 	
 	for param in id:
 		path += "id=" + str(param) + "&" 
@@ -685,7 +685,7 @@ func update_redemption_status(body: TwitchUpdateRedemptionStatus.Body, id: Array
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-charity-campaign
 func get_charity_campaign(broadcaster_id: String) -> TwitchGetCharityCampaign.Response:
-	var path = "/charity/campaigns?"
+	var path: String = "/charity/campaigns?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -708,7 +708,7 @@ func get_charity_campaign(broadcaster_id: String) -> TwitchGetCharityCampaign.Re
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-charity-campaign-donations
 func get_charity_campaign_donations(opt: TwitchGetCharityCampaignDonations.Opt, broadcaster_id: String) -> TwitchGetCharityCampaignDonations.Response:
-	var path = "/charity/donations?"
+	var path: String = "/charity/donations?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -743,7 +743,7 @@ func get_charity_campaign_donations(opt: TwitchGetCharityCampaignDonations.Opt, 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-chatters
 func get_chatters(opt: TwitchGetChatters.Opt, moderator_id: String, broadcaster_id: String) -> TwitchGetChatters.Response:
-	var path = "/chat/chatters?"
+	var path: String = "/chat/chatters?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
@@ -778,7 +778,7 @@ func get_chatters(opt: TwitchGetChatters.Opt, moderator_id: String, broadcaster_
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-emotes
 func get_channel_emotes(broadcaster_id: String) -> TwitchGetChannelEmotes.Response:
-	var path = "/chat/emotes?"
+	var path: String = "/chat/emotes?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -801,7 +801,7 @@ func get_channel_emotes(broadcaster_id: String) -> TwitchGetChannelEmotes.Respon
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-global-emotes
 func get_global_emotes() -> TwitchGetGlobalEmotes.Response:
-	var path = "/chat/emotes/global?"
+	var path: String = "/chat/emotes/global?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 
@@ -825,7 +825,7 @@ func get_global_emotes() -> TwitchGetGlobalEmotes.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-emote-sets
 func get_emote_sets(emote_set_id: Array[String]) -> TwitchGetEmoteSets.Response:
-	var path = "/chat/emotes/set?"
+	var path: String = "/chat/emotes/set?"
 	
 	for param in emote_set_id:
 		path += "emote_set_id=" + str(param) + "&" 
@@ -850,7 +850,7 @@ func get_emote_sets(emote_set_id: Array[String]) -> TwitchGetEmoteSets.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-chat-badges
 func get_channel_chat_badges(broadcaster_id: String) -> TwitchGetChannelChatBadges.Response:
-	var path = "/chat/badges?"
+	var path: String = "/chat/badges?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -873,7 +873,7 @@ func get_channel_chat_badges(broadcaster_id: String) -> TwitchGetChannelChatBadg
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-global-chat-badges
 func get_global_chat_badges() -> TwitchGetGlobalChatBadges.Response:
-	var path = "/chat/badges/global?"
+	var path: String = "/chat/badges/global?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 
@@ -895,7 +895,7 @@ func get_global_chat_badges() -> TwitchGetGlobalChatBadges.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-chat-settings
 func get_chat_settings(opt: TwitchGetChatSettings.Opt, broadcaster_id: String) -> TwitchGetChatSettings.Response:
-	var path = "/chat/settings?"
+	var path: String = "/chat/settings?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("moderator_id"):
@@ -923,7 +923,7 @@ func get_chat_settings(opt: TwitchGetChatSettings.Opt, broadcaster_id: String) -
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-chat-settings
 func update_chat_settings(body: TwitchUpdateChatSettings.Body, moderator_id: String, broadcaster_id: String) -> TwitchUpdateChatSettings.Response:
-	var path = "/chat/settings?"
+	var path: String = "/chat/settings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -947,7 +947,7 @@ func update_chat_settings(body: TwitchUpdateChatSettings.Body, moderator_id: Str
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-shared-chat-session
 func get_shared_chat_session(broadcaster_id: String) -> TwitchGetSharedChatSession.Response:
-	var path = "/shared_chat/session?"
+	var path: String = "/shared_chat/session?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -964,13 +964,13 @@ func get_shared_chat_session(broadcaster_id: String) -> TwitchGetSharedChatSessi
 	return parsed_result
 
 
-## NEW Retrieves emotes available to the user across all channels.
+## Retrieves emotes available to the user across all channels.
 ## 
 ## user_id - The ID of the user. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-emotes
 func get_user_emotes(opt: TwitchGetUserEmotes.Opt, user_id: String) -> TwitchGetUserEmotes.Response:
-	var path = "/chat/emotes/user?"
+	var path: String = "/chat/emotes/user?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "user_id=" + str(user_id) + "&"
@@ -1005,7 +1005,7 @@ func get_user_emotes(opt: TwitchGetUserEmotes.Opt, user_id: String) -> TwitchGet
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-chat-announcement
 func send_chat_announcement(body: TwitchSendChatAnnouncement.Body, moderator_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/chat/announcements?"
+	var path: String = "/chat/announcements?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -1024,7 +1024,7 @@ func send_chat_announcement(body: TwitchSendChatAnnouncement.Body, moderator_id:
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-a-shoutout
 func send_a_shoutout(from_broadcaster_id: String, moderator_id: String, to_broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/chat/shoutouts?"
+	var path: String = "/chat/shoutouts?"
 	path += "from_broadcaster_id=" + str(from_broadcaster_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "to_broadcaster_id=" + str(to_broadcaster_id) + "&"
@@ -1036,13 +1036,13 @@ func send_a_shoutout(from_broadcaster_id: String, moderator_id: String, to_broad
 	return response
 
 
-## NEW Sends a message to the broadcaster’s chat room.
+## Sends a message to the broadcaster’s chat room.
 ## 
 ## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-chat-message
 func send_chat_message(body: TwitchSendChatMessage.Body) -> TwitchSendChatMessage.Response:
-	var path = "/chat/messages?"
+	var path: String = "/chat/messages?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 
@@ -1066,7 +1066,7 @@ func send_chat_message(body: TwitchSendChatMessage.Body) -> TwitchSendChatMessag
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-chat-color
 func get_user_chat_color(user_id: Array[String]) -> TwitchGetUserChatColor.Response:
-	var path = "/chat/color?"
+	var path: String = "/chat/color?"
 	
 	for param in user_id:
 		path += "user_id=" + str(param) + "&" 
@@ -1110,7 +1110,7 @@ func get_user_chat_color(user_id: Array[String]) -> TwitchGetUserChatColor.Respo
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-user-chat-color
 func update_user_chat_color(color: String, user_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/chat/color?"
+	var path: String = "/chat/color?"
 	path += "color=" + str(color) + "&"
 	path += "user_id=" + str(user_id) + "&"
 	
@@ -1127,11 +1127,13 @@ func update_user_chat_color(color: String, user_id: String) -> BufferedHTTPClien
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-clip
 func create_clip(opt: TwitchCreateClip.Opt, broadcaster_id: String) -> TwitchCreateClip.Response:
-	var path = "/clips?"
+	var path: String = "/clips?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
-	if optionals.has("has_delay"):
-		path += "has_delay=" + str(optionals.has_delay) + "&"
+	if optionals.has("duration"):
+		path += "duration=" + str(optionals.duration) + "&"
+	if optionals.has("title"):
+		path += "title=" + str(optionals.title) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
@@ -1154,7 +1156,7 @@ func create_clip(opt: TwitchCreateClip.Opt, broadcaster_id: String) -> TwitchCre
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-clips
 func get_clips(opt: TwitchGetClips.Opt) -> TwitchGetClips.Response:
-	var path = "/clips?"
+	var path: String = "/clips?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -1197,13 +1199,77 @@ func get_clips(opt: TwitchGetClips.Opt) -> TwitchGetClips.Response:
 	return parsed_result
 
 
-## NEW  Gets the conduits for a client ID.
+## NEW  Creates a clip from the broadcaster’s VOD.
+## 
+## editor_id - The user ID of the editor for the channel you want to create a clip for. If using the broadcaster’s auth token, this is the same as broadcaster\_id. This must match the user\_id in the user access token. 
+## broadcaster_id - The user ID for the channel you want to create a clip for. 
+## vod_id - ID of the VOD the user wants to clip. 
+## vod_offset - Offset in the VOD to create the clip. See notes above. 
+## title - The title of the clip. 
+##
+## https://dev.twitch.tv/docs/api/reference#create-clip-from-vod
+func create_clip_from_vod(opt: TwitchCreateClipFromVod.Opt, editor_id: String, title: String, vod_id: String, vod_offset: int, broadcaster_id: String) -> TwitchCreateClipFromVod.Response:
+	var path: String = "/videos/clips?"
+	var optionals: Dictionary[StringName, Variant] = {}
+	if opt != null: optionals = opt.to_dict()
+	path += "editor_id=" + str(editor_id) + "&"
+	path += "title=" + str(title) + "&"
+	path += "vod_id=" + str(vod_id) + "&"
+	path += "vod_offset=" + str(vod_offset) + "&"
+	if optionals.has("duration"):
+		path += "duration=" + str(optionals.duration) + "&"
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	
+	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
+
+	var result: Variant = {}
+	if response.response_code >= 400: 
+		_handle_error("create_clip_from_vod", response)
+	else:
+		result = JSON.parse_string(response.response_data.get_string_from_utf8())
+		
+	var parsed_result: TwitchCreateClipFromVod.Response = TwitchCreateClipFromVod.Response.from_json(result)
+	parsed_result.response = response
+	
+	return parsed_result
+
+
+## NEW Provides URLs to download the video file(s) for the specified clips.
+## 
+## editor_id - The User ID of the editor for the channel you want to download a clip for. If using the broadcaster’s auth token, this is the same as `broadcaster_id`. This must match the `user_id` in the user access token. 
+## broadcaster_id - The ID of the broadcaster you want to download clips for. 
+## clip_id - The ID that identifies the clip you want to download. Include this parameter for each clip you want to download, up to a maximum of 10 clips. For example, `clip_id=SleepyGiftedPeppermintNerfRedBlaster-KbkBXYt3lOk3jy8-&clip_id=WimpyAltruisticKleeKeyboardCat-EiY5yMrEwZ4i4gwC`. 
+##
+## https://dev.twitch.tv/docs/api/reference#get-clips-download
+func get_clips_download(clip_id: Array[String], editor_id: String, broadcaster_id: String) -> TwitchGetClipsDownload.Response:
+	var path: String = "/clips/downloads?"
+	
+	for param in clip_id:
+		path += "clip_id=" + str(param) + "&" 
+	path += "editor_id=" + str(editor_id) + "&"
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	
+	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+
+	var result: Variant = {}
+	if response.response_code >= 400: 
+		_handle_error("get_clips_download", response)
+	else:
+		result = JSON.parse_string(response.response_data.get_string_from_utf8())
+		
+	var parsed_result: TwitchGetClipsDownload.Response = TwitchGetClipsDownload.Response.from_json(result)
+	parsed_result.response = response
+	
+	return parsed_result
+
+
+## Gets the conduits for a client ID.
 ## 
 ## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-conduits
 func get_conduits() -> TwitchGetConduits.Response:
-	var path = "/eventsub/conduits?"
+	var path: String = "/eventsub/conduits?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 
@@ -1219,13 +1285,13 @@ func get_conduits() -> TwitchGetConduits.Response:
 	return parsed_result
 
 
-## NEW Creates a new conduit.
+## Creates a new conduit.
 ## 
 ## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-conduits
 func create_conduits(body: TwitchCreateConduits.Body) -> TwitchCreateConduits.Response:
-	var path = "/eventsub/conduits?"
+	var path: String = "/eventsub/conduits?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 
@@ -1241,13 +1307,13 @@ func create_conduits(body: TwitchCreateConduits.Body) -> TwitchCreateConduits.Re
 	return parsed_result
 
 
-## NEW Updates a conduit’s shard count.
+## Updates a conduit’s shard count.
 ## 
 ## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-conduits
 func update_conduits(body: TwitchUpdateConduits.Body) -> TwitchUpdateConduits.Response:
-	var path = "/eventsub/conduits?"
+	var path: String = "/eventsub/conduits?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 
@@ -1263,13 +1329,13 @@ func update_conduits(body: TwitchUpdateConduits.Body) -> TwitchUpdateConduits.Re
 	return parsed_result
 
 
-## NEW Deletes a specified conduit.
+## Deletes a specified conduit.
 ## 
 ## id - Conduit ID. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-conduit
 func delete_conduit(id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/eventsub/conduits?"
+	var path: String = "/eventsub/conduits?"
 	path += "id=" + str(id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
@@ -1279,13 +1345,13 @@ func delete_conduit(id: String) -> BufferedHTTPClient.ResponseData:
 	return response
 
 
-## NEW Gets a lists of all shards for a conduit.
+## Gets a lists of all shards for a conduit.
 ## 
 ## conduit_id - Conduit ID. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-conduit-shards
 func get_conduit_shards(opt: TwitchGetConduitShards.Opt, conduit_id: String) -> TwitchGetConduitShards.Response:
-	var path = "/eventsub/conduits/shards?"
+	var path: String = "/eventsub/conduits/shards?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "conduit_id=" + str(conduit_id) + "&"
@@ -1313,13 +1379,13 @@ func get_conduit_shards(opt: TwitchGetConduitShards.Opt, conduit_id: String) -> 
 	return parsed_result
 
 
-## NEW Updates shard(s) for a conduit.
+## Updates shard(s) for a conduit.
 ## 
 ## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-conduit-shards
 func update_conduit_shards(body: TwitchUpdateConduitShards.Body) -> TwitchUpdateConduitShards.Response:
-	var path = "/eventsub/conduits/shards?"
+	var path: String = "/eventsub/conduits/shards?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 
@@ -1341,7 +1407,7 @@ func update_conduit_shards(body: TwitchUpdateConduitShards.Body) -> TwitchUpdate
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-content-classification-labels
 func get_content_classification_labels(opt: TwitchGetContentClassificationLabels.Opt) -> TwitchGetContentClassificationLabels.Response:
-	var path = "/content_classification_labels?"
+	var path: String = "/content_classification_labels?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("locale"):
@@ -1367,7 +1433,7 @@ func get_content_classification_labels(opt: TwitchGetContentClassificationLabels
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-drops-entitlements
 func get_drops_entitlements(opt: TwitchGetDropsEntitlements.Opt) -> TwitchGetDropsEntitlements.Response:
-	var path = "/entitlements/drops?"
+	var path: String = "/entitlements/drops?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -1410,7 +1476,7 @@ func get_drops_entitlements(opt: TwitchGetDropsEntitlements.Opt) -> TwitchGetDro
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-drops-entitlements
 func update_drops_entitlements(body: TwitchUpdateDropsEntitlements.Body) -> TwitchUpdateDropsEntitlements.Response:
-	var path = "/entitlements/drops?"
+	var path: String = "/entitlements/drops?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 
@@ -1439,7 +1505,7 @@ func update_drops_entitlements(body: TwitchUpdateDropsEntitlements.Body) -> Twit
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-configuration-segment
 func get_extension_configuration_segment(opt: TwitchGetExtensionConfigurationSegment.Opt, extension_id: String, segment: String) -> TwitchGetExtensionConfigurationSegment.Response:
-	var path = "/extensions/configurations?"
+	var path: String = "/extensions/configurations?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
@@ -1467,7 +1533,7 @@ func get_extension_configuration_segment(opt: TwitchGetExtensionConfigurationSeg
 ##
 ## https://dev.twitch.tv/docs/api/reference#set-extension-configuration-segment
 func set_extension_configuration_segment(body: TwitchSetExtensionConfigurationSegment.Body) -> BufferedHTTPClient.ResponseData:
-	var path = "/extensions/configurations?"
+	var path: String = "/extensions/configurations?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 
@@ -1482,7 +1548,7 @@ func set_extension_configuration_segment(body: TwitchSetExtensionConfigurationSe
 ##
 ## https://dev.twitch.tv/docs/api/reference#set-extension-required-configuration
 func set_extension_required_configuration(body: TwitchSetExtensionRequiredConfiguration.Body, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/extensions/required_configuration?"
+	var path: String = "/extensions/required_configuration?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
@@ -1498,7 +1564,7 @@ func set_extension_required_configuration(body: TwitchSetExtensionRequiredConfig
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-extension-pubsub-message
 func send_extension_pubsub_message(body: TwitchSendExtensionPubSubMessage.Body) -> BufferedHTTPClient.ResponseData:
-	var path = "/extensions/pubsub?"
+	var path: String = "/extensions/pubsub?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 
@@ -1513,7 +1579,7 @@ func send_extension_pubsub_message(body: TwitchSendExtensionPubSubMessage.Body) 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-live-channels
 func get_extension_live_channels(opt: TwitchGetExtensionLiveChannels.Opt, extension_id: String) -> TwitchGetExtensionLiveChannels.Response:
-	var path = "/extensions/live?"
+	var path: String = "/extensions/live?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
@@ -1547,7 +1613,7 @@ func get_extension_live_channels(opt: TwitchGetExtensionLiveChannels.Opt, extens
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-secrets
 func get_extension_secrets() -> TwitchGetExtensionSecrets.Response:
-	var path = "/extensions/jwt/secrets?"
+	var path: String = "/extensions/jwt/secrets?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 
@@ -1569,7 +1635,7 @@ func get_extension_secrets() -> TwitchGetExtensionSecrets.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-extension-secret
 func create_extension_secret(opt: TwitchCreateExtensionSecret.Opt, extension_id: String) -> TwitchCreateExtensionSecret.Response:
-	var path = "/extensions/jwt/secrets?"
+	var path: String = "/extensions/jwt/secrets?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
@@ -1596,7 +1662,7 @@ func create_extension_secret(opt: TwitchCreateExtensionSecret.Opt, extension_id:
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-extension-chat-message
 func send_extension_chat_message(body: TwitchSendExtensionChatMessage.Body, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/extensions/chat?"
+	var path: String = "/extensions/chat?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
@@ -1612,7 +1678,7 @@ func send_extension_chat_message(body: TwitchSendExtensionChatMessage.Body, broa
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extensions
 func get_extensions(opt: TwitchGetExtensions.Opt, extension_id: String) -> TwitchGetExtensions.Response:
-	var path = "/extensions?"
+	var path: String = "/extensions?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
@@ -1639,7 +1705,7 @@ func get_extensions(opt: TwitchGetExtensions.Opt, extension_id: String) -> Twitc
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-released-extensions
 func get_released_extensions(opt: TwitchGetReleasedExtensions.Opt, extension_id: String) -> TwitchGetReleasedExtensions.Response:
-	var path = "/extensions/released?"
+	var path: String = "/extensions/released?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "extension_id=" + str(extension_id) + "&"
@@ -1666,7 +1732,7 @@ func get_released_extensions(opt: TwitchGetReleasedExtensions.Opt, extension_id:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-extension-bits-products
 func get_extension_bits_products(opt: TwitchGetExtensionBitsProducts.Opt) -> TwitchGetExtensionBitsProducts.Response:
-	var path = "/bits/extensions?"
+	var path: String = "/bits/extensions?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("should_include_all"):
@@ -1692,7 +1758,7 @@ func get_extension_bits_products(opt: TwitchGetExtensionBitsProducts.Opt) -> Twi
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-extension-bits-product
 func update_extension_bits_product(body: TwitchUpdateExtensionBitsProduct.Body) -> TwitchUpdateExtensionBitsProduct.Response:
-	var path = "/bits/extensions?"
+	var path: String = "/bits/extensions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 
@@ -1714,7 +1780,7 @@ func update_extension_bits_product(body: TwitchUpdateExtensionBitsProduct.Body) 
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-eventsub-subscription
 func create_eventsub_subscription(body: TwitchCreateEventSubSubscription.Body) -> TwitchCreateEventSubSubscription.Response:
-	var path = "/eventsub/subscriptions?"
+	var path: String = "/eventsub/subscriptions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 
@@ -1736,7 +1802,7 @@ func create_eventsub_subscription(body: TwitchCreateEventSubSubscription.Body) -
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-eventsub-subscription
 func delete_eventsub_subscription(id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/eventsub/subscriptions?"
+	var path: String = "/eventsub/subscriptions?"
 	path += "id=" + str(id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
@@ -1751,8 +1817,8 @@ func delete_eventsub_subscription(id: String) -> BufferedHTTPClient.ResponseData
 ## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-eventsub-subscriptions
-func get_eventsub_subscriptions(opt: TwitchGetEventsubSubscriptions.Opt) -> TwitchGetEventSubSubscriptions.Response:
-	var path = "/eventsub/subscriptions?"
+func get_eventsub_subscriptions(opt: TwitchGetEventsubSubscriptions.Opt) -> TwitchGetEventsubSubscriptions.Response:
+	var path: String = "/eventsub/subscriptions?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -1774,7 +1840,7 @@ func get_eventsub_subscriptions(opt: TwitchGetEventsubSubscriptions.Opt) -> Twit
 	else:
 		result = JSON.parse_string(response.response_data.get_string_from_utf8())
 		
-	var parsed_result: TwitchGetEventSubSubscriptions.Response = TwitchGetEventSubSubscriptions.Response.from_json(result)
+	var parsed_result: TwitchGetEventsubSubscriptions.Response = TwitchGetEventsubSubscriptions.Response.from_json(result)
 	parsed_result.response = response
 	if parsed_result.pagination != null:
 		var cursor: String = parsed_result.pagination.cursor
@@ -1791,7 +1857,7 @@ func get_eventsub_subscriptions(opt: TwitchGetEventsubSubscriptions.Opt) -> Twit
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-top-games
 func get_top_games(opt: TwitchGetTopGames.Opt) -> TwitchGetTopGames.Response:
-	var path = "/games/top?"
+	var path: String = "/games/top?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -1826,7 +1892,7 @@ func get_top_games(opt: TwitchGetTopGames.Opt) -> TwitchGetTopGames.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-games
 func get_games(opt: TwitchGetGames.Opt) -> TwitchGetGames.Response:
-	var path = "/games?"
+	var path: String = "/games?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("id"):
@@ -1862,7 +1928,7 @@ func get_games(opt: TwitchGetGames.Opt) -> TwitchGetGames.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-creator-goals
 func get_creator_goals(broadcaster_id: String) -> TwitchGetCreatorGoals.Response:
-	var path = "/goals?"
+	var path: String = "/goals?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -1886,7 +1952,7 @@ func get_creator_goals(broadcaster_id: String) -> TwitchGetCreatorGoals.Response
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-guest-star-settings
 func get_channel_guest_star_settings(moderator_id: String, broadcaster_id: String) -> TwitchGetChannelGuestStarSettings.Response:
-	var path = "/guest_star/channel_settings?"
+	var path: String = "/guest_star/channel_settings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -1910,7 +1976,7 @@ func get_channel_guest_star_settings(moderator_id: String, broadcaster_id: Strin
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-channel-guest-star-settings
 func update_channel_guest_star_settings(body: TwitchUpdateChannelGuestStarSettings.Body, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/guest_star/channel_settings?"
+	var path: String = "/guest_star/channel_settings?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
@@ -1927,7 +1993,7 @@ func update_channel_guest_star_settings(body: TwitchUpdateChannelGuestStarSettin
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-guest-star-session
 func get_guest_star_session(moderator_id: String, broadcaster_id: String) -> TwitchGetGuestStarSession.Response:
-	var path = "/guest_star/session?"
+	var path: String = "/guest_star/session?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -1951,7 +2017,7 @@ func get_guest_star_session(moderator_id: String, broadcaster_id: String) -> Twi
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-guest-star-session
 func create_guest_star_session(broadcaster_id: String) -> TwitchCreateGuestStarSession.Response:
-	var path = "/guest_star/session?"
+	var path: String = "/guest_star/session?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, "", "")
@@ -1974,16 +2040,23 @@ func create_guest_star_session(broadcaster_id: String) -> TwitchCreateGuestStarS
 ## session_id - ID for the session to end on behalf of the broadcaster. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#end-guest-star-session
-func end_guest_star_session(session_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/guest_star/session?"
+func end_guest_star_session(session_id: String, broadcaster_id: String) -> TwitchEndGuestStarSession.Response:
+	var path: String = "/guest_star/session?"
 	path += "session_id=" + str(session_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
 
+	var result: Variant = {}
 	if response.response_code >= 400: 
 		_handle_error("end_guest_star_session", response)
-	return response
+	else:
+		result = JSON.parse_string(response.response_data.get_string_from_utf8())
+		
+	var parsed_result: TwitchEndGuestStarSession.Response = TwitchEndGuestStarSession.Response.from_json(result)
+	parsed_result.response = response
+	
+	return parsed_result
 
 
 ## BETA Provides the caller with a list of pending invites to a Guest Star session.
@@ -1994,7 +2067,7 @@ func end_guest_star_session(session_id: String, broadcaster_id: String) -> Buffe
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-guest-star-invites
 func get_guest_star_invites(moderator_id: String, session_id: String, broadcaster_id: String) -> TwitchGetGuestStarInvites.Response:
-	var path = "/guest_star/invites?"
+	var path: String = "/guest_star/invites?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
@@ -2022,7 +2095,7 @@ func get_guest_star_invites(moderator_id: String, session_id: String, broadcaste
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-guest-star-invite
 func send_guest_star_invite(guest_id: String, moderator_id: String, session_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/guest_star/invites?"
+	var path: String = "/guest_star/invites?"
 	path += "guest_id=" + str(guest_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
@@ -2044,7 +2117,7 @@ func send_guest_star_invite(guest_id: String, moderator_id: String, session_id: 
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-guest-star-invite
 func delete_guest_star_invite(guest_id: String, moderator_id: String, session_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/guest_star/invites?"
+	var path: String = "/guest_star/invites?"
 	path += "guest_id=" + str(guest_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
@@ -2067,7 +2140,7 @@ func delete_guest_star_invite(guest_id: String, moderator_id: String, session_id
 ##
 ## https://dev.twitch.tv/docs/api/reference#assign-guest-star-slot
 func assign_guest_star_slot(guest_id: String, moderator_id: String, session_id: String, slot_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/guest_star/slot?"
+	var path: String = "/guest_star/slot?"
 	path += "guest_id=" + str(guest_id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "session_id=" + str(session_id) + "&"
@@ -2090,7 +2163,7 @@ func assign_guest_star_slot(guest_id: String, moderator_id: String, session_id: 
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-guest-star-slot
 func update_guest_star_slot(opt: TwitchUpdateGuestStarSlot.Opt, moderator_id: String, session_id: String, source_slot_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/guest_star/slot?"
+	var path: String = "/guest_star/slot?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
@@ -2117,7 +2190,7 @@ func update_guest_star_slot(opt: TwitchUpdateGuestStarSlot.Opt, moderator_id: St
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-guest-star-slot
 func delete_guest_star_slot(opt: TwitchDeleteGuestStarSlot.Opt, guest_id: String, moderator_id: String, session_id: String, slot_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/guest_star/slot?"
+	var path: String = "/guest_star/slot?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "guest_id=" + str(guest_id) + "&"
@@ -2144,7 +2217,7 @@ func delete_guest_star_slot(opt: TwitchDeleteGuestStarSlot.Opt, guest_id: String
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-guest-star-slot-settings
 func update_guest_star_slot_settings(opt: TwitchUpdateGuestStarSlotSettings.Opt, moderator_id: String, session_id: String, slot_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/guest_star/slot_settings?"
+	var path: String = "/guest_star/slot_settings?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
@@ -2167,47 +2240,13 @@ func update_guest_star_slot_settings(opt: TwitchUpdateGuestStarSlotSettings.Opt,
 	return response
 
 
-## DEPRECATED Gets information about the broadcaster’s current or most recent Hype Train event.
-## 
-## broadcaster_id - The ID of the broadcaster that’s running the Hype Train. This ID must match the User ID in the user access token. 
-##
-## https://dev.twitch.tv/docs/api/reference#get-hype-train-events
-func get_hype_train_events(opt: TwitchGetHypeTrainEvents.Opt, broadcaster_id: String) -> TwitchGetHypeTrainEvents.Response:
-	var path = "/hypetrain/events?"
-	var optionals: Dictionary[StringName, Variant] = {}
-	if opt != null: optionals = opt.to_dict()
-	if optionals.has("after"):
-		path += "after=" + str(optionals.after) + "&"
-	if optionals.has("first"):
-		path += "first=" + str(optionals.first) + "&"
-	path += "broadcaster_id=" + str(broadcaster_id) + "&"
-	
-	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
-
-	var result: Variant = {}
-	if response.response_code >= 400: 
-		_handle_error("get_hype_train_events", response)
-	else:
-		result = JSON.parse_string(response.response_data.get_string_from_utf8())
-		
-	var parsed_result: TwitchGetHypeTrainEvents.Response = TwitchGetHypeTrainEvents.Response.from_json(result)
-	parsed_result.response = response
-	if parsed_result.pagination != null:
-		var cursor: String = parsed_result.pagination.cursor
-		if not opt: opt = TwitchGetHypeTrainEvents.Opt.new()
-		opt.after = cursor
-		parsed_result._next_page = get_hype_train_events.bind(opt, broadcaster_id)
-	
-	return parsed_result
-
-
 ## NEW Gets the status of a Hype Train for the specified broadcaster.
 ## 
 ## broadcaster_id - The User ID of the channel broadcaster. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-hype-train-status
 func get_hype_train_status(broadcaster_id: String) -> TwitchGetHypeTrainStatus.Response:
-	var path = "/hypetrain/status?"
+	var path: String = "/hypetrain/status?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -2230,7 +2269,7 @@ func get_hype_train_status(broadcaster_id: String) -> TwitchGetHypeTrainStatus.R
 ##
 ## https://dev.twitch.tv/docs/api/reference#check-automod-status
 func check_automod_status(body: TwitchCheckAutoModStatus.Body, broadcaster_id: String) -> TwitchCheckAutoModStatus.Response:
-	var path = "/moderation/enforcements/status?"
+	var path: String = "/moderation/enforcements/status?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
@@ -2253,7 +2292,7 @@ func check_automod_status(body: TwitchCheckAutoModStatus.Body, broadcaster_id: S
 ##
 ## https://dev.twitch.tv/docs/api/reference#manage-held-automod-messages
 func manage_held_automod_messages(body: TwitchManageHeldAutoModMessages.Body) -> BufferedHTTPClient.ResponseData:
-	var path = "/moderation/automod/message?"
+	var path: String = "/moderation/automod/message?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 
@@ -2269,7 +2308,7 @@ func manage_held_automod_messages(body: TwitchManageHeldAutoModMessages.Body) ->
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-automod-settings
 func get_automod_settings(moderator_id: String, broadcaster_id: String) -> TwitchGetAutoModSettings.Response:
-	var path = "/moderation/automod/settings?"
+	var path: String = "/moderation/automod/settings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2294,7 +2333,7 @@ func get_automod_settings(moderator_id: String, broadcaster_id: String) -> Twitc
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-automod-settings
 func update_automod_settings(body: TwitchUpdateAutoModSettings.Body, moderator_id: String, broadcaster_id: String) -> TwitchUpdateAutoModSettings.Response:
-	var path = "/moderation/automod/settings?"
+	var path: String = "/moderation/automod/settings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2318,7 +2357,7 @@ func update_automod_settings(body: TwitchUpdateAutoModSettings.Body, moderator_i
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-banned-users
 func get_banned_users(opt: TwitchGetBannedUsers.Opt, broadcaster_id: String) -> TwitchGetBannedUsers.Response:
-	var path = "/moderation/banned?"
+	var path: String = "/moderation/banned?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -2359,7 +2398,7 @@ func get_banned_users(opt: TwitchGetBannedUsers.Opt, broadcaster_id: String) -> 
 ##
 ## https://dev.twitch.tv/docs/api/reference#ban-user
 func ban_user(body: TwitchBanUser.Body, moderator_id: String, broadcaster_id: String) -> TwitchBanUser.Response:
-	var path = "/moderation/bans?"
+	var path: String = "/moderation/bans?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2385,7 +2424,7 @@ func ban_user(body: TwitchBanUser.Body, moderator_id: String, broadcaster_id: St
 ##
 ## https://dev.twitch.tv/docs/api/reference#unban-user
 func unban_user(moderator_id: String, user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/moderation/bans?"
+	var path: String = "/moderation/bans?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
@@ -2397,7 +2436,7 @@ func unban_user(moderator_id: String, user_id: String, broadcaster_id: String) -
 	return response
 
 
-## NEW Gets a list of unban requests for a broadcaster’s channel.
+## Gets a list of unban requests for a broadcaster’s channel.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose channel is receiving unban requests. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s unban requests. This ID must match the user ID in the user access token. 
@@ -2411,7 +2450,7 @@ func unban_user(moderator_id: String, user_id: String, broadcaster_id: String) -
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-unban-requests
 func get_unban_requests(opt: TwitchGetUnbanRequests.Opt, moderator_id: String, status: String, broadcaster_id: String) -> TwitchGetUnbanRequests.Response:
-	var path = "/moderation/unban_requests?"
+	var path: String = "/moderation/unban_requests?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
@@ -2443,7 +2482,7 @@ func get_unban_requests(opt: TwitchGetUnbanRequests.Opt, moderator_id: String, s
 	return parsed_result
 
 
-## NEW Resolves an unban request by approving or denying it.
+## Resolves an unban request by approving or denying it.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose channel is approving or denying the unban request. 
 ## moderator_id - The ID of the broadcaster or a user that has permission to moderate the broadcaster’s unban requests. This ID must match the user ID in the user access token. 
@@ -2455,7 +2494,7 @@ func get_unban_requests(opt: TwitchGetUnbanRequests.Opt, moderator_id: String, s
 ##
 ## https://dev.twitch.tv/docs/api/reference#resolve-unban-requests
 func resolve_unban_requests(opt: TwitchResolveUnbanRequests.Opt, moderator_id: String, status: String, unban_request_id: String, broadcaster_id: String) -> TwitchResolveUnbanRequests.Response:
-	var path = "/moderation/unban_requests?"
+	var path: String = "/moderation/unban_requests?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
@@ -2486,7 +2525,7 @@ func resolve_unban_requests(opt: TwitchResolveUnbanRequests.Opt, moderator_id: S
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-blocked-terms
 func get_blocked_terms(opt: TwitchGetBlockedTerms.Opt, moderator_id: String, broadcaster_id: String) -> TwitchGetBlockedTerms.Response:
-	var path = "/moderation/blocked_terms?"
+	var path: String = "/moderation/blocked_terms?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
@@ -2522,7 +2561,7 @@ func get_blocked_terms(opt: TwitchGetBlockedTerms.Opt, moderator_id: String, bro
 ##
 ## https://dev.twitch.tv/docs/api/reference#add-blocked-term
 func add_blocked_term(body: TwitchAddBlockedTerm.Body, moderator_id: String, broadcaster_id: String) -> TwitchAddBlockedTerm.Response:
-	var path = "/moderation/blocked_terms?"
+	var path: String = "/moderation/blocked_terms?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2548,7 +2587,7 @@ func add_blocked_term(body: TwitchAddBlockedTerm.Body, moderator_id: String, bro
 ##
 ## https://dev.twitch.tv/docs/api/reference#remove-blocked-term
 func remove_blocked_term(id: String, moderator_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/moderation/blocked_terms?"
+	var path: String = "/moderation/blocked_terms?"
 	path += "id=" + str(id) + "&"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
@@ -2567,7 +2606,7 @@ func remove_blocked_term(id: String, moderator_id: String, broadcaster_id: Strin
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-chat-messages
 func delete_chat_messages(opt: TwitchDeleteChatMessages.Opt, moderator_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/moderation/chat?"
+	var path: String = "/moderation/chat?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "moderator_id=" + str(moderator_id) + "&"
@@ -2588,7 +2627,7 @@ func delete_chat_messages(opt: TwitchDeleteChatMessages.Opt, moderator_id: Strin
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-moderated-channels
 func get_moderated_channels(opt: TwitchGetModeratedChannels.Opt, user_id: String) -> TwitchGetModeratedChannels.Response:
-	var path = "/moderation/channels?"
+	var path: String = "/moderation/channels?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "user_id=" + str(user_id) + "&"
@@ -2622,7 +2661,7 @@ func get_moderated_channels(opt: TwitchGetModeratedChannels.Opt, user_id: String
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-moderators
 func get_moderators(opt: TwitchGetModerators.Opt, broadcaster_id: String) -> TwitchGetModerators.Response:
-	var path = "/moderation/moderators?"
+	var path: String = "/moderation/moderators?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -2661,7 +2700,7 @@ func get_moderators(opt: TwitchGetModerators.Opt, broadcaster_id: String) -> Twi
 ##
 ## https://dev.twitch.tv/docs/api/reference#add-channel-moderator
 func add_channel_moderator(user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/moderation/moderators?"
+	var path: String = "/moderation/moderators?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2679,7 +2718,7 @@ func add_channel_moderator(user_id: String, broadcaster_id: String) -> BufferedH
 ##
 ## https://dev.twitch.tv/docs/api/reference#remove-channel-moderator
 func remove_channel_moderator(user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/moderation/moderators?"
+	var path: String = "/moderation/moderators?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2695,8 +2734,8 @@ func remove_channel_moderator(user_id: String, broadcaster_id: String) -> Buffer
 ## broadcaster_id - The ID of the broadcaster whose list of VIPs you want to get. This ID must match the user ID in the access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-vips
-func get_vips(opt: TwitchGetVips.Opt, broadcaster_id: String) -> TwitchGetVIPs.Response:
-	var path = "/channels/vips?"
+func get_vips(opt: TwitchGetVips.Opt, broadcaster_id: String) -> TwitchGetVips.Response:
+	var path: String = "/channels/vips?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -2717,7 +2756,7 @@ func get_vips(opt: TwitchGetVips.Opt, broadcaster_id: String) -> TwitchGetVIPs.R
 	else:
 		result = JSON.parse_string(response.response_data.get_string_from_utf8())
 		
-	var parsed_result: TwitchGetVIPs.Response = TwitchGetVIPs.Response.from_json(result)
+	var parsed_result: TwitchGetVips.Response = TwitchGetVips.Response.from_json(result)
 	parsed_result.response = response
 	if parsed_result.pagination != null:
 		var cursor: String = parsed_result.pagination.cursor
@@ -2735,7 +2774,7 @@ func get_vips(opt: TwitchGetVips.Opt, broadcaster_id: String) -> TwitchGetVIPs.R
 ##
 ## https://dev.twitch.tv/docs/api/reference#add-channel-vip
 func add_channel_vip(user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/channels/vips?"
+	var path: String = "/channels/vips?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2753,7 +2792,7 @@ func add_channel_vip(user_id: String, broadcaster_id: String) -> BufferedHTTPCli
 ##
 ## https://dev.twitch.tv/docs/api/reference#remove-channel-vip
 func remove_channel_vip(user_id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/channels/vips?"
+	var path: String = "/channels/vips?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2771,7 +2810,7 @@ func remove_channel_vip(user_id: String, broadcaster_id: String) -> BufferedHTTP
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-shield-mode-status
 func update_shield_mode_status(body: TwitchUpdateShieldModeStatus.Body, moderator_id: String, broadcaster_id: String) -> TwitchUpdateShieldModeStatus.Response:
-	var path = "/moderation/shield_mode?"
+	var path: String = "/moderation/shield_mode?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2796,7 +2835,7 @@ func update_shield_mode_status(body: TwitchUpdateShieldModeStatus.Body, moderato
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-shield-mode-status
 func get_shield_mode_status(moderator_id: String, broadcaster_id: String) -> TwitchGetShieldModeStatus.Response:
-	var path = "/moderation/shield_mode?"
+	var path: String = "/moderation/shield_mode?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2814,14 +2853,14 @@ func get_shield_mode_status(moderator_id: String, broadcaster_id: String) -> Twi
 	return parsed_result
 
 
-## NEW Warns a user in the specified broadcaster’s chat room, preventing them from chat interaction until the warning is acknowledged.
+## Warns a user in the specified broadcaster’s chat room, preventing them from chat interaction until the warning is acknowledged.
 ## 
 ## broadcaster_id - The ID of the channel in which the warning will take effect. 
 ## moderator_id - The ID of the twitch user who requested the warning. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#warn-chat-user
 func warn_chat_user(body: TwitchWarnChatUser.Body, moderator_id: String, broadcaster_id: String) -> TwitchWarnChatUser.Response:
-	var path = "/moderation/warnings?"
+	var path: String = "/moderation/warnings?"
 	path += "moderator_id=" + str(moderator_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -2839,13 +2878,65 @@ func warn_chat_user(body: TwitchWarnChatUser.Body, moderator_id: String, broadca
 	return parsed_result
 
 
+## NEW Adds a suspicious user status to a chatter on the broadcaster’s channel.
+## 
+## broadcaster_id - The user ID of the broadcaster, indicating the channel where the status is being applied. 
+## moderator_id - The user ID of the moderator who is applying the status. 
+##
+## https://dev.twitch.tv/docs/api/reference#add-suspicious-status-to-chat-user
+func add_suspicious_status_to_chat_user(body: TwitchAddSuspiciousStatusToChatUser.Body, moderator_id: String, broadcaster_id: String) -> TwitchAddSuspiciousStatusToChatUser.Response:
+	var path: String = "/moderation/suspicious_users?"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	
+	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
+
+	var result: Variant = {}
+	if response.response_code >= 400: 
+		_handle_error("add_suspicious_status_to_chat_user", response)
+	else:
+		result = JSON.parse_string(response.response_data.get_string_from_utf8())
+		
+	var parsed_result: TwitchAddSuspiciousStatusToChatUser.Response = TwitchAddSuspiciousStatusToChatUser.Response.from_json(result)
+	parsed_result.response = response
+	
+	return parsed_result
+
+
+## NEW Remove a suspicious user status from a chatter on broadcaster’s channel.
+## 
+## broadcaster_id - The user ID of the broadcaster, indicating the channel where the status is being removed. 
+## moderator_id - The user ID of the moderator who is removing the status. 
+## user_id - The ID of the user having the suspicious status removed. 
+##
+## https://dev.twitch.tv/docs/api/reference#remove-suspicious-status-from-chat-user
+func remove_suspicious_status_from_chat_user(moderator_id: String, user_id: String, broadcaster_id: String) -> TwitchRemoveSuspiciousStatusFromChatUser.Response:
+	var path: String = "/moderation/suspicious_users?"
+	path += "moderator_id=" + str(moderator_id) + "&"
+	path += "user_id=" + str(user_id) + "&"
+	path += "broadcaster_id=" + str(broadcaster_id) + "&"
+	
+	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
+
+	var result: Variant = {}
+	if response.response_code >= 400: 
+		_handle_error("remove_suspicious_status_from_chat_user", response)
+	else:
+		result = JSON.parse_string(response.response_data.get_string_from_utf8())
+		
+	var parsed_result: TwitchRemoveSuspiciousStatusFromChatUser.Response = TwitchRemoveSuspiciousStatusFromChatUser.Response.from_json(result)
+	parsed_result.response = response
+	
+	return parsed_result
+
+
 ## Gets a list of polls that the broadcaster created.
 ## 
 ## broadcaster_id - The ID of the broadcaster that created the polls. This ID must match the user ID in the user access token. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-polls
 func get_polls(opt: TwitchGetPolls.Opt, broadcaster_id: String) -> TwitchGetPolls.Response:
-	var path = "/polls?"
+	var path: String = "/polls?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -2883,7 +2974,7 @@ func get_polls(opt: TwitchGetPolls.Opt, broadcaster_id: String) -> TwitchGetPoll
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-poll
 func create_poll(body: TwitchCreatePoll.Body) -> TwitchCreatePoll.Response:
-	var path = "/polls?"
+	var path: String = "/polls?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 
@@ -2905,7 +2996,7 @@ func create_poll(body: TwitchCreatePoll.Body) -> TwitchCreatePoll.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#end-poll
 func end_poll(body: TwitchEndPoll.Body) -> TwitchEndPoll.Response:
-	var path = "/polls?"
+	var path: String = "/polls?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 
@@ -2927,7 +3018,7 @@ func end_poll(body: TwitchEndPoll.Body) -> TwitchEndPoll.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-predictions
 func get_predictions(opt: TwitchGetPredictions.Opt, broadcaster_id: String) -> TwitchGetPredictions.Response:
-	var path = "/predictions?"
+	var path: String = "/predictions?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -2965,7 +3056,7 @@ func get_predictions(opt: TwitchGetPredictions.Opt, broadcaster_id: String) -> T
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-prediction
 func create_prediction(body: TwitchCreatePrediction.Body) -> TwitchCreatePrediction.Response:
-	var path = "/predictions?"
+	var path: String = "/predictions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 
@@ -2987,7 +3078,7 @@ func create_prediction(body: TwitchCreatePrediction.Body) -> TwitchCreatePredict
 ##
 ## https://dev.twitch.tv/docs/api/reference#end-prediction
 func end_prediction(body: TwitchEndPrediction.Body) -> TwitchEndPrediction.Response:
-	var path = "/predictions?"
+	var path: String = "/predictions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PATCH, body, "application/json")
 
@@ -3008,8 +3099,8 @@ func end_prediction(body: TwitchEndPrediction.Body) -> TwitchEndPrediction.Respo
 ## [no required query parameters to describe]
 ##
 ## https://dev.twitch.tv/docs/api/reference#start-a-raid
-func start_a_raid(opt: TwitchStartARaid.Opt) -> TwitchStartRaid.Response:
-	var path = "/raids?"
+func start_a_raid(opt: TwitchStartARaid.Opt) -> TwitchStartARaid.Response:
+	var path: String = "/raids?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("from_broadcaster_id"):
@@ -3025,7 +3116,7 @@ func start_a_raid(opt: TwitchStartARaid.Opt) -> TwitchStartRaid.Response:
 	else:
 		result = JSON.parse_string(response.response_data.get_string_from_utf8())
 		
-	var parsed_result: TwitchStartRaid.Response = TwitchStartRaid.Response.from_json(result)
+	var parsed_result: TwitchStartARaid.Response = TwitchStartARaid.Response.from_json(result)
 	parsed_result.response = response
 	
 	return parsed_result
@@ -3037,7 +3128,7 @@ func start_a_raid(opt: TwitchStartARaid.Opt) -> TwitchStartRaid.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#cancel-a-raid
 func cancel_a_raid(broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/raids?"
+	var path: String = "/raids?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
@@ -3053,7 +3144,7 @@ func cancel_a_raid(broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-stream-schedule
 func get_channel_stream_schedule(opt: TwitchGetChannelStreamSchedule.Opt, broadcaster_id: String) -> TwitchGetChannelStreamSchedule.Response:
-	var path = "/schedule?"
+	var path: String = "/schedule?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -3094,7 +3185,7 @@ func get_channel_stream_schedule(opt: TwitchGetChannelStreamSchedule.Opt, broadc
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-icalendar
 func get_channel_icalendar(broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/schedule/icalendar?"
+	var path: String = "/schedule/icalendar?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -3110,7 +3201,7 @@ func get_channel_icalendar(broadcaster_id: String) -> BufferedHTTPClient.Respons
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-channel-stream-schedule
 func update_channel_stream_schedule(opt: TwitchUpdateChannelStreamSchedule.Opt, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/schedule/settings?"
+	var path: String = "/schedule/settings?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("is_vacation_enabled"):
@@ -3136,7 +3227,7 @@ func update_channel_stream_schedule(opt: TwitchUpdateChannelStreamSchedule.Opt, 
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-channel-stream-schedule-segment
 func create_channel_stream_schedule_segment(body: TwitchCreateChannelStreamScheduleSegment.Body, broadcaster_id: String) -> TwitchCreateChannelStreamScheduleSegment.Response:
-	var path = "/schedule/segment?"
+	var path: String = "/schedule/segment?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
@@ -3160,7 +3251,7 @@ func create_channel_stream_schedule_segment(body: TwitchCreateChannelStreamSched
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-channel-stream-schedule-segment
 func update_channel_stream_schedule_segment(body: TwitchUpdateChannelStreamScheduleSegment.Body, id: String, broadcaster_id: String) -> TwitchUpdateChannelStreamScheduleSegment.Response:
-	var path = "/schedule/segment?"
+	var path: String = "/schedule/segment?"
 	path += "id=" + str(id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -3185,7 +3276,7 @@ func update_channel_stream_schedule_segment(body: TwitchUpdateChannelStreamSched
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-channel-stream-schedule-segment
 func delete_channel_stream_schedule_segment(id: String, broadcaster_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/schedule/segment?"
+	var path: String = "/schedule/segment?"
 	path += "id=" + str(id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -3202,7 +3293,7 @@ func delete_channel_stream_schedule_segment(id: String, broadcaster_id: String) 
 ##
 ## https://dev.twitch.tv/docs/api/reference#search-categories
 func search_categories(opt: TwitchSearchCategories.Opt, query: String) -> TwitchSearchCategories.Response:
-	var path = "/search/categories?"
+	var path: String = "/search/categories?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "query=" + str(query) + "&"
@@ -3236,7 +3327,7 @@ func search_categories(opt: TwitchSearchCategories.Opt, query: String) -> Twitch
 ##
 ## https://dev.twitch.tv/docs/api/reference#search-channels
 func search_channels(opt: TwitchSearchChannels.Opt, query: String) -> TwitchSearchChannels.Response:
-	var path = "/search/channels?"
+	var path: String = "/search/channels?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "query=" + str(query) + "&"
@@ -3272,7 +3363,7 @@ func search_channels(opt: TwitchSearchChannels.Opt, query: String) -> TwitchSear
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-stream-key
 func get_stream_key(broadcaster_id: String) -> TwitchGetStreamKey.Response:
-	var path = "/streams/key?"
+	var path: String = "/streams/key?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -3295,7 +3386,7 @@ func get_stream_key(broadcaster_id: String) -> TwitchGetStreamKey.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-streams
 func get_streams(opt: TwitchGetStreams.Opt) -> TwitchGetStreams.Response:
-	var path = "/streams?"
+	var path: String = "/streams?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -3348,7 +3439,7 @@ func get_streams(opt: TwitchGetStreams.Opt) -> TwitchGetStreams.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-followed-streams
 func get_followed_streams(opt: TwitchGetFollowedStreams.Opt, user_id: String) -> TwitchGetFollowedStreams.Response:
-	var path = "/streams/followed?"
+	var path: String = "/streams/followed?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "user_id=" + str(user_id) + "&"
@@ -3382,7 +3473,7 @@ func get_followed_streams(opt: TwitchGetFollowedStreams.Opt, user_id: String) ->
 ##
 ## https://dev.twitch.tv/docs/api/reference#create-stream-marker
 func create_stream_marker(body: TwitchCreateStreamMarker.Body) -> TwitchCreateStreamMarker.Response:
-	var path = "/streams/markers?"
+	var path: String = "/streams/markers?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_POST, body, "application/json")
 
@@ -3404,7 +3495,7 @@ func create_stream_marker(body: TwitchCreateStreamMarker.Body) -> TwitchCreateSt
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-stream-markers
 func get_stream_markers(opt: TwitchGetStreamMarkers.Opt) -> TwitchGetStreamMarkers.Response:
-	var path = "/streams/markers?"
+	var path: String = "/streams/markers?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -3443,7 +3534,7 @@ func get_stream_markers(opt: TwitchGetStreamMarkers.Opt) -> TwitchGetStreamMarke
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-broadcaster-subscriptions
 func get_broadcaster_subscriptions(opt: TwitchGetBroadcasterSubscriptions.Opt, broadcaster_id: String) -> TwitchGetBroadcasterSubscriptions.Response:
-	var path = "/subscriptions?"
+	var path: String = "/subscriptions?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -3484,7 +3575,7 @@ func get_broadcaster_subscriptions(opt: TwitchGetBroadcasterSubscriptions.Opt, b
 ##
 ## https://dev.twitch.tv/docs/api/reference#check-user-subscription
 func check_user_subscription(user_id: String, broadcaster_id: String) -> TwitchCheckUserSubscription.Response:
-	var path = "/subscriptions/user?"
+	var path: String = "/subscriptions/user?"
 	path += "user_id=" + str(user_id) + "&"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
@@ -3508,7 +3599,7 @@ func check_user_subscription(user_id: String, broadcaster_id: String) -> TwitchC
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-all-stream-tags
 func get_all_stream_tags(opt: TwitchGetAllStreamTags.Opt) -> TwitchGetAllStreamTags.Response:
-	var path = "/tags/streams?"
+	var path: String = "/tags/streams?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -3545,7 +3636,7 @@ func get_all_stream_tags(opt: TwitchGetAllStreamTags.Opt) -> TwitchGetAllStreamT
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-stream-tags
 func get_stream_tags(broadcaster_id: String) -> TwitchGetStreamTags.Response:
-	var path = "/streams/tags?"
+	var path: String = "/streams/tags?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -3568,7 +3659,7 @@ func get_stream_tags(broadcaster_id: String) -> TwitchGetStreamTags.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-channel-teams
 func get_channel_teams(broadcaster_id: String) -> TwitchGetChannelTeams.Response:
-	var path = "/teams/channel?"
+	var path: String = "/teams/channel?"
 	path += "broadcaster_id=" + str(broadcaster_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
@@ -3591,7 +3682,7 @@ func get_channel_teams(broadcaster_id: String) -> TwitchGetChannelTeams.Response
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-teams
 func get_teams(opt: TwitchGetTeams.Opt) -> TwitchGetTeams.Response:
-	var path = "/teams?"
+	var path: String = "/teams?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("id"):
@@ -3619,7 +3710,7 @@ func get_teams(opt: TwitchGetTeams.Opt) -> TwitchGetTeams.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-users
 func get_users(opt: TwitchGetUsers.Opt) -> TwitchGetUsers.Response:
-	var path = "/users?"
+	var path: String = "/users?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("id"):
@@ -3651,7 +3742,7 @@ func get_users(opt: TwitchGetUsers.Opt) -> TwitchGetUsers.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-user
 func update_user(opt: TwitchUpdateUser.Opt) -> TwitchUpdateUser.Response:
-	var path = "/users?"
+	var path: String = "/users?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("description"):
@@ -3671,13 +3762,38 @@ func update_user(opt: TwitchUpdateUser.Opt) -> TwitchUpdateUser.Response:
 	return parsed_result
 
 
+## NEW Gets the authorization scopes that the specified user has granted the application.
+## 
+## user_id - The ID of the user(s) you want to check authorization for. To specify more than one user, include the user\_id parameter for each user to get. For example, `user_id=1234&user_id=5678`. The maximum number of IDs you may specify is 10. 
+##
+## https://dev.twitch.tv/docs/api/reference#get-authorization-by-user
+func get_authorization_by_user(user_id: Array[String]) -> TwitchGetAuthorizationByUser.Response:
+	var path: String = "/authorization/users?"
+	
+	for param in user_id:
+		path += "user_id=" + str(param) + "&" 
+	
+	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
+
+	var result: Variant = {}
+	if response.response_code >= 400: 
+		_handle_error("get_authorization_by_user", response)
+	else:
+		result = JSON.parse_string(response.response_data.get_string_from_utf8())
+		
+	var parsed_result: TwitchGetAuthorizationByUser.Response = TwitchGetAuthorizationByUser.Response.from_json(result)
+	parsed_result.response = response
+	
+	return parsed_result
+
+
 ## Gets the list of users that the broadcaster has blocked.
 ## 
 ## broadcaster_id - The ID of the broadcaster whose list of blocked users you want to get. 
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-block-list
 func get_user_block_list(opt: TwitchGetUserBlockList.Opt, broadcaster_id: String) -> TwitchGetUserBlockList.Response:
-	var path = "/users/blocks?"
+	var path: String = "/users/blocks?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -3711,7 +3827,7 @@ func get_user_block_list(opt: TwitchGetUserBlockList.Opt, broadcaster_id: String
 ##
 ## https://dev.twitch.tv/docs/api/reference#block-user
 func block_user(opt: TwitchBlockUser.Opt, target_user_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/users/blocks?"
+	var path: String = "/users/blocks?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	path += "target_user_id=" + str(target_user_id) + "&"
@@ -3733,7 +3849,7 @@ func block_user(opt: TwitchBlockUser.Opt, target_user_id: String) -> BufferedHTT
 ##
 ## https://dev.twitch.tv/docs/api/reference#unblock-user
 func unblock_user(target_user_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/users/blocks?"
+	var path: String = "/users/blocks?"
 	path += "target_user_id=" + str(target_user_id) + "&"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_DELETE, "", "")
@@ -3749,7 +3865,7 @@ func unblock_user(target_user_id: String) -> BufferedHTTPClient.ResponseData:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-extensions
 func get_user_extensions() -> TwitchGetUserExtensions.Response:
-	var path = "/users/extensions/list?"
+	var path: String = "/users/extensions/list?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_GET, "", "")
 
@@ -3771,7 +3887,7 @@ func get_user_extensions() -> TwitchGetUserExtensions.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-user-active-extensions
 func get_user_active_extensions(opt: TwitchGetUserActiveExtensions.Opt) -> TwitchGetUserActiveExtensions.Response:
-	var path = "/users/extensions?"
+	var path: String = "/users/extensions?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("user_id"):
@@ -3797,7 +3913,7 @@ func get_user_active_extensions(opt: TwitchGetUserActiveExtensions.Opt) -> Twitc
 ##
 ## https://dev.twitch.tv/docs/api/reference#update-user-extensions
 func update_user_extensions(body: TwitchUpdateUserExtensions.Body) -> TwitchUpdateUserExtensions.Response:
-	var path = "/users/extensions?"
+	var path: String = "/users/extensions?"
 	
 	var response: BufferedHTTPClient.ResponseData = await request(path, HTTPClient.METHOD_PUT, body, "application/json")
 
@@ -3819,7 +3935,7 @@ func update_user_extensions(body: TwitchUpdateUserExtensions.Body) -> TwitchUpda
 ##
 ## https://dev.twitch.tv/docs/api/reference#get-videos
 func get_videos(opt: TwitchGetVideos.Opt) -> TwitchGetVideos.Response:
-	var path = "/videos?"
+	var path: String = "/videos?"
 	var optionals: Dictionary[StringName, Variant] = {}
 	if opt != null: optionals = opt.to_dict()
 	if optionals.has("after"):
@@ -3872,7 +3988,7 @@ func get_videos(opt: TwitchGetVideos.Opt) -> TwitchGetVideos.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#delete-videos
 func delete_videos(id: Array[String]) -> TwitchDeleteVideos.Response:
-	var path = "/videos?"
+	var path: String = "/videos?"
 	
 	for param in id:
 		path += "id=" + str(param) + "&" 
@@ -3898,7 +4014,7 @@ func delete_videos(id: Array[String]) -> TwitchDeleteVideos.Response:
 ##
 ## https://dev.twitch.tv/docs/api/reference#send-whisper
 func send_whisper(body: TwitchSendWhisper.Body, from_user_id: String, to_user_id: String) -> BufferedHTTPClient.ResponseData:
-	var path = "/whispers?"
+	var path: String = "/whispers?"
 	path += "from_user_id=" + str(from_user_id) + "&"
 	path += "to_user_id=" + str(to_user_id) + "&"
 	
