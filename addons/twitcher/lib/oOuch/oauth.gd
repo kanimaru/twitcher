@@ -123,7 +123,7 @@ func login(force: bool = false) -> bool:
 	_setup_nodes()
 	token_handler.token.load_tokens() # Load it because the setter is not always called within the token
 	if token_handler.is_token_valid() && not _got_scopes_changed() and not force: return true
-	logDebug("Token is valid (%s) and not scopes changed (%s)" % [ token_handler.is_token_valid(), _got_scopes_changed()])
+	logDebug("Token (%s) is valid (%s) and not scopes changed (%s)" % [ token_handler.token, token_handler.is_token_valid(), _got_scopes_changed()])
 
 	if login_in_process:
 		logInfo("Another process tries already to login. Abort")

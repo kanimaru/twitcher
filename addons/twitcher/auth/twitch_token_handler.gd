@@ -4,38 +4,35 @@ extends OAuthTokenHandler
 
 class_name TwitchTokenHandler
 
-## Time between checking the validation of the tokens
-var _last_validation_check: int = 0
-
+## Validate that the token is still valid
+var _validation_timer: Timer
 
 func _ready() -> void:
 	super._ready()
-	# We don't need to check right after the start
-	_last_validation_check = Time.get_ticks_msec() + 60 * 60 * 1000;
-
-
-func _check_token_refresh() -> void:
-	super._check_token_refresh()
-
-	if _last_validation_check < Time.get_ticks_msec():
-		var token = OAuth.DEBUGGER_PROTECTION + await token.get_access_token()
-		validate_token(token)
+	_validation_timer = Timer.new()
+	_validation_timer.name = "ValidationTimer"
+	_validation_timer.wait_time = 60*60 # 1 Hour
+	_validation_timer.timeout.connect(validate_token)
+	add_child(_validation_timer)
+	validate_token()
 
 
 ## Calles the validation endpoint of Twtich to make sure
-func validate_token(token: String) -> BufferedHTTPClient.ResponseData:
-	_last_validation_check = Time.get_ticks_msec() + 60 * 60 * 1000;
+func validate_token() -> BufferedHTTPClient.ResponseData:
 	var validation_request = _http_client.request("https://id.twitch.tv/oauth2/validate", HTTPClient.METHOD_GET, {
-		"Authorization": "OAuth %s" % token.trim_prefix(OAuth.DEBUGGER_PROTECTION)
+		"Authorization": "OAuth %s" % await token.get_access_token()
 	}, "")
 	var response: BufferedHTTPClient.ResponseData = await _http_client.wait_for_request(validation_request)
 	if response.response_code != 200:
-		refresh_tokens()
+		logInfo("Token (%s) is not valid anymore. Tokens got reset please reauthenticate! Twitch: %s " % [ token, response.response_data.get_string_from_utf8() ] )
+		token.remove_tokens()
+		unauthenticated.emit()
 		return response
 
 	var response_string: String = response.response_data.get_string_from_utf8();
 	var response_data: Variant = JSON.parse_string(response_string);
 	if response_data["expires_in"] <= 0:
+		logInfo("Token is valid! (%s)" % token)
 		refresh_tokens()
 	return response
 
