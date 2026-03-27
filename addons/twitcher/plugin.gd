@@ -117,7 +117,8 @@ func generate_api() -> void:
 	remove_child(generator_api)
 	remove_child(parser_api)
 	remove_child(parser_eventsub)
-	
+	EditorInterface.get_resource_filesystem().scan()
+
 
 func is_magick_available() -> bool:
 	var transformer: MagicImageTransformer = MagicImageTransformer.new()
