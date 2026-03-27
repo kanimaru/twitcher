@@ -141,9 +141,43 @@ static func get_rfc_3339_date_format(time: Variant) -> String:
 var grouped_files: Dictionary[String, Variant] = {}
 
 
+func generate_api() -> void:
+	# Get all classes in the API Folder to remove not needed anymore
+	var existing_classes: PackedStringArray = get_all_classes(api_output_path)
+	
+	for component: Variant in parser.components:
+		prepare_component(component)
+	
+	# Generate TwitchAPI
+	var twitch_api_code: String = twitch_api_header
+	for method: TwitchGenMethod in parser.methods:
+		twitch_api_code += method_code(method)
+	write_output_file(api_output_path + "twitch_api.gd", twitch_api_code)
+	
+	# Generate Components
+	for component: Variant in grouped_files.values():
+		var code: String = ""
+		if component is GroupedComponent:
+			code = group_code(component)
+		else:
+			code = component_code(component, 0)
+		write_output_file(api_output_path + component.get_filename(), code)
+		existing_classes.erase(component.get_filename())
+
+	
+	print("API regenerated you can find it under: %s" % api_output_path)
+
+	for cls in existing_classes:
+		if cls.get_extension() == "gd":
+			var absolute_path: String = ProjectSettings.globalize_path(api_output_path + cls)
+			DirAccess.remove_absolute(absolute_path)
+			DirAccess.remove_absolute(absolute_path + ".uid")
+			print("- got deleted ", cls)
+
+
 func prepare_component(component: TwitchGenComponent) -> void:
 	if component._is_root:
-		var base_name = get_base_name(component._classname)
+		var base_name: String = get_base_name(component._classname)
 		
 		# No suffix class lives by its own
 		if base_name == component._classname:
@@ -161,31 +195,12 @@ func prepare_component(component: TwitchGenComponent) -> void:
 			for sub_component in sub_components_to_update:
 				sub_component._classname = component._classname + sub_component._classname
 				sub_components_to_update.append_array(sub_component._sub_components.values())
-	pass
-	
-	
-	
-func generate_api() -> void:
-	for component: Variant in parser.components:
-		prepare_component(component)
-	
-	# Generate TwitchAPI
-	var twitch_api_code = twitch_api_header
-	for method: TwitchGenMethod in parser.methods:
-		twitch_api_code += method_code(method)
-	write_output_file(api_output_path + "twitch_api.gd", twitch_api_code)
-	
-	# Generate Components
-	for component: Variant in grouped_files.values():
-		var code = ""
-		if component is GroupedComponent:
-			code = group_code(component)
-		else:
-			code = component_code(component, 0)
-		write_output_file(api_output_path + component.get_filename(), code)
-	
-	print("API regenerated you can find it under: %s" % api_output_path)
 
+
+## Return array of the filenames in the folder
+func get_all_classes(folder: String) -> PackedStringArray:
+	return DirAccess.get_files_at(folder)
+	
 
 class GroupedComponent extends RefCounted:
 	var base_name: String

@@ -28,6 +28,26 @@ class Condition extends TwitchData:
 
 
 ## 
+## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddV2Condition
+class V2Condition extends TwitchData:
+
+	## The broadcaster user ID for the channel you want to receive channel points reward add notifications for.
+	@export var broadcaster_user_id: String:
+		set(val): 
+			broadcaster_user_id = val
+			track_data(&"broadcaster_user_id", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> V2Condition:
+		var result: V2Condition = V2Condition.new()
+		if d.get("broadcaster_user_id", null) != null:
+			result.broadcaster_user_id = d["broadcaster_user_id"]
+		return result
+	
+
+
+## 
 ## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddEvent
 class Event extends TwitchData:
 
@@ -252,5 +272,246 @@ class Emotes extends TwitchData:
 			result.begin = d["begin"]
 		if d.get("end", null) != null:
 			result.end = d["end"]
+		return result
+	
+
+
+## 
+## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddV2Event
+class V2Event extends TwitchData:
+
+	## The ID of the channel where the reward was redeemed.
+	@export var broadcaster_user_id: String:
+		set(val): 
+			broadcaster_user_id = val
+			track_data(&"broadcaster_user_id", val)
+	
+	## The login of the channel where the reward was redeemed.
+	@export var broadcaster_user_login: String:
+		set(val): 
+			broadcaster_user_login = val
+			track_data(&"broadcaster_user_login", val)
+	
+	## The display name of the channel where the reward was redeemed.
+	@export var broadcaster_user_name: String:
+		set(val): 
+			broadcaster_user_name = val
+			track_data(&"broadcaster_user_name", val)
+	
+	## The ID of the redeeming user.
+	@export var user_id: String:
+		set(val): 
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the redeeming user.
+	@export var user_login: String:
+		set(val): 
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The display name of the redeeming user.
+	@export var user_name: String:
+		set(val): 
+			user_name = val
+			track_data(&"user_name", val)
+	
+	## The ID of the Redemption.
+	@export var id: String:
+		set(val): 
+			id = val
+			track_data(&"id", val)
+	
+	## An object that contains the reward information.
+	@export var reward: RewardV2:
+		set(val): 
+			reward = val
+			track_data(&"reward", val)
+	
+	## Optional. An object that contains the user message and emote information needed to recreate the message.
+	@export var message: MessageV2:
+		set(val): 
+			message = val
+			track_data(&"message", val)
+	
+	## The UTC date and time (in RFC3339 format) of when the reward was redeemed.
+	@export var redeemed_at: String:
+		set(val): 
+			redeemed_at = val
+			track_data(&"redeemed_at", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> V2Event:
+		var result: V2Event = V2Event.new()
+		if d.get("broadcaster_user_id", null) != null:
+			result.broadcaster_user_id = d["broadcaster_user_id"]
+		if d.get("broadcaster_user_login", null) != null:
+			result.broadcaster_user_login = d["broadcaster_user_login"]
+		if d.get("broadcaster_user_name", null) != null:
+			result.broadcaster_user_name = d["broadcaster_user_name"]
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		if d.get("id", null) != null:
+			result.id = d["id"]
+		if d.get("reward", null) != null:
+			result.reward = RewardV2.from_json(d["reward"])
+		if d.get("message", null) != null:
+			result.message = MessageV2.from_json(d["message"])
+		if d.get("redeemed_at", null) != null:
+			result.redeemed_at = d["redeemed_at"]
+		return result
+	
+
+
+## An object that contains the reward information.
+## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddV2Event/Reward
+class RewardV2 extends TwitchData:
+
+	## The type of reward. One of: single_message_bypass_sub_modesend_highlighted_messagerandom_sub_emote_unlockchosen_sub_emote_unlockchosen_modified_sub_emote_unlock
+	@export var type: String:
+		set(val): 
+			type = val
+			track_data(&"type", val)
+	
+	## Number of channel points used.
+	@export var channel_points: int:
+		set(val): 
+			channel_points = val
+			track_data(&"channel_points", val)
+	
+	## Optional. Emote associated with the reward.
+	@export var emote: EmoteV2:
+		set(val): 
+			emote = val
+			track_data(&"emote", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> RewardV2:
+		var result: RewardV2 = RewardV2.new()
+		if d.get("type", null) != null:
+			result.type = d["type"]
+		if d.get("channel_points", null) != null:
+			result.channel_points = d["channel_points"]
+		if d.get("emote", null) != null:
+			result.emote = EmoteV2.from_json(d["emote"])
+		return result
+	
+
+
+## Optional. Emote associated with the reward.
+## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddV2Event/Reward/Emote
+class EmoteV2 extends TwitchData:
+
+	## The emote ID.
+	@export var id: String:
+		set(val): 
+			id = val
+			track_data(&"id", val)
+	
+	## The human readable emote token.
+	@export var name: String:
+		set(val): 
+			name = val
+			track_data(&"name", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> EmoteV2:
+		var result: EmoteV2 = EmoteV2.new()
+		if d.get("id", null) != null:
+			result.id = d["id"]
+		if d.get("name", null) != null:
+			result.name = d["name"]
+		return result
+	
+
+
+## Optional. An object that contains the user message and emote information needed to recreate the message.
+## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddV2Event/Message
+class MessageV2 extends TwitchData:
+
+	## The chat message in plain text.
+	@export var text: String:
+		set(val): 
+			text = val
+			track_data(&"text", val)
+	
+	## The ordered list of chat message fragments.
+	@export var fragments: Array[FragmentsV2]:
+		set(val): 
+			fragments = val
+			track_data(&"fragments", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> MessageV2:
+		var result: MessageV2 = MessageV2.new()
+		if d.get("text", null) != null:
+			result.text = d["text"]
+		if d.get("fragments", null) != null:
+			for value in d["fragments"]:
+				result.fragments.append(FragmentsV2.from_json(value))
+		return result
+	
+
+
+## The ordered list of chat message fragments.
+## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddV2Event/Message/Fragments
+class FragmentsV2 extends TwitchData:
+
+	## The message text in fragment.
+	@export var text: String:
+		set(val): 
+			text = val
+			track_data(&"text", val)
+	
+	## The type of message fragment. Possible values are: textemote
+	@export var type: String:
+		set(val): 
+			type = val
+			track_data(&"type", val)
+	
+	## Optional. The metadata pertaining to the emote.
+	@export var emote: Fragments_EmoteV2:
+		set(val): 
+			emote = val
+			track_data(&"emote", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> FragmentsV2:
+		var result: FragmentsV2 = FragmentsV2.new()
+		if d.get("text", null) != null:
+			result.text = d["text"]
+		if d.get("type", null) != null:
+			result.type = d["type"]
+		if d.get("emote", null) != null:
+			result.emote = Fragments_EmoteV2.from_json(d["emote"])
+		return result
+	
+
+
+## Optional. The metadata pertaining to the emote.
+## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddV2Event/Message/Fragments/Emote
+class Fragments_EmoteV2 extends TwitchData:
+
+	## The ID that uniquely identifies this emote.
+	@export var id: String:
+		set(val): 
+			id = val
+			track_data(&"id", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> Fragments_EmoteV2:
+		var result: Fragments_EmoteV2 = Fragments_EmoteV2.new()
+		if d.get("id", null) != null:
+			result.id = d["id"]
 		return result
 	
