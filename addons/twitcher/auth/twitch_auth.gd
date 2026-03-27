@@ -117,7 +117,6 @@ static func create_default_oauth_setting() -> OAuthSetting:
 	oauth_setting.device_authorization_url = "https://id.twitch.tv/oauth2/device"
 	oauth_setting.token_url = "https://id.twitch.tv/oauth2/token"
 	oauth_setting.authorization_url = "https://id.twitch.tv/oauth2/authorize"
-	oauth_setting.cache_file = "user://auth.conf"
 	oauth_setting.redirect_url = "http://localhost:7170"
 	return oauth_setting
 	

@@ -15,8 +15,6 @@ class_name OAuthSetting
 @export var authorization_url: String
 ## Path to the device code flow URL.
 @export var device_authorization_url: String
-## Where should the tokens be cached
-@export var cache_file: String = "res://auth.key"
 ## Client ID to authorize
 @export var client_id: String:
 	set(val): 
