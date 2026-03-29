@@ -495,14 +495,17 @@ static func from_json(d: Dictionary) -> {classname}:
 			code += """
 		for value in d["{name}"]:
 			result.{name}.append({type}.from_json(value))\n""".lstrip("\n")
+			code += "\t\tresult.track_data(&\"{name}\", result.{name})\n"
 		elif field._is_array:
 			code += """
 		for value in d["{name}"]:
 			result.{name}.append(value)\n""".lstrip("\n")
+			code += "\t\tresult.track_data(&\"{name}\", result.{name})\n"
 		elif field._is_sub_class:
 			code += "\t\tresult.{name} = {type}.from_json(d[\"{name}\"])\n"
 		else:
 			code += "\t\tresult.{name} = d[\"{name}\"]\n"
+		
 		code = code.format({
 			"name": field._name,
 			"type": get_type(field._type, false)

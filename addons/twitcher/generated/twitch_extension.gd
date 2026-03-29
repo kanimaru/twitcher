@@ -226,6 +226,7 @@ static func from_json(d: Dictionary) -> TwitchExtension:
 	if d.get("screenshot_urls", null) != null:
 		for value in d["screenshot_urls"]:
 			result.screenshot_urls.append(value)
+		result.track_data(&"screenshot_urls", result.screenshot_urls)
 	if d.get("state", null) != null:
 		result.state = d["state"]
 	if d.get("subscriptions_support_level", null) != null:
@@ -243,9 +244,11 @@ static func from_json(d: Dictionary) -> TwitchExtension:
 	if d.get("allowlisted_config_urls", null) != null:
 		for value in d["allowlisted_config_urls"]:
 			result.allowlisted_config_urls.append(value)
+		result.track_data(&"allowlisted_config_urls", result.allowlisted_config_urls)
 	if d.get("allowlisted_panel_urls", null) != null:
 		for value in d["allowlisted_panel_urls"]:
 			result.allowlisted_panel_urls.append(value)
+		result.track_data(&"allowlisted_panel_urls", result.allowlisted_panel_urls)
 	return result
 
 

@@ -45,6 +45,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(ResponseData.from_json(value))
+			result.track_data(&"data", result.data)
 		if d.get("all_time_high", null) != null:
 			result.all_time_high = ResponseAllTimeHigh.from_json(d["all_time_high"])
 		if d.get("shared_all_time_high", null) != null:
@@ -176,6 +177,7 @@ class ResponseCurrent extends TwitchData:
 		if d.get("top_contributions", null) != null:
 			for value in d["top_contributions"]:
 				result.top_contributions.append(ResponseTopContributions.from_json(value))
+			result.track_data(&"top_contributions", result.top_contributions)
 		return result
 	
 
@@ -276,6 +278,7 @@ class ResponseTopContributions extends TwitchData:
 		if d.get("shared_train_participants", null) != null:
 			for value in d["shared_train_participants"]:
 				result.shared_train_participants.append(ResponseSharedTrainParticipants.from_json(value))
+			result.track_data(&"shared_train_participants", result.shared_train_participants)
 		if d.get("started_at", null) != null:
 			result.started_at = d["started_at"]
 		if d.get("expires_at", null) != null:

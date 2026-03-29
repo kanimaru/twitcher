@@ -76,9 +76,11 @@ class Body extends TwitchData:
 		if d.get("tags", null) != null:
 			for value in d["tags"]:
 				result.tags.append(value)
+			result.track_data(&"tags", result.tags)
 		if d.get("content_classification_labels", null) != null:
 			for value in d["content_classification_labels"]:
 				result.content_classification_labels.append(BodyContentClassificationLabels.from_json(value))
+			result.track_data(&"content_classification_labels", result.content_classification_labels)
 		if d.get("is_branded_content", null) != null:
 			result.is_branded_content = d["is_branded_content"]
 		return result

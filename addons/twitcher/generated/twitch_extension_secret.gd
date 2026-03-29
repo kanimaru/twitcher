@@ -36,6 +36,7 @@ static func from_json(d: Dictionary) -> TwitchExtensionSecret:
 	if d.get("secrets", null) != null:
 		for value in d["secrets"]:
 			result.secrets.append(Secrets.from_json(value))
+		result.track_data(&"secrets", result.secrets)
 	return result
 
 

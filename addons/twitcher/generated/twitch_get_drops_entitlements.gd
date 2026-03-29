@@ -37,6 +37,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchDropsEntitlement.from_json(value))
+			result.track_data(&"data", result.data)
 		if d.get("pagination", null) != null:
 			result.pagination = ResponsePagination.from_json(d["pagination"])
 		return result
@@ -166,6 +167,7 @@ class Opt extends TwitchData:
 		if d.get("id", null) != null:
 			for value in d["id"]:
 				result.id.append(value)
+			result.track_data(&"id", result.id)
 		if d.get("user_id", null) != null:
 			result.user_id = d["user_id"]
 		if d.get("game_id", null) != null:

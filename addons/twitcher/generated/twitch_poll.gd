@@ -135,6 +135,7 @@ static func from_json(d: Dictionary) -> TwitchPoll:
 	if d.get("choices", null) != null:
 		for value in d["choices"]:
 			result.choices.append(Choices.from_json(value))
+		result.track_data(&"choices", result.choices)
 	if d.get("bits_voting_enabled", null) != null:
 		result.bits_voting_enabled = d["bits_voting_enabled"]
 	if d.get("bits_per_vote", null) != null:

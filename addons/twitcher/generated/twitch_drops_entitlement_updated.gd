@@ -42,5 +42,6 @@ static func from_json(d: Dictionary) -> TwitchDropsEntitlementUpdated:
 	if d.get("ids", null) != null:
 		for value in d["ids"]:
 			result.ids.append(value)
+		result.track_data(&"ids", result.ids)
 	return result
 

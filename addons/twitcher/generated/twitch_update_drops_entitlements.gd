@@ -39,6 +39,7 @@ class Body extends TwitchData:
 		if d.get("entitlement_ids", null) != null:
 			for value in d["entitlement_ids"]:
 				result.entitlement_ids.append(value)
+			result.track_data(&"entitlement_ids", result.entitlement_ids)
 		if d.get("fulfillment_status", null) != null:
 			result.fulfillment_status = d["fulfillment_status"]
 		return result
@@ -69,5 +70,6 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchDropsEntitlementUpdated.from_json(value))
+			result.track_data(&"data", result.data)
 		return result
 	

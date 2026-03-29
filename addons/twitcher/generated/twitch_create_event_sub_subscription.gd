@@ -171,6 +171,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchEventSubSubscription.from_json(value))
+			result.track_data(&"data", result.data)
 		if d.get("total", null) != null:
 			result.total = d["total"]
 		if d.get("total_cost", null) != null:

@@ -38,6 +38,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchEmote.from_json(value))
+			result.track_data(&"data", result.data)
 		if d.get("template", null) != null:
 			result.template = d["template"]
 		return result

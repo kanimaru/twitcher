@@ -155,6 +155,7 @@ class ResponseData extends TwitchData:
 		if d.get("segments", null) != null:
 			for value in d["segments"]:
 				result.segments.append(TwitchChannelStreamScheduleSegment.from_json(value))
+			result.track_data(&"segments", result.segments)
 		if d.get("broadcaster_id", null) != null:
 			result.broadcaster_id = d["broadcaster_id"]
 		if d.get("broadcaster_name", null) != null:

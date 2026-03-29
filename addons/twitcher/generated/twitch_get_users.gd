@@ -31,6 +31,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchUser.from_json(value))
+			result.track_data(&"data", result.data)
 		return result
 	
 
@@ -64,8 +65,10 @@ class Opt extends TwitchData:
 		if d.get("id", null) != null:
 			for value in d["id"]:
 				result.id.append(value)
+			result.track_data(&"id", result.id)
 		if d.get("login", null) != null:
 			for value in d["login"]:
 				result.login.append(value)
+			result.track_data(&"login", result.login)
 		return result
 	

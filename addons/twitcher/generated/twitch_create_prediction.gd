@@ -56,6 +56,7 @@ class Body extends TwitchData:
 		if d.get("outcomes", null) != null:
 			for value in d["outcomes"]:
 				result.outcomes.append(BodyOutcomes.from_json(value))
+			result.track_data(&"outcomes", result.outcomes)
 		if d.get("prediction_window", null) != null:
 			result.prediction_window = d["prediction_window"]
 		return result
@@ -113,5 +114,6 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchPrediction.from_json(value))
+			result.track_data(&"data", result.data)
 		return result
 	

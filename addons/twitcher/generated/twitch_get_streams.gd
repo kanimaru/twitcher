@@ -37,6 +37,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchStream.from_json(value))
+			result.track_data(&"data", result.data)
 		if d.get("pagination", null) != null:
 			result.pagination = ResponsePagination.from_json(d["pagination"])
 		return result
@@ -182,17 +183,21 @@ class Opt extends TwitchData:
 		if d.get("user_id", null) != null:
 			for value in d["user_id"]:
 				result.user_id.append(value)
+			result.track_data(&"user_id", result.user_id)
 		if d.get("user_login", null) != null:
 			for value in d["user_login"]:
 				result.user_login.append(value)
+			result.track_data(&"user_login", result.user_login)
 		if d.get("game_id", null) != null:
 			for value in d["game_id"]:
 				result.game_id.append(value)
+			result.track_data(&"game_id", result.game_id)
 		if d.get("type", null) != null:
 			result.type = d["type"]
 		if d.get("language", null) != null:
 			for value in d["language"]:
 				result.language.append(value)
+			result.track_data(&"language", result.language)
 		if d.get("first", null) != null:
 			result.first = d["first"]
 		if d.get("before", null) != null:

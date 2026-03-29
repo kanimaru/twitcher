@@ -40,6 +40,7 @@ class Body extends TwitchData:
 		if d.get("shards", null) != null:
 			for value in d["shards"]:
 				result.shards.append(BodyShards.from_json(value))
+			result.track_data(&"shards", result.shards)
 		return result
 	
 
@@ -164,9 +165,11 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(ResponseData.from_json(value))
+			result.track_data(&"data", result.data)
 		if d.get("errors", null) != null:
 			for value in d["errors"]:
 				result.errors.append(ResponseErrors.from_json(value))
+			result.track_data(&"errors", result.errors)
 		return result
 	
 

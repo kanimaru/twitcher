@@ -45,6 +45,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchBitsLeaderboard.from_json(value))
+			result.track_data(&"data", result.data)
 		if d.get("date_range", null) != null:
 			result.date_range = ResponseDateRange.from_json(d["date_range"])
 		if d.get("total", null) != null:

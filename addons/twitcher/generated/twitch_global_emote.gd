@@ -80,12 +80,15 @@ static func from_json(d: Dictionary) -> TwitchGlobalEmote:
 	if d.get("format", null) != null:
 		for value in d["format"]:
 			result.format.append(value)
+		result.track_data(&"format", result.format)
 	if d.get("scale", null) != null:
 		for value in d["scale"]:
 			result.scale.append(value)
+		result.track_data(&"scale", result.scale)
 	if d.get("theme_mode", null) != null:
 		for value in d["theme_mode"]:
 			result.theme_mode.append(value)
+		result.track_data(&"theme_mode", result.theme_mode)
 	return result
 
 

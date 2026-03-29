@@ -31,6 +31,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(ResponseData.from_json(value))
+			result.track_data(&"data", result.data)
 		return result
 	
 
@@ -91,6 +92,7 @@ class ResponseData extends TwitchData:
 		if d.get("participants", null) != null:
 			for value in d["participants"]:
 				result.participants.append(ResponseParticipants.from_json(value))
+			result.track_data(&"participants", result.participants)
 		if d.get("created_at", null) != null:
 			result.created_at = d["created_at"]
 		if d.get("updated_at", null) != null:

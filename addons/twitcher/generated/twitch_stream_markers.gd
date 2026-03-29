@@ -54,6 +54,7 @@ static func from_json(d: Dictionary) -> TwitchStreamMarkers:
 	if d.get("videos", null) != null:
 		for value in d["videos"]:
 			result.videos.append(Videos.from_json(value))
+		result.track_data(&"videos", result.videos)
 	return result
 
 
@@ -91,6 +92,7 @@ class Videos extends TwitchData:
 		if d.get("markers", null) != null:
 			for value in d["markers"]:
 				result.markers.append(Markers.from_json(value))
+			result.track_data(&"markers", result.markers)
 		return result
 	
 

@@ -36,6 +36,7 @@ static func from_json(d: Dictionary) -> TwitchChatBadge:
 	if d.get("versions", null) != null:
 		for value in d["versions"]:
 			result.versions.append(Versions.from_json(value))
+		result.track_data(&"versions", result.versions)
 	return result
 
 

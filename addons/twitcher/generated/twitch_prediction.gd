@@ -121,6 +121,7 @@ static func from_json(d: Dictionary) -> TwitchPrediction:
 	if d.get("outcomes", null) != null:
 		for value in d["outcomes"]:
 			result.outcomes.append(TwitchPredictionOutcome.from_json(value))
+		result.track_data(&"outcomes", result.outcomes)
 	if d.get("prediction_window", null) != null:
 		result.prediction_window = d["prediction_window"]
 	if d.get("status", null) != null:

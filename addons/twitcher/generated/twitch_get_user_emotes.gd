@@ -48,6 +48,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(ResponseData.from_json(value))
+			result.track_data(&"data", result.data)
 		if d.get("template", null) != null:
 			result.template = d["template"]
 		if d.get("pagination", null) != null:
@@ -206,12 +207,15 @@ class ResponseData extends TwitchData:
 		if d.get("format", null) != null:
 			for value in d["format"]:
 				result.format.append(value)
+			result.track_data(&"format", result.format)
 		if d.get("scale", null) != null:
 			for value in d["scale"]:
 				result.scale.append(value)
+			result.track_data(&"scale", result.scale)
 		if d.get("theme_mode", null) != null:
 			for value in d["theme_mode"]:
 				result.theme_mode.append(value)
+			result.track_data(&"theme_mode", result.theme_mode)
 		return result
 	
 

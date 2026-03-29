@@ -31,6 +31,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(ResponseData.from_json(value))
+			result.track_data(&"data", result.data)
 		return result
 	
 
@@ -104,5 +105,6 @@ class ResponseData extends TwitchData:
 		if d.get("types", null) != null:
 			for value in d["types"]:
 				result.types.append(value)
+			result.track_data(&"types", result.types)
 		return result
 	

@@ -92,6 +92,7 @@ class ResponseData extends TwitchData:
 		if d.get("segments", null) != null:
 			for value in d["segments"]:
 				result.segments.append(TwitchChannelStreamScheduleSegment.from_json(value))
+			result.track_data(&"segments", result.segments)
 		if d.get("broadcaster_id", null) != null:
 			result.broadcaster_id = d["broadcaster_id"]
 		if d.get("broadcaster_name", null) != null:
@@ -260,6 +261,7 @@ class Opt extends TwitchData:
 		if d.get("id", null) != null:
 			for value in d["id"]:
 				result.id.append(value)
+			result.track_data(&"id", result.id)
 		if d.get("start_time", null) != null:
 			result.start_time = d["start_time"]
 		if d.get("utc_offset", null) != null:

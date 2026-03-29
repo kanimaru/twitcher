@@ -68,5 +68,6 @@ static func from_json(d: Dictionary) -> TwitchUserExtension:
 	if d.get("type", null) != null:
 		for value in d["type"]:
 			result.type.append(value)
+		result.track_data(&"type", result.type)
 	return result
 

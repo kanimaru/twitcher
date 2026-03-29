@@ -175,6 +175,7 @@ static func from_json(d: Dictionary) -> TwitchVideo:
 	if d.get("muted_segments", null) != null:
 		for value in d["muted_segments"]:
 			result.muted_segments.append(MutedSegments.from_json(value))
+		result.track_data(&"muted_segments", result.muted_segments)
 	return result
 
 

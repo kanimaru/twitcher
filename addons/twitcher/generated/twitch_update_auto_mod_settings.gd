@@ -121,5 +121,6 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchAutoModSettings.from_json(value))
+			result.track_data(&"data", result.data)
 		return result
 	

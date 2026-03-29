@@ -157,9 +157,11 @@ static func from_json(d: Dictionary) -> TwitchStream:
 	if d.get("tag_ids", null) != null:
 		for value in d["tag_ids"]:
 			result.tag_ids.append(value)
+		result.track_data(&"tag_ids", result.tag_ids)
 	if d.get("tags", null) != null:
 		for value in d["tags"]:
 			result.tags.append(value)
+		result.track_data(&"tags", result.tags)
 	if d.get("is_mature", null) != null:
 		result.is_mature = d["is_mature"]
 	return result

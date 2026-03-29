@@ -90,6 +90,7 @@ static func from_json(d: Dictionary) -> TwitchTeam:
 	if d.get("users", null) != null:
 		for value in d["users"]:
 			result.users.append(Users.from_json(value))
+		result.track_data(&"users", result.users)
 	if d.get("background_image_url", null) != null:
 		result.background_image_url = d["background_image_url"]
 	if d.get("banner", null) != null:

@@ -70,6 +70,7 @@ static func from_json(d: Dictionary) -> TwitchCheermote:
 	if d.get("tiers", null) != null:
 		for value in d["tiers"]:
 			result.tiers.append(Tiers.from_json(value))
+		result.track_data(&"tiers", result.tiers)
 	if d.get("type", null) != null:
 		result.type = d["type"]
 	if d.get("order", null) != null:

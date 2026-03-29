@@ -68,6 +68,7 @@ class Body extends TwitchData:
 		if d.get("choices", null) != null:
 			for value in d["choices"]:
 				result.choices.append(BodyChoices.from_json(value))
+			result.track_data(&"choices", result.choices)
 		if d.get("duration", null) != null:
 			result.duration = d["duration"]
 		if d.get("channel_points_voting_enabled", null) != null:
@@ -129,5 +130,6 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchPoll.from_json(value))
+			result.track_data(&"data", result.data)
 		return result
 	

@@ -120,9 +120,11 @@ static func from_json(d: Dictionary) -> TwitchChannel:
 	if d.get("tag_ids", null) != null:
 		for value in d["tag_ids"]:
 			result.tag_ids.append(value)
+		result.track_data(&"tag_ids", result.tag_ids)
 	if d.get("tags", null) != null:
 		for value in d["tags"]:
 			result.tags.append(value)
+		result.track_data(&"tags", result.tags)
 	if d.get("thumbnail_url", null) != null:
 		result.thumbnail_url = d["thumbnail_url"]
 	if d.get("title", null) != null:

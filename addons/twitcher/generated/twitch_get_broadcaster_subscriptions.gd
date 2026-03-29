@@ -51,6 +51,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchBroadcasterSubscription.from_json(value))
+			result.track_data(&"data", result.data)
 		if d.get("pagination", null) != null:
 			result.pagination = ResponsePagination.from_json(d["pagination"])
 		if d.get("points", null) != null:
@@ -171,6 +172,7 @@ class Opt extends TwitchData:
 		if d.get("user_id", null) != null:
 			for value in d["user_id"]:
 				result.user_id.append(value)
+			result.track_data(&"user_id", result.user_id)
 		if d.get("first", null) != null:
 			result.first = d["first"]
 		if d.get("after", null) != null:

@@ -31,6 +31,7 @@ class Response extends TwitchData:
 		if d.get("data", null) != null:
 			for value in d["data"]:
 				result.data.append(TwitchCustomReward.from_json(value))
+			result.track_data(&"data", result.data)
 		return result
 	
 
@@ -66,6 +67,7 @@ class Opt extends TwitchData:
 		if d.get("id", null) != null:
 			for value in d["id"]:
 				result.id.append(value)
+			result.track_data(&"id", result.id)
 		if d.get("only_manageable_rewards", null) != null:
 			result.only_manageable_rewards = d["only_manageable_rewards"]
 		return result

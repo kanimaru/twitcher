@@ -75,6 +75,7 @@ static func from_json(d: Dictionary) -> TwitchPredictionOutcome:
 	if d.get("top_predictors", null) != null:
 		for value in d["top_predictors"]:
 			result.top_predictors.append(TopPredictors.from_json(value))
+		result.track_data(&"top_predictors", result.top_predictors)
 	if d.get("color", null) != null:
 		result.color = d["color"]
 	return result
