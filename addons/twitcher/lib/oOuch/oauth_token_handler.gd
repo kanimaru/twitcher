@@ -46,6 +46,7 @@ func _ready() -> void:
 	_expiration_check_timer.name = "ExpirationCheck"
 	_expiration_check_timer.timeout.connect(refresh_tokens)
 	add_child(_expiration_check_timer)
+	token.load_tokens()
 	update_expiration_check()
 	
 	
@@ -147,7 +148,11 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 
 ## Uses the refresh token if possible to refresh all tokens
 func refresh_tokens() -> void:
-	if not token.has_refresh_token(): return
+	if not token.has_refresh_token(): 
+		logDebug("%s has no refresh token can't refresh" % token)
+		unauthenticated.emit()
+		_expiration_check_timer.stop()
+		return
 	
 	if not oauth_setting.is_valid(): 
 		logError("Try to refresh token (%s) but oauth settings are invalid. Can't refresh token." % token)
