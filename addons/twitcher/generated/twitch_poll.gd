@@ -120,6 +120,7 @@ static func create(_id: String, _broadcaster_id: String, _broadcaster_name: Stri
 	return twitch_poll
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchPoll:
 	var result: TwitchPoll = TwitchPoll.new()
 	if d.get("id", null) != null:
@@ -203,6 +204,7 @@ class Choices extends TwitchData:
 		return choices
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Choices:
 		var result: Choices = Choices.new()
 		if d.get("id", null) != null:

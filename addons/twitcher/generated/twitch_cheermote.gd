@@ -63,6 +63,7 @@ static func create(_prefix: String, _tiers: Array[Tiers], _type: String, _order:
 	return twitch_cheermote
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchCheermote:
 	var result: TwitchCheermote = TwitchCheermote.new()
 	if d.get("prefix", null) != null:
@@ -145,6 +146,7 @@ class Tiers extends TwitchData:
 		return tiers
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Tiers:
 		var result: Tiers = Tiers.new()
 		if d.get("min_bits", null) != null:

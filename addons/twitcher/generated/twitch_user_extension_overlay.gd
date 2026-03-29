@@ -40,6 +40,7 @@ static func create(_active: bool) -> TwitchUserExtensionOverlay:
 	return twitch_user_extension_overlay
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchUserExtensionOverlay:
 	var result: TwitchUserExtensionOverlay = TwitchUserExtensionOverlay.new()
 	if d.get("active", null) != null:

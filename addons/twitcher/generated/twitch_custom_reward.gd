@@ -155,6 +155,7 @@ static func create(_broadcaster_id: String, _broadcaster_login: String, _broadca
 	return twitch_custom_reward
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchCustomReward:
 	var result: TwitchCustomReward = TwitchCustomReward.new()
 	if d.get("broadcaster_id", null) != null:
@@ -234,6 +235,7 @@ class TwitchImage extends TwitchData:
 		return twitch_image
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> TwitchImage:
 		var result: TwitchImage = TwitchImage.new()
 		if d.get("url_1x", null) != null:
@@ -279,6 +281,7 @@ class DefaultImage extends TwitchData:
 		return default_image
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> DefaultImage:
 		var result: DefaultImage = DefaultImage.new()
 		if d.get("url_1x", null) != null:
@@ -317,6 +320,7 @@ class MaxPerStreamSetting extends TwitchData:
 		return max_per_stream_setting
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> MaxPerStreamSetting:
 		var result: MaxPerStreamSetting = MaxPerStreamSetting.new()
 		if d.get("is_enabled", null) != null:
@@ -353,6 +357,7 @@ class MaxPerUserPerStreamSetting extends TwitchData:
 		return max_per_user_per_stream_setting
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> MaxPerUserPerStreamSetting:
 		var result: MaxPerUserPerStreamSetting = MaxPerUserPerStreamSetting.new()
 		if d.get("is_enabled", null) != null:
@@ -389,6 +394,7 @@ class GlobalCooldownSetting extends TwitchData:
 		return global_cooldown_setting
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> GlobalCooldownSetting:
 		var result: GlobalCooldownSetting = GlobalCooldownSetting.new()
 		if d.get("is_enabled", null) != null:

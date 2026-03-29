@@ -43,6 +43,7 @@ static func create(_id: String, _name: String, _box_art_url: String, _igdb_id: S
 	return twitch_game
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchGame:
 	var result: TwitchGame = TwitchGame.new()
 	if d.get("id", null) != null:

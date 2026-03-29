@@ -88,6 +88,7 @@ static func create(_id: String, _status: String, _type: String, _version: String
 	return twitch_event_sub_subscription
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchEventSubSubscription:
 	var result: TwitchEventSubSubscription = TwitchEventSubSubscription.new()
 	if d.get("id", null) != null:
@@ -156,6 +157,7 @@ class Transport extends TwitchData:
 		return transport
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Transport:
 		var result: Transport = Transport.new()
 		if d.get("method", null) != null:

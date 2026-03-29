@@ -43,6 +43,7 @@ static func create(_user_id: String, _user_login: String, _user_name: String, _c
 	return twitch_user_chat_color
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchUserChatColor:
 	var result: TwitchUserChatColor = TwitchUserChatColor.new()
 	if d.get("user_id", null) != null:

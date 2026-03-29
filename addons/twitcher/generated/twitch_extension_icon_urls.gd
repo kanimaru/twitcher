@@ -11,19 +11,19 @@ class_name TwitchExtensionIconUrls
 @export var _100x100: String:
 	set(val): 
 		_100x100 = val
-		track_data(&"_100x100", val)
+		track_data(&"100x100", val)
 
 ## 
 @export var _24x24: String:
 	set(val): 
 		_24x24 = val
-		track_data(&"_24x24", val)
+		track_data(&"24x24", val)
 
 ## 
 @export var _300x200: String:
 	set(val): 
 		_300x200 = val
-		track_data(&"_300x200", val)
+		track_data(&"300x200", val)
 
 
 
@@ -33,13 +33,14 @@ static func create() -> TwitchExtensionIconUrls:
 	return twitch_extension_icon_urls
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchExtensionIconUrls:
 	var result: TwitchExtensionIconUrls = TwitchExtensionIconUrls.new()
-	if d.get("_100x100", null) != null:
-		result._100x100 = d["_100x100"]
-	if d.get("_24x24", null) != null:
-		result._24x24 = d["_24x24"]
-	if d.get("_300x200", null) != null:
-		result._300x200 = d["_300x200"]
+	if d.get("100x100", null) != null:
+		result._100x100 = d["100x100"]
+	if d.get("24x24", null) != null:
+		result._24x24 = d["24x24"]
+	if d.get("300x200", null) != null:
+		result._300x200 = d["300x200"]
 	return result
 

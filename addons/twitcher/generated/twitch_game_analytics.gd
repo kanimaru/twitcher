@@ -43,6 +43,7 @@ static func create(_game_id: String, _URL: String, _type: String, _date_range: D
 	return twitch_game_analytics
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchGameAnalytics:
 	var result: TwitchGameAnalytics = TwitchGameAnalytics.new()
 	if d.get("game_id", null) != null:
@@ -83,6 +84,7 @@ class DateRange extends TwitchData:
 		return date_range
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> DateRange:
 		var result: DateRange = DateRange.new()
 		if d.get("started_at", null) != null:

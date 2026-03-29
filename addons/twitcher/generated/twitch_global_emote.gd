@@ -69,6 +69,7 @@ static func create(_id: String, _name: String, _images: Images, _format: Array[S
 	return twitch_global_emote
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchGlobalEmote:
 	var result: TwitchGlobalEmote = TwitchGlobalEmote.new()
 	if d.get("id", null) != null:
@@ -128,6 +129,7 @@ class Images extends TwitchData:
 		return images
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Images:
 		var result: Images = Images.new()
 		if d.get("url_1x", null) != null:

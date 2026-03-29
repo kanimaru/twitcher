@@ -4023,4 +4023,3 @@ func send_whisper(body: TwitchSendWhisper.Body, from_user_id: String, to_user_id
 	if response.response_code >= 400: 
 		_handle_error("send_whisper", response)
 	return response
-

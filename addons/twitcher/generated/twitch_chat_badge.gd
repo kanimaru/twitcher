@@ -29,6 +29,7 @@ static func create(_set_id: String, _versions: Array[Versions]) -> TwitchChatBad
 	return twitch_chat_badge
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchChatBadge:
 	var result: TwitchChatBadge = TwitchChatBadge.new()
 	if d.get("set_id", null) != null:
@@ -109,6 +110,7 @@ class Versions extends TwitchData:
 		return versions
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Versions:
 		var result: Versions = Versions.new()
 		if d.get("id", null) != null:

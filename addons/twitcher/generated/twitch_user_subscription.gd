@@ -72,6 +72,7 @@ static func create(_broadcaster_id: String, _broadcaster_login: String, _broadca
 	return twitch_user_subscription
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchUserSubscription:
 	var result: TwitchUserSubscription = TwitchUserSubscription.new()
 	if d.get("broadcaster_id", null) != null:

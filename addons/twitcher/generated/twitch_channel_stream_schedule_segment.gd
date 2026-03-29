@@ -64,6 +64,7 @@ static func create(_id: String, _start_time: String, _end_time: String, _title: 
 	return twitch_channel_stream_schedule_segment
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchChannelStreamScheduleSegment:
 	var result: TwitchChannelStreamScheduleSegment = TwitchChannelStreamScheduleSegment.new()
 	if d.get("id", null) != null:
@@ -110,6 +111,7 @@ class Category extends TwitchData:
 		return category
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Category:
 		var result: Category = Category.new()
 		if d.get("id", null) != null:

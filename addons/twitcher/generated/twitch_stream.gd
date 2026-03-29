@@ -128,6 +128,7 @@ static func create(_id: String, _user_id: String, _user_login: String, _user_nam
 	return twitch_stream
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchStream:
 	var result: TwitchStream = TwitchStream.new()
 	if d.get("id", null) != null:

@@ -195,6 +195,7 @@ static func create(_author_name: String, _bits_enabled: bool, _can_install: bool
 	return twitch_extension
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchExtension:
 	var result: TwitchExtension = TwitchExtension.new()
 	if d.get("author_name", null) != null:
@@ -300,6 +301,7 @@ class Views extends TwitchData:
 		return views
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Views:
 		var result: Views = Views.new()
 		if d.get("mobile", null) != null:
@@ -335,6 +337,7 @@ class Mobile extends TwitchData:
 		return mobile
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Mobile:
 		var result: Mobile = Mobile.new()
 		if d.get("viewer_url", null) != null:
@@ -376,6 +379,7 @@ class TwitchPanel extends TwitchData:
 		return twitch_panel
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> TwitchPanel:
 		var result: TwitchPanel = TwitchPanel.new()
 		if d.get("viewer_url", null) != null:
@@ -414,6 +418,7 @@ class VideoOverlay extends TwitchData:
 		return video_overlay
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> VideoOverlay:
 		var result: VideoOverlay = VideoOverlay.new()
 		if d.get("viewer_url", null) != null:
@@ -485,6 +490,7 @@ class Component extends TwitchData:
 		return component
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Component:
 		var result: Component = Component.new()
 		if d.get("viewer_url", null) != null:
@@ -531,6 +537,7 @@ class Config extends TwitchData:
 		return config
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Config:
 		var result: Config = Config.new()
 		if d.get("viewer_url", null) != null:

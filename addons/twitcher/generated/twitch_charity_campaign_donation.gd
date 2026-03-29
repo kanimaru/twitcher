@@ -57,6 +57,7 @@ static func create(_id: String, _campaign_id: String, _user_id: String, _user_lo
 	return twitch_charity_campaign_donation
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchCharityCampaignDonation:
 	var result: TwitchCharityCampaignDonation = TwitchCharityCampaignDonation.new()
 	if d.get("id", null) != null:
@@ -110,6 +111,7 @@ class Amount extends TwitchData:
 		return amount
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Amount:
 		var result: Amount = Amount.new()
 		if d.get("value", null) != null:

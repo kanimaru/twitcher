@@ -83,6 +83,7 @@ static func create(_slot_id: String, _is_live: bool, _user_id: String, _user_dis
 	return twitch_guest
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchGuest:
 	var result: TwitchGuest = TwitchGuest.new()
 	if d.get("slot_id", null) != null:
@@ -140,6 +141,7 @@ class AudioSettings extends TwitchData:
 		return audio_settings
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> AudioSettings:
 		var result: AudioSettings = AudioSettings.new()
 		if d.get("is_host_enabled", null) != null:
@@ -185,6 +187,7 @@ class VideoSettings extends TwitchData:
 		return video_settings
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> VideoSettings:
 		var result: VideoSettings = VideoSettings.new()
 		if d.get("is_host_enabled", null) != null:

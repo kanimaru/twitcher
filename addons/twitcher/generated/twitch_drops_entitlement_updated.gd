@@ -35,6 +35,7 @@ static func create(_status: String, _ids: Array[String]) -> TwitchDropsEntitleme
 	return twitch_drops_entitlement_updated
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchDropsEntitlementUpdated:
 	var result: TwitchDropsEntitlementUpdated = TwitchDropsEntitlementUpdated.new()
 	if d.get("status", null) != null:

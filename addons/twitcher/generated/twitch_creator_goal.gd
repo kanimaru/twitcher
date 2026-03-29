@@ -92,6 +92,7 @@ static func create(_id: String, _broadcaster_id: String, _broadcaster_name: Stri
 	return twitch_creator_goal
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchCreatorGoal:
 	var result: TwitchCreatorGoal = TwitchCreatorGoal.new()
 	if d.get("id", null) != null:

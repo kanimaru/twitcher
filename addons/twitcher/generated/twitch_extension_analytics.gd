@@ -43,6 +43,7 @@ static func create(_extension_id: String, _URL: String, _type: String, _date_ran
 	return twitch_extension_analytics
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchExtensionAnalytics:
 	var result: TwitchExtensionAnalytics = TwitchExtensionAnalytics.new()
 	if d.get("extension_id", null) != null:
@@ -83,6 +84,7 @@ class DateRange extends TwitchData:
 		return date_range
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> DateRange:
 		var result: DateRange = DateRange.new()
 		if d.get("started_at", null) != null:

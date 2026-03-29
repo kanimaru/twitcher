@@ -11,31 +11,31 @@ class_name TwitchCheermoteImageFormat
 @export var _1: String:
 	set(val): 
 		_1 = val
-		track_data(&"_1", val)
+		track_data(&"1", val)
 
 ## 
 @export var _2: String:
 	set(val): 
 		_2 = val
-		track_data(&"_2", val)
+		track_data(&"2", val)
 
 ## 
 @export var _3: String:
 	set(val): 
 		_3 = val
-		track_data(&"_3", val)
+		track_data(&"3", val)
 
 ## 
 @export var _4: String:
 	set(val): 
 		_4 = val
-		track_data(&"_4", val)
+		track_data(&"4", val)
 
 ## 
 @export var _1_5: String:
 	set(val): 
 		_1_5 = val
-		track_data(&"_1_5", val)
+		track_data(&"1.5", val)
 
 
 
@@ -45,17 +45,18 @@ static func create() -> TwitchCheermoteImageFormat:
 	return twitch_cheermote_image_format
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchCheermoteImageFormat:
 	var result: TwitchCheermoteImageFormat = TwitchCheermoteImageFormat.new()
-	if d.get("_1", null) != null:
-		result._1 = d["_1"]
-	if d.get("_2", null) != null:
-		result._2 = d["_2"]
-	if d.get("_3", null) != null:
-		result._3 = d["_3"]
-	if d.get("_4", null) != null:
-		result._4 = d["_4"]
-	if d.get("_1_5", null) != null:
-		result._1_5 = d["_1_5"]
+	if d.get("1", null) != null:
+		result._1 = d["1"]
+	if d.get("2", null) != null:
+		result._2 = d["2"]
+	if d.get("3", null) != null:
+		result._3 = d["3"]
+	if d.get("4", null) != null:
+		result._4 = d["4"]
+	if d.get("1.5", null) != null:
+		result._1_5 = d["1.5"]
 	return result
 

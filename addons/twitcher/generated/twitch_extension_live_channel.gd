@@ -50,6 +50,7 @@ static func create(_broadcaster_id: String, _broadcaster_name: String, _game_nam
 	return twitch_extension_live_channel
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchExtensionLiveChannel:
 	var result: TwitchExtensionLiveChannel = TwitchExtensionLiveChannel.new()
 	if d.get("broadcaster_id", null) != null:

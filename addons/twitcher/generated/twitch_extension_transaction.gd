@@ -87,6 +87,7 @@ static func create(_id: String, _timestamp: String, _broadcaster_id: String, _br
 	return twitch_extension_transaction
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchExtensionTransaction:
 	var result: TwitchExtensionTransaction = TwitchExtensionTransaction.new()
 	if d.get("id", null) != null:
@@ -174,6 +175,7 @@ class ProductData extends TwitchData:
 		return product_data
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> ProductData:
 		var result: ProductData = ProductData.new()
 		if d.get("sku", null) != null:
@@ -222,6 +224,7 @@ class Cost extends TwitchData:
 		return cost
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Cost:
 		var result: Cost = Cost.new()
 		if d.get("amount", null) != null:

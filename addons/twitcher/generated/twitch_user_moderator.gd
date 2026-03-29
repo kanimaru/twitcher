@@ -36,6 +36,7 @@ static func create(_user_id: String, _user_login: String, _user_name: String) ->
 	return twitch_user_moderator
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchUserModerator:
 	var result: TwitchUserModerator = TwitchUserModerator.new()
 	if d.get("user_id", null) != null:

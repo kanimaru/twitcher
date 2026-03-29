@@ -43,6 +43,7 @@ static func create(_user_id: String, _user_name: String, _user_login: String, _v
 	return twitch_stream_markers
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchStreamMarkers:
 	var result: TwitchStreamMarkers = TwitchStreamMarkers.new()
 	if d.get("user_id", null) != null:
@@ -85,6 +86,7 @@ class Videos extends TwitchData:
 		return videos
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Videos:
 		var result: Videos = Videos.new()
 		if d.get("video_id", null) != null:
@@ -144,6 +146,7 @@ class Markers extends TwitchData:
 		return markers
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Markers:
 		var result: Markers = Markers.new()
 		if d.get("id", null) != null:

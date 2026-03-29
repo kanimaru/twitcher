@@ -29,6 +29,7 @@ static func create(_id: String, _guests: Array[TwitchGuest]) -> TwitchGuestStarS
 	return twitch_guest_star_session
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchGuestStarSession:
 	var result: TwitchGuestStarSession = TwitchGuestStarSession.new()
 	if d.get("id", null) != null:

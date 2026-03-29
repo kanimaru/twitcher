@@ -96,6 +96,7 @@ static func create(_broadcaster_id: String, _broadcaster_login: String, _broadca
 	return twitch_custom_reward_redemption
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchCustomRewardRedemption:
 	var result: TwitchCustomRewardRedemption = TwitchCustomRewardRedemption.new()
 	if d.get("broadcaster_id", null) != null:
@@ -164,6 +165,7 @@ class Reward extends TwitchData:
 		return reward
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Reward:
 		var result: Reward = Reward.new()
 		if d.get("id", null) != null:

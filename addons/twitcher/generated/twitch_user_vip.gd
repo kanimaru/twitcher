@@ -36,6 +36,7 @@ static func create(_user_id: String, _user_name: String, _user_login: String) ->
 	return twitch_user_vip
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchUserVip:
 	var result: TwitchUserVip = TwitchUserVip.new()
 	if d.get("user_id", null) != null:

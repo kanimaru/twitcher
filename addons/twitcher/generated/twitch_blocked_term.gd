@@ -68,6 +68,7 @@ static func create(_broadcaster_id: String, _moderator_id: String, _id: String, 
 	return twitch_blocked_term
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchBlockedTerm:
 	var result: TwitchBlockedTerm = TwitchBlockedTerm.new()
 	if d.get("broadcaster_id", null) != null:

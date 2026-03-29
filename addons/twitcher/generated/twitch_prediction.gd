@@ -104,6 +104,7 @@ static func create(_id: String, _broadcaster_id: String, _broadcaster_name: Stri
 	return twitch_prediction
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchPrediction:
 	var result: TwitchPrediction = TwitchPrediction.new()
 	if d.get("id", null) != null:

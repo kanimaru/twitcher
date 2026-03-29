@@ -153,6 +153,7 @@ func generate_api() -> void:
 	for method: TwitchGenMethod in parser.methods:
 		twitch_api_code += method_code(method)
 	write_output_file(api_output_path + "twitch_api.gd", twitch_api_code)
+	existing_classes.erase("twitch_api.gd")
 	
 	# Generate Components
 	for component: Variant in grouped_files.values():
@@ -239,8 +240,9 @@ func field_declaration(field: TwitchGenField) -> String:
 @export var {name}: {type}:
 	set(val): 
 		{name} = val
-		track_data(&"{name}", val)\n""".format({
+		track_data(&"{original_name}", val)\n""".format({
 			"name": field._name,
+			"original_name": field._original_name,
 			"description": ident(field._description, 0, "## "),
 			"type": type
 		})
@@ -486,28 +488,30 @@ static func create({parameters}) -> {classname}:
 	
 func from_json_code(component: TwitchGenComponent) -> String:
 	var code : String = """
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> {classname}:
 	var result: {classname} = {classname}.new()
 """.format({"classname": component._classname})
 	for field: TwitchGenField in component._fields:
-		code += "\tif d.get(\"{name}\", null) != null:\n"
+		code += "\tif d.get(\"{original_name}\", null) != null:\n"
 		if field._is_typed_array:
 			code += """
-		for value in d["{name}"]:
+		for value in d["{original_name}"]:
 			result.{name}.append({type}.from_json(value))\n""".lstrip("\n")
-			code += "\t\tresult.track_data(&\"{name}\", result.{name})\n"
+			code += "\t\tresult.track_data(&\"{original_name}\", result.{name})\n"
 		elif field._is_array:
 			code += """
-		for value in d["{name}"]:
+		for value in d["{original_name}"]:
 			result.{name}.append(value)\n""".lstrip("\n")
-			code += "\t\tresult.track_data(&\"{name}\", result.{name})\n"
+			code += "\t\tresult.track_data(&\"{original_name}\", result.{name})\n"
 		elif field._is_sub_class:
-			code += "\t\tresult.{name} = {type}.from_json(d[\"{name}\"])\n"
+			code += "\t\tresult.{name} = {type}.from_json(d[\"{original_name}\"])\n"
 		else:
-			code += "\t\tresult.{name} = d[\"{name}\"]\n"
+			code += "\t\tresult.{name} = d[\"{original_name}\"]\n"
 		
 		code = code.format({
 			"name": field._name,
+			"original_name": field._original_name,
 			"type": get_type(field._type, false)
 		})
 	code += "\treturn result\n"

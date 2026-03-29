@@ -101,6 +101,7 @@ static func create(_broadcaster_language: String, _broadcaster_login: String, _d
 	return twitch_channel
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchChannel:
 	var result: TwitchChannel = TwitchChannel.new()
 	if d.get("broadcaster_language", null) != null:

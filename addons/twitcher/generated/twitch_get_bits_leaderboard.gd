@@ -40,6 +40,7 @@ class Response extends TwitchData:
 		return response
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Response:
 		var result: Response = Response.new()
 		if d.get("data", null) != null:
@@ -80,6 +81,7 @@ class ResponseDateRange extends TwitchData:
 		return response_date_range
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> ResponseDateRange:
 		var result: ResponseDateRange = ResponseDateRange.new()
 		if d.get("started_at", null) != null:
@@ -136,6 +138,7 @@ class Opt extends TwitchData:
 		return opt
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Opt:
 		var result: Opt = Opt.new()
 		if d.get("count", null) != null:

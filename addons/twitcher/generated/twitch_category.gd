@@ -36,6 +36,7 @@ static func create(_box_art_url: String, _name: String, _id: String) -> TwitchCa
 	return twitch_category
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchCategory:
 	var result: TwitchCategory = TwitchCategory.new()
 	if d.get("box_art_url", null) != null:

@@ -29,6 +29,7 @@ static func create(_msg_id: String, _is_permitted: bool) -> TwitchAutoModStatus:
 	return twitch_auto_mod_status
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchAutoModStatus:
 	var result: TwitchAutoModStatus = TwitchAutoModStatus.new()
 	if d.get("msg_id", null) != null:

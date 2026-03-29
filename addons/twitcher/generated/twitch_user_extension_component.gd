@@ -52,6 +52,7 @@ static func create(_active: bool) -> TwitchUserExtensionComponent:
 	return twitch_user_extension_component
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchUserExtensionComponent:
 	var result: TwitchUserExtensionComponent = TwitchUserExtensionComponent.new()
 	if d.get("active", null) != null:

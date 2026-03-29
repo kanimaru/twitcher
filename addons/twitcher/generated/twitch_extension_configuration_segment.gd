@@ -46,6 +46,7 @@ static func create(_segment: String, _content: String, _version: String) -> Twit
 	return twitch_extension_configuration_segment
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchExtensionConfigurationSegment:
 	var result: TwitchExtensionConfigurationSegment = TwitchExtensionConfigurationSegment.new()
 	if d.get("segment", null) != null:

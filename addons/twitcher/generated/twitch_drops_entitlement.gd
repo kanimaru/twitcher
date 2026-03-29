@@ -67,6 +67,7 @@ static func create(_id: String, _benefit_id: String, _timestamp: String, _user_i
 	return twitch_drops_entitlement
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchDropsEntitlement:
 	var result: TwitchDropsEntitlement = TwitchDropsEntitlement.new()
 	if d.get("id", null) != null:

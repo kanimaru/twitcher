@@ -36,6 +36,7 @@ static func create(_user_id: String, _user_login: String, _user_name: String) ->
 	return twitch_chatter
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchChatter:
 	var result: TwitchChatter = TwitchChatter.new()
 	if d.get("user_id", null) != null:

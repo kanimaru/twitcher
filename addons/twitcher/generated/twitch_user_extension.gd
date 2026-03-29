@@ -55,6 +55,7 @@ static func create(_id: String, _version: String, _name: String, _can_activate: 
 	return twitch_user_extension
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchUserExtension:
 	var result: TwitchUserExtension = TwitchUserExtension.new()
 	if d.get("id", null) != null:

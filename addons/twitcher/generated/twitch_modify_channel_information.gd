@@ -63,6 +63,7 @@ class Body extends TwitchData:
 		return body
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Body:
 		var result: Body = Body.new()
 		if d.get("game_id", null) != null:
@@ -120,6 +121,7 @@ class BodyContentClassificationLabels extends TwitchData:
 		return body_content_classification_labels
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> BodyContentClassificationLabels:
 		var result: BodyContentClassificationLabels = BodyContentClassificationLabels.new()
 		if d.get("id", null) != null:

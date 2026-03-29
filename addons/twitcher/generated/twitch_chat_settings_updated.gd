@@ -105,6 +105,7 @@ static func create(_broadcaster_id: String, _emote_mode: bool, _follower_mode: b
 	return twitch_chat_settings_updated
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchChatSettingsUpdated:
 	var result: TwitchChatSettingsUpdated = TwitchChatSettingsUpdated.new()
 	if d.get("broadcaster_id", null) != null:

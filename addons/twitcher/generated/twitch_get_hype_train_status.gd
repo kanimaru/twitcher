@@ -40,6 +40,7 @@ class Response extends TwitchData:
 		return response
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Response:
 		var result: Response = Response.new()
 		if d.get("data", null) != null:
@@ -73,6 +74,7 @@ class ResponseData extends TwitchData:
 		return response_data
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> ResponseData:
 		var result: ResponseData = ResponseData.new()
 		if d.get("current", null) != null:
@@ -156,6 +158,7 @@ class ResponseCurrent extends TwitchData:
 		return response_current
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> ResponseCurrent:
 		var result: ResponseCurrent = ResponseCurrent.new()
 		if d.get("id", null) != null:
@@ -263,6 +266,7 @@ class ResponseTopContributions extends TwitchData:
 		return response_top_contributions
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> ResponseTopContributions:
 		var result: ResponseTopContributions = ResponseTopContributions.new()
 		if d.get("user_id", null) != null:
@@ -322,6 +326,7 @@ class ResponseSharedTrainParticipants extends TwitchData:
 		return response_shared_train_participants
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> ResponseSharedTrainParticipants:
 		var result: ResponseSharedTrainParticipants = ResponseSharedTrainParticipants.new()
 		if d.get("broadcaster_user_id", null) != null:
@@ -367,6 +372,7 @@ class ResponseAllTimeHigh extends TwitchData:
 		return response_all_time_high
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> ResponseAllTimeHigh:
 		var result: ResponseAllTimeHigh = ResponseAllTimeHigh.new()
 		if d.get("level", null) != null:
@@ -412,6 +418,7 @@ class ResponseSharedAllTimeHigh extends TwitchData:
 		return response_shared_all_time_high
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> ResponseSharedAllTimeHigh:
 		var result: ResponseSharedAllTimeHigh = ResponseSharedAllTimeHigh.new()
 		if d.get("level", null) != null:

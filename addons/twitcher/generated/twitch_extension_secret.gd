@@ -29,6 +29,7 @@ static func create(_format_version: int, _secrets: Array[Secrets]) -> TwitchExte
 	return twitch_extension_secret
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchExtensionSecret:
 	var result: TwitchExtensionSecret = TwitchExtensionSecret.new()
 	if d.get("format_version", null) != null:
@@ -74,6 +75,7 @@ class Secrets extends TwitchData:
 		return secrets
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Secrets:
 		var result: Secrets = Secrets.new()
 		if d.get("content", null) != null:

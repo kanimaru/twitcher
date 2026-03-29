@@ -57,6 +57,7 @@ static func create(_sku: String, _cost: Cost, _in_development: bool, _display_na
 	return twitch_extension_bits_product
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchExtensionBitsProduct:
 	var result: TwitchExtensionBitsProduct = TwitchExtensionBitsProduct.new()
 	if d.get("sku", null) != null:
@@ -103,6 +104,7 @@ class Cost extends TwitchData:
 		return cost
 	
 	
+	## Used to transform responses to the current object
 	static func from_json(d: Dictionary) -> Cost:
 		var result: Cost = Cost.new()
 		if d.get("amount", null) != null:

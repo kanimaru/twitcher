@@ -27,6 +27,7 @@ static func create() -> TwitchCheermoteImages:
 	return twitch_cheermote_images
 
 
+## Used to transform responses to the current object
 static func from_json(d: Dictionary) -> TwitchCheermoteImages:
 	var result: TwitchCheermoteImages = TwitchCheermoteImages.new()
 	if d.get("light", null) != null:
@@ -34,4 +35,3 @@ static func from_json(d: Dictionary) -> TwitchCheermoteImages:
 	if d.get("dark", null) != null:
 		result.dark = TwitchCheermoteImageTheme.from_json(d["dark"])
 	return result
-
