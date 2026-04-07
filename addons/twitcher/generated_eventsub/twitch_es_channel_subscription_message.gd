@@ -67,7 +67,7 @@ class Event extends TwitchData:
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
-	## The tier of the user’s subscription.
+	## The tier of the user's subscription.
 	@export var tier: String:
 		set(val): 
 			tier = val
@@ -85,7 +85,7 @@ class Event extends TwitchData:
 			cumulative_months = val
 			track_data(&"cumulative_months", val)
 	
-	## The number of consecutive months the user’s current subscription has been active. This value is null if the user has opted out of sharing this information.
+	## The number of consecutive months the user's current subscription has been active. This value is null if the user has opted out of sharing this information.
 	@export var streak_months: int:
 		set(val): 
 			streak_months = val

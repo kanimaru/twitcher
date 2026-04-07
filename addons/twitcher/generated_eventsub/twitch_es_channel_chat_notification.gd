@@ -75,13 +75,13 @@ class Event extends TwitchData:
 			chatter_is_anonymous = val
 			track_data(&"chatter_is_anonymous", val)
 	
-	## The color of the user’s name in the chat room.
+	## The color of the user's name in the chat room.
 	@export var color: String:
 		set(val): 
 			color = val
 			track_data(&"color", val)
 	
-	## The color of the user’s name in the chat room.
+	## The color of the user's name in the chat room.
 	@export var badges: Array[Badges]:
 		set(val): 
 			badges = val
@@ -105,19 +105,19 @@ class Event extends TwitchData:
 			message = val
 			track_data(&"message", val)
 	
-	## The type of notice. Possible values are: subresubsub_giftcommunity_sub_giftgift_paid_upgradeprime_paid_upgraderaidunraidpay_it_forwardannouncementbits_badge_tiercharity_donationshared_chat_subshared_chat_resubshared_chat_sub_giftshared_chat_community_sub_giftshared_chat_gift_paid_upgradeshared_chat_prime_paid_upgradeshared_chat_raidshared_chat_pay_it_forwardshared_chat_announcement
+	## The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement
 	@export var notice_type: String:
 		set(val): 
 			notice_type = val
 			track_data(&"notice_type", val)
 	
-	## Information about the sub event. Null if notice_type is not sub.
+	## Information about the sub event. Null if notice_type is not sub .
 	@export var sub: Sub:
 		set(val): 
 			sub = val
 			track_data(&"sub", val)
 	
-	## Information about the resub event. Null if notice_type is not resub.
+	## Information about the resub event. Null if notice_type is not resub .
 	@export var resub: Resub:
 		set(val): 
 			resub = val
@@ -129,13 +129,13 @@ class Event extends TwitchData:
 			sub_gift = val
 			track_data(&"sub_gift", val)
 	
-	## Information about the community gift sub event. Null if notice_type is not community_sub_gift.
+	## Information about the community gift sub event. Null if notice_type is not community_sub_gift .
 	@export var community_sub_gift: CommunitySubGift:
 		set(val): 
 			community_sub_gift = val
 			track_data(&"community_sub_gift", val)
 	
-	## Information about the community gift paid upgrade event. Null if notice_type is not gift_paid_upgrade.
+	## Information about the community gift paid upgrade event. Null if notice_type is not gift_paid_upgrade .
 	@export var gift_paid_upgrade: GiftPaidUpgrade:
 		set(val): 
 			gift_paid_upgrade = val
@@ -159,13 +159,13 @@ class Event extends TwitchData:
 			raid = val
 			track_data(&"raid", val)
 	
-	## Returns an empty payload if notice_type is not unraid, otherwise returns null.
+	## Returns an empty payload if notice_type is not unraid , otherwise returns null.
 	@export var unraid: Dictionary:
 		set(val): 
 			unraid = val
 			track_data(&"unraid", val)
 	
-	## Information about the announcement event. Null if notice_type is not {::nomarkdown}announcement
+	## Information about the announcement event. Null if notice_type is not announcement
 	@export var announcement: Announcement:
 		set(val): 
 			announcement = val
@@ -178,90 +178,114 @@ class Event extends TwitchData:
 			track_data(&"bits_badge_tier", val)
 	
 	## Information about the announcement event. Null if notice_type is not charity_donation
-	@export var charity_donation: CharityDonation:
+	@export var charity_donation: String:
 		set(val): 
 			charity_donation = val
 			track_data(&"charity_donation", val)
 	
-	## Optional. The broadcaster user ID of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Name of the charity.
+	@export var charity_name: String:
+		set(val): 
+			charity_name = val
+			track_data(&"charity_name", val)
+	
+	## An object that contains the amount of money that the user paid.
+	@export var amount: Amount:
+		set(val): 
+			amount = val
+			track_data(&"amount", val)
+	
+	## Information about the Watch Streak event. Null if notice_type is not watch_streak .
+	@export var watch_streak: WatchStreak:
+		set(val): 
+			watch_streak = val
+			track_data(&"watch_streak", val)
+	
+	## Optional . The broadcaster user ID of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_id: String:
 		set(val): 
 			source_broadcaster_user_id = val
 			track_data(&"source_broadcaster_user_id", val)
 	
-	## Optional. The user name of the broadcaster of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Optional . The user name of the broadcaster of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_name: String:
 		set(val): 
 			source_broadcaster_user_name = val
 			track_data(&"source_broadcaster_user_name", val)
 	
-	## Optional. The login of the broadcaster of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Optional . The login of the broadcaster of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_login: String:
 		set(val): 
 			source_broadcaster_user_login = val
 			track_data(&"source_broadcaster_user_login", val)
 	
-	## Optional. The UUID that identifies the source message from the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Optional . The UUID that identifies the source message from the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_message_id: String:
 		set(val): 
 			source_message_id = val
 			track_data(&"source_message_id", val)
 	
-	## Optional. The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_badges: SourceBadges:
 		set(val): 
 			source_badges = val
 			track_data(&"source_badges", val)
 	
-	## Optional. Information about the shared_chat_sub event. Is null if notice_type is not shared_chat_sub. This field has the same information as the sub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Whether the notification is only sent to the source channel. Is null if the notification is not in a shared chat session.
+	@export var is_source_only: bool:
+		set(val): 
+			is_source_only = val
+			track_data(&"is_source_only", val)
+	
+	## Optional . Information about the shared_chat_sub event. Is null if notice_type is not shared_chat_sub . This field has the same information as the sub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_sub: Dictionary:
 		set(val): 
 			shared_chat_sub = val
 			track_data(&"shared_chat_sub", val)
 	
-	## Optional. Information about the shared_chat_resub event. Is null if notice_type is not shared_chat_resub. This field has the same information as the resub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_resub event. Is null if notice_type is not shared_chat_resub . This field has the same information as the resub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_resub: Dictionary:
 		set(val): 
 			shared_chat_resub = val
 			track_data(&"shared_chat_resub", val)
 	
-	## Optional. Information about the shared_chat_sub_gift event. Is null if notice_type is not shared_chat_sub_gift. This field has the same information as the chat_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_sub_gift event. Is null if notice_type is not shared_chat_sub_gift . This field has the same information as the chat_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_sub_gift: Dictionary:
 		set(val): 
 			shared_chat_sub_gift = val
 			track_data(&"shared_chat_sub_gift", val)
 	
-	## Optional. Information about the shared_chat_community_sub_gift event. Is null if notice_type is not shared_chat_community_sub_gift. This field has the same information as the community_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_community_sub_gift event. Is null if notice_type is not shared_chat_community_sub_gift . This field has the same information as the community_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_community_sub_gift: Dictionary:
 		set(val): 
 			shared_chat_community_sub_gift = val
 			track_data(&"shared_chat_community_sub_gift", val)
 	
-	## Optional. Information about the shared_chat_gift_paid_upgrade event. Is null if notice_type is not shared_chat_gift_paid_upgrade. This field has the same information as the gift_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_gift_paid_upgrade event. Is null if notice_type is not shared_chat_gift_paid_upgrade . This field has the same information as the gift_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_gift_paid_upgrade: Dictionary:
 		set(val): 
 			shared_chat_gift_paid_upgrade = val
 			track_data(&"shared_chat_gift_paid_upgrade", val)
 	
-	## Optional. Information about the shared_chat_chat_prime_paid_upgrade event. Is null if notice_type is not shared_chat_prime_paid_upgrade. This field has the same information as the prime_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_chat_prime_paid_upgrade event. Is null if notice_type is not shared_chat_prime_paid_upgrade . This field has the same information as the prime_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_prime_paid_upgrade: Dictionary:
 		set(val): 
 			shared_chat_prime_paid_upgrade = val
 			track_data(&"shared_chat_prime_paid_upgrade", val)
 	
-	## Optional. Information about the shared_chat_pay_it_forward event. Is null if notice_type is not shared_chat_pay_it_forward. This field has the same information as the pay_it_forward field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_pay_it_forward event. Is null if notice_type is not shared_chat_pay_it_forward . This field has the same information as the pay_it_forward field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_pay_it_forward: Dictionary:
 		set(val): 
 			shared_chat_pay_it_forward = val
 			track_data(&"shared_chat_pay_it_forward", val)
 	
-	## Optional. Information about the shared_chat_raid event. Is null if notice_type is not shared_chat_raid. This field has the same information as the raid field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_raid event. Is null if notice_type is not shared_chat_raid . This field has the same information as the raid field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_raid: Dictionary:
 		set(val): 
 			shared_chat_raid = val
 			track_data(&"shared_chat_raid", val)
 	
-	## Optional. Information about the shared_chat_announcement event. Is null if notice_type is not shared_chat_announcement. This field has the same information as the announcement field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_announcement event. Is null if notice_type is not shared_chat_announcement . This field has the same information as the announcement field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_announcement: Dictionary:
 		set(val): 
 			shared_chat_announcement = val
@@ -319,7 +343,13 @@ class Event extends TwitchData:
 		if d.get("bits_badge_tier", null) != null:
 			result.bits_badge_tier = BitsBadgeTier.from_json(d["bits_badge_tier"])
 		if d.get("charity_donation", null) != null:
-			result.charity_donation = CharityDonation.from_json(d["charity_donation"])
+			result.charity_donation = d["charity_donation"]
+		if d.get("charity_name", null) != null:
+			result.charity_name = d["charity_name"]
+		if d.get("amount", null) != null:
+			result.amount = Amount.from_json(d["amount"])
+		if d.get("watch_streak", null) != null:
+			result.watch_streak = WatchStreak.from_json(d["watch_streak"])
 		if d.get("source_broadcaster_user_id", null) != null:
 			result.source_broadcaster_user_id = d["source_broadcaster_user_id"]
 		if d.get("source_broadcaster_user_name", null) != null:
@@ -330,6 +360,8 @@ class Event extends TwitchData:
 			result.source_message_id = d["source_message_id"]
 		if d.get("source_badges", null) != null:
 			result.source_badges = SourceBadges.from_json(d["source_badges"])
+		if d.get("is_source_only", null) != null:
+			result.is_source_only = d["is_source_only"]
 		if d.get("shared_chat_sub", null) != null:
 			result.shared_chat_sub = d["shared_chat_sub"]
 		if d.get("shared_chat_resub", null) != null:
@@ -352,7 +384,7 @@ class Event extends TwitchData:
 	
 
 
-## The color of the user’s name in the chat room.
+## The color of the user's name in the chat room.
 ## #/components/schemas/ChannelChatNotificationEvent/Badges
 class Badges extends TwitchData:
 
@@ -393,7 +425,7 @@ class Badges extends TwitchData:
 class Message extends TwitchData:
 
 	## The chat message in plain text.
-	@export var text: String:
+	@export var text: Dictionary:
 		set(val): 
 			text = val
 			track_data(&"text", val)
@@ -421,7 +453,7 @@ class Message extends TwitchData:
 ## #/components/schemas/ChannelChatNotificationEvent/Message/Fragments
 class Fragments extends TwitchData:
 
-	## The type of message fragment. Possible values: textcheermoteemotemention
+	## The type of message fragment. Possible values: text cheermote emote mention
 	@export var type: String:
 		set(val): 
 			type = val
@@ -433,19 +465,19 @@ class Fragments extends TwitchData:
 			text = val
 			track_data(&"text", val)
 	
-	## Optional. Metadata pertaining to the cheermote.
+	## Optional . Metadata pertaining to the cheermote.
 	@export var cheermote: Cheermote:
 		set(val): 
 			cheermote = val
 			track_data(&"cheermote", val)
 	
-	## Optional. Metadata pertaining to the emote.
+	## Optional . Metadata pertaining to the emote.
 	@export var emote: Emote:
 		set(val): 
 			emote = val
 			track_data(&"emote", val)
 	
-	## Optional. Metadata pertaining to the mention.
+	## Optional . Metadata pertaining to the mention.
 	@export var mention: Mention:
 		set(val): 
 			mention = val
@@ -469,12 +501,12 @@ class Fragments extends TwitchData:
 	
 
 
-## Optional. Metadata pertaining to the cheermote.
+## Optional . Metadata pertaining to the cheermote.
 ## #/components/schemas/ChannelChatNotificationEvent/Message/Fragments/Cheermote
 class Cheermote extends TwitchData:
 
-	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is “Cheer” and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
-	@export var prefix: String:
+	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
+	@export var prefix: Dictionary:
 		set(val): 
 			prefix = val
 			track_data(&"prefix", val)
@@ -505,7 +537,7 @@ class Cheermote extends TwitchData:
 	
 
 
-## Optional. Metadata pertaining to the emote.
+## Optional . Metadata pertaining to the emote.
 ## #/components/schemas/ChannelChatNotificationEvent/Message/Fragments/Emote
 class Emote extends TwitchData:
 
@@ -527,7 +559,7 @@ class Emote extends TwitchData:
 			owner_id = val
 			track_data(&"owner_id", val)
 	
-	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote.static - A static PNG file is available for this emote.
+	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote.
 	@export var format: Array[String]:
 		set(val): 
 			format = val
@@ -550,7 +582,7 @@ class Emote extends TwitchData:
 	
 
 
-## Optional. Metadata pertaining to the mention.
+## Optional . Metadata pertaining to the mention.
 ## #/components/schemas/ChannelChatNotificationEvent/Message/Fragments/Mention
 class Mention extends TwitchData:
 
@@ -586,11 +618,11 @@ class Mention extends TwitchData:
 	
 
 
-## Information about the sub event. Null if notice_type is not sub.
+## Information about the sub event. Null if notice_type is not sub .
 ## #/components/schemas/ChannelChatNotificationEvent/Sub
 class Sub extends TwitchData:
 
-	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription.2000 - Second level of paid subscription.3000 - Third level of paid subscription.
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
 		set(val): 
 			sub_tier = val
@@ -622,7 +654,7 @@ class Sub extends TwitchData:
 	
 
 
-## Information about the resub event. Null if notice_type is not resub.
+## Information about the resub event. Null if notice_type is not resub .
 ## #/components/schemas/ChannelChatNotificationEvent/Resub
 class Resub extends TwitchData:
 
@@ -644,13 +676,13 @@ class Resub extends TwitchData:
 			streak_months = val
 			track_data(&"streak_months", val)
 	
-	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription.2000 - Second level of paid subscription.3000 - Third level of paid subscription.
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
 		set(val): 
 			sub_tier = val
 			track_data(&"sub_tier", val)
 	
-	## Optional. The number of consecutive months the user has subscribed.
+	## Optional . The number of consecutive months the user has subscribed.
 	@export var is_prime: bool:
 		set(val): 
 			is_prime = val
@@ -662,7 +694,7 @@ class Resub extends TwitchData:
 			is_gift = val
 			track_data(&"is_gift", val)
 	
-	## Optional. Whether or not the gift was anonymous.
+	## Optional . Whether or not the gift was anonymous.
 	@export var gifter_is_anonymous: bool:
 		set(val): 
 			gifter_is_anonymous = val
@@ -680,7 +712,7 @@ class Resub extends TwitchData:
 			gifter_user_name = val
 			track_data(&"gifter_user_name", val)
 	
-	## Optional. The user login of the subscription gifter. Null if anonymous.
+	## Optional . The user login of the subscription gifter. Null if anonymous.
 	@export var gifter_user_login: String:
 		set(val): 
 			gifter_user_login = val
@@ -724,7 +756,7 @@ class SubGift extends TwitchData:
 			duration_months = val
 			track_data(&"duration_months", val)
 	
-	## Optional. The amount of gifts the gifter has given in this channel. Null if anonymous.
+	## Optional . The amount of gifts the gifter has given in this channel. Null if anonymous.
 	@export var cumulative_total: int:
 		set(val): 
 			cumulative_total = val
@@ -748,13 +780,13 @@ class SubGift extends TwitchData:
 			recipient_user_login = val
 			track_data(&"recipient_user_login", val)
 	
-	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription.2000 - Second level of paid subscription.3000 - Third level of paid subscription.
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
 		set(val): 
 			sub_tier = val
 			track_data(&"sub_tier", val)
 	
-	## Optional. The ID of the associated community gift. Null if not associated with a community gift.
+	## Optional . The ID of the associated community gift. Null if not associated with a community gift.
 	@export var community_gift_id: String:
 		set(val): 
 			community_gift_id = val
@@ -782,7 +814,7 @@ class SubGift extends TwitchData:
 	
 
 
-## Information about the community gift sub event. Null if notice_type is not community_sub_gift.
+## Information about the community gift sub event. Null if notice_type is not community_sub_gift .
 ## #/components/schemas/ChannelChatNotificationEvent/CommunitySubGift
 class CommunitySubGift extends TwitchData:
 
@@ -798,13 +830,13 @@ class CommunitySubGift extends TwitchData:
 			total = val
 			track_data(&"total", val)
 	
-	## The type of subscription plan being used. Possible values are: <ul><li>1000 - First level of paid or Prime subscription.</li><li>2000 - Second level of paid subscription.</li><li>3000 - Third level of paid subscription.</li></ul>
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
 		set(val): 
 			sub_tier = val
 			track_data(&"sub_tier", val)
 	
-	## Optional. The amount of gifts the gifter has given in this channel. Null if anonymous.
+	## Optional . The amount of gifts the gifter has given in this channel. Null if anonymous.
 	@export var cumulative_total: int:
 		set(val): 
 			cumulative_total = val
@@ -826,7 +858,7 @@ class CommunitySubGift extends TwitchData:
 	
 
 
-## Information about the community gift paid upgrade event. Null if notice_type is not gift_paid_upgrade.
+## Information about the community gift paid upgrade event. Null if notice_type is not gift_paid_upgrade .
 ## #/components/schemas/ChannelChatNotificationEvent/GiftPaidUpgrade
 class GiftPaidUpgrade extends TwitchData:
 
@@ -836,13 +868,13 @@ class GiftPaidUpgrade extends TwitchData:
 			gifter_is_anonymous = val
 			track_data(&"gifter_is_anonymous", val)
 	
-	## Optional. The user ID of the user who gifted the subscription. Null if anonymous.
+	## Optional . The user ID of the user who gifted the subscription. Null if anonymous.
 	@export var gifter_user_id: String:
 		set(val): 
 			gifter_user_id = val
 			track_data(&"gifter_user_id", val)
 	
-	## Optional. The user name of the user who gifted the subscription. Null if anonymous.
+	## Optional . The user name of the user who gifted the subscription. Null if anonymous.
 	@export var gifter_user_name: String:
 		set(val): 
 			gifter_user_name = val
@@ -866,7 +898,7 @@ class GiftPaidUpgrade extends TwitchData:
 ## #/components/schemas/ChannelChatNotificationEvent/PrimePaidUpgrade
 class PrimePaidUpgrade extends TwitchData:
 
-	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription.2000 - Second level of paid subscription.3000 - Third level of paid subscription.
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
 		set(val): 
 			sub_tier = val
@@ -898,7 +930,7 @@ class PayItForward extends TwitchData:
 			gifter_user_id = val
 			track_data(&"gifter_user_id", val)
 	
-	## Optional. The user name of the user who gifted the subscription. Null if anonymous.
+	## Optional . The user name of the user who gifted the subscription. Null if anonymous.
 	@export var gifter_user_name: String:
 		set(val): 
 			gifter_user_name = val
@@ -948,7 +980,7 @@ class Raid extends TwitchData:
 			user_login = val
 			track_data(&"user_login", val)
 	
-	## The number of viewers raiding this channel from the broadcaster’s channel.
+	## The number of viewers raiding this channel from the broadcaster's channel.
 	@export var viewer_count: int:
 		set(val): 
 			viewer_count = val
@@ -978,7 +1010,7 @@ class Raid extends TwitchData:
 	
 
 
-## Information about the announcement event. Null if notice_type is not {::nomarkdown}announcement
+## Information about the announcement event. Null if notice_type is not announcement
 ## #/components/schemas/ChannelChatNotificationEvent/Announcement
 class Announcement extends TwitchData:
 
@@ -1018,39 +1050,11 @@ class BitsBadgeTier extends TwitchData:
 	
 
 
-## Information about the announcement event. Null if notice_type is not charity_donation
-## #/components/schemas/ChannelChatNotificationEvent/CharityDonation
-class CharityDonation extends TwitchData:
-
-	## Name of the charity.
-	@export var charity_name: String:
-		set(val): 
-			charity_name = val
-			track_data(&"charity_name", val)
-	
-	## An object that contains the amount of money that the user paid.
-	@export var amount: Amount:
-		set(val): 
-			amount = val
-			track_data(&"amount", val)
-	
-	
-	
-	static func from_json(d: Dictionary) -> CharityDonation:
-		var result: CharityDonation = CharityDonation.new()
-		if d.get("charity_name", null) != null:
-			result.charity_name = d["charity_name"]
-		if d.get("amount", null) != null:
-			result.amount = Amount.from_json(d["amount"])
-		return result
-	
-
-
 ## An object that contains the amount of money that the user paid.
-## #/components/schemas/ChannelChatNotificationEvent/CharityDonation/Amount
+## #/components/schemas/ChannelChatNotificationEvent/Amount
 class Amount extends TwitchData:
 
-	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550.
+	## The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550.
 	@export var value: int:
 		set(val): 
 			value = val
@@ -1082,7 +1086,35 @@ class Amount extends TwitchData:
 	
 
 
-## Optional. The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+## Information about the Watch Streak event. Null if notice_type is not watch_streak .
+## #/components/schemas/ChannelChatNotificationEvent/WatchStreak
+class WatchStreak extends TwitchData:
+
+	## The number of consecutive broadcasts for which the user has been watching.
+	@export var streak_count: int:
+		set(val): 
+			streak_count = val
+			track_data(&"streak_count", val)
+	
+	## The number of channel points awarded for the Watch Streak milestone.
+	@export var channel_points_awarded: int:
+		set(val): 
+			channel_points_awarded = val
+			track_data(&"channel_points_awarded", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> WatchStreak:
+		var result: WatchStreak = WatchStreak.new()
+		if d.get("streak_count", null) != null:
+			result.streak_count = d["streak_count"]
+		if d.get("channel_points_awarded", null) != null:
+			result.channel_points_awarded = d["channel_points_awarded"]
+		return result
+	
+
+
+## Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 ## #/components/schemas/ChannelChatNotificationEvent/SourceBadges
 class SourceBadges extends TwitchData:
 

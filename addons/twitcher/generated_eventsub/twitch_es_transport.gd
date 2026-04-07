@@ -7,37 +7,37 @@ extends TwitchData
 ## #/components/schemas/Transport
 class_name TwitchESTransport
 	
-## The transport method. Possible values are: webhookwebsocket
+## The transport method. Possible values are: webhook websocket
 @export var method: String:
 	set(val): 
 		method = val
 		track_data(&"method", val)
 
-## The callback URL where the notifications are sent. The URL must use the HTTPS protocol and port 443. See Processing an event.Specify this field only if method is set to webhook.NOTE: Redirects are not followed.
+## The callback URL where the notifications are sent. The URL must use the HTTPS protocol and port 443. See Processing an event . Specify this field only if method is set to webhook . NOTE : Redirects are not followed.
 @export var callback: String:
 	set(val): 
 		callback = val
 		track_data(&"callback", val)
 
-## The secret used to verify the signature. The secret must be an ASCII string that’s a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see Verifying the event message.Specify this field only if method is set to webhook.
+## The secret used to verify the signature. The secret must be an ASCII string that's a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see Verifying the event message . Specify this field only if method is set to webhook .
 @export var secret: String:
 	set(val): 
 		secret = val
 		track_data(&"secret", val)
 
-## An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message.Specify this field only if method is set to websocket.
+## An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message . Specify this field only if method is set to websocket .
 @export var session_id: String:
 	set(val): 
 		session_id = val
 		track_data(&"session_id", val)
 
-## The UTC date and time that the WebSocket connection was established.This is a response-only field that Create EventSub Subscription and Get EventSub Subscription returns if the method field is set to websocket.
+## The UTC date and time that the WebSocket connection was established. This is a response-only field that Create EventSub Subscription and Get EventSub Subscription returns if the method field is set to websocket .
 @export var connected_at: String:
 	set(val): 
 		connected_at = val
 		track_data(&"connected_at", val)
 
-## The UTC date and time that the WebSocket connection was lost.This is a response-only field that Get EventSub Subscription returns if the method field is set to websocket.
+## The UTC date and time that the WebSocket connection was lost. This is a response-only field that Get EventSub Subscription returns if the method field is set to websocket .
 @export var disconnected_at: String:
 	set(val): 
 		disconnected_at = val

@@ -7,7 +7,7 @@ extends TwitchData
 ## #/components/schemas/BitsVoting
 class_name TwitchESBitsVoting
 	
-## Not used; will be set to false.
+## Not used; will be set to false .
 @export var is_enabled: bool:
 	set(val): 
 		is_enabled = val

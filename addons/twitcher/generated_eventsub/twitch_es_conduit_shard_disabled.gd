@@ -11,13 +11,13 @@ class_name TwitchESConduitShardDisabled
 ## #/components/schemas/ConduitShardDisabledCondition
 class Condition extends TwitchData:
 
-	## Your application’s client id. The provided client_id must match the client ID in the application access token.
+	## Your application's client id. The provided client_id must match the client ID in the application access token.
 	@export var client_id: String:
 		set(val): 
 			client_id = val
 			track_data(&"client_id", val)
 	
-	## The conduit ID to receive events for. If omitted, events for all of this client’s conduits are sent.
+	## The conduit ID to receive events for. If omitted, events for all of this client's conduits are sent.
 	@export var conduit_id: String:
 		set(val): 
 			conduit_id = val
@@ -69,25 +69,25 @@ class Event extends TwitchData:
 			method = val
 			track_data(&"method", val)
 	
-	## Optional. Webhook callback URL. Null if method is set to websocket.
+	## Optional. Webhook callback URL. Null if method is set to websocket .
 	@export var callback: String:
 		set(val): 
 			callback = val
 			track_data(&"callback", val)
 	
-	## Optional. WebSocket session ID. Null if method is set to webhook.
+	## Optional. WebSocket session ID. Null if method is set to webhook .
 	@export var session_id: String:
 		set(val): 
 			session_id = val
 			track_data(&"session_id", val)
 	
-	## Optional. Time that the WebSocket session connected. Null if method is set to webhook.
+	## Optional. Time that the WebSocket session connected. Null if method is set to webhook .
 	@export var connected_at: String:
 		set(val): 
 			connected_at = val
 			track_data(&"connected_at", val)
 	
-	## Optional. Time that the WebSocket session disconnected. Null if method is set to webhook.
+	## Optional. Time that the WebSocket session disconnected. Null if method is set to webhook .
 	@export var disconnected_at: String:
 		set(val): 
 			disconnected_at = val

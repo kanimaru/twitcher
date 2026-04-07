@@ -31,37 +31,37 @@ class Condition extends TwitchData:
 ## #/components/schemas/UserUpdateEvent
 class Event extends TwitchData:
 
-	## The user’s user id.
+	## The user's user id.
 	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
-	## The user’s user login.
+	## The user's user login.
 	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
-	## The user’s user display name.
+	## The user's user display name.
 	@export var user_name: String:
 		set(val): 
 			user_name = val
 			track_data(&"user_name", val)
 	
-	## The user’s email address. The event includes the user’s email address only if the app used to request this event type includes the user:read:email scope for the user; otherwise, the field is set to an empty string. See Create EventSub Subscription.
+	## The user's email address. The event includes the user's email address only if the app used to request this event type includes the user:read:email scope for the user; otherwise, the field is set to an empty string. See Create EventSub Subscription .
 	@export var email: String:
 		set(val): 
 			email = val
 			track_data(&"email", val)
 	
-	## A Boolean value that determines whether Twitch has verified the user’s email address. Is true if Twitch has verified the email address; otherwise, false.NOTE: Ignore this field if the email field contains an empty string.
+	## A Boolean value that determines whether Twitch has verified the user's email address. Is true if Twitch has verified the email address; otherwise, false. NOTE: Ignore this field if the email field contains an empty string.
 	@export var email_verified: bool:
 		set(val): 
 			email_verified = val
 			track_data(&"email_verified", val)
 	
-	## The user’s description.
+	## The user's description.
 	@export var description: String:
 		set(val): 
 			description = val

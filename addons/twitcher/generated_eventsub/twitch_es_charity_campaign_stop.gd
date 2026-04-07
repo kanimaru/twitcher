@@ -23,19 +23,19 @@ class Event extends TwitchData:
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
-	## The broadcaster’s login name.
+	## The broadcaster's login name.
 	@export var broadcaster_login: String:
 		set(val): 
 			broadcaster_login = val
 			track_data(&"broadcaster_login", val)
 	
-	## The broadcaster’s display name.
+	## The broadcaster's display name.
 	@export var broadcaster_name: String:
 		set(val): 
 			broadcaster_name = val
 			track_data(&"broadcaster_name", val)
 	
-	## The charity’s name.
+	## The charity's name.
 	@export var charity_name: String:
 		set(val): 
 			charity_name = val
@@ -47,13 +47,13 @@ class Event extends TwitchData:
 			charity_description = val
 			track_data(&"charity_description", val)
 	
-	## A URL to an image of the charity’s logo. The image’s type is PNG and its size is 100px X 100px.
+	## A URL to an image of the charity's logo. The image's type is PNG and its size is 100px X 100px.
 	@export var charity_logo: String:
 		set(val): 
 			charity_logo = val
 			track_data(&"charity_logo", val)
 	
-	## A URL to the charity’s website.
+	## A URL to the charity's website.
 	@export var charity_website: String:
 		set(val): 
 			charity_website = val
@@ -65,7 +65,7 @@ class Event extends TwitchData:
 			current_amount = val
 			track_data(&"current_amount", val)
 	
-	## An object that contains the campaign’s target fundraising goal.
+	## An object that contains the campaign's target fundraising goal.
 	@export var target_amount: TargetAmount:
 		set(val): 
 			target_amount = val
@@ -111,19 +111,19 @@ class Event extends TwitchData:
 ## #/components/schemas/CharityCampaignStopEvent/CurrentAmount
 class CurrentAmount extends TwitchData:
 
-	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550.
+	## The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550.
 	@export var value: int:
 		set(val): 
 			value = val
 			track_data(&"value", val)
 	
-	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula:value / 10^decimal_places
+	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places
 	@export var decimal_places: int:
 		set(val): 
 			decimal_places = val
 			track_data(&"decimal_places", val)
 	
-	## The ISO-4217 three-letter currency code that identifies the type of currency in value.
+	## The ISO-4217 three-letter currency code that identifies the type of currency in value .
 	@export var currency: String:
 		set(val): 
 			currency = val
@@ -143,23 +143,23 @@ class CurrentAmount extends TwitchData:
 	
 
 
-## An object that contains the campaign’s target fundraising goal.
+## An object that contains the campaign's target fundraising goal.
 ## #/components/schemas/CharityCampaignStopEvent/TargetAmount
 class TargetAmount extends TwitchData:
 
-	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550.
+	## The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550.
 	@export var value: int:
 		set(val): 
 			value = val
 			track_data(&"value", val)
 	
-	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula:value / 10^decimal_places
+	## The number of decimal places used by the currency. For example, USD uses two decimal places. Use this number to translate value from minor units to major units by using the formula: value / 10^decimal_places
 	@export var decimal_places: int:
 		set(val): 
 			decimal_places = val
 			track_data(&"decimal_places", val)
 	
-	## The ISO-4217 three-letter currency code that identifies the type of currency in value.
+	## The ISO-4217 three-letter currency code that identifies the type of currency in value .
 	@export var currency: String:
 		set(val): 
 			currency = val

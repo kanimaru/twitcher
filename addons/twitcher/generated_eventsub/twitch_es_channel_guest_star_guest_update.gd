@@ -63,13 +63,13 @@ class Event extends TwitchData:
 			session_id = val
 			track_data(&"session_id", val)
 	
-	## The user ID of the moderator who updated the guest’s state (could be the host). null if the update was performed by the guest.
+	## The user ID of the moderator who updated the guest's state (could be the host). null if the update was performed by the guest.
 	@export var moderator_user_id: String:
 		set(val): 
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
-	## The moderator display name.null if the update was performed by the guest.
+	## The moderator display name. null if the update was performed by the guest.
 	@export var moderator_user_name: String:
 		set(val): 
 			moderator_user_name = val
@@ -105,7 +105,7 @@ class Event extends TwitchData:
 			slot_id = val
 			track_data(&"slot_id", val)
 	
-	## The current state of the user after the update has taken place. null if the slot is now empty. Can otherwise be one of the following: invited — The guest has transitioned to the invite queue. This can take place when the guest was previously assigned a slot, but have been removed from the call and are sent back to the invite queue.accepted — The guest has accepted the invite and is currently in the process of setting up to join the session.ready — The guest has signaled they are ready and can be assigned a slot.backstage — The guest has been assigned a slot in the session, but is not currently seen live in the broadcasting software.live — The guest is now live in the host's broadcasting software.removed — The guest was removed from the call or queue.accepted — The guest has accepted the invite to the call.
+	## The current state of the user after the update has taken place. null if the slot is now empty. Can otherwise be one of the following: invited — The guest has transitioned to the invite queue. This can take place when the guest was previously assigned a slot, but have been removed from the call and are sent back to the invite queue. accepted — The guest has accepted the invite and is currently in the process of setting up to join the session. ready — The guest has signaled they are ready and can be assigned a slot. backstage — The guest has been assigned a slot in the session, but is not currently seen live in the broadcasting software. live — The guest is now live in the host's broadcasting software. removed — The guest was removed from the call or queue. accepted — The guest has accepted the invite to the call.
 	@export var state: String:
 		set(val): 
 			state = val
@@ -129,19 +129,19 @@ class Event extends TwitchData:
 			host_user_login = val
 			track_data(&"host_user_login", val)
 	
-	## Flag that signals whether the host is allowing the slot’s video to be seen by participants within the session. null if the guest is not slotted.
+	## Flag that signals whether the host is allowing the slot's video to be seen by participants within the session. null if the guest is not slotted.
 	@export var host_video_enabled: bool:
 		set(val): 
 			host_video_enabled = val
 			track_data(&"host_video_enabled", val)
 	
-	## Flag that signals whether the host is allowing the slot’s audio to be heard by participants within the session. null if the guest is not slotted.
+	## Flag that signals whether the host is allowing the slot's audio to be heard by participants within the session. null if the guest is not slotted.
 	@export var host_audio_enabled: bool:
 		set(val): 
 			host_audio_enabled = val
 			track_data(&"host_audio_enabled", val)
 	
-	## Value between 0-100 that represents the slot’s audio level as heard by participants within the session. null if the guest is not slotted.
+	## Value between 0-100 that represents the slot's audio level as heard by participants within the session. null if the guest is not slotted.
 	@export var host_volume: int:
 		set(val): 
 			host_volume = val

@@ -11,7 +11,7 @@ class_name TwitchESChannelUnbanRequestCreate
 ## #/components/schemas/ChannelUnbanRequestCreateCondition
 class Condition extends TwitchData:
 
-	## The ID of the user that has permission to moderate the broadcaster’s channel and has granted your app permission to subscribe to this subscription type.
+	## The ID of the user that has permission to moderate the broadcaster's channel and has granted your app permission to subscribe to this subscription type.
 	@export var moderator_user_id: String:
 		set(val): 
 			moderator_user_id = val
@@ -45,19 +45,19 @@ class Event extends TwitchData:
 			id = val
 			track_data(&"id", val)
 	
-	## The broadcaster’s user ID for the channel the unban request was created for.
+	## The broadcaster's user ID for the channel the unban request was created for.
 	@export var broadcaster_user_id: String:
 		set(val): 
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
-	## The broadcaster’s login name.
+	## The broadcaster's login name.
 	@export var broadcaster_user_login: String:
 		set(val): 
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
-	## The broadcaster’s display name.
+	## The broadcaster's display name.
 	@export var broadcaster_user_name: String:
 		set(val): 
 			broadcaster_user_name = val
@@ -69,13 +69,13 @@ class Event extends TwitchData:
 			user_id = val
 			track_data(&"user_id", val)
 	
-	## The user’s login name.
+	## The user's login name.
 	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
-	## The user’s display name.
+	## The user's display name.
 	@export var user_name: String:
 		set(val): 
 			user_name = val

@@ -73,7 +73,7 @@ class Event extends TwitchData:
 			bits = val
 			track_data(&"bits", val)
 	
-	## Possible values are: cheerpower_up
+	## Possible values are: cheer power_up custom_power_up
 	@export var type: String:
 		set(val): 
 			type = val
@@ -85,11 +85,17 @@ class Event extends TwitchData:
 			message = val
 			track_data(&"message", val)
 	
-	## Optional. Data about Power-up.
+	## Optional. Data about a default (i.e. built-in) Power-up.
 	@export var power_up: PowerUp:
 		set(val): 
 			power_up = val
 			track_data(&"power_up", val)
+	
+	## Optional. Data about a custom Power-up.
+	@export var custom_power_up: CustomPowerUp:
+		set(val): 
+			custom_power_up = val
+			track_data(&"custom_power_up", val)
 	
 	
 	
@@ -115,6 +121,8 @@ class Event extends TwitchData:
 			result.message = Message.from_json(d["message"])
 		if d.get("power_up", null) != null:
 			result.power_up = PowerUp.from_json(d["power_up"])
+		if d.get("custom_power_up", null) != null:
+			result.custom_power_up = CustomPowerUp.from_json(d["custom_power_up"])
 		return result
 	
 
@@ -158,7 +166,7 @@ class Fragments extends TwitchData:
 			text = val
 			track_data(&"text", val)
 	
-	## The type of message fragment. Possible values are: textcheermoteemote
+	## The type of message fragment. Possible values are: text cheermote emote
 	@export var type: String:
 		set(val): 
 			type = val
@@ -214,7 +222,7 @@ class Emote extends TwitchData:
 			owner_id = val
 			track_data(&"owner_id", val)
 	
-	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote.static - A static PNG file is available for this emote.
+	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote.
 	@export var format: Array[String]:
 		set(val): 
 			format = val
@@ -241,7 +249,7 @@ class Emote extends TwitchData:
 ## #/components/schemas/ChannelBitsUseEvent/Message/Fragments/Cheermote
 class Cheermote extends TwitchData:
 
-	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is “Cheer” and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
+	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: String:
 		set(val): 
 			prefix = val
@@ -273,11 +281,11 @@ class Cheermote extends TwitchData:
 	
 
 
-## Optional. Data about Power-up.
+## Optional. Data about a default (i.e. built-in) Power-up.
 ## #/components/schemas/ChannelBitsUseEvent/PowerUp
 class PowerUp extends TwitchData:
 
-	## Possible values: message_effectcelebrationgigantify_an_emote
+	## Possible values: message_effect celebration gigantify_an_emote
 	@export var type: String:
 		set(val): 
 			type = val
@@ -333,5 +341,33 @@ class PowerUp_Emote extends TwitchData:
 			result.id = d["id"]
 		if d.get("name", null) != null:
 			result.name = d["name"]
+		return result
+	
+
+
+## Optional. Data about a custom Power-up.
+## #/components/schemas/ChannelBitsUseEvent/CustomPowerUp
+class CustomPowerUp extends TwitchData:
+
+	## The title of the custom Power-up.
+	@export var title: String:
+		set(val): 
+			title = val
+			track_data(&"title", val)
+	
+	## The ID of the custom Power-up.
+	@export var reward_id: String:
+		set(val): 
+			reward_id = val
+			track_data(&"reward_id", val)
+	
+	
+	
+	static func from_json(d: Dictionary) -> CustomPowerUp:
+		var result: CustomPowerUp = CustomPowerUp.new()
+		if d.get("title", null) != null:
+			result.title = d["title"]
+		if d.get("reward_id", null) != null:
+			result.reward_id = d["reward_id"]
 		return result
 	

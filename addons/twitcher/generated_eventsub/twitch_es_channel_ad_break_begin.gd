@@ -49,19 +49,19 @@ class Event extends TwitchData:
 			is_automatic = val
 			track_data(&"is_automatic", val)
 	
-	## The broadcaster’s user ID for the channel the ad was run on.
+	## The broadcaster's user ID for the channel the ad was run on.
 	@export var broadcaster_user_id: String:
 		set(val): 
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
-	## The broadcaster’s user login for the channel the ad was run on.
+	## The broadcaster's user login for the channel the ad was run on.
 	@export var broadcaster_user_login: String:
 		set(val): 
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
-	## The broadcaster’s user display name for the channel the ad was run on.
+	## The broadcaster's user display name for the channel the ad was run on.
 	@export var broadcaster_user_name: String:
 		set(val): 
 			broadcaster_user_name = val

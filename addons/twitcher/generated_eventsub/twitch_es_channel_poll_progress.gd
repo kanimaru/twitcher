@@ -11,7 +11,7 @@ class_name TwitchESChannelPollProgress
 ## #/components/schemas/ChannelPollProgressCondition
 class Condition extends TwitchData:
 
-	## The broadcaster user ID of the channel for which “poll progress” notifications will be received.
+	## The broadcaster user ID of the channel for which "poll progress" notifications will be received.
 	@export var broadcaster_user_id: String:
 		set(val): 
 			broadcaster_user_id = val
@@ -62,7 +62,7 @@ class Event extends TwitchData:
 			track_data(&"title", val)
 	
 	## An array of choices for the poll. Includes vote counts.
-	@export var choices: Array[TwitchESChoices]:
+	@export var choices: TwitchESChoices:
 		set(val): 
 			choices = val
 			track_data(&"choices", val)
@@ -106,8 +106,7 @@ class Event extends TwitchData:
 		if d.get("title", null) != null:
 			result.title = d["title"]
 		if d.get("choices", null) != null:
-			for value in d["choices"]:
-				result.choices.append(TwitchESChoices.from_json(value))
+			result.choices = TwitchESChoices.from_json(d["choices"])
 		if d.get("bits_voting", null) != null:
 			result.bits_voting = TwitchESBitsVoting.from_json(d["bits_voting"])
 		if d.get("channel_points_voting", null) != null:

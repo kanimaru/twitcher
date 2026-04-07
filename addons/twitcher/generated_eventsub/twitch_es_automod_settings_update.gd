@@ -63,13 +63,13 @@ class Event extends TwitchData:
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
-	## The moderator’s login.
+	## The moderator's login.
 	@export var moderator_user_login: String:
 		set(val): 
 			moderator_user_login = val
 			track_data(&"moderator_user_login", val)
 	
-	## The moderator’s user name.
+	## The moderator's user name.
 	@export var moderator_user_name: String:
 		set(val): 
 			moderator_user_name = val

@@ -17,7 +17,7 @@ class Condition extends TwitchData:
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
-	## Optional. Specify a reward id to only receive notifications for a specific reward.
+	## Optional . Specify a reward id to only receive notifications for a specific reward.
 	@export var reward_id: String:
 		set(val): 
 			reward_id = val
@@ -87,7 +87,7 @@ class Event extends TwitchData:
 			user_input = val
 			track_data(&"user_input", val)
 	
-	## Will be fulfilled or canceled. Possible values are unknown, unfulfilled, fulfilled, and canceled.
+	## Will be fulfilled or canceled . Possible values are unknown , unfulfilled , fulfilled , and canceled .
 	@export var status: String:
 		set(val): 
 			status = val

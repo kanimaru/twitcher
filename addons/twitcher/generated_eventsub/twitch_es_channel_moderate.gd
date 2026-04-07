@@ -121,127 +121,127 @@ class Event extends TwitchData:
 			moderator_user_name = val
 			track_data(&"moderator_user_name", val)
 	
-	## The type of action: Possible values are: bantimeoutunbanuntimeoutclearemoteonlyemoteonlyofffollowersfollowersoffuniquechatuniquechatoffslowslowoffsubscriberssubscribersoffunraiddeleteunvipvipraidadd_blocked_termadd_permitted_termremove_blocked_termremove_permitted_termmodunmodapprove_unban_requestdeny_unban_requestshared_chat_banshared_chat_timeoutshared_chat_untimeoutshared_chat_unbanshared_chat_delete
+	## The type of action: Possible values are: ban timeout unban untimeout clear emoteonly emoteonlyoff followers followersoff uniquechat uniquechatoff slow slowoff subscribers subscribersoff unraid delete unvip vip raid add_blocked_term add_permitted_term remove_blocked_term remove_permitted_term mod unmod approve_unban_request deny_unban_request shared_chat_ban shared_chat_timeout shared_chat_untimeout shared_chat_unban shared_chat_delete
 	@export var action: String:
 		set(val): 
 			action = val
 			track_data(&"action", val)
 	
-	## Optional.. Metadata associated with the followers command.
+	## Optional .. Metadata associated with the followers command.
 	@export var followers: Followers:
 		set(val): 
 			followers = val
 			track_data(&"followers", val)
 	
-	## Optional. Metadata associated with the slow command.
+	## Optional . Metadata associated with the slow command.
 	@export var slow: Slow:
 		set(val): 
 			slow = val
 			track_data(&"slow", val)
 	
-	## Optional. Metadata associated with the vip command.
+	## Optional . Metadata associated with the vip command.
 	@export var vip: Vip:
 		set(val): 
 			vip = val
 			track_data(&"vip", val)
 	
-	## Optional. Metadata associated with the unvip command.
+	## Optional . Metadata associated with the unvip command.
 	@export var unvip: Unvip:
 		set(val): 
 			unvip = val
 			track_data(&"unvip", val)
 	
-	## Optional. Metadata associated with the mod command.
+	## Optional . Metadata associated with the mod command.
 	@export var mod: Mod:
 		set(val): 
 			mod = val
 			track_data(&"mod", val)
 	
-	## Optional. Metadata associated with the unmod command.
+	## Optional . Metadata associated with the unmod command.
 	@export var unmod: Unmod:
 		set(val): 
 			unmod = val
 			track_data(&"unmod", val)
 	
-	## Optional. Metadata associated with the ban command.
+	## Optional . Metadata associated with the ban command.
 	@export var ban: Ban:
 		set(val): 
 			ban = val
 			track_data(&"ban", val)
 	
-	## Optional. Metadata associated with the unban command.
+	## Optional . Metadata associated with the unban command.
 	@export var unban: Unban:
 		set(val): 
 			unban = val
 			track_data(&"unban", val)
 	
-	## Optional.. Metadata associated with the timeout command.
+	## Optional .. Metadata associated with the timeout command.
 	@export var timeout: Timeout:
 		set(val): 
 			timeout = val
 			track_data(&"timeout", val)
 	
-	## Optional. Metadata associated with the untimeout command.
+	## Optional . Metadata associated with the untimeout command.
 	@export var untimeout: Untimeout:
 		set(val): 
 			untimeout = val
 			track_data(&"untimeout", val)
 	
-	## Optional.. Metadata associated with the raid command.
+	## Optional .. Metadata associated with the raid command.
 	@export var raid: Raid:
 		set(val): 
 			raid = val
 			track_data(&"raid", val)
 	
-	## Optional. Metadata associated with the unraid command.
+	## Optional . Metadata associated with the unraid command.
 	@export var unraid: Unraid:
 		set(val): 
 			unraid = val
 			track_data(&"unraid", val)
 	
-	## Optional. Metadata associated with the delete command.
+	## Optional . Metadata associated with the delete command.
 	@export var delete: Delete:
 		set(val): 
 			delete = val
 			track_data(&"delete", val)
 	
-	## Optional. Metadata associated with the automod terms changes.
+	## Optional . Metadata associated with the automod terms changes.
 	@export var automod_terms: AutomodTerms:
 		set(val): 
 			automod_terms = val
 			track_data(&"automod_terms", val)
 	
-	## Optional. Metadata associated with an unban request.
+	## Optional . Metadata associated with an unban request.
 	@export var unban_request: UnbanRequest:
 		set(val): 
 			unban_request = val
 			track_data(&"unban_request", val)
 	
-	## Optional. Information about the shared_chat_ban event. Is null if action is not shared_chat_ban. This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_ban: Dictionary:
 		set(val): 
 			shared_chat_ban = val
 			track_data(&"shared_chat_ban", val)
 	
-	## Optional. Information about the shared_chat_unban event. Is null if action is not shared_chat_unban. This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_unban: Dictionary:
 		set(val): 
 			shared_chat_unban = val
 			track_data(&"shared_chat_unban", val)
 	
-	## Optional. Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout. This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_timeout: Dictionary:
 		set(val): 
 			shared_chat_timeout = val
 			track_data(&"shared_chat_timeout", val)
 	
-	## Optional. Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout. This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_untimeout: Dictionary:
 		set(val): 
 			shared_chat_untimeout = val
 			track_data(&"shared_chat_untimeout", val)
 	
-	## Optional. Information about the shared_chat_delete event. Is null if action is not shared_chat_delete. This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_delete: Dictionary:
 		set(val): 
 			shared_chat_delete = val
@@ -315,7 +315,7 @@ class Event extends TwitchData:
 	
 
 
-## Optional.. Metadata associated with the followers command.
+## Optional .. Metadata associated with the followers command.
 ## #/components/schemas/ChannelModerateEvent/Followers
 class Followers extends TwitchData:
 
@@ -335,7 +335,7 @@ class Followers extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the slow command.
+## Optional . Metadata associated with the slow command.
 ## #/components/schemas/ChannelModerateEvent/Slow
 class Slow extends TwitchData:
 
@@ -355,7 +355,7 @@ class Slow extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the vip command.
+## Optional . Metadata associated with the vip command.
 ## #/components/schemas/ChannelModerateEvent/Vip
 class Vip extends TwitchData:
 
@@ -391,7 +391,7 @@ class Vip extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the unvip command.
+## Optional . Metadata associated with the unvip command.
 ## #/components/schemas/ChannelModerateEvent/Unvip
 class Unvip extends TwitchData:
 
@@ -427,7 +427,7 @@ class Unvip extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the mod command.
+## Optional . Metadata associated with the mod command.
 ## #/components/schemas/ChannelModerateEvent/Mod
 class Mod extends TwitchData:
 
@@ -463,7 +463,7 @@ class Mod extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the unmod command.
+## Optional . Metadata associated with the unmod command.
 ## #/components/schemas/ChannelModerateEvent/Unmod
 class Unmod extends TwitchData:
 
@@ -499,7 +499,7 @@ class Unmod extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the ban command.
+## Optional . Metadata associated with the ban command.
 ## #/components/schemas/ChannelModerateEvent/Ban
 class Ban extends TwitchData:
 
@@ -521,7 +521,7 @@ class Ban extends TwitchData:
 			user_name = val
 			track_data(&"user_name", val)
 	
-	## Optional. Reason given for the ban.
+	## Optional . Reason given for the ban.
 	@export var reason: String:
 		set(val): 
 			reason = val
@@ -543,7 +543,7 @@ class Ban extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the unban command.
+## Optional . Metadata associated with the unban command.
 ## #/components/schemas/ChannelModerateEvent/Unban
 class Unban extends TwitchData:
 
@@ -579,7 +579,7 @@ class Unban extends TwitchData:
 	
 
 
-## Optional.. Metadata associated with the timeout command.
+## Optional .. Metadata associated with the timeout command.
 ## #/components/schemas/ChannelModerateEvent/Timeout
 class Timeout extends TwitchData:
 
@@ -601,7 +601,7 @@ class Timeout extends TwitchData:
 			user_name = val
 			track_data(&"user_name", val)
 	
-	## Optional.. The reason given for the timeout.
+	## Optional .. The reason given for the timeout.
 	@export var reason: String:
 		set(val): 
 			reason = val
@@ -631,7 +631,7 @@ class Timeout extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the untimeout command.
+## Optional . Metadata associated with the untimeout command.
 ## #/components/schemas/ChannelModerateEvent/Untimeout
 class Untimeout extends TwitchData:
 
@@ -667,7 +667,7 @@ class Untimeout extends TwitchData:
 	
 
 
-## Optional.. Metadata associated with the raid command.
+## Optional .. Metadata associated with the raid command.
 ## #/components/schemas/ChannelModerateEvent/Raid
 class Raid extends TwitchData:
 
@@ -711,7 +711,7 @@ class Raid extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the unraid command.
+## Optional . Metadata associated with the unraid command.
 ## #/components/schemas/ChannelModerateEvent/Unraid
 class Unraid extends TwitchData:
 
@@ -747,7 +747,7 @@ class Unraid extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the delete command.
+## Optional . Metadata associated with the delete command.
 ## #/components/schemas/ChannelModerateEvent/Delete
 class Delete extends TwitchData:
 
@@ -799,17 +799,17 @@ class Delete extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the automod terms changes.
+## Optional . Metadata associated with the automod terms changes.
 ## #/components/schemas/ChannelModerateEvent/AutomodTerms
 class AutomodTerms extends TwitchData:
 
-	## Either “add” or “remove”.
+	## Either "add" or "remove".
 	@export var action: String:
 		set(val): 
 			action = val
 			track_data(&"action", val)
 	
-	## Either “blocked” or “permitted”.
+	## Either "blocked" or "permitted".
 	@export var list: String:
 		set(val): 
 			list = val
@@ -844,7 +844,7 @@ class AutomodTerms extends TwitchData:
 	
 
 
-## Optional. Metadata associated with an unban request.
+## Optional . Metadata associated with an unban request.
 ## #/components/schemas/ChannelModerateEvent/UnbanRequest
 class UnbanRequest extends TwitchData:
 
@@ -954,133 +954,133 @@ class EventV2 extends TwitchData:
 			moderator_user_name = val
 			track_data(&"moderator_user_name", val)
 	
-	## The action performed. Possible values are: bantimeoutunbanuntimeoutclearemoteonlyemoteonlyofffollowersfollowersoffuniquechatuniquechatoffslowslowoffsubscriberssubscribersoffunraiddeleteunvipvipraidadd_blocked_termadd_permitted_termremove_blocked_termremove_permitted_termmodunmodapprove_unban_requestdeny_unban_requestwarnshared_chat_banshared_chat_timeoutshared_chat_unbanshared_chat_untimeoutshared_chat_delete
+	## The action performed. Possible values are: ban timeout unban untimeout clear emoteonly emoteonlyoff followers followersoff uniquechat uniquechatoff slow slowoff subscribers subscribersoff unraid delete unvip vip raid add_blocked_term add_permitted_term remove_blocked_term remove_permitted_term mod unmod approve_unban_request deny_unban_request warn shared_chat_ban shared_chat_timeout shared_chat_unban shared_chat_untimeout shared_chat_delete
 	@export var action: String:
 		set(val): 
 			action = val
 			track_data(&"action", val)
 	
-	## Optional. Metadata associated with the followers command.
+	## Optional . Metadata associated with the followers command.
 	@export var followers: FollowersV2:
 		set(val): 
 			followers = val
 			track_data(&"followers", val)
 	
-	## Optional. Metadata associated with the slow command.
+	## Optional . Metadata associated with the slow command.
 	@export var slow: SlowV2:
 		set(val): 
 			slow = val
 			track_data(&"slow", val)
 	
-	## Optional. Metadata associated with the vip command.
+	## Optional . Metadata associated with the vip command.
 	@export var vip: VipV2:
 		set(val): 
 			vip = val
 			track_data(&"vip", val)
 	
-	## Optional. Metadata associated with the unvip command.
+	## Optional . Metadata associated with the unvip command.
 	@export var unvip: UnvipV2:
 		set(val): 
 			unvip = val
 			track_data(&"unvip", val)
 	
-	## Optional. Metadata associated with the mod command.
+	## Optional . Metadata associated with the mod command.
 	@export var mod: ModV2:
 		set(val): 
 			mod = val
 			track_data(&"mod", val)
 	
-	## Optional. Metadata associated with the unmod command.
+	## Optional . Metadata associated with the unmod command.
 	@export var unmod: UnmodV2:
 		set(val): 
 			unmod = val
 			track_data(&"unmod", val)
 	
-	## Optional. Metadata associated with the ban command.
+	## Optional . Metadata associated with the ban command.
 	@export var ban: BanV2:
 		set(val): 
 			ban = val
 			track_data(&"ban", val)
 	
-	## Optional. Metadata associated with the unban command.
+	## Optional . Metadata associated with the unban command.
 	@export var unban: UnbanV2:
 		set(val): 
 			unban = val
 			track_data(&"unban", val)
 	
-	## Optional. Metadata associated with the timeout command.
+	## Optional . Metadata associated with the timeout command.
 	@export var timeout: TimeoutV2:
 		set(val): 
 			timeout = val
 			track_data(&"timeout", val)
 	
-	## Optional. Metadata associated with the untimeout command.
+	## Optional . Metadata associated with the untimeout command.
 	@export var untimeout: UntimeoutV2:
 		set(val): 
 			untimeout = val
 			track_data(&"untimeout", val)
 	
-	## Optional. Metadata associated with the raid command.
+	## Optional . Metadata associated with the raid command.
 	@export var raid: RaidV2:
 		set(val): 
 			raid = val
 			track_data(&"raid", val)
 	
-	## Optional. Metadata associated with the unraid command.
+	## Optional . Metadata associated with the unraid command.
 	@export var unraid: UnraidV2:
 		set(val): 
 			unraid = val
 			track_data(&"unraid", val)
 	
-	## Optional. Metadata associated with the delete command.
+	## Optional . Metadata associated with the delete command.
 	@export var delete: DeleteV2:
 		set(val): 
 			delete = val
 			track_data(&"delete", val)
 	
-	## Optional. Metadata associated with the automod terms changes.
+	## Optional . Metadata associated with the automod terms changes.
 	@export var automod_terms: AutomodTermsV2:
 		set(val): 
 			automod_terms = val
 			track_data(&"automod_terms", val)
 	
-	## Optional. Metadata associated with an unban request.
+	## Optional . Metadata associated with an unban request.
 	@export var unban_request: UnbanRequestV2:
 		set(val): 
 			unban_request = val
 			track_data(&"unban_request", val)
 	
-	## Optional. Metadata associated with the warn command.
+	## Optional . Metadata associated with the warn command.
 	@export var warn: WarnV2:
 		set(val): 
 			warn = val
 			track_data(&"warn", val)
 	
-	## Optional. Information about the shared_chat_ban event. Is null if action is not shared_chat_ban. This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_ban: Dictionary:
 		set(val): 
 			shared_chat_ban = val
 			track_data(&"shared_chat_ban", val)
 	
-	## Optional. Information about the shared_chat_unban event. Is null if action is not shared_chat_unban. This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_unban: Dictionary:
 		set(val): 
 			shared_chat_unban = val
 			track_data(&"shared_chat_unban", val)
 	
-	## Optional. Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout. This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_timeout: Dictionary:
 		set(val): 
 			shared_chat_timeout = val
 			track_data(&"shared_chat_timeout", val)
 	
-	## Optional. Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout. This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_untimeout: Dictionary:
 		set(val): 
 			shared_chat_untimeout = val
 			track_data(&"shared_chat_untimeout", val)
 	
-	## Optional. Information about the shared_chat_delete event. Is null if action is not shared_chat_delete. This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	## Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_delete: Dictionary:
 		set(val): 
 			shared_chat_delete = val
@@ -1156,7 +1156,7 @@ class EventV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the followers command.
+## Optional . Metadata associated with the followers command.
 ## #/components/schemas/ChannelModerateEventV2/Followers
 class FollowersV2 extends TwitchData:
 
@@ -1176,7 +1176,7 @@ class FollowersV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the slow command.
+## Optional . Metadata associated with the slow command.
 ## #/components/schemas/ChannelModerateEventV2/Slow
 class SlowV2 extends TwitchData:
 
@@ -1196,7 +1196,7 @@ class SlowV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the vip command.
+## Optional . Metadata associated with the vip command.
 ## #/components/schemas/ChannelModerateEventV2/Vip
 class VipV2 extends TwitchData:
 
@@ -1232,7 +1232,7 @@ class VipV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the unvip command.
+## Optional . Metadata associated with the unvip command.
 ## #/components/schemas/ChannelModerateEventV2/Unvip
 class UnvipV2 extends TwitchData:
 
@@ -1268,7 +1268,7 @@ class UnvipV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the mod command.
+## Optional . Metadata associated with the mod command.
 ## #/components/schemas/ChannelModerateEventV2/Mod
 class ModV2 extends TwitchData:
 
@@ -1304,7 +1304,7 @@ class ModV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the unmod command.
+## Optional . Metadata associated with the unmod command.
 ## #/components/schemas/ChannelModerateEventV2/Unmod
 class UnmodV2 extends TwitchData:
 
@@ -1340,7 +1340,7 @@ class UnmodV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the ban command.
+## Optional . Metadata associated with the ban command.
 ## #/components/schemas/ChannelModerateEventV2/Ban
 class BanV2 extends TwitchData:
 
@@ -1362,7 +1362,7 @@ class BanV2 extends TwitchData:
 			user_name = val
 			track_data(&"user_name", val)
 	
-	## Optional. Reason given for the ban.
+	## Optional . Reason given for the ban.
 	@export var reason: String:
 		set(val): 
 			reason = val
@@ -1384,7 +1384,7 @@ class BanV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the unban command.
+## Optional . Metadata associated with the unban command.
 ## #/components/schemas/ChannelModerateEventV2/Unban
 class UnbanV2 extends TwitchData:
 
@@ -1420,7 +1420,7 @@ class UnbanV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the timeout command.
+## Optional . Metadata associated with the timeout command.
 ## #/components/schemas/ChannelModerateEventV2/Timeout
 class TimeoutV2 extends TwitchData:
 
@@ -1442,7 +1442,7 @@ class TimeoutV2 extends TwitchData:
 			user_name = val
 			track_data(&"user_name", val)
 	
-	## Optional. The reason given for the timeout.
+	## Optional . The reason given for the timeout.
 	@export var reason: String:
 		set(val): 
 			reason = val
@@ -1472,7 +1472,7 @@ class TimeoutV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the untimeout command.
+## Optional . Metadata associated with the untimeout command.
 ## #/components/schemas/ChannelModerateEventV2/Untimeout
 class UntimeoutV2 extends TwitchData:
 
@@ -1508,7 +1508,7 @@ class UntimeoutV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the raid command.
+## Optional . Metadata associated with the raid command.
 ## #/components/schemas/ChannelModerateEventV2/Raid
 class RaidV2 extends TwitchData:
 
@@ -1552,7 +1552,7 @@ class RaidV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the unraid command.
+## Optional . Metadata associated with the unraid command.
 ## #/components/schemas/ChannelModerateEventV2/Unraid
 class UnraidV2 extends TwitchData:
 
@@ -1588,7 +1588,7 @@ class UnraidV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the delete command.
+## Optional . Metadata associated with the delete command.
 ## #/components/schemas/ChannelModerateEventV2/Delete
 class DeleteV2 extends TwitchData:
 
@@ -1640,17 +1640,17 @@ class DeleteV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the automod terms changes.
+## Optional . Metadata associated with the automod terms changes.
 ## #/components/schemas/ChannelModerateEventV2/AutomodTerms
 class AutomodTermsV2 extends TwitchData:
 
-	## Either “add” or “remove”.
+	## Either "add" or "remove".
 	@export var action: String:
 		set(val): 
 			action = val
 			track_data(&"action", val)
 	
-	## Either “blocked” or “permitted”.
+	## Either "blocked" or "permitted".
 	@export var list: String:
 		set(val): 
 			list = val
@@ -1685,7 +1685,7 @@ class AutomodTermsV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with an unban request.
+## Optional . Metadata associated with an unban request.
 ## #/components/schemas/ChannelModerateEventV2/UnbanRequest
 class UnbanRequestV2 extends TwitchData:
 
@@ -1737,7 +1737,7 @@ class UnbanRequestV2 extends TwitchData:
 	
 
 
-## Optional. Metadata associated with the warn command.
+## Optional . Metadata associated with the warn command.
 ## #/components/schemas/ChannelModerateEventV2/Warn
 class WarnV2 extends TwitchData:
 
@@ -1759,13 +1759,13 @@ class WarnV2 extends TwitchData:
 			user_name = val
 			track_data(&"user_name", val)
 	
-	## Optional. Reason given for the warning.
+	## Optional . Reason given for the warning.
 	@export var reason: String:
 		set(val): 
 			reason = val
 			track_data(&"reason", val)
 	
-	## Optional. Chat rules cited for the warning.
+	## Optional . Chat rules cited for the warning.
 	@export var chat_rules_cited: Array[String]:
 		set(val): 
 			chat_rules_cited = val

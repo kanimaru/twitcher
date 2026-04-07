@@ -11,7 +11,7 @@ class_name TwitchESChannelSuspiciousUserMessage
 ## #/components/schemas/ChannelSuspiciousUserMessageCondition
 class Condition extends TwitchData:
 
-	## The ID of a user that has permission to moderate the broadcaster’s channel and has granted your app permission to subscribe to this subscription type.
+	## The ID of a user that has permission to moderate the broadcaster's channel and has granted your app permission to subscribe to this subscription type.
 	@export var moderator_user_id: String:
 		set(val): 
 			moderator_user_id = val
@@ -75,7 +75,7 @@ class Event extends TwitchData:
 			user_login = val
 			track_data(&"user_login", val)
 	
-	## The status set for the suspicious user. Can be the following: “none”, “active_monitoring”, or “restricted”
+	## The status set for the suspicious user. Can be the following: "none", "active_monitoring", or "restricted"
 	@export var low_trust_status: String:
 		set(val): 
 			low_trust_status = val
@@ -87,13 +87,13 @@ class Event extends TwitchData:
 			shared_ban_channel_ids = val
 			track_data(&"shared_ban_channel_ids", val)
 	
-	## User types (if any) that apply to the suspicious user, can be “manually_added”, “ban_evader”, or “banned_in_shared_channel”.
+	## User types (if any) that apply to the suspicious user, can be "manually_added", "ban_evader", or "banned_in_shared_channel".
 	@export var types: Array[String]:
 		set(val): 
 			types = val
 			track_data(&"types", val)
 	
-	## A ban evasion likelihood value (if any) that as been applied to the user automatically by Twitch, can be “unknown”, “possible”, or “likely”.
+	## A ban evasion likelihood value (if any) that as been applied to the user automatically by Twitch, can be "unknown", "possible", or "likely".
 	@export var ban_evasion_evaluation: String:
 		set(val): 
 			ban_evasion_evaluation = val
@@ -222,7 +222,7 @@ class Fragments extends TwitchData:
 ## #/components/schemas/ChannelSuspiciousUserMessageEvent/Message/Fragments/Cheermote
 class Cheermote extends TwitchData:
 
-	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is “Cheer” and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
+	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: String:
 		set(val): 
 			prefix = val

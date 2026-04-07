@@ -11,7 +11,7 @@ class_name TwitchESChannelPredictionEnd
 ## #/components/schemas/ChannelPredictionEndCondition
 class Condition extends TwitchData:
 
-	## The broadcaster user ID of the channel for which “prediction end” notifications will be received.
+	## The broadcaster user ID of the channel for which "prediction end" notifications will be received.
 	@export var broadcaster_user_id: String:
 		set(val): 
 			broadcaster_user_id = val
@@ -67,13 +67,13 @@ class Event extends TwitchData:
 			winning_outcome_id = val
 			track_data(&"winning_outcome_id", val)
 	
-	## An array of outcomes for the Channel Points Prediction. Includes top_predictors.
-	@export var outcomes: Array[TwitchESOutcomes]:
+	## An array of outcomes for the Channel Points Prediction. Includes top_predictors .
+	@export var outcomes: TwitchESOutcomes:
 		set(val): 
 			outcomes = val
 			track_data(&"outcomes", val)
 	
-	## The status of the Channel Points Prediction. Valid values are resolved and canceled.
+	## The status of the Channel Points Prediction. Valid values are resolved and canceled .
 	@export var status: String:
 		set(val): 
 			status = val
@@ -108,8 +108,7 @@ class Event extends TwitchData:
 		if d.get("winning_outcome_id", null) != null:
 			result.winning_outcome_id = d["winning_outcome_id"]
 		if d.get("outcomes", null) != null:
-			for value in d["outcomes"]:
-				result.outcomes.append(TwitchESOutcomes.from_json(value))
+			result.outcomes = TwitchESOutcomes.from_json(d["outcomes"])
 		if d.get("status", null) != null:
 			result.status = d["status"]
 		if d.get("started_at", null) != null:

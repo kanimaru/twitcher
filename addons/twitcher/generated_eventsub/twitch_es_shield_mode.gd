@@ -13,31 +13,31 @@ class_name TwitchESShieldMode
 		broadcaster_user_id = val
 		track_data(&"broadcaster_user_id", val)
 
-## The broadcaster’s login name.
+## The broadcaster's login name.
 @export var broadcaster_user_login: String:
 	set(val): 
 		broadcaster_user_login = val
 		track_data(&"broadcaster_user_login", val)
 
-## The broadcaster’s display name.
+## The broadcaster's display name.
 @export var broadcaster_user_name: String:
 	set(val): 
 		broadcaster_user_name = val
 		track_data(&"broadcaster_user_name", val)
 
-## An ID that identifies the moderator that updated the Shield Mode’s status. If the broadcaster updated the status, this ID will be the same as broadcaster_user_id.
+## An ID that identifies the moderator that updated the Shield Mode's status. If the broadcaster updated the status, this ID will be the same as broadcaster_user_id .
 @export var moderator_user_id: String:
 	set(val): 
 		moderator_user_id = val
 		track_data(&"moderator_user_id", val)
 
-## The moderator’s login name.
+## The moderator's login name.
 @export var moderator_user_login: String:
 	set(val): 
 		moderator_user_login = val
 		track_data(&"moderator_user_login", val)
 
-## The moderator’s display name.
+## The moderator's display name.
 @export var moderator_user_name: String:
 	set(val): 
 		moderator_user_name = val

@@ -43,37 +43,37 @@ class Event extends TwitchData:
 			id = val
 			track_data(&"id", val)
 	
-	## The transaction’s broadcaster ID.
+	## The transaction's broadcaster ID.
 	@export var broadcaster_user_id: String:
 		set(val): 
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
-	## The transaction’s broadcaster login.
+	## The transaction's broadcaster login.
 	@export var broadcaster_user_login: String:
 		set(val): 
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
-	## The transaction’s broadcaster display name.
+	## The transaction's broadcaster display name.
 	@export var broadcaster_user_name: String:
 		set(val): 
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
-	## The transaction’s user ID.
+	## The transaction's user ID.
 	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
-	## The transaction’s user login.
+	## The transaction's user login.
 	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
-	## The transaction’s user display name.
+	## The transaction's user display name.
 	@export var user_name: String:
 		set(val): 
 			user_name = val

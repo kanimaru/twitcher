@@ -11,13 +11,13 @@ class_name TwitchESChannelRaid
 ## #/components/schemas/ChannelRaidCondition
 class Condition extends TwitchData:
 
-	## The broadcaster user ID that created the channel raid you want to get notifications for. Use this parameter if you want to know when a specific broadcaster raids another broadcaster. The channel raid condition must include either from_broadcaster_user_id or to_broadcaster_user_id.
+	## The broadcaster user ID that created the channel raid you want to get notifications for. Use this parameter if you want to know when a specific broadcaster raids another broadcaster. The channel raid condition must include either from_broadcaster_user_id or to_broadcaster_user_id .
 	@export var from_broadcaster_user_id: String:
 		set(val): 
 			from_broadcaster_user_id = val
 			track_data(&"from_broadcaster_user_id", val)
 	
-	## The broadcaster user ID that received the channel raid you want to get notifications for. Use this parameter if you want to know when a specific broadcaster is raided by another broadcaster. The channel raid condition must include either from_broadcaster_user_id or to_broadcaster_user_id.
+	## The broadcaster user ID that received the channel raid you want to get notifications for. Use this parameter if you want to know when a specific broadcaster is raided by another broadcaster. The channel raid condition must include either from_broadcaster_user_id or to_broadcaster_user_id .
 	@export var to_broadcaster_user_id: String:
 		set(val): 
 			to_broadcaster_user_id = val

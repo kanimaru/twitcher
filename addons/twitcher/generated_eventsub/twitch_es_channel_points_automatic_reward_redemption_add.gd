@@ -151,7 +151,7 @@ class Event extends TwitchData:
 ## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddEvent/Reward
 class Reward extends TwitchData:
 
-	## The type of reward. One of: single_message_bypass_sub_modesend_highlighted_messagerandom_sub_emote_unlockchosen_sub_emote_unlockchosen_modified_sub_emote_unlockmessage_effectgigantify_an_emotecelebration
+	## The type of reward. One of: single_message_bypass_sub_mode send_highlighted_message random_sub_emote_unlock chosen_sub_emote_unlock chosen_modified_sub_emote_unlock message_effect gigantify_an_emote celebration
 	@export var type: String:
 		set(val): 
 			type = val
@@ -372,7 +372,7 @@ class V2Event extends TwitchData:
 ## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddV2Event/Reward
 class RewardV2 extends TwitchData:
 
-	## The type of reward. One of: single_message_bypass_sub_modesend_highlighted_messagerandom_sub_emote_unlockchosen_sub_emote_unlockchosen_modified_sub_emote_unlock
+	## The type of reward. One of: single_message_bypass_sub_mode send_highlighted_message random_sub_emote_unlock chosen_sub_emote_unlock chosen_modified_sub_emote_unlock
 	@export var type: String:
 		set(val): 
 			type = val
@@ -471,7 +471,7 @@ class FragmentsV2 extends TwitchData:
 			text = val
 			track_data(&"text", val)
 	
-	## The type of message fragment. Possible values are: textemote
+	## The type of message fragment. Possible values are: text emote
 	@export var type: String:
 		set(val): 
 			type = val

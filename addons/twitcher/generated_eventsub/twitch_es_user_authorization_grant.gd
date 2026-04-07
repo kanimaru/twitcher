@@ -11,7 +11,7 @@ class_name TwitchESUserAuthorizationGrant
 ## #/components/schemas/UserAuthorizationGrantCondition
 class Condition extends TwitchData:
 
-	## Your application’s client id. The provided client_id must match the client id in the application access token.
+	## Your application's client id. The provided client_id must match the client id in the application access token.
 	@export var client_id: String:
 		set(val): 
 			client_id = val

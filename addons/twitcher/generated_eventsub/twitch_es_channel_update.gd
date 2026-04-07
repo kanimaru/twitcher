@@ -31,37 +31,37 @@ class Condition extends TwitchData:
 ## #/components/schemas/ChannelUpdateEvent
 class Event extends TwitchData:
 
-	## The broadcaster’s user ID.
+	## The broadcaster's user ID.
 	@export var broadcaster_user_id: String:
 		set(val): 
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
-	## The broadcaster’s user login.
+	## The broadcaster's user login.
 	@export var broadcaster_user_login: String:
 		set(val): 
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
-	## The broadcaster’s user display name.
+	## The broadcaster's user display name.
 	@export var broadcaster_user_name: String:
 		set(val): 
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
-	## The channel’s stream title.
+	## The channel's stream title.
 	@export var title: String:
 		set(val): 
 			title = val
 			track_data(&"title", val)
 	
-	## The channel’s broadcast language.
+	## The channel's broadcast language.
 	@export var language: String:
 		set(val): 
 			language = val
 			track_data(&"language", val)
 	
-	## The channel’s category ID.
+	## The channel's category ID.
 	@export var category_id: String:
 		set(val): 
 			category_id = val

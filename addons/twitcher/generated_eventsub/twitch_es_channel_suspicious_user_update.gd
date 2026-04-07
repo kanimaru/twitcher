@@ -11,7 +11,7 @@ class_name TwitchESChannelSuspiciousUserUpdate
 ## #/components/schemas/ChannelSuspiciousUserUpdateCondition
 class Condition extends TwitchData:
 
-	## The ID of a user that has permission to moderate the broadcaster’s channel and has granted your app permission to subscribe to this subscription type.
+	## The ID of a user that has permission to moderate the broadcaster's channel and has granted your app permission to subscribe to this subscription type.
 	@export var moderator_user_id: String:
 		set(val): 
 			moderator_user_id = val
@@ -93,7 +93,7 @@ class Event extends TwitchData:
 			user_login = val
 			track_data(&"user_login", val)
 	
-	## The status set for the suspicious user. Can be the following: “none”, “active_monitoring”, or “restricted”.
+	## The status set for the suspicious user. Can be the following: "none", "active_monitoring", or "restricted".
 	@export var low_trust_status: String:
 		set(val): 
 			low_trust_status = val

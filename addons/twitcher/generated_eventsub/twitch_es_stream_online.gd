@@ -37,25 +37,25 @@ class Event extends TwitchData:
 			id = val
 			track_data(&"id", val)
 	
-	## The broadcaster’s user id.
+	## The broadcaster's user id.
 	@export var broadcaster_user_id: String:
 		set(val): 
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
-	## The broadcaster’s user login.
+	## The broadcaster's user login.
 	@export var broadcaster_user_login: String:
 		set(val): 
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
-	## The broadcaster’s user display name.
+	## The broadcaster's user display name.
 	@export var broadcaster_user_name: String:
 		set(val): 
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
-	## The stream type. Valid values are: live, playlist, watch_party, premiere, rerun.
+	## The stream type. Valid values are: live , playlist , watch_party , premiere , rerun .
 	@export var type: String:
 		set(val): 
 			type = val

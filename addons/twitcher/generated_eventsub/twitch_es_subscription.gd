@@ -13,7 +13,7 @@ class_name TwitchESSubscription
 		id = val
 		track_data(&"id", val)
 
-## The notification’s subscription type.
+## The notification's subscription type.
 @export var type: String:
 	set(val): 
 		type = val
@@ -49,12 +49,6 @@ class_name TwitchESSubscription
 		created_at = val
 		track_data(&"created_at", val)
 
-## Transport details.
-@export var transport: TwitchESTransport:
-	set(val): 
-		transport = val
-		track_data(&"transport", val)
-
 
 
 static func from_json(d: Dictionary) -> TwitchESSubscription:
@@ -73,7 +67,5 @@ static func from_json(d: Dictionary) -> TwitchESSubscription:
 		result.condition = d["condition"]
 	if d.get("created_at", null) != null:
 		result.created_at = d["created_at"]
-	if d.get("transport", null) != null:
-		result.transport = TwitchESTransport.from_json(d["transport"])
 	return result
 

@@ -87,7 +87,7 @@ class Event extends TwitchData:
 			message = val
 			track_data(&"message", val)
 	
-	## The type of message. Possible values: <ul><li>text</li><li>channel_points_highlighted</li><li>channel_points_sub_only</li><li>user_intro</li><li>power_ups_message_effect</li><li>power_ups_gigantified_emote</li></ul>
+	## The type of message. Possible values: text channel_points_highlighted channel_points_sub_only user_intro power_ups_message_effect power_ups_gigantified_emote
 	@export var message_type: String:
 		set(val): 
 			message_type = val
@@ -99,55 +99,55 @@ class Event extends TwitchData:
 			badges = val
 			track_data(&"badges", val)
 	
-	## Optional. Metadata if this message is a cheer.
+	## Optional . Metadata if this message is a cheer.
 	@export var cheer: Cheer:
 		set(val): 
 			cheer = val
 			track_data(&"cheer", val)
 	
-	## The color of the user’s name in the chat room. This is a hexadecimal RGB color code in the form, #&lt;RGB&gt;. This tag may be empty if it is never set.
+	## The color of the user's name in the chat room. This is a hexadecimal RGB color code in the form, #&lt;RGB&gt; . This tag may be empty if it is never set.
 	@export var color: String:
 		set(val): 
 			color = val
 			track_data(&"color", val)
 	
-	## Optional. Metadata if this message is a reply.
+	## Optional . Metadata if this message is a reply.
 	@export var reply: Reply:
 		set(val): 
 			reply = val
 			track_data(&"reply", val)
 	
-	## Optional. The ID of a channel points custom reward that was redeemed.
+	## Optional . The ID of a channel points custom reward that was redeemed.
 	@export var channel_points_custom_reward_id: String:
 		set(val): 
 			channel_points_custom_reward_id = val
 			track_data(&"channel_points_custom_reward_id", val)
 	
-	## Optional. The broadcaster user ID of the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Optional . The broadcaster user ID of the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_id: String:
 		set(val): 
 			source_broadcaster_user_id = val
 			track_data(&"source_broadcaster_user_id", val)
 	
-	## Optional. The user name of the broadcaster of the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Optional . The user name of the broadcaster of the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_name: String:
 		set(val): 
 			source_broadcaster_user_name = val
 			track_data(&"source_broadcaster_user_name", val)
 	
-	## Optional. The login of the broadcaster of the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Optional . The login of the broadcaster of the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_login: String:
 		set(val): 
 			source_broadcaster_user_login = val
 			track_data(&"source_broadcaster_user_login", val)
 	
-	## Optional. The UUID that identifies the source message from the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Optional . The UUID that identifies the source message from the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_message_id: String:
 		set(val): 
 			source_message_id = val
 			track_data(&"source_message_id", val)
 	
-	## Optional. The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+	## Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_badges: SourceBadges:
 		set(val): 
 			source_badges = val
@@ -241,7 +241,7 @@ class Message extends TwitchData:
 ## #/components/schemas/ChannelChatMessageEvent/Message/Fragments
 class Fragments extends TwitchData:
 
-	## The type of message fragment. Possible values: textcheermoteemotemention
+	## The type of message fragment. Possible values: text cheermote emote mention
 	@export var type: String:
 		set(val): 
 			type = val
@@ -253,19 +253,19 @@ class Fragments extends TwitchData:
 			text = val
 			track_data(&"text", val)
 	
-	## Optional. Metadata pertaining to the cheermote.
+	## Optional . Metadata pertaining to the cheermote.
 	@export var cheermote: Cheermote:
 		set(val): 
 			cheermote = val
 			track_data(&"cheermote", val)
 	
-	## Optional. Metadata pertaining to the emote.
+	## Optional . Metadata pertaining to the emote.
 	@export var emote: Emote:
 		set(val): 
 			emote = val
 			track_data(&"emote", val)
 	
-	## Optional. Metadata pertaining to the mention.
+	## Optional . Metadata pertaining to the mention.
 	@export var mention: Mention:
 		set(val): 
 			mention = val
@@ -289,11 +289,11 @@ class Fragments extends TwitchData:
 	
 
 
-## Optional. Metadata pertaining to the cheermote.
+## Optional . Metadata pertaining to the cheermote.
 ## #/components/schemas/ChannelChatMessageEvent/Message/Fragments/Cheermote
 class Cheermote extends TwitchData:
 
-	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is “Cheer” and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
+	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: String:
 		set(val): 
 			prefix = val
@@ -325,7 +325,7 @@ class Cheermote extends TwitchData:
 	
 
 
-## Optional. Metadata pertaining to the emote.
+## Optional . Metadata pertaining to the emote.
 ## #/components/schemas/ChannelChatMessageEvent/Message/Fragments/Emote
 class Emote extends TwitchData:
 
@@ -347,7 +347,7 @@ class Emote extends TwitchData:
 			owner_id = val
 			track_data(&"owner_id", val)
 	
-	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote.static - A static PNG file is available for this emote.
+	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote.
 	@export var format: Array[String]:
 		set(val): 
 			format = val
@@ -370,7 +370,7 @@ class Emote extends TwitchData:
 	
 
 
-## Optional. Metadata pertaining to the mention.
+## Optional . Metadata pertaining to the mention.
 ## #/components/schemas/ChannelChatMessageEvent/Message/Fragments/Mention
 class Mention extends TwitchData:
 
@@ -442,7 +442,7 @@ class Badges extends TwitchData:
 	
 
 
-## Optional. Metadata if this message is a cheer.
+## Optional . Metadata if this message is a cheer.
 ## #/components/schemas/ChannelChatMessageEvent/Cheer
 class Cheer extends TwitchData:
 
@@ -462,7 +462,7 @@ class Cheer extends TwitchData:
 	
 
 
-## Optional. Metadata if this message is a reply.
+## Optional . Metadata if this message is a reply.
 ## #/components/schemas/ChannelChatMessageEvent/Reply
 class Reply extends TwitchData:
 
@@ -502,19 +502,19 @@ class Reply extends TwitchData:
 			thread_message_id = val
 			track_data(&"thread_message_id", val)
 	
-	## User ID of the sender of the thread’s parent message.
+	## User ID of the sender of the thread's parent message.
 	@export var thread_user_id: String:
 		set(val): 
 			thread_user_id = val
 			track_data(&"thread_user_id", val)
 	
-	## User name of the sender of the thread’s parent message.
+	## User name of the sender of the thread's parent message.
 	@export var thread_user_name: String:
 		set(val): 
 			thread_user_name = val
 			track_data(&"thread_user_name", val)
 	
-	## User login of the sender of the thread’s parent message.
+	## User login of the sender of the thread's parent message.
 	@export var thread_user_login: String:
 		set(val): 
 			thread_user_login = val
@@ -546,7 +546,7 @@ class Reply extends TwitchData:
 	
 
 
-## Optional. The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
+## Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 ## #/components/schemas/ChannelChatMessageEvent/SourceBadges
 class SourceBadges extends TwitchData:
 

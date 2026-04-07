@@ -17,7 +17,7 @@ class Condition extends TwitchData:
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
-	## Optional. Specify a reward id to only receive notifications for a specific reward.
+	## Optional . Specify a reward id to only receive notifications for a specific reward.
 	@export var reward_id: String:
 		set(val): 
 			reward_id = val
@@ -63,19 +63,19 @@ class Event extends TwitchData:
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
-	## Is the reward currently enabled. If false, the reward won’t show up to viewers.
+	## Is the reward currently enabled. If false, the reward won't show up to viewers.
 	@export var is_enabled: bool:
 		set(val): 
 			is_enabled = val
 			track_data(&"is_enabled", val)
 	
-	## Is the reward currently paused. If true, viewers can’t redeem.
+	## Is the reward currently paused. If true, viewers can't redeem.
 	@export var is_paused: bool:
 		set(val): 
 			is_paused = val
 			track_data(&"is_paused", val)
 	
-	## Is the reward currently in stock. If false, viewers can’t redeem.
+	## Is the reward currently in stock. If false, viewers can't redeem.
 	@export var is_in_stock: bool:
 		set(val): 
 			is_in_stock = val
@@ -123,14 +123,14 @@ class Event extends TwitchData:
 			max_per_user_per_stream = val
 			track_data(&"max_per_user_per_stream", val)
 	
-	## Custom background color for the reward. Format: Hex with # prefix. Example: #FA1ED2.
+	## Custom background color for the reward. Format: Hex with # prefix. Example: #FA1ED2 .
 	@export var background_color: String:
 		set(val): 
 			background_color = val
 			track_data(&"background_color", val)
 	
 	## Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded.
-	@export var image: TwitchESTwitchImage:
+	@export var image: Variant:
 		set(val): 
 			image = val
 			track_data(&"image", val)
@@ -147,13 +147,13 @@ class Event extends TwitchData:
 			global_cooldown = val
 			track_data(&"global_cooldown", val)
 	
-	## Timestamp of the cooldown expiration. null if the reward isn’t on cooldown.
+	## Timestamp of the cooldown expiration. null if the reward isn't on cooldown.
 	@export var cooldown_expires_at: String:
 		set(val): 
 			cooldown_expires_at = val
 			track_data(&"cooldown_expires_at", val)
 	
-	## The number of redemptions redeemed during the current live stream. Counts against the max_per_stream limit. null if the broadcasters stream isn’t live or max_per_stream isn’t enabled.
+	## The number of redemptions redeemed during the current live stream. Counts against the max_per_stream limit. null if the broadcasters stream isn't live or max_per_stream isn't enabled.
 	@export var redemptions_redeemed_current_stream: int:
 		set(val): 
 			redemptions_redeemed_current_stream = val
@@ -194,7 +194,7 @@ class Event extends TwitchData:
 		if d.get("background_color", null) != null:
 			result.background_color = d["background_color"]
 		if d.get("image", null) != null:
-			result.image = TwitchESTwitchImage.from_json(d["image"])
+			result.image = d["image"]
 		if d.get("default_image", null) != null:
 			result.default_image = TwitchESTwitchImage.from_json(d["default_image"])
 		if d.get("global_cooldown", null) != null:

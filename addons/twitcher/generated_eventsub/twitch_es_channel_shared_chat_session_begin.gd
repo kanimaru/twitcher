@@ -74,7 +74,7 @@ class Event extends TwitchData:
 			track_data(&"host_broadcaster_user_login", val)
 	
 	## The list of participants in the session.
-	@export var participants: Array[Participants]:
+	@export var participants: Participants:
 		set(val): 
 			participants = val
 			track_data(&"participants", val)
@@ -98,8 +98,7 @@ class Event extends TwitchData:
 		if d.get("host_broadcaster_user_login", null) != null:
 			result.host_broadcaster_user_login = d["host_broadcaster_user_login"]
 		if d.get("participants", null) != null:
-			for value in d["participants"]:
-				result.participants.append(Participants.from_json(value))
+			result.participants = Participants.from_json(d["participants"])
 		return result
 	
 

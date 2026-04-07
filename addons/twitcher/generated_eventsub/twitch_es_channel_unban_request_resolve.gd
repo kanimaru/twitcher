@@ -11,7 +11,7 @@ class_name TwitchESChannelUnbanRequestResolve
 ## #/components/schemas/ChannelUnbanRequestResolveCondition
 class Condition extends TwitchData:
 
-	## The ID of the user that has permission to moderate the broadcaster’s channel and has granted your app permission to subscribe to this subscription type.
+	## The ID of the user that has permission to moderate the broadcaster's channel and has granted your app permission to subscribe to this subscription type.
 	@export var moderator_user_id: String:
 		set(val): 
 			moderator_user_id = val
@@ -45,19 +45,19 @@ class Event extends TwitchData:
 			id = val
 			track_data(&"id", val)
 	
-	## The broadcaster’s user ID for the channel the unban request was updated for.
+	## The broadcaster's user ID for the channel the unban request was updated for.
 	@export var broadcaster_user_id: String:
 		set(val): 
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
-	## The broadcaster’s login name.
+	## The broadcaster's login name.
 	@export var broadcaster_user_login: String:
 		set(val): 
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
-	## The broadcaster’s display name.
+	## The broadcaster's display name.
 	@export var broadcaster_user_name: String:
 		set(val): 
 			broadcaster_user_name = val
@@ -69,13 +69,13 @@ class Event extends TwitchData:
 			moderator_id = val
 			track_data(&"moderator_id", val)
 	
-	## Optional. The moderator’s login name
+	## Optional. The moderator's login name
 	@export var moderator_login: String:
 		set(val): 
 			moderator_login = val
 			track_data(&"moderator_login", val)
 	
-	## Optional. The moderator’s display name
+	## Optional. The moderator's display name
 	@export var moderator_name: String:
 		set(val): 
 			moderator_name = val
@@ -87,13 +87,13 @@ class Event extends TwitchData:
 			user_id = val
 			track_data(&"user_id", val)
 	
-	## The user’s login name.
+	## The user's login name.
 	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
-	## The user’s display name.
+	## The user's display name.
 	@export var user_name: String:
 		set(val): 
 			user_name = val
@@ -105,7 +105,7 @@ class Event extends TwitchData:
 			resolution_text = val
 			track_data(&"resolution_text", val)
 	
-	## Dictates whether the unban request was approved or denied. Can be the following: approvedcanceleddenied
+	## Dictates whether the unban request was approved or denied. Can be the following: approved canceled denied
 	@export var status: String:
 		set(val): 
 			status = val

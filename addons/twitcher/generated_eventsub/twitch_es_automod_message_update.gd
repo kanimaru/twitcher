@@ -57,19 +57,19 @@ class Event extends TwitchData:
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
-	## The message sender’s user ID.
+	## The message sender's user ID.
 	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
-	## The message sender’s login name.
+	## The message sender's login name.
 	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
-	## The message sender’s display name.
+	## The message sender's display name.
 	@export var user_name: String:
 		set(val): 
 			user_name = val
@@ -81,7 +81,7 @@ class Event extends TwitchData:
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
-	## TThe moderator’s user name.
+	## TThe moderator's user name.
 	@export var moderator_user_name: String:
 		set(val): 
 			moderator_user_name = val
@@ -117,7 +117,7 @@ class Event extends TwitchData:
 			level = val
 			track_data(&"level", val)
 	
-	## The message’s status. Possible values are:ApprovedDeniedExpired
+	## The message's status. Possible values are: Approved Denied Expired
 	@export var status: String:
 		set(val): 
 			status = val
@@ -264,7 +264,7 @@ class Emote extends TwitchData:
 ## #/components/schemas/AutomodMessageUpdateEvent/Message/Fragments/Cheermote
 class Cheermote extends TwitchData:
 
-	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is “Cheer” and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
+	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: String:
 		set(val): 
 			prefix = val
@@ -318,19 +318,19 @@ class EventV2 extends TwitchData:
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
-	## The message sender’s user ID.
+	## The message sender's user ID.
 	@export var user_id: String:
 		set(val): 
 			user_id = val
 			track_data(&"user_id", val)
 	
-	## The message sender’s login name.
+	## The message sender's login name.
 	@export var user_login: String:
 		set(val): 
 			user_login = val
 			track_data(&"user_login", val)
 	
-	## The message sender’s display name.
+	## The message sender's display name.
 	@export var user_name: String:
 		set(val): 
 			user_name = val
@@ -342,7 +342,7 @@ class EventV2 extends TwitchData:
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
-	## TThe moderator’s user name.
+	## TThe moderator's user name.
 	@export var moderator_user_name: String:
 		set(val): 
 			moderator_user_name = val
@@ -366,7 +366,7 @@ class EventV2 extends TwitchData:
 			message = val
 			track_data(&"message", val)
 	
-	## The message’s status. Possible values are:ApprovedDeniedExpired
+	## The message's status. Possible values are: Approved Denied Expired
 	@export var status: String:
 		set(val): 
 			status = val
@@ -378,7 +378,7 @@ class EventV2 extends TwitchData:
 			held_at = val
 			track_data(&"held_at", val)
 	
-	## The reason why the message was caught. Possible values are: automodblocked_term
+	## The reason why the message was caught. Possible values are: automod blocked_term
 	@export var reason: String:
 		set(val): 
 			reason = val
@@ -475,7 +475,7 @@ class FragmentsV2 extends TwitchData:
 			text = val
 			track_data(&"text", val)
 	
-	## One of three options:textemotecheermote
+	## One of three options: text emote cheermote
 	@export var type: String:
 		set(val): 
 			type = val
@@ -541,7 +541,7 @@ class EmoteV2 extends TwitchData:
 ## #/components/schemas/AutomodMessageUpdateEventV2/Message/Fragments/Cheermote
 class CheermoteV2 extends TwitchData:
 
-	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is “Cheer” and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
+	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: String:
 		set(val): 
 			prefix = val

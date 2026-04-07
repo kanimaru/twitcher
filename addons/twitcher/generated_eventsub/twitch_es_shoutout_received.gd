@@ -13,13 +13,13 @@ class_name TwitchESShoutoutReceived
 		broadcaster_user_id = val
 		track_data(&"broadcaster_user_id", val)
 
-## The broadcaster’s login name.
+## The broadcaster's login name.
 @export var broadcaster_user_login: String:
 	set(val): 
 		broadcaster_user_login = val
 		track_data(&"broadcaster_user_login", val)
 
-## The broadcaster’s display name.
+## The broadcaster's display name.
 @export var broadcaster_user_name: String:
 	set(val): 
 		broadcaster_user_name = val
@@ -31,19 +31,19 @@ class_name TwitchESShoutoutReceived
 		from_broadcaster_user_id = val
 		track_data(&"from_broadcaster_user_id", val)
 
-## The broadcaster’s login name.
+## The broadcaster's login name.
 @export var from_broadcaster_user_login: String:
 	set(val): 
 		from_broadcaster_user_login = val
 		track_data(&"from_broadcaster_user_login", val)
 
-## The broadcaster’s display name.
+## The broadcaster's display name.
 @export var from_broadcaster_user_name: String:
 	set(val): 
 		from_broadcaster_user_name = val
 		track_data(&"from_broadcaster_user_name", val)
 
-## The number of users that were watching the from-broadcaster’s stream at the time of the Shoutout.
+## The number of users that were watching the from-broadcaster's stream at the time of the Shoutout.
 @export var viewer_count: int:
 	set(val): 
 		viewer_count = val

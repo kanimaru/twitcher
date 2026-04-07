@@ -67,7 +67,7 @@ class Event extends TwitchData:
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
-	## The tier of the subscription that ended. Valid values are 1000, 2000, and 3000.
+	## The tier of the subscription that ended. Valid values are 1000 , 2000 , and 3000 .
 	@export var tier: String:
 		set(val): 
 			tier = val

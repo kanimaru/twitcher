@@ -17,7 +17,7 @@ class Condition extends TwitchData:
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
-	## The ID of the moderator of the channel you want to get follow notifications for. If you have authorization from the broadcaster rather than a moderator, specify the broadcaster’s user ID here.
+	## The ID of the moderator of the channel you want to get follow notifications for. If you have authorization from the broadcaster rather than a moderator, specify the broadcaster's user ID here.
 	@export var moderator_user_id: String:
 		set(val): 
 			moderator_user_id = val
