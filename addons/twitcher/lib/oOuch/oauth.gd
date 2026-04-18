@@ -121,14 +121,22 @@ func do_unsetup() -> void:
 func login(force: bool = false) -> bool:
 	if not is_node_ready(): await ready
 	_setup_nodes()
-	if token_handler.is_token_valid() && not _got_scopes_changed() and not force: return true
-	logDebug("Token (%s) is valid (%s) and not scopes changed (%s)" % [ token_handler.token, token_handler.is_token_valid(), _got_scopes_changed()])
+	
+	if scopes == null: 
+		scopes = OAuthScopes.new()
+	
+	var is_valid: bool = token_handler.is_token_valid()
+	var scopes_changed: bool = _got_scopes_changed()
+	
+	if is_valid && not scopes_changed && not force: 
+		return true
+	
+	logDebug("Token (%s) is valid (%s) | scopes changed (%s) | force login (%s)" % [ token_handler.token, is_valid, scopes_changed, force])
 
 	if login_in_process:
 		logInfo("Another process tries already to login. Abort")
-		if (await token_handler.token_resolved) == null:
-			return false
-		return true
+		await token_handler._request_finished
+		return token_handler.is_token_valid()
 
 	if _last_login_attempt != 0 && Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
 		print("[OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
@@ -136,9 +144,18 @@ func login(force: bool = false) -> bool:
 
 	_last_login_attempt = Time.get_ticks_msec()
 
+	# Attempt refresh if possible before starting full flow
+	if not is_valid && token_handler.has_refresh_token() && not force:
+		logInfo("Token is invalid but refresh token exists. Attempting refresh...")
+		await token_handler.refresh_tokens()
+		if token_handler.is_token_valid():
+			logInfo("Refresh successful, no full login needed.")
+			return true
+		logInfo("Refresh failed or token still invalid. Proceeding with full login.")
+
 	login_in_process = true
 	_login_timeout_timer.start()
-	logInfo("do login")
+	logInfo("do login via flow: %s" % oauth_setting.authorization_flow)
 	match oauth_setting.authorization_flow:
 		AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
 			await _start_login_process(_AUTHTYPE_CODE)
@@ -151,7 +168,7 @@ func login(force: bool = false) -> bool:
 
 	login_in_process = false
 	_login_timeout_timer.stop()
-	return true
+	return token_handler.is_token_valid()
 
 
 func _got_scopes_changed() -> bool:
@@ -213,7 +230,7 @@ func _start_login_process(response_type: String) -> void:
 		if auth_code == "":
 			logDebug("Auth code was empty. Abort Login.")
 			return
-		token_handler.request_token("authorization_code", auth_code)
+		await token_handler.request_token("authorization_code", auth_code)
 
 
 func _stop_server(authtype: StringName) -> void:
@@ -458,6 +475,7 @@ static func set_logger(error: Callable, info: Callable, debug: Callable) -> void
 	logger.info = info
 	logger.error = error
 	OAuthTokenHandler.set_logger(error, info, debug)
+	OAuthToken.set_logger(error, info, debug)
 
 static func logDebug(text: String) -> void:
 	if logger.has("debug"): logger.debug.call(text)

@@ -42,7 +42,13 @@ func _update_token(val: OAuthToken) -> void:
 	
 	
 func update_token_view() -> void:
-	title.text = token._identifier
+	if token.resource_path != "":
+		title.text = token.resource_path.get_file().get_basename()
+	elif token.resource_name != "":
+		title.text = token.resource_name
+	else:
+		title.text = "Unnamed Token"
+		
 	token_valid_value.text = token.get_expiration_readable()
 	if token.is_token_valid():
 		token_valid_value.add_theme_color_override(&"font_color", Color.GREEN)

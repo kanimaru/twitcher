@@ -65,6 +65,8 @@ func _enter_tree():
 		add_import_plugin(gif_importer_imagemagick)
 		
 	if TwitchEditorSettings.show_setup_on_startup: open_setup()
+	await _try_authorize_editor()
+	
 	_log.i("Twitcher loading ended")
 
 
@@ -123,3 +125,22 @@ func generate_api() -> void:
 func is_magick_available() -> bool:
 	var transformer: MagicImageTransformer = MagicImageTransformer.new()
 	return transformer.is_supported()
+
+
+func _try_authorize_editor() -> void:
+	var oauth_setting: OAuthSetting = TwitchEditorSettings.editor_oauth_setting
+	var oauth_token: OAuthToken = TwitchEditorSettings.editor_oauth_token
+	if not oauth_setting.is_valid(): 
+		_log.d("Can't validate editor token cause OAuthSettings are invalid.")
+		return
+	var auth: TwitchAuth = TwitchAuth.new()
+	auth.oauth_setting = oauth_setting
+	auth.token = oauth_token
+	add_child(auth)
+	await auth.ready
+	var success: bool = await auth.authorize()
+	if success:
+		_log.i("Editor token got authorized")
+	else:
+		_log.e("Editor token didn't get authorized. Editor functionallity maybe malfunctioning.")
+	auth.queue_free()

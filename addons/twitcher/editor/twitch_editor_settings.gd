@@ -156,7 +156,7 @@ static func _create_editor_oauth_token() -> void:
 	_log.i("Create new Editor Token resource")
 	var path: String = _editor_oauth_token_property.get_val()
 	var token = OAuthToken.new()
-	token._identifier = "EditorToken"
+	token.resource_name = "EditorToken"
 	token.take_over_path(path)
 	editor_oauth_token = token
 	save_editor_oauth_token()

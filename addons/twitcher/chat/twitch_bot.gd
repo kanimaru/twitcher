@@ -40,7 +40,7 @@ func _init() -> void:
 func _ready() -> void:
 	if bot_token == null: 
 		bot_token = OAuthToken.new()
-		bot_token._identifier = "Bot-Token"
+		bot_token.resource_name = "Bot-Token"
 	_ensure_children()
 	_update_setting(oauth_setting)
 	
@@ -83,8 +83,10 @@ func _ensure_children() -> void:
 ## Sends a message as the bot user the target broadcaster default to the sender user.
 ## for_source_only: see https://dev.twitch.tv/docs/api/reference/#send-chat-message
 static func chat(message: String, reply_parent_message_id: String = "", for_source_only = true, broadcaster: TwitchUser = null) -> void:
-	if _instance != null:
+	if _instance:
 		_instance.send_message(message, reply_parent_message_id, for_source_only, broadcaster)
+	else:
+		push_error("No TwitchBot registered yet")
 
 
 ## Sends a message as the bot user the target broadcaster default to the sender user.
@@ -102,7 +104,38 @@ func send_message(message: String, reply_parent_message_id: String = "", for_sou
 		if data.is_sent: _log.d("Message was sent %s" % [data.message_id])
 		else: _log.e("Message couldn't be send cause of [%s]: %s" % [data.drop_reason.code, data.drop_reason.message])
 	
-	
+
+static func announcement(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, for_source_only = true, broadcaster: TwitchUser = null) -> void:
+	if _instance:
+		_instance.send_announcement(message, color, for_source_only, broadcaster)
+	else:
+		push_error("No TwitchBot registered yet")
+
+
+func send_announcement(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, for_source_only = true, broadcaster: TwitchUser = null) -> void:
+	if not _bot_auth.is_authenticated: await _bot_auth.authorize()
+	if broadcaster == null: 
+		broadcaster = receiver if receiver != null else sender
+	_log.d("Send announcment from %s to %s: %s" % [sender.display_name, broadcaster.display_name, message])
+	var body: TwitchSendChatAnnouncement.Body = TwitchSendChatAnnouncement.Body.new()
+	body.color = color.value
+	body.message = message
+	body.source_only = for_source_only
+	_bot_api.send_chat_announcement(body, sender.id, broadcaster.id)
+
+
+static func shoutout(from_user: TwitchUser, target_user: TwitchUser) -> void:
+	if _instance:
+		_instance.send_shoutout(from_user, target_user)
+	else:
+		push_error("No TwitchBot registered yet")
+		
+
+func send_shoutout(from_user: TwitchUser, target_user: TwitchUser) -> void:
+	_log.d("Sends a shoutout from %s to %s" % [from_user.display_name, target_user.display_name ])
+	_bot_api.send_a_shoutout(from_user.id, sender.id, target_user.id)
+
+
 func _update_setting(val: OAuthSetting) -> void:
 	oauth_setting = val
 	update_configuration_warnings()

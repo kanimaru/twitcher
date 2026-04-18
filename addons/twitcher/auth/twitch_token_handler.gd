@@ -19,8 +19,12 @@ func _ready() -> void:
 
 ## Calles the validation endpoint of Twtich to make sure
 func validate_token() -> BufferedHTTPClient.ResponseData:
+	var access_token: String = await get_access_token()
+	if access_token == "":
+		return null
+		
 	var validation_request = _http_client.request("https://id.twitch.tv/oauth2/validate", HTTPClient.METHOD_GET, {
-		"Authorization": "OAuth %s" % await token.get_access_token()
+		"Authorization": "OAuth %s" % access_token
 	}, "")
 	var response: BufferedHTTPClient.ResponseData = await _http_client.wait_for_request(validation_request)
 	if response.response_code != 200:
@@ -31,8 +35,8 @@ func validate_token() -> BufferedHTTPClient.ResponseData:
 
 	var response_string: String = response.response_data.get_string_from_utf8();
 	var response_data: Variant = JSON.parse_string(response_string);
-	if response_data["expires_in"] <= 0:
-		logInfo("Token is valid! (%s)" % token)
+	if response_data.has("expires_in") and response_data["expires_in"] <= 0:
+		logInfo("Token is nearing expiration! Refreshing. (%s)" % token)
 		refresh_tokens()
 	return response
 

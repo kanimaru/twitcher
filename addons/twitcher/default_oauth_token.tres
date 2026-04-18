@@ -5,4 +5,4 @@
 
 [resource]
 script = ExtResource("2_phbii")
-_identifier = "DefaultAuth"
+resource_name = "DefaultAuth"

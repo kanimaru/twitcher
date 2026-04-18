@@ -16,9 +16,7 @@ const USER_ACCESS_TOKEN: StringName = &"User Access Token"
 
 ## Key for encryption purpose to save the tokens
 @export var _crypto_key_provider: CryptoKeyProvider = preload("res://addons/twitcher/lib/oOuch/default_key_provider.tres")
-## Unique identifier to store multiple tokens within one config file
-@export var _identifier: String = "Auth-%s" % randi_range(0, 10000)
-## Storage where the tokens should be saved encrypted (multiple secrets can be put in the same file see _identifier)
+## Storage where the tokens should be saved encrypted (multiple secrets can be put in the same file)
 @export var _cache_path: String = "user://auth.conf":
 	set(val):
 		_cache_path = val
@@ -29,6 +27,11 @@ var type: StringName
 var _scopes: PackedStringArray = []
 var _expire_date: int
 var _config_file: ConfigFile = ConfigFile.new()
+var _creation_stack: Array = []
+
+func _init() -> void:
+	_creation_stack = get_stack()
+
 
 var _access_token: String = "":
 	set(val):
@@ -39,6 +42,17 @@ var _refresh_token: String = ""
 
 ## Called when the token was resolved / accesstoken got refreshed
 signal authorized
+
+
+func _get_storage_key() -> String:
+	if resource_path != "" and ResourceLoader.exists(resource_path):
+		var uid: int = ResourceLoader.get_resource_uid(resource_path)
+		if uid != ResourceUID.INVALID_ID:
+			return ResourceUID.id_to_text(uid)
+			
+	if resource_name != "":
+		return "Auth-" + resource_name
+	return "Auth-%s" % get_instance_id()
 
 
 ## Update the visual representation of the scopes (don't use it for actually changing scopes it wont work!) 
@@ -62,50 +76,68 @@ func update_values(access_token: String, refresh_token: String, expire_in: int, 
 
 ## Persists the tokesn with the expire date
 func _persist_tokens():
+	var key: String = _get_storage_key()
 	var encrypted_access_token: PackedByteArray  = _crypto_key_provider.encrypt(_access_token.to_utf8_buffer())
 	var encrypted_refresh_token: PackedByteArray = _crypto_key_provider.encrypt(_refresh_token.to_utf8_buffer())
 	_config_file.load(_cache_path)
-	_config_file.set_value(_identifier, "expire_date", _expire_date)
-	_config_file.set_value(_identifier, "type", type)
-	_config_file.set_value(_identifier, "access_token", Marshalls.raw_to_base64(encrypted_access_token))
-	_config_file.set_value(_identifier, "refresh_token", Marshalls.raw_to_base64(encrypted_refresh_token))
-	_config_file.set_value(_identifier, "scopes", ",".join(_scopes))
+	
+	var token_name: String = "Unnamed (Missing Path/Name)"
+	if resource_path != "":
+		token_name = resource_path.get_file()
+	elif resource_name != "":
+		token_name = resource_name
+		
+	_config_file.set_value(key, "name", token_name)
+	_config_file.set_value(key, "expire_date", _expire_date)
+	_config_file.set_value(key, "type", type)
+	_config_file.set_value(key, "access_token", Marshalls.raw_to_base64(encrypted_access_token))
+	_config_file.set_value(key, "refresh_token", Marshalls.raw_to_base64(encrypted_refresh_token))
+	_config_file.set_value(key, "scopes", ",".join(_scopes))
 	var err: Error = _config_file.save(_cache_path)
-	if err != OK: push_error("Couldn't save tokens cause of ", error_string(err))
+	if err != OK: 
+		logError("Token %s could not be saved cause of %s" % [self, error_string(err)])
+	else:
+		logDebug("Token %s got persited" % self)
 
 
 ## Loads the tokens and returns the information if the file got created
 func load_tokens() -> bool:
+	var key: String = _get_storage_key()
 	var status: Error = _config_file.load(_cache_path)
-	if status == OK && _config_file.has_section(_identifier):
-		_expire_date = _config_file.get_value(_identifier, "expire_date", 0)
-		var encrypted_access_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "access_token"))
-		var encrypted_refresh_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(_identifier, "refresh_token"))
+	if status == OK && _config_file.has_section(key):
+		_expire_date = _config_file.get_value(key, "expire_date", 0)
+		var encrypted_access_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(key, "access_token"))
+		var encrypted_refresh_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(key, "refresh_token"))
 		_access_token = _crypto_key_provider.decrypt(encrypted_access_token).get_string_from_utf8()
 		_refresh_token = _crypto_key_provider.decrypt(encrypted_refresh_token).get_string_from_utf8()
-		type = _config_file.get_value(_identifier, "type", &"")
-		_scopes = _config_file.get_value(_identifier, "scopes", "").split(",", false)
+		type = _config_file.get_value(key, "type", &"")
+		_scopes = _config_file.get_value(key, "scopes", "").split(",", false)
 		emit_changed()
+		logDebug("Token %s got loaded" % self)
 		return true
+	logInfo("Token %s got not loaded error -> (%s) or was not present in '%s' yet" % [self, error_string(status), _cache_path])
 	return false
+	
 
 
 func remove_tokens() -> void:
+	var key: String = _get_storage_key()
 	var status: Error = _config_file.load(_cache_path)
-	if status == OK && _config_file.has_section(_identifier):
+	if status == OK && _config_file.has_section(key):
 		_access_token = ""
 		_refresh_token = ""
 		type = &""
 		_expire_date = 0
 		_scopes.clear()
 
-		_config_file.erase_section(_identifier)
+		_config_file.erase_section(key)
 		var err: Error = _config_file.save(_cache_path)
-		if err != OK: push_error("Couldn't save tokens cause of ", error_string(err))
+		if err != OK: 
+			logError("Token %s could not be erased cause of %s" % [self, error_string(err)])
 		emit_changed()
-		print("%s got revoked" % _identifier)
+		logInfo("Token %s got revoked" % self)
 	else:
-		print("%s not found" % _identifier)
+		logInfo("Token %s not found" % self)
 
 
 func get_refresh_token() -> String:
@@ -113,7 +145,7 @@ func get_refresh_token() -> String:
 
 
 func get_access_token() -> String:
-	if not is_token_valid(): await authorized
+	#if not is_token_valid(): await authorized
 	return _access_token
 
 
@@ -133,6 +165,7 @@ func get_expiration_readable() -> String:
 
 
 func invalidate() -> void:
+	logInfo("Token %s got invalidated" % self)
 	_expire_date = 0
 	_refresh_token = ""
 	_access_token = ""
@@ -152,7 +185,17 @@ func is_token_valid() -> bool:
 
 
 func _to_string() -> String:
-	return "<%s#%s>" % [_identifier, get_instance_id()]
+	var token_name: String = "Unnamed (Missing Path/Name)"
+	if resource_path != "":
+		token_name = resource_path.get_file()
+	elif resource_name != "":
+		token_name = resource_name
+	
+	if (resource_path == "" and resource_name == "") and _creation_stack.size() > 1:
+		var frame = _creation_stack[1]
+		token_name += " [created at %s:%s]" % [frame.source.get_file(), frame.line]
+		
+	return "<%s#%s>" % [token_name, get_instance_id()]
 	
 	
 ## Get all token names within a config file
@@ -161,3 +204,25 @@ static func get_identifiers(cache_file: String) -> PackedStringArray:
 	var status: Error = _config_file.load(cache_file)
 	if status != OK: return []
 	return _config_file.get_sections()
+
+
+# === LOGGER ===
+static var logger: Dictionary = {}
+
+
+static func set_logger(error: Callable, info: Callable, debug: Callable) -> void:
+	logger.debug = debug
+	logger.info = info
+	logger.error = error
+
+
+static func logDebug(text: String) -> void:
+	if logger.has("debug"): logger.debug.call(text)
+
+
+static func logInfo(text: String) -> void:
+	if logger.has("info"): logger.info.call(text)
+
+
+static func logError(text: String) -> void:
+	if logger.has("error"): logger.error.call(text)
