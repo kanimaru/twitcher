@@ -6,7 +6,7 @@ extends Twitcher
 class_name TwitchCommandBase
 
 ## Constant to convert from seconds to milliseconds
-const S_TO_MS: int = 1000
+const S_TO_MS: float = 1000
 
 static var ALL_COMMANDS: Array[TwitchCommandBase] = []
 
@@ -63,8 +63,8 @@ var permission_level: int = PermissionFlag.EVERYONE
 ## The eventsub to listen for chatmessages
 @export var eventsub: TwitchEventsub
 
-## Cooldowns per user Key: Username | Value: Time until it can be used again
-var _user_cooldowns: Dictionary[String, float] = {}
+## Cooldowns per user Key: Username | Value: Time until it can be used again in ms
+var _user_cooldowns: Dictionary[String, int] = {}
 ## Time until it can be used again
 var _global_cooldown: float
 
@@ -96,31 +96,35 @@ static func create(
 func _enter_tree() -> void:
 	if eventsub == null: eventsub = TwitchEventsub.instance
 	if eventsub != null:
-		eventsub.event.connect(_on_event)
+		eventsub.event_received.connect(_on_event)
 	
 
 func _exit_tree() -> void:
 	if eventsub != null:
-		eventsub.event.disconnect(_on_event)
+		eventsub.event_received.disconnect(_on_event)
 
 
-func _on_event(type: StringName, data: Dictionary) -> void:
-	if type == TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE.value:
+func _on_event(event: TwitchEventsub.Event) -> void:
+	if event.type == TwitchEventsubDefinition.CHANNEL_CHAT_MESSAGE:
 		if where & WhereFlag.CHAT != WhereFlag.CHAT: return
+		var data: TwitchESChannelChatMessage.Event = event.typed_data
 		var message : String = data.message.text
 		var username : String = data.chatter_user_login
+		var user_id : String = data.chatter_user_id
 		var channel_name : String = data.broadcaster_user_login
-		var chat_message = TwitchChatMessage.from_json(data)
-		var info: TwitchCommandInfo = TwitchCommandInfo.new(self, channel_name, username, chat_message, message)
+		var chat_message = TwitchChatMessage.from_json(event.data)
+		var info: TwitchCommandInfo = TwitchCommandInfo.new(self, channel_name, username, user_id, chat_message, message)
 		if not _should_handle(info): return
 		_handle_command(info)
 		
-	if type == TwitchEventsubDefinition.USER_WHISPER_MESSAGE.value:
+	if event.type == TwitchEventsubDefinition.USER_WHISPER_MESSAGE:
 		if where & WhereFlag.WHISPER != WhereFlag.WHISPER: return
+		var data: TwitchESWhisperReceived.Event = event.typed_data
 		var message : String = data.whisper.text
 		var from_user : String = data.from_user_login
+		var from_user_id : String = data.from_user_id
 		var to_user : String = data.to_user_login
-		var info: TwitchCommandInfo = TwitchCommandInfo.new(self, to_user, from_user, data, message)
+		var info: TwitchCommandInfo = TwitchCommandInfo.new(self, to_user, from_user, from_user_id, data, message)
 		if not _should_handle(info): return
 		_handle_command(info)
 
@@ -142,11 +146,11 @@ func _has_permission(from_username: String, data: Variant) -> bool:
 	return true
 
 
-func get_user_cooldown(from_username: String) -> bool:
-	var current_user_cooldown: float = _user_cooldowns.get_or_add(from_username, 0)
+## Returns the cooldown for the specific user in seconds
+func get_user_cooldown(from_username: String) -> float:
+	var current_user_cooldown: int = _user_cooldowns.get_or_add(from_username, 0)
 	if current_user_cooldown >= Time.get_ticks_msec():
-		var cooldown_left: float = (current_user_cooldown - Time.get_ticks_msec()) / 1000
-		return cooldown_left
+		return (current_user_cooldown - Time.get_ticks_msec()) / S_TO_MS
 	return 0
 
 
@@ -160,7 +164,7 @@ func is_on_cooldown(from_username: String) -> bool:
 
 
 func get_globalcooldown() -> float:
-	var cooldown_left: float = (_global_cooldown - Time.get_ticks_msec()) / 1000
+	var cooldown_left: float = (_global_cooldown - Time.get_ticks_msec()) / S_TO_MS
 	return cooldown_left
 
 

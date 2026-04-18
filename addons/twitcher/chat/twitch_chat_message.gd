@@ -1,5 +1,8 @@
 extends RefCounted
 
+
+## Technically deprecated by TwitchESChannelChatMessage but because it's one of the most used 
+## classes it will probably live until Twitcher 3.0
 class_name TwitchChatMessage
 
 enum FragmentType {

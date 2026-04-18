@@ -7,6 +7,7 @@ class_name TwitchCommandInfo
 var command : TwitchCommandBase
 var channel_name : String
 var username : String
+var user_id : String
 var arguments : PackedStringArray = []
 ## The original received message as string
 var text_message : String
@@ -18,10 +19,12 @@ func _init(
 	_command: TwitchCommandBase,
 	_channel_name: String,
 	_username: String,
+	_user_id: String,
 	_original_message: Variant,
 	_text_message: String):
 	command = _command
 	channel_name = _channel_name
 	username = _username
+	user_id = _user_id
 	original_message = _original_message
 	text_message = _text_message
