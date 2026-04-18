@@ -30,4 +30,5 @@ func _update_name(val: String) -> void:
 		"100x100": _name = "_100x100"
 		"24x24": _name = "_24x24"
 		"300x200": _name = "_300x200"
+		"source-only": _name = "source_only"
 		_: _name = val
