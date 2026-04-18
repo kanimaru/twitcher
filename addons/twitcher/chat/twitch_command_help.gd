@@ -11,6 +11,9 @@ class_name TwitchCommandHelp
 
 var _current_user: TwitchUser
 
+func _init() -> void:
+	args_max = 1
+	
 
 func _enter_tree() -> void:
 	super._enter_tree()
