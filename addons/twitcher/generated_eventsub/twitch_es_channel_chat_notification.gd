@@ -226,7 +226,7 @@ class Event extends TwitchData:
 			track_data(&"source_message_id", val)
 	
 	## Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
-	@export var source_badges: SourceBadges:
+	@export var source_badges: Array[SourceBadges]:
 		set(val): 
 			source_badges = val
 			track_data(&"source_badges", val)
@@ -359,7 +359,8 @@ class Event extends TwitchData:
 		if d.get("source_message_id", null) != null:
 			result.source_message_id = d["source_message_id"]
 		if d.get("source_badges", null) != null:
-			result.source_badges = SourceBadges.from_json(d["source_badges"])
+			for value in d["source_badges"]:
+				result.source_badges.append(SourceBadges.from_json(value))
 		if d.get("is_source_only", null) != null:
 			result.is_source_only = d["is_source_only"]
 		if d.get("shared_chat_sub", null) != null:

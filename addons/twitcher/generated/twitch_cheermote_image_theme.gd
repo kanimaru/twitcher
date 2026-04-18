@@ -35,3 +35,4 @@ static func from_json(d: Dictionary) -> TwitchCheermoteImageTheme:
 	if d.get("static", null) != null:
 		result.static_format = TwitchCheermoteImageFormat.from_json(d["static"])
 	return result
+
