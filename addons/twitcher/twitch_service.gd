@@ -311,7 +311,7 @@ func shoutout(user: TwitchUser, broadcaster: TwitchUser = null, moderator: Twitc
 
 
 ## Sends a announcement message to the chat
-func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, broadcaster: TwitchUser = null, moderator: TwitchUser = null):
+func announcement(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, broadcaster: TwitchUser = null, moderator: TwitchUser = null):
 	var current_user: TwitchUser = await get_current_user()
 	if not broadcaster:
 		if not current_user: return

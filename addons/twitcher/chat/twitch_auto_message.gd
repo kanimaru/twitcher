@@ -7,9 +7,9 @@ static var all_rotational_messages: Array[TwitchAutoMessage] = []
 
 ## Should the TwitchBot Node be used to send the message
 @export var use_bot: bool
-## Should it send an announcment
+## Should it send an announcement
 @export var announcement: bool
-## The color of the announcment obviously :D
+## The color of the announcement obviously :D
 @export var announcement_color: TwitchAnnouncementColor.Enum
 ## The message that should be send
 @export_multiline var message: String

@@ -116,7 +116,7 @@ func send_announcement(message: String, color: TwitchAnnouncementColor = TwitchA
 	if not _bot_auth.is_authenticated: await _bot_auth.authorize()
 	if broadcaster == null: 
 		broadcaster = receiver if receiver != null else sender
-	_log.d("Send announcment from %s to %s: %s" % [sender.display_name, broadcaster.display_name, message])
+	_log.d("Send announcement from %s to %s: %s" % [sender.display_name, broadcaster.display_name, message])
 	var body: TwitchSendChatAnnouncement.Body = TwitchSendChatAnnouncement.Body.new()
 	body.color = color.value
 	body.message = message
