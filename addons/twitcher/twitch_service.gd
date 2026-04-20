@@ -91,14 +91,16 @@ func _on_child_entered(node: Node) -> void:
 	if node is TwitchIRC: irc = node
 	if node is TwitchMediaLoader: media_loader = node
 
-	if "token" in node && token != null:
-		node.token = token
-	if "scopes" in node && scopes != null:
-		node.scopes = scopes
-	if "oauth_setting" in node && oauth_setting != null:
-		node.oauth_setting = oauth_setting
-	if node.has_signal(&"unauthenticated"):
-		node.unauthenticated.connect(_on_unauthenticated)
+	# TwitchBot handles it's own dependencies
+	if not node is TwitchBot:
+		if "token" in node and token:
+			node.token = token
+		if "scopes" in node and scopes:
+			node.scopes = scopes
+		if "oauth_setting" in node and oauth_setting:
+			node.oauth_setting = oauth_setting
+		if node.has_signal(&"unauthenticated"):
+			node.unauthenticated.connect(_on_unauthenticated)
 	update_configuration_warnings()
 
 
