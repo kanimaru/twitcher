@@ -86,6 +86,7 @@ func _exit_tree():
 	remove_inspector_plugin(encryption_inspector)
 	remove_inspector_plugin(bot_inspector)
 	if Engine.is_editor_hint():
+		remove_tool_menu_item(OPEN_SETUP_LABEL)
 		remove_tool_menu_item(REGENERATE_API_LABEL)
 		
 	_log.i("Twitcher Unloaded")
