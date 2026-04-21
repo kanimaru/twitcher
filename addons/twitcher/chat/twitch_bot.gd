@@ -9,7 +9,7 @@ extends Node
 class_name TwitchBot
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchBot")
-static var _instance: TwitchBot
+static var instance: TwitchBot
 
 const TWITCH_BOT_SCOPES = preload("res://addons/twitcher/chat/twitch_bot_scopes.tres")
 
@@ -46,11 +46,11 @@ func _ready() -> void:
 	
 	
 func _enter_tree() -> void:
-	if _instance == null: _instance = self
+	if instance == null: instance = self
 	
 	
 func _exit_tree() -> void:
-	if _instance == self: _instance = null
+	if instance == self: instance = null
 	
 	
 func _on_enter_child(node: Node) -> void:
@@ -83,8 +83,8 @@ func _ensure_children() -> void:
 ## Sends a message as the bot user the target broadcaster default to the sender user.
 ## for_source_only: see https://dev.twitch.tv/docs/api/reference/#send-chat-message
 static func chat(message: String, reply_parent_message_id: String = "", for_source_only = true, broadcaster: TwitchUser = null) -> void:
-	if _instance:
-		_instance.send_message(message, reply_parent_message_id, for_source_only, broadcaster)
+	if instance:
+		instance.send_message(message, reply_parent_message_id, for_source_only, broadcaster)
 	else:
 		push_error("No TwitchBot registered yet")
 
@@ -106,8 +106,8 @@ func send_message(message: String, reply_parent_message_id: String = "", for_sou
 	
 
 static func announcement(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, for_source_only = true, broadcaster: TwitchUser = null) -> void:
-	if _instance:
-		_instance.send_announcement(message, color, for_source_only, broadcaster)
+	if instance:
+		instance.send_announcement(message, color, for_source_only, broadcaster)
 	else:
 		push_error("No TwitchBot registered yet")
 
@@ -125,8 +125,8 @@ func send_announcement(message: String, color: TwitchAnnouncementColor = TwitchA
 
 
 static func shoutout(from_user: TwitchUser, target_user: TwitchUser) -> void:
-	if _instance:
-		_instance.send_shoutout(from_user, target_user)
+	if instance:
+		instance.send_shoutout(from_user, target_user)
 	else:
 		push_error("No TwitchBot registered yet")
 		
