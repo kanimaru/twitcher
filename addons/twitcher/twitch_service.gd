@@ -63,6 +63,8 @@ var _current_user: TwitchUser
 ## Cache TTL for the current user. When it expires it fetches the current user again.
 var _current_user_timestamp: int = 0
 
+var _reward_service: TwitchRewardService
+
 var _commands: Dictionary[String, TwitchCommand] = {}
 
 func _init() -> void:
@@ -74,6 +76,7 @@ func _ready() -> void:
 	_log.d("is ready")
 	if not is_instance_valid(token): token = TwitchEditorSettings.game_oauth_token
 	if not is_instance_valid(oauth_setting): oauth_setting = TwitchEditorSettings.game_oauth_setting
+	_reward_service = TwitchRewardService.new(TwitchAPI.instance, TwitchMediaLoader.instance)
 
 
 func _enter_tree() -> void:
@@ -442,3 +445,13 @@ func get_cheermotes(definition: TwitchCheermoteDefinition) -> Dictionary:
 	return await media_loader.get_cheermotes(definition)
 
 #endregion
+
+#region Rewards
+
+## Saves it as a new reward or updates an existing reward
+func save_reward(twitch_reward: TwitchReward) -> TwitchRewardService.SaveError:
+	return await _reward_service.save_reward(twitch_reward)
+	
+## Deletes a reward
+func delete_reward(twitch_reward: TwitchReward) -> TwitchRewardService.DeleteError:
+	return await _reward_service.delete_reward(twitch_reward)
