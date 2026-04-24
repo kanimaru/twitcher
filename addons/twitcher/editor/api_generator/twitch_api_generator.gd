@@ -96,7 +96,8 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 			_log.e("'%s' is unauthorized. It is probably your scopes." % path)
 			unauthorized.emit()
 		403:
-			_log.i("'%s' is unauthenticated. Refresh token." % path)
+			_log.i("'%s' is forbidden. Refresh token." % path)
+			push_error(res.response_data.get_string_from_utf8())
 			unauthenticated.emit()
 			await token.authorized
 			return await retry(req, res, path, method, body, content_type, error_count + 1)
@@ -611,9 +612,9 @@ func ident(code: String, level: int, padding: String = "") -> String:
 
 # Writes the processed content to the output file.
 func write_output_file(file_output: String, content: String) -> void:
-	var file = FileAccess.open(file_output, FileAccess.WRITE);
+	var file: FileAccess = FileAccess.open(file_output, FileAccess.WRITE);
 	if file == null:
-		var error_message = error_string(FileAccess.get_open_error());
+		var error_message: String = error_string(FileAccess.get_open_error());
 		push_error("Failed to open output file: %s\n%s" % [file_output, error_message])
 		return
 	file.store_string(content + "\n")

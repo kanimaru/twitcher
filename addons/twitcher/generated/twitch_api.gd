@@ -87,7 +87,8 @@ func request(path: String, method: int, body: Variant = "", content_type: String
 			_log.e("'%s' is unauthorized. It is probably your scopes." % path)
 			unauthorized.emit()
 		403:
-			_log.i("'%s' is unauthenticated. Refresh token." % path)
+			_log.i("'%s' is forbidden. Refresh token." % path)
+			push_error(res.response_data.get_string_from_utf8())
 			unauthenticated.emit()
 			await token.authorized
 			return await retry(req, res, path, method, body, content_type, error_count + 1)
