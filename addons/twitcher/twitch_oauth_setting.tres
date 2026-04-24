@@ -1,14 +1,10 @@
 [gd_resource type="Resource" script_class="OAuthSetting" format=3 uid="uid://ry64ckbckh6m"]
 
-[ext_resource type="Script" uid="uid://dcrliedgr6eol" path="res://addons/twitcher/lib/oOuch/crypto_key_provider.gd" id="1_54bgt"]
+[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="1_54bgt"]
 [ext_resource type="Script" uid="uid://00xbijwpi8xa" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="2_wroyb"]
-
-[sub_resource type="Resource" id="Resource_ss7yp"]
-script = ExtResource("1_54bgt")
 
 [resource]
 script = ExtResource("2_wroyb")
 token_url = "https://id.twitch.tv/oauth2/token"
 authorization_url = "https://id.twitch.tv/oauth2/authorize"
 device_authorization_url = "https://id.twitch.tv/oauth2/device"
-_encryption_key_provider = SubResource("Resource_ss7yp")
