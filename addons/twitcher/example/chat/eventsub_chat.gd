@@ -23,6 +23,8 @@ const ChatView = preload("res://addons/twitcher/example/chat_view.gd")
 @onready var twitch_command_help: TwitchCommandHelp = %TwitchCommandHelp
 ## Send bot button
 @onready var bot_send: Button = %BotSend
+## Send announcment button
+@onready var bot_announce: Button = %BotAnnounce
 @onready var bot: TwitchBot = %TwitchBot
 
 func _ready() -> void:
@@ -53,6 +55,7 @@ func _ready() -> void:
 	twitch_chat.subscribe()
 	
 	bot_send.pressed.connect(_on_bot_send)
+	bot_announce.pressed.connect(_on_bot_announce)
 
 
 func _on_hello(_from_username: String, info: TwitchCommandInfo, _args: PackedStringArray) -> void:
@@ -146,4 +149,10 @@ func _on_sent_message(message: String) -> void:
 func _on_bot_send() -> void:
 	var message: String = chat_view.message
 	bot.send_message(message)
+	chat_view.message = ""
+	
+	
+func _on_bot_announce() -> void:
+	var message: String = chat_view.message
+	bot.send_announcement(message)
 	chat_view.message = ""
