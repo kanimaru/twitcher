@@ -197,7 +197,7 @@ func get_user_by_id(user_id: String, force_refresh: bool = false) -> TwitchUser:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
 	if user_id == null || user_id == "": return null
-	var opt = TwitchGetUsers.Opt.new()
+	var opt: TwitchGetUsers.Opt = TwitchGetUsers.Opt.new()
 	opt.id = [user_id] as Array[String]
 	var user_data : TwitchGetUsers.Response = await api.get_users(opt)
 	if user_data.data.is_empty(): return null
@@ -217,7 +217,7 @@ func get_user(username: String, force_refresh: bool = false) -> TwitchUser:
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
-	var opt = TwitchGetUsers.Opt.new()
+	var opt: TwitchGetUsers.Opt = TwitchGetUsers.Opt.new()
 	opt.login = [username] as Array[String]
 	var user_data : TwitchGetUsers.Response = await api.get_users(opt)
 	if user_data.data.is_empty():
@@ -265,7 +265,7 @@ func subscribe_event(definition: TwitchEventsubDefinition, conditions: Dictionar
 		_log.e("TwitchEventsubDefinition is null")
 		return
 
-	var config = TwitchEventsubConfig.create(definition, conditions)
+	var config: TwitchEventsubConfig = TwitchEventsubConfig.create(definition, conditions)
 	await eventsub.subscribe(config)
 	return config
 
@@ -289,7 +289,11 @@ func get_subscriptions() -> Array[TwitchEventsubConfig]:
 
 #region Chat
 
-func chat(message: String, broadcaster: TwitchUser = null, sender: TwitchUser = null) -> void:
+static func chat(message: String, reply_parent_message_id: String = "", broadcaster: TwitchUser = null, sender: TwitchUser = null) -> void:
+	instance.send_message(message, reply_parent_message_id, broadcaster, sender)
+
+
+func send_message(message: String, reply_parent_message_id: String = "", broadcaster: TwitchUser = null, sender: TwitchUser = null) -> void:
 	var current_user = await get_current_user()
 	if not sender:
 		if not current_user: return
@@ -297,12 +301,18 @@ func chat(message: String, broadcaster: TwitchUser = null, sender: TwitchUser = 
 	if not broadcaster: 
 		if not current_user: return
 		broadcaster = current_user
-	var body = TwitchSendChatMessage.Body.create(broadcaster.id, sender.id, message)
+	var body: TwitchSendChatMessage.Body = TwitchSendChatMessage.Body.create(broadcaster.id, sender.id, message)
+	body.reply_parent_message_id = reply_parent_message_id
 	api.send_chat_message(body)
 
 
 ## Sends out a shoutout to a specific user
-func shoutout(user: TwitchUser, broadcaster: TwitchUser = null, moderator: TwitchUser = null) -> void:
+static func shoutout(user: TwitchUser, broadcaster: TwitchUser = null, moderator: TwitchUser = null) -> void:
+	instance.send_shoutout(user, broadcaster, moderator)
+
+
+## Sends out a shoutout to a specific user
+func send_shoutout(user: TwitchUser, broadcaster: TwitchUser = null, moderator: TwitchUser = null) -> void:
 	var current_user: TwitchUser = await get_current_user()
 	
 	if not broadcaster:
@@ -316,7 +326,12 @@ func shoutout(user: TwitchUser, broadcaster: TwitchUser = null, moderator: Twitc
 
 
 ## Sends a announcement message to the chat
-func announcement(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, broadcaster: TwitchUser = null, moderator: TwitchUser = null):
+static func announcment(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, broadcaster: TwitchUser = null, moderator: TwitchUser = null):
+	instance.send_announcement(message, color, broadcaster, moderator)
+
+
+## Sends a announcement message to the chat
+func send_announcement(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, broadcaster: TwitchUser = null, moderator: TwitchUser = null) -> void:
 	var current_user: TwitchUser = await get_current_user()
 	if not broadcaster:
 		if not current_user: return
@@ -326,7 +341,7 @@ func announcement(message: String, color: TwitchAnnouncementColor = TwitchAnnoun
 		if not current_user: return
 		moderator = current_user
 	
-	var body = TwitchSendChatAnnouncement.Body.new()
+	var body: TwitchSendChatAnnouncement.Body = TwitchSendChatAnnouncement.Body.new()
 	body.message = message
 	body.color = color.value
 	api.send_chat_announcement(body, moderator.id, broadcaster.id)
@@ -340,7 +355,7 @@ func add_command(command: String, callback: Callable, args_min: int = 0, args_ma
 	permission_level : TwitchCommand.PermissionFlag = TwitchCommand.PermissionFlag.EVERYONE,
 	where : TwitchCommand.WhereFlag = TwitchCommand.WhereFlag.CHAT, user_cooldown: float = 0, 
 	global_cooldown: float = 0) -> TwitchCommand:
-	var command_node = TwitchCommand.new()
+	var command_node: TwitchCommand = TwitchCommand.new()
 	command_node.command = command
 	command_node.command_received.connect(callback) 
 	command_node.args_min = args_min
