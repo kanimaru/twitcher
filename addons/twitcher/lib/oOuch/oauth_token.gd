@@ -28,6 +28,8 @@ var _scopes: PackedStringArray = []
 var _expire_date: int
 var _config_file: ConfigFile = ConfigFile.new()
 var _creation_stack: Array = []
+## To get a sanatized unique name for the token id
+var _sanatize_regex: RegEx = RegEx.create_from_string("[^\\w]")
 
 func _init() -> void:
 	_creation_stack = get_stack()
@@ -45,14 +47,13 @@ signal authorized
 
 
 func _get_storage_key() -> String:
-	if resource_path != "" and ResourceLoader.exists(resource_path):
+	if resource_path and ResourceLoader.exists(resource_path):
 		var uid: int = ResourceLoader.get_resource_uid(resource_path)
 		if uid != ResourceUID.INVALID_ID:
 			return ResourceUID.id_to_text(uid)
-			
-	if resource_name != "":
-		return "Auth-" + resource_name
-	return "Auth-%s" % get_instance_id()
+		else:
+			return _sanatize_regex.sub(resource_path, "")
+	return "Auth-" + resource_name
 
 
 ## Update the visual representation of the scopes (don't use it for actually changing scopes it wont work!) 
