@@ -17,11 +17,13 @@ func _ready() -> void:
 	validate_token()
 
 
-## Calles the validation endpoint of Twtich to make sure
-func validate_token() -> BufferedHTTPClient.ResponseData:
-	var access_token: String = await get_access_token()
+## Cales the validation endpoint of Twitch to make sure that the token is still valid and get more information about it
+func validate_token(access_token: String = "") -> BufferedHTTPClient.ResponseData:
+	if access_token == "":
+		access_token = await get_access_token()
 	if access_token == "":
 		return null
+	access_token = access_token.trim_prefix(OAuth.DEBUGGER_PROTECTION)
 		
 	var validation_request = _http_client.request("https://id.twitch.tv/oauth2/validate", HTTPClient.METHOD_GET, {
 		"Authorization": "OAuth %s" % access_token
