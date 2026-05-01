@@ -109,10 +109,13 @@ class Client extends RefCounted:
 
 ## Called when a new request was made
 signal request_received(client: Client)
-
+signal client_connected(client: Client)
+signal client_disconnected(client: Client)
+signal client_error_occured(client: Client, error: Error)
 
 @export var _port: int
 @export var _bind_address: String
+
 
 var _server : Server
 var _listening: bool
@@ -131,12 +134,27 @@ func _ready() -> void:
 	else:
 		_server = Server.new(_bind_address, _port)
 	_server.request_received.connect(_on_request_received)
+	_server.client_connected.connect(_on_client_connected)
+	_server.client_disconnected.connect(_on_client_disconnected)
+	_server.client_error_occured.connect(_on_client_error_occured)
 	logInfo("{%s:%s} start" % [ _bind_address, _port ])
 
 
 func _on_request_received(client: Client) -> void:
 	request_received.emit(client)
+
+
+func _on_client_connected(client: Client) -> void:
+	client_connected.emit(client)
 	
+	
+func _on_client_disconnected(client: Client) -> void:
+	client_disconnected.emit(client)
+	
+	
+func _on_client_error_occured(client: Client, error: Error) -> void:
+	client_error_occured.emit(client, error)
+
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE:
@@ -163,6 +181,7 @@ func send_response(client: Client, response_code : String, body : PackedByteArra
 	peer.put_data("Content-Type: text/html charset=UTF-8\r\n".to_utf8_buffer())
 	peer.put_data("\r\n".to_utf8_buffer())
 	peer.put_data(body)
+	
 
 
 # === LOGGER ===

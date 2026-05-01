@@ -22,6 +22,9 @@ const ERROR_USER_DENY: StringName = &"userdeny"
 ## Called when the authorization for AuthCodeFlow is complete to handle the auth code
 signal _auth_succeed(code: String)
 
+## Called when the authorization for ImplicitFlow is complete
+signal _implicit_succeed
+
 ## In case the authorization wasn't succesfull
 signal auth_error(error: StringName, error_description: String)
 
@@ -231,6 +234,8 @@ func _start_login_process(response_type: String) -> void:
 			logDebug("Auth code was empty. Abort Login.")
 			return
 		await token_handler.request_token("authorization_code", auth_code)
+	elif response_type == _AUTHTYPE_TOKEN:
+		await _implicit_succeed
 
 
 func _stop_server(authtype: StringName) -> void:
@@ -373,6 +378,8 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 			
 		logInfo("Received Access Token and updated successfully.")
 		server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success! You may close this window.</body></html>".to_utf8_buffer())
+		_implicit_succeed.emit()
+		await server.client_disconnected
 		_stop_server(_AUTHTYPE_TOKEN)
 
 #endregion
