@@ -7,7 +7,7 @@
 oversampling_override = 1.0
 title = "Revoke Token"
 position = Vector2i(0, 36)
-size = Vector2i(400, 200)
+size = Vector2i(600, 300)
 script = ExtResource("1_4n8su")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=92324889]

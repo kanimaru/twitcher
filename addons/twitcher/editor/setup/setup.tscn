@@ -1,51 +1,59 @@
-[gd_scene load_steps=6 format=3 uid="uid://wu1fprbhr62"]
+[gd_scene format=3 uid="uid://wu1fprbhr62"]
 
 [ext_resource type="Script" uid="uid://bbguje3a0cl8t" path="res://addons/twitcher/editor/setup/setup.gd" id="1_o5snq"]
 [ext_resource type="PackedScene" uid="uid://c7pja1druikbn" path="res://addons/twitcher/editor/setup/page_use_case.tscn" id="2_6678v"]
 [ext_resource type="PackedScene" uid="uid://dm6jvnuikxtei" path="res://addons/twitcher/editor/setup/page_authorization.tscn" id="3_qcivh"]
 [ext_resource type="PackedScene" uid="uid://d4l63q706mkhw" path="res://addons/twitcher/editor/setup/page_utilities.tscn" id="4_qcivh"]
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_6678v"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_qcivh"]
 
-[node name="SetupWindow" type="Window"]
+[node name="SetupWindow" type="Window" unique_id=1827582033]
+oversampling_override = 1.0
 title = "Setup Twitcher"
 initial_position = 2
 size = Vector2i(800, 800)
 script = ExtResource("1_o5snq")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=89955671]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="Setup" type="TabContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1393938258]
+layout_mode = 2
+
+[node name="Setup" type="TabContainer" parent="MarginContainer/VBoxContainer" unique_id=638100898]
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="UseCase" parent="VBoxContainer/Setup" instance=ExtResource("2_6678v")]
+[node name="UseCase" parent="MarginContainer/VBoxContainer/Setup" unique_id=1624839746 instance=ExtResource("2_6678v")]
 unique_name_in_owner = true
 layout_mode = 2
-choose_button_group = SubResource("ButtonGroup_6678v")
+choose_button_group = SubResource("ButtonGroup_qcivh")
 
-[node name="Authorization" parent="VBoxContainer/Setup" instance=ExtResource("3_qcivh")]
+[node name="Authorization" parent="MarginContainer/VBoxContainer/Setup" unique_id=2112939332 instance=ExtResource("3_qcivh")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="Utilities" parent="VBoxContainer/Setup" instance=ExtResource("4_qcivh")]
+[node name="Utilities" parent="MarginContainer/VBoxContainer/Setup" unique_id=773191535 instance=ExtResource("4_qcivh")]
 visible = false
 layout_mode = 2
 
-[node name="StartupCheck" type="CheckButton" parent="VBoxContainer"]
+[node name="StartupCheck" type="CheckButton" parent="MarginContainer/VBoxContainer" unique_id=1949535297]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Show on startup (you can open it via 'Project/Tools/Twitcher Setup')"
 
-[node name="Close" type="Button" parent="VBoxContainer"]
+[node name="Close" type="Button" parent="MarginContainer/VBoxContainer" unique_id=795954952]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Close"
