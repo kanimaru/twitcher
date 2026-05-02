@@ -19,7 +19,7 @@ class Opt extends TwitchData:
 	##   
 	## If not specified, the request removes all messages in the broadcaster’s chat room.
 	@export var message_id: String:
-		set(val): 
+		set(val):
 			message_id = val
 			track_data(&"message_id", val)
 	

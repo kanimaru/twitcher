@@ -9,13 +9,13 @@ class_name TwitchGuestStarSession
 	
 ## ID uniquely representing the Guest Star session.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## List of guests currently interacting with the Guest Star session.
 @export var guests: Array[TwitchGuest]:
-	set(val): 
+	set(val):
 		guests = val
 		track_data(&"guests", val)
 

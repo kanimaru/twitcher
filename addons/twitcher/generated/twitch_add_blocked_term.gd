@@ -17,7 +17,7 @@ class Body extends TwitchData:
 	##   
 	## If the blocked term already exists, the response contains the existing blocked term.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
@@ -45,7 +45,7 @@ class Response extends TwitchData:
 
 	## A list that contains the single blocked term that the broadcaster added.
 	@export var data: Array[TwitchBlockedTerm]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

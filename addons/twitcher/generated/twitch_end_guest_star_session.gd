@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## Summary of the session details when the session was ended.
 	@export var data: Array[TwitchGuestStarSession]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

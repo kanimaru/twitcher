@@ -13,13 +13,13 @@ class Response extends TwitchData:
 
 	## A list that contains information about the channel's unban requests.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
 	## Contains information used to page through a list of results. The object is empty if there are no more pages left to page through.
 	@export var pagination: ResponsePagination:
-		set(val): 
+		set(val):
 			pagination = val
 			track_data(&"pagination", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -69,17 +69,17 @@ class Response extends TwitchData:
 		iter[0] = data[0]
 		_cur_iter = 1
 		return true
-		
-		
+	
+	
 	func _iter_next(iter: Array) -> bool:
 		if data.size() > _cur_iter:
 			iter[0] = data[_cur_iter]
 			_cur_iter += 1
-		elif not _has_pagination(): 
+		elif not _has_pagination():
 			return false
 		return true
-		
-		
+	
+	
 	func _iter_get(iter: Variant) -> Variant:
 		if data.size() == _cur_iter && _has_pagination():
 			await next_page()
@@ -92,67 +92,67 @@ class ResponseData extends TwitchData:
 
 	## Unban request ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## User ID of broadcaster whose channel is receiving the unban request.
 	@export var broadcaster_id: String:
-		set(val): 
+		set(val):
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The broadcaster's display name.
 	@export var broadcaster_name: String:
-		set(val): 
+		set(val):
 			broadcaster_name = val
 			track_data(&"broadcaster_name", val)
 	
 	## The broadcaster's login name.
 	@export var broadcaster_login: String:
-		set(val): 
+		set(val):
 			broadcaster_login = val
 			track_data(&"broadcaster_login", val)
 	
 	## User ID of moderator who approved/denied the request.
 	@export var moderator_id: String:
-		set(val): 
+		set(val):
 			moderator_id = val
 			track_data(&"moderator_id", val)
 	
 	## The moderator's login name.
 	@export var moderator_login: String:
-		set(val): 
+		set(val):
 			moderator_login = val
 			track_data(&"moderator_login", val)
 	
 	## The moderator's display name.
 	@export var moderator_name: String:
-		set(val): 
+		set(val):
 			moderator_name = val
 			track_data(&"moderator_name", val)
 	
 	## User ID of the requestor who is asking for an unban.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user's login name.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user's display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## Text of the request from the requesting user.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
@@ -164,25 +164,25 @@ class ResponseData extends TwitchData:
 	## * acknowledged
 	## * canceled
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
 	## Timestamp of when the unban request was created.
 	@export var created_at: String:
-		set(val): 
+		set(val):
 			created_at = val
 			track_data(&"created_at", val)
 	
 	## Timestamp of when moderator/broadcaster approved or denied the request.
 	@export var resolved_at: String:
-		set(val): 
+		set(val):
 			resolved_at = val
 			track_data(&"resolved_at", val)
 	
 	## Text input by the resolver (moderator) of the unban. request
 	@export var resolution_text: String:
-		set(val): 
+		set(val):
 			resolution_text = val
 			track_data(&"resolution_text", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -252,7 +252,7 @@ class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s after query parameter.
 	@export var cursor: String:
-		set(val): 
+		set(val):
 			cursor = val
 			track_data(&"cursor", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -279,19 +279,19 @@ class Opt extends TwitchData:
 
 	## The ID used to filter what unban requests are returned.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## Cursor used to get next page of results. Pagination object in response contains cursor value.
 	@export var after: String:
-		set(val): 
+		set(val):
 			after = val
 			track_data(&"after", val)
 	
 	## The maximum number of items to return per page in response
 	@export var first: int:
-		set(val): 
+		set(val):
 			first = val
 			track_data(&"first", val)
 	

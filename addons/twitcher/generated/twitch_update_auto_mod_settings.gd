@@ -13,55 +13,55 @@ class Body extends TwitchData:
 
 	## The Automod level for hostility involving aggression.
 	@export var aggression: int:
-		set(val): 
+		set(val):
 			aggression = val
 			track_data(&"aggression", val)
 	
 	## The Automod level for hostility involving name calling or insults.
 	@export var bullying: int:
-		set(val): 
+		set(val):
 			bullying = val
 			track_data(&"bullying", val)
 	
 	## The Automod level for discrimination against disability.
 	@export var disability: int:
-		set(val): 
+		set(val):
 			disability = val
 			track_data(&"disability", val)
 	
 	## The Automod level for discrimination against women.
 	@export var misogyny: int:
-		set(val): 
+		set(val):
 			misogyny = val
 			track_data(&"misogyny", val)
 	
 	## The default AutoMod level for the broadcaster.
 	@export var overall_level: int:
-		set(val): 
+		set(val):
 			overall_level = val
 			track_data(&"overall_level", val)
 	
 	## The Automod level for racial discrimination.
 	@export var race_ethnicity_or_religion: int:
-		set(val): 
+		set(val):
 			race_ethnicity_or_religion = val
 			track_data(&"race_ethnicity_or_religion", val)
 	
 	## The Automod level for sexual content.
 	@export var sex_based_terms: int:
-		set(val): 
+		set(val):
 			sex_based_terms = val
 			track_data(&"sex_based_terms", val)
 	
 	## The AutoMod level for discrimination based on sexuality, sex, or gender.
 	@export var sexuality_sex_or_gender: int:
-		set(val): 
+		set(val):
 			sexuality_sex_or_gender = val
 			track_data(&"sexuality_sex_or_gender", val)
 	
 	## The Automod level for profanity.
 	@export var swearing: int:
-		set(val): 
+		set(val):
 			swearing = val
 			track_data(&"swearing", val)
 	
@@ -104,7 +104,7 @@ class Response extends TwitchData:
 
 	## The list of AutoMod settings. The list contains a single object that contains all the AutoMod settings.
 	@export var data: Array[TwitchAutoModSettings]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

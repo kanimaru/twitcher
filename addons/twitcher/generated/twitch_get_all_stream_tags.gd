@@ -13,13 +13,13 @@ class Response extends TwitchData:
 
 	## The list of stream tags that the broadcaster can apply to their channel.
 	@export var data: Array[TwitchStreamTag]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
 	## The information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 	@export var pagination: ResponsePagination:
-		set(val): 
+		set(val):
 			pagination = val
 			track_data(&"pagination", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -69,17 +69,17 @@ class Response extends TwitchData:
 		iter[0] = data[0]
 		_cur_iter = 1
 		return true
-		
-		
+	
+	
 	func _iter_next(iter: Array) -> bool:
 		if data.size() > _cur_iter:
 			iter[0] = data[_cur_iter]
 			_cur_iter += 1
-		elif not _has_pagination(): 
+		elif not _has_pagination():
 			return false
 		return true
-		
-		
+	
+	
 	func _iter_get(iter: Variant) -> Variant:
 		if data.size() == _cur_iter && _has_pagination():
 			await next_page()
@@ -92,7 +92,7 @@ class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Set the request’s _after_ query parameter to this value to page forwards through the results.
 	@export var cursor: String:
-		set(val): 
+		set(val):
 			cursor = val
 			track_data(&"cursor", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -119,19 +119,19 @@ class Opt extends TwitchData:
 
 	## The ID of the tag to get. Used to filter the list of tags. To specify more than one tag, include the _tag\_id_ parameter for each tag to get. For example, `tag_id=1234&tag_id=5678`. The maximum number of IDs you may specify is 100\. Ignores invalid IDs but not duplicate IDs.
 	@export var tag_id: Array[String]:
-		set(val): 
+		set(val):
 			tag_id = val
 			track_data(&"tag_id", val)
 	
 	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100\. The default is 20.
 	@export var first: int:
-		set(val): 
+		set(val):
 			first = val
 			track_data(&"first", val)
 	
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 	@export var after: String:
-		set(val): 
+		set(val):
 			after = val
 			track_data(&"after", val)
 	

@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list that contains information related to the channel’s ad schedule.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,37 +43,37 @@ class ResponseData extends TwitchData:
 
 	## The number of snoozes available for the broadcaster.
 	@export var snooze_count: int:
-		set(val): 
+		set(val):
 			snooze_count = val
 			track_data(&"snooze_count", val)
 	
 	## The UTC timestamp when the broadcaster will gain an additional snooze, in RFC3339 format. Can be `0`.
 	@export var snooze_refresh_at: int:
-		set(val): 
+		set(val):
 			snooze_refresh_at = val
 			track_data(&"snooze_refresh_at", val)
 	
 	## The UTC timestamp of the broadcaster’s next scheduled ad, in RFC3339 format. `0` if the channel has no ad scheduled or is not live.
 	@export var next_ad_at: int:
-		set(val): 
+		set(val):
 			next_ad_at = val
 			track_data(&"next_ad_at", val)
 	
 	## The length in seconds of the scheduled upcoming ad break.
 	@export var duration: int:
-		set(val): 
+		set(val):
 			duration = val
 			track_data(&"duration", val)
 	
 	## The UTC timestamp of the broadcaster’s last ad-break, in RFC3339 format. Empty if the channel has not run an ad or is not live.
 	@export var last_ad_at: int:
-		set(val): 
+		set(val):
 			last_ad_at = val
 			track_data(&"last_ad_at", val)
 	
 	## The amount of pre-roll free time remaining for the channel in seconds. Returns 0 if they are currently not pre-roll free.
 	@export var preroll_free_time: int:
-		set(val): 
+		set(val):
 			preroll_free_time = val
 			track_data(&"preroll_free_time", val)
 	var response: BufferedHTTPClient.ResponseData

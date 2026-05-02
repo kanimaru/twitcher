@@ -9,43 +9,43 @@ class_name TwitchChannel
 	
 ## The ISO 639-1 two-letter language code of the language used by the broadcaster. For example, _en_ for English. If the broadcaster uses a language not in the list of [supported stream languages](https://help.twitch.tv/s/article/languages-on-twitch#streamlang), the value is _other_.
 @export var broadcaster_language: String:
-	set(val): 
+	set(val):
 		broadcaster_language = val
 		track_data(&"broadcaster_language", val)
 
 ## The broadcaster’s login name.
 @export var broadcaster_login: String:
-	set(val): 
+	set(val):
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The broadcaster’s display name.
 @export var display_name: String:
-	set(val): 
+	set(val):
 		display_name = val
 		track_data(&"display_name", val)
 
 ## The ID of the game that the broadcaster is playing or last played.
 @export var game_id: String:
-	set(val): 
+	set(val):
 		game_id = val
 		track_data(&"game_id", val)
 
 ## The name of the game that the broadcaster is playing or last played.
 @export var game_name: String:
-	set(val): 
+	set(val):
 		game_name = val
 		track_data(&"game_name", val)
 
 ## An ID that uniquely identifies the channel (this is the broadcaster’s ID).
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## A Boolean value that determines whether the broadcaster is streaming live. Is **true** if the broadcaster is streaming live; otherwise, **false**.
 @export var is_live: bool:
-	set(val): 
+	set(val):
 		is_live = val
 		track_data(&"is_live", val)
 
@@ -53,31 +53,31 @@ class_name TwitchChannel
 ##   
 ## The list of tags that apply to the stream. The list contains IDs only when the channel is steaming live. For a list of possible tags, see [List of All Tags](https://www.twitch.tv/directory/all/tags). The list doesn’t include Category Tags.
 @export var tag_ids: Array[String]:
-	set(val): 
+	set(val):
 		tag_ids = val
 		track_data(&"tag_ids", val)
 
 ## The tags applied to the channel.
 @export var tags: Array[String]:
-	set(val): 
+	set(val):
 		tags = val
 		track_data(&"tags", val)
 
 ## A URL to a thumbnail of the broadcaster’s profile image.
 @export var thumbnail_url: String:
-	set(val): 
+	set(val):
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
 
 ## The stream’s title. Is an empty string if the broadcaster didn’t set it.
 @export var title: String:
-	set(val): 
+	set(val):
 		title = val
 		track_data(&"title", val)
 
 ## The UTC date and time (in RFC3339 format) of when the broadcaster started streaming. The string is empty if the broadcaster is not streaming live.
 @export var started_at: String:
-	set(val): 
+	set(val):
 		started_at = val
 		track_data(&"started_at", val)
 

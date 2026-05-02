@@ -9,25 +9,25 @@ class_name TwitchUserExtension
 	
 ## An ID that identifies the extension.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The extension's version.
 @export var version: String:
-	set(val): 
+	set(val):
 		version = val
 		track_data(&"version", val)
 
 ## The extension's name.
 @export var name: String:
-	set(val): 
+	set(val):
 		name = val
 		track_data(&"name", val)
 
 ## A Boolean value that determines whether the extension is configured and can be activated. Is **true** if the extension is configured and can be activated.
 @export var can_activate: bool:
-	set(val): 
+	set(val):
 		can_activate = val
 		track_data(&"can_activate", val)
 
@@ -38,7 +38,7 @@ class_name TwitchUserExtension
 ## * overlay
 ## * panel
 @export var type: Array[String]:
-	set(val): 
+	set(val):
 		type = val
 		track_data(&"type", val)
 

@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list that contains information about the specified channels. The list is empty if the specified channels weren’t found.
 	@export var data: Array[TwitchChannelInformation]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

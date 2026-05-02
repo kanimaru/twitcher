@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of teams that the broadcaster is a member of. Returns an empty array if the broadcaster is not a member of a team.
 	@export var data: Array[TwitchChannelTeam]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

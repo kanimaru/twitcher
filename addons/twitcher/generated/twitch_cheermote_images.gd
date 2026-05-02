@@ -9,13 +9,13 @@ class_name TwitchCheermoteImages
 	
 ## 
 @export var light: TwitchCheermoteImageTheme:
-	set(val): 
+	set(val):
 		light = val
 		track_data(&"light", val)
 
 ## 
 @export var dark: TwitchCheermoteImageTheme:
-	set(val): 
+	set(val):
 		dark = val
 		track_data(&"dark", val)
 

@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list of invite objects describing the invited user as well as their ready status.
 	@export var data: Array[TwitchGuestStarInvite]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

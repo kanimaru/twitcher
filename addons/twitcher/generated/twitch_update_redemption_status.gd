@@ -18,7 +18,7 @@ class Body extends TwitchData:
 	##   
 	## Setting the status to CANCELED refunds the user’s channel points.
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
@@ -46,7 +46,7 @@ class Response extends TwitchData:
 
 	## The list contains the single redemption that you updated.
 	@export var data: Array[TwitchCustomRewardRedemption]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

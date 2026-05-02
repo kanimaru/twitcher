@@ -13,13 +13,13 @@ class Response extends TwitchData:
 
 	## The list of users that were banned or put in a timeout.
 	@export var data: Array[TwitchBannedUser]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 	@export var pagination: ResponsePagination:
-		set(val): 
+		set(val):
 			pagination = val
 			track_data(&"pagination", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -69,17 +69,17 @@ class Response extends TwitchData:
 		iter[0] = data[0]
 		_cur_iter = 1
 		return true
-		
-		
+	
+	
 	func _iter_next(iter: Array) -> bool:
 		if data.size() > _cur_iter:
 			iter[0] = data[_cur_iter]
 			_cur_iter += 1
-		elif not _has_pagination(): 
+		elif not _has_pagination():
 			return false
 		return true
-		
-		
+	
+	
 	func _iter_get(iter: Variant) -> Variant:
 		if data.size() == _cur_iter && _has_pagination():
 			await next_page()
@@ -92,7 +92,7 @@ class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
 	@export var cursor: String:
-		set(val): 
+		set(val):
 			cursor = val
 			track_data(&"cursor", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -121,25 +121,25 @@ class Opt extends TwitchData:
 	##   
 	## The returned list includes only those users that were banned or put in a timeout. The list is returned in the same order that you specified the IDs.
 	@export var user_id: Array[String]:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The maximum number of items to return per page in the response. The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
 	@export var first: int:
-		set(val): 
+		set(val):
 			first = val
 			track_data(&"first", val)
 	
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 	@export var after: String:
-		set(val): 
+		set(val):
 			after = val
 			track_data(&"after", val)
 	
 	## The cursor used to get the previous page of results. The **Pagination** object in the response contains the cursor’s value. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 	@export var before: String:
-		set(val): 
+		set(val):
 			before = val
 			track_data(&"before", val)
 	

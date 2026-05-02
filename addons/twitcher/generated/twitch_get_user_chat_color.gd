@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of users and the color code they use for their name.
 	@export var data: Array[TwitchUserChatColor]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

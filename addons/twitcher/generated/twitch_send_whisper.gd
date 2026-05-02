@@ -20,7 +20,7 @@ class Body extends TwitchData:
 	##   
 	## Messages that exceed the maximum length are truncated.
 	@export var message: String:
-		set(val): 
+		set(val):
 			message = val
 			track_data(&"message", val)
 	

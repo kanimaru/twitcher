@@ -9,37 +9,37 @@ class_name TwitchCharityCampaignDonation
 	
 ## An ID that identifies the donation. The ID is unique across campaigns.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## An ID that identifies the charity campaign that the donation applies to.
 @export var campaign_id: String:
-	set(val): 
+	set(val):
 		campaign_id = val
 		track_data(&"campaign_id", val)
 
 ## An ID that identifies a user that donated money to the campaign.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s login name.
 @export var user_login: String:
-	set(val): 
+	set(val):
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The user’s display name.
 @export var user_name: String:
-	set(val): 
+	set(val):
 		user_name = val
 		track_data(&"user_name", val)
 
 ## An object that contains the amount of money that the user donated.
 @export var amount: Amount:
-	set(val): 
+	set(val):
 		amount = val
 		track_data(&"amount", val)
 
@@ -82,7 +82,7 @@ class Amount extends TwitchData:
 
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
 	@export var value: int:
-		set(val): 
+		set(val):
 			value = val
 			track_data(&"value", val)
 	
@@ -90,13 +90,13 @@ class Amount extends TwitchData:
 	##   
 	## `value / 10^decimal_places`
 	@export var decimal_places: int:
-		set(val): 
+		set(val):
 			decimal_places = val
 			track_data(&"decimal_places", val)
 	
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
 	@export var currency: String:
-		set(val): 
+		set(val):
 			currency = val
 			track_data(&"currency", val)
 	

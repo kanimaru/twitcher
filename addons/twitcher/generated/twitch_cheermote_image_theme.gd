@@ -9,13 +9,13 @@ class_name TwitchCheermoteImageTheme
 	
 ## 
 @export var animated_format: TwitchCheermoteImageFormat:
-	set(val): 
+	set(val):
 		animated_format = val
 		track_data(&"animated", val)
 
 ## 
 @export var static_format: TwitchCheermoteImageFormat:
-	set(val): 
+	set(val):
 		static_format = val
 		track_data(&"static", val)
 

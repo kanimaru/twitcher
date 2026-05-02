@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list that contains a single object with information about the user’s subscription.
 	@export var data: Array[TwitchUserSubscription]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

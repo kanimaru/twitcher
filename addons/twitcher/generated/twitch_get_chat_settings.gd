@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of chat settings. The list contains a single object with all the settings.
 	@export var data: Array[TwitchChatSettings]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -47,7 +47,7 @@ class Opt extends TwitchData:
 	##   
 	## If you specify this field, this ID must match the user ID in the user access token.
 	@export var moderator_id: String:
-		set(val): 
+		set(val):
 			moderator_id = val
 			track_data(&"moderator_id", val)
 	

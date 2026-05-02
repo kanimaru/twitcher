@@ -13,25 +13,25 @@ class Body extends TwitchData:
 
 	## The ID of the broadcaster that’s running the prediction. This ID must match the user ID in the user access token.
 	@export var broadcaster_id: String:
-		set(val): 
+		set(val):
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The question that the broadcaster is asking. For example, _Will I finish this entire pizza?_ The title is limited to a maximum of 45 characters.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## The list of possible outcomes that the viewers may choose from. The list must contain a minimum of 2 choices and up to a maximum of 10 choices.
 	@export var outcomes: Array[BodyOutcomes]:
-		set(val): 
+		set(val):
 			outcomes = val
 			track_data(&"outcomes", val)
 	
 	## The length of time (in seconds) that the prediction will run for. The minimum is 30 seconds and the maximum is 1800 seconds (30 minutes).
 	@export var prediction_window: int:
-		set(val): 
+		set(val):
 			prediction_window = val
 			track_data(&"prediction_window", val)
 	
@@ -70,7 +70,7 @@ class BodyOutcomes extends TwitchData:
 
 	## The text of one of the outcomes that the viewer may select. The title is limited to a maximum of 25 characters.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
@@ -98,7 +98,7 @@ class Response extends TwitchData:
 
 	## A list that contains the single prediction that you created.
 	@export var data: Array[TwitchPrediction]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

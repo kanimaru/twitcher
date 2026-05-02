@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of IDs of the videos that were deleted.
 	@export var data: Array[String]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

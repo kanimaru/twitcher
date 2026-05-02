@@ -13,19 +13,19 @@ class Response extends TwitchData:
 
 	## Flag determining if Guest Star moderators have access to control whether a guest is live once assigned to a slot.
 	@export var is_moderator_send_live_enabled: bool:
-		set(val): 
+		set(val):
 			is_moderator_send_live_enabled = val
 			track_data(&"is_moderator_send_live_enabled", val)
 	
 	## Number of slots the Guest Star call interface will allow the host to add to a call. Required to be between 1 and 6.
 	@export var slot_count: int:
-		set(val): 
+		set(val):
 			slot_count = val
 			track_data(&"slot_count", val)
 	
 	## Flag determining if Browser Sources subscribed to sessions on this channel should output audio
 	@export var is_browser_source_audio_enabled: bool:
-		set(val): 
+		set(val):
 			is_browser_source_audio_enabled = val
 			track_data(&"is_browser_source_audio_enabled", val)
 	
@@ -34,13 +34,13 @@ class Response extends TwitchData:
 	## * `TILED_LAYOUT`: All live guests are tiled within the browser source with the same size.
 	## * `SCREENSHARE_LAYOUT`: All live guests are tiled within the browser source with the same size. If there is an active screen share, it is sized larger than the other guests.
 	@export var group_layout: String:
-		set(val): 
+		set(val):
 			group_layout = val
 			track_data(&"group_layout", val)
 	
 	## View only token to generate browser source URLs
 	@export var browser_source_token: String:
-		set(val): 
+		set(val):
 			browser_source_token = val
 			track_data(&"browser_source_token", val)
 	var response: BufferedHTTPClient.ResponseData

@@ -13,7 +13,7 @@ class Body extends TwitchData:
 
 	## The announcement to make in the broadcaster’s chat room. Announcements are limited to a maximum of 500 characters; announcements longer than 500 characters are truncated.
 	@export var message: String:
-		set(val): 
+		set(val):
 			message = val
 			track_data(&"message", val)
 	
@@ -27,13 +27,13 @@ class Body extends TwitchData:
 	##   
 	## If `color` is set to _primary_ or is not set, the channel’s accent color is used to highlight the announcement (see **Profile Accent Color** under [profile settings](https://www.twitch.tv/settings/profile), **Channel and Videos**, and **Brand**).
 	@export var color: String:
-		set(val): 
+		set(val):
 			color = val
 			track_data(&"color", val)
 	
 	## Determines if the chat announcement is sent only to the source channel defined by broadcaster\_id during a shared chat session. This has no effect if the announcement is not sent sent during a shared chat session. The default value is `false`. NOTE: This parameter can only be set when utilizing an App Access Token. It cannot be specified when a User Access Token is used, and will instead result in an HTTP 400 error.
 	@export var source_only: bool:
-		set(val): 
+		set(val):
 			source_only = val
 			track_data(&"source-only", val)
 	

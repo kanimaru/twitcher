@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list that contains the channel’s stream key.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,7 +43,7 @@ class ResponseData extends TwitchData:
 
 	## The channel’s stream key.
 	@export var stream_key: String:
-		set(val): 
+		set(val):
 			stream_key = val
 			track_data(&"stream_key", val)
 	var response: BufferedHTTPClient.ResponseData

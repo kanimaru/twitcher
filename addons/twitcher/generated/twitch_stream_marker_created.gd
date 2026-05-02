@@ -9,25 +9,25 @@ class_name TwitchStreamMarkerCreated
 	
 ## An ID that identifies this marker.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The UTC date and time (in RFC3339 format) of when the user created the marker.
 @export var created_at: String:
-	set(val): 
+	set(val):
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The relative offset (in seconds) of the marker from the beginning of the stream.
 @export var position_seconds: int:
-	set(val): 
+	set(val):
 		position_seconds = val
 		track_data(&"position_seconds", val)
 
 ## A description that the user gave the marker to help them remember why they marked the location.
 @export var description: String:
-	set(val): 
+	set(val):
 		description = val
 		track_data(&"description", val)
 

@@ -13,25 +13,25 @@ class Body extends TwitchData:
 
 	## The type of subscription to create. For a list of subscriptions that you can create, see [Subscription Types](https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#subscription-types). Set this field to the value in the **Name** column of the Subscription Types table.
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## The version number that identifies the definition of the subscription type that you want the response to use.
 	@export var version: String:
-		set(val): 
+		set(val):
 			version = val
 			track_data(&"version", val)
 	
 	## A JSON object that contains the parameter values that are specific to the specified subscription type. For the object’s required and optional fields, see the subscription type’s documentation.
 	@export var condition: Dictionary:
-		set(val): 
+		set(val):
 			condition = val
 			track_data(&"condition", val)
 	
 	## The transport details that you want Twitch to use when sending you notifications.
 	@export var transport: BodyTransport:
-		set(val): 
+		set(val):
 			transport = val
 			track_data(&"transport", val)
 	
@@ -72,7 +72,7 @@ class BodyTransport extends TwitchData:
 	## * websocket
 	## * conduit
 	@export var method: String:
-		set(val): 
+		set(val):
 			method = val
 			track_data(&"method", val)
 	
@@ -80,25 +80,25 @@ class BodyTransport extends TwitchData:
 	## 
 	## **NOTE**: Redirects are not followed.
 	@export var callback: String:
-		set(val): 
+		set(val):
 			callback = val
 			track_data(&"callback", val)
 	
 	## The secret used to verify the signature. The secret must be an ASCII string that’s a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see [Verifying the event message](https://dev.twitch.tv/docs/eventsub/handling-webhook-events#verifying-the-event-message). Specify this field only if `method` is set to **webhook**.
 	@export var secret: String:
-		set(val): 
+		set(val):
 			secret = val
 			track_data(&"secret", val)
 	
 	## An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message. Specify this field only if `method` is set to **websocket**.
 	@export var session_id: String:
-		set(val): 
+		set(val):
 			session_id = val
 			track_data(&"session_id", val)
 	
 	## An ID that identifies the conduit to send notifications to. When you create a conduit, the server returns the conduit ID. Specify this field only if `method` is set to **conduit**.
 	@export var conduit_id: String:
-		set(val): 
+		set(val):
 			conduit_id = val
 			track_data(&"conduit_id", val)
 	
@@ -134,25 +134,25 @@ class Response extends TwitchData:
 
 	## A list that contains the single subscription that you created.
 	@export var data: Array[TwitchEventSubSubscription]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
 	## The total number of subscriptions you’ve created.
 	@export var total: int:
-		set(val): 
+		set(val):
 			total = val
 			track_data(&"total", val)
 	
 	## The sum of all of your subscription costs. [Learn More](https://dev.twitch.tv/docs/eventsub/manage-subscriptions/#subscription-limits)
 	@export var total_cost: int:
-		set(val): 
+		set(val):
 			total_cost = val
 			track_data(&"total_cost", val)
 	
 	## The maximum total cost that you’re allowed to incur for all subscriptions you create.
 	@export var max_total_cost: int:
-		set(val): 
+		set(val):
 			max_total_cost = val
 			track_data(&"max_total_cost", val)
 	var response: BufferedHTTPClient.ResponseData

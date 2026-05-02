@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of stream tags. The list is empty if the broadcaster or Twitch hasn’t added tags to the broadcaster’s channel.
 	@export var data: Array[TwitchStreamTag]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

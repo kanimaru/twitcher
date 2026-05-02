@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list that contains the newly added secrets.
 	@export var data: Array[TwitchExtensionSecret]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,7 +43,7 @@ class Opt extends TwitchData:
 
 	## The amount of time, in seconds, to delay activating the secret. The delay should provide enough time for instances of the extension to gracefully switch over to the new secret. The minimum delay is 300 seconds (5 minutes). The default is 300 seconds.
 	@export var delay: int:
-		set(val): 
+		set(val):
 			delay = val
 			track_data(&"delay", val)
 	

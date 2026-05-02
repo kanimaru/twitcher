@@ -9,31 +9,31 @@ class_name TwitchPredictionOutcome
 	
 ## An ID that identifies this outcome.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The outcome’s text.
 @export var title: String:
-	set(val): 
+	set(val):
 		title = val
 		track_data(&"title", val)
 
 ## The number of unique viewers that chose this outcome.
 @export var users: int:
-	set(val): 
+	set(val):
 		users = val
 		track_data(&"users", val)
 
 ## The number of Channel Points spent by viewers on this outcome.
 @export var channel_points: int:
-	set(val): 
+	set(val):
 		channel_points = val
 		track_data(&"channel_points", val)
 
 ## A list of viewers who were the top predictors; otherwise, **null** if none.
 @export var top_predictors: Array[TopPredictors]:
-	set(val): 
+	set(val):
 		top_predictors = val
 		track_data(&"top_predictors", val)
 
@@ -44,7 +44,7 @@ class_name TwitchPredictionOutcome
 ##   
 ## If the number of outcomes is two, the color is BLUE for the first outcome and PINK for the second outcome. If there are more than two outcomes, the color is BLUE for all outcomes.
 @export var color: String:
-	set(val): 
+	set(val):
 		color = val
 		track_data(&"color", val)
 
@@ -89,31 +89,31 @@ class TopPredictors extends TwitchData:
 
 	## An ID that identifies the viewer.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The viewer’s display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The viewer’s login name.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The number of Channel Points the viewer spent.
 	@export var channel_points_used: int:
-		set(val): 
+		set(val):
 			channel_points_used = val
 			track_data(&"channel_points_used", val)
 	
 	## The number of Channel Points distributed to the viewer.
 	@export var channel_points_won: int:
-		set(val): 
+		set(val):
 			channel_points_won = val
 			track_data(&"channel_points_won", val)
 	

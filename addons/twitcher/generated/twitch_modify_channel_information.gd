@@ -13,25 +13,25 @@ class Body extends TwitchData:
 
 	## The ID of the game that the user plays. The game is not updated if the ID isn’t a game ID that Twitch recognizes. To unset this field, use “0” or “” (an empty string).
 	@export var game_id: String:
-		set(val): 
+		set(val):
 			game_id = val
 			track_data(&"game_id", val)
 	
 	## The user’s preferred language. Set the value to an ISO 639-1 two-letter language code (for example, _en_ for English). Set to “other” if the user’s preferred language is not a Twitch supported language. The language isn’t updated if the language code isn’t a Twitch supported language.
 	@export var broadcaster_language: String:
-		set(val): 
+		set(val):
 			broadcaster_language = val
 			track_data(&"broadcaster_language", val)
 	
 	## The title of the user’s stream. You may not set this field to an empty string.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## The number of seconds you want your broadcast buffered before streaming it live. The delay helps ensure fairness during competitive play. Only users with Partner status may set this field. The maximum delay is 900 seconds (15 minutes).
 	@export var delay: int:
-		set(val): 
+		set(val):
 			delay = val
 			track_data(&"delay", val)
 	
@@ -39,19 +39,19 @@ class Body extends TwitchData:
 	##   
 	## A channel may specify a maximum of 10 tags. Each tag is limited to a maximum of 25 characters and may not be an empty string or contain spaces or special characters. Tags are case insensitive. For readability, consider using camelCasing or PascalCasing.
 	@export var tags: Array[String]:
-		set(val): 
+		set(val):
 			tags = val
 			track_data(&"tags", val)
 	
 	## List of labels that should be set as the Channel’s CCLs.
 	@export var content_classification_labels: Array[BodyContentClassificationLabels]:
-		set(val): 
+		set(val):
 			content_classification_labels = val
 			track_data(&"content_classification_labels", val)
 	
 	## Boolean flag indicating if the channel has branded content.
 	@export var is_branded_content: bool:
-		set(val): 
+		set(val):
 			is_branded_content = val
 			track_data(&"is_branded_content", val)
 	
@@ -101,13 +101,13 @@ class BodyContentClassificationLabels extends TwitchData:
 	## * Gambling
 	## * ProfanityVulgarity
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## Boolean flag indicating whether the label should be enabled (true) or disabled for the channel.
 	@export var is_enabled: bool:
-		set(val): 
+		set(val):
 			is_enabled = val
 			track_data(&"is_enabled", val)
 	

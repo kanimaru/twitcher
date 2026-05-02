@@ -13,19 +13,19 @@ class Response extends TwitchData:
 
 	## A list that contains information related to the channel’s Hype Train.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
 	## An object with information about the channel’s Hype Train records. Null if a Hype Train has not occurred.
 	@export var all_time_high: ResponseAllTimeHigh:
-		set(val): 
+		set(val):
 			all_time_high = val
 			track_data(&"all_time_high", val)
 	
 	## An object with information about the channel’s shared Hype Train records. Null if a Hype Train has not occurred.
 	@export var shared_all_time_high: ResponseSharedAllTimeHigh:
-		set(val): 
+		set(val):
 			shared_all_time_high = val
 			track_data(&"shared_all_time_high", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -61,7 +61,7 @@ class ResponseData extends TwitchData:
 
 	## An object describing the current Hype Train. Null if a Hype Train is not active.
 	@export var current: ResponseCurrent:
-		set(val): 
+		set(val):
 			current = val
 			track_data(&"current", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -89,55 +89,55 @@ class ResponseCurrent extends TwitchData:
 
 	## The Hype Train ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The broadcaster ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The current level of the Hype Train.
 	@export var level: int:
-		set(val): 
+		set(val):
 			level = val
 			track_data(&"level", val)
 	
 	## Total points contributed to the Hype Train.
 	@export var total: int:
-		set(val): 
+		set(val):
 			total = val
 			track_data(&"total", val)
 	
 	## The number of points contributed to the Hype Train at the current level.
 	@export var progress: int:
-		set(val): 
+		set(val):
 			progress = val
 			track_data(&"progress", val)
 	
 	## The number of points required to reach the next level.
 	@export var goal: int:
-		set(val): 
+		set(val):
 			goal = val
 			track_data(&"goal", val)
 	
 	## The contributors with the most points contributed.
 	@export var top_contributions: Array[ResponseTopContributions]:
-		set(val): 
+		set(val):
 			top_contributions = val
 			track_data(&"top_contributions", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -191,19 +191,19 @@ class ResponseTopContributions extends TwitchData:
 
 	## The ID of the user that made the contribution.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user’s login name.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user’s display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
@@ -215,37 +215,37 @@ class ResponseTopContributions extends TwitchData:
 	##   
 	## [Learn More](https://help.twitch.tv/s/article/hype-train-guide#special)
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## The total number of points contributed for the type.
 	@export var total: int:
-		set(val): 
+		set(val):
 			total = val
 			track_data(&"total", val)
 	
 	## A list containing the broadcasters participating in the shared Hype Train. Null if the Hype Train is not shared.
 	@export var shared_train_participants: Array[ResponseSharedTrainParticipants]:
-		set(val): 
+		set(val):
 			shared_train_participants = val
 			track_data(&"shared_train_participants", val)
 	
 	## The time when the Hype Train started.
 	@export var started_at: String:
-		set(val): 
+		set(val):
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The time when the Hype Train expires. The expiration is extended when the Hype Train reaches a new level.
 	@export var expires_at: String:
-		set(val): 
+		set(val):
 			expires_at = val
 			track_data(&"expires_at", val)
 	
 	## Indicates if the Hype Train is shared. When true, shared\_train\_participants will contain the list of broadcasters the train is shared with.
 	@export var is_shared_train: bool:
-		set(val): 
+		set(val):
 			is_shared_train = val
 			track_data(&"is_shared_train", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -299,19 +299,19 @@ class ResponseSharedTrainParticipants extends TwitchData:
 
 	## The broadcaster ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -345,19 +345,19 @@ class ResponseAllTimeHigh extends TwitchData:
 
 	## The level of the record Hype Train.
 	@export var level: int:
-		set(val): 
+		set(val):
 			level = val
 			track_data(&"level", val)
 	
 	## Total points contributed to the record Hype Train.
 	@export var total: int:
-		set(val): 
+		set(val):
 			total = val
 			track_data(&"total", val)
 	
 	## The time when the record was achieved.
 	@export var achieved_at: String:
-		set(val): 
+		set(val):
 			achieved_at = val
 			track_data(&"achieved_at", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -391,19 +391,19 @@ class ResponseSharedAllTimeHigh extends TwitchData:
 
 	## The level of the record Hype Train.
 	@export var level: int:
-		set(val): 
+		set(val):
 			level = val
 			track_data(&"level", val)
 	
 	## Total points contributed to the record Hype Train.
 	@export var total: int:
-		set(val): 
+		set(val):
 			total = val
 			track_data(&"total", val)
 	
 	## The time when the record was achieved.
 	@export var achieved_at: String:
-		set(val): 
+		set(val):
 			achieved_at = val
 			track_data(&"achieved_at", val)
 	var response: BufferedHTTPClient.ResponseData

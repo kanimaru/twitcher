@@ -13,13 +13,13 @@ class Response extends TwitchData:
 
 	## A list of reports. The reports are returned in no particular order; however, the data within each report is in ascending order by date (newest first). The report contains one row of data per day of the reporting window; the report contains rows for only those days that the extension was used. The array is empty if there are no reports.
 	@export var data: Array[TwitchExtensionAnalytics]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 	@export var pagination: ResponsePagination:
-		set(val): 
+		set(val):
 			pagination = val
 			track_data(&"pagination", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -69,17 +69,17 @@ class Response extends TwitchData:
 		iter[0] = data[0]
 		_cur_iter = 1
 		return true
-		
-		
+	
+	
 	func _iter_next(iter: Array) -> bool:
 		if data.size() > _cur_iter:
 			iter[0] = data[_cur_iter]
 			_cur_iter += 1
-		elif not _has_pagination(): 
+		elif not _has_pagination():
 			return false
 		return true
-		
-		
+	
+	
 	func _iter_get(iter: Variant) -> Variant:
 		if data.size() == _cur_iter && _has_pagination():
 			await next_page()
@@ -92,7 +92,7 @@ class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
 	@export var cursor: String:
-		set(val): 
+		set(val):
 			cursor = val
 			track_data(&"cursor", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -119,7 +119,7 @@ class Opt extends TwitchData:
 
 	## The extension's client ID. If specified, the response contains a report for the specified extension. If not specified, the response includes a report for each extension that the authenticated user owns.
 	@export var extension_id: String:
-		set(val): 
+		set(val):
 			extension_id = val
 			track_data(&"extension_id", val)
 	
@@ -127,7 +127,7 @@ class Opt extends TwitchData:
 	##   
 	## * overview\_v2
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
@@ -137,7 +137,7 @@ class Opt extends TwitchData:
 	##   
 	## The report contains one row of data for each day in the reporting window.
 	@export var started_at: String:
-		set(val): 
+		set(val):
 			started_at = val
 			track_data(&"started_at", val)
 	
@@ -145,7 +145,7 @@ class Opt extends TwitchData:
 	##   
 	## Specify an end date only if you provide a start date. Because it can take up to two days for the data to be available, you must specify an end date that's earlier than today minus one to two days. If not, the API ignores your end date and uses an end date that is today minus one to two days.
 	@export var ended_at: String:
-		set(val): 
+		set(val):
 			ended_at = val
 			track_data(&"ended_at", val)
 	
@@ -153,7 +153,7 @@ class Opt extends TwitchData:
 	##   
 	## **NOTE**: While you may specify a maximum value of 100, the response will contain at most 20 URLs per page.
 	@export var first: int:
-		set(val): 
+		set(val):
 			first = val
 			track_data(&"first", val)
 	
@@ -161,7 +161,7 @@ class Opt extends TwitchData:
 	##   
 	## This parameter is ignored if the _extension\_id_ parameter is set.
 	@export var after: String:
-		set(val): 
+		set(val):
 			after = val
 			track_data(&"after", val)
 	

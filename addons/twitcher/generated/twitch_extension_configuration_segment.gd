@@ -13,25 +13,25 @@ class_name TwitchExtensionConfigurationSegment
 ## * developer
 ## * global
 @export var segment: String:
-	set(val): 
+	set(val):
 		segment = val
 		track_data(&"segment", val)
 
 ## The ID of the broadcaster that installed the extension. The object includes this field only if the `segment` query parameter is set to developer or broadcaster.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The contents of the segment. This string may be a plain-text string or a string-encoded JSON object.
 @export var content: String:
-	set(val): 
+	set(val):
 		content = val
 		track_data(&"content", val)
 
 ## The version number that identifies this definition of the segment’s data.
 @export var version: String:
-	set(val): 
+	set(val):
 		version = val
 		track_data(&"version", val)
 

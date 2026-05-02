@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## List of clips and their download URLs.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,19 +43,19 @@ class ResponseData extends TwitchData:
 
 	## An ID that uniquely identifies the clip.
 	@export var clip_id: String:
-		set(val): 
+		set(val):
 			clip_id = val
 			track_data(&"clip_id", val)
 	
 	## The landscape URL to download the clip. This field is `null` if the URL is not available.
 	@export var landscape_download_url: String:
-		set(val): 
+		set(val):
 			landscape_download_url = val
 			track_data(&"landscape_download_url", val)
 	
 	## The portrait URL to download the clip. This field is `null` if the URL is not available.
 	@export var portrait_download_url: String:
-		set(val): 
+		set(val):
 			portrait_download_url = val
 			track_data(&"portrait_download_url", val)
 	var response: BufferedHTTPClient.ResponseData

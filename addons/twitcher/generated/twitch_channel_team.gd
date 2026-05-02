@@ -9,73 +9,73 @@ class_name TwitchChannelTeam
 	
 ## An ID that identifies the broadcaster.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s login name.
 @export var broadcaster_login: String:
-	set(val): 
+	set(val):
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The broadcaster’s display name.
 @export var broadcaster_name: String:
-	set(val): 
+	set(val):
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## A URL to the team’s background image.
 @export var background_image_url: String:
-	set(val): 
+	set(val):
 		background_image_url = val
 		track_data(&"background_image_url", val)
 
 ## A URL to the team’s banner.
 @export var banner: String:
-	set(val): 
+	set(val):
 		banner = val
 		track_data(&"banner", val)
 
 ## The UTC date and time (in RFC3339 format) of when the team was created.
 @export var created_at: String:
-	set(val): 
+	set(val):
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The UTC date and time (in RFC3339 format) of the last time the team was updated.
 @export var updated_at: String:
-	set(val): 
+	set(val):
 		updated_at = val
 		track_data(&"updated_at", val)
 
 ## The team’s description. The description may contain formatting such as Markdown, HTML, newline (\\n) characters, etc.
 @export var info: String:
-	set(val): 
+	set(val):
 		info = val
 		track_data(&"info", val)
 
 ## A URL to a thumbnail image of the team’s logo.
 @export var thumbnail_url: String:
-	set(val): 
+	set(val):
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
 
 ## The team’s name.
 @export var team_name: String:
-	set(val): 
+	set(val):
 		team_name = val
 		track_data(&"team_name", val)
 
 ## The team’s display name.
 @export var team_display_name: String:
-	set(val): 
+	set(val):
 		team_display_name = val
 		track_data(&"team_display_name", val)
 
 ## An ID that identifies the team.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 

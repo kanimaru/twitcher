@@ -13,7 +13,7 @@ class Body extends TwitchData:
 
 	## A list of IDs that identify the entitlements to update. You may specify a maximum of 100 IDs.
 	@export var entitlement_ids: Array[String]:
-		set(val): 
+		set(val):
 			entitlement_ids = val
 			track_data(&"entitlement_ids", val)
 	
@@ -22,7 +22,7 @@ class Body extends TwitchData:
 	## * CLAIMED — The user claimed the benefit.
 	## * FULFILLED — The developer granted the benefit that the user claimed.
 	@export var fulfillment_status: String:
-		set(val): 
+		set(val):
 			fulfillment_status = val
 			track_data(&"fulfillment_status", val)
 	
@@ -53,7 +53,7 @@ class Response extends TwitchData:
 
 	## A list that indicates which entitlements were successfully updated and those that weren’t.
 	@export var data: Array[TwitchDropsEntitlementUpdated]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

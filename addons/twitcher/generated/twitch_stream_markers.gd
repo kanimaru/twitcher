@@ -9,25 +9,25 @@ class_name TwitchStreamMarkers
 	
 ## The ID of the user that created the marker.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s display name.
 @export var user_name: String:
-	set(val): 
+	set(val):
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The user’s login name.
 @export var user_login: String:
-	set(val): 
+	set(val):
 		user_login = val
 		track_data(&"user_login", val)
 
 ## A list of videos that contain markers. The list contains a single video.
 @export var videos: Array[Videos]:
-	set(val): 
+	set(val):
 		videos = val
 		track_data(&"videos", val)
 
@@ -66,13 +66,13 @@ class Videos extends TwitchData:
 
 	## An ID that identifies this video.
 	@export var video_id: String:
-		set(val): 
+		set(val):
 			video_id = val
 			track_data(&"video_id", val)
 	
 	## The list of markers in this video. The list in ascending order by when the marker was created.
 	@export var markers: Array[Markers]:
-		set(val): 
+		set(val):
 			markers = val
 			track_data(&"markers", val)
 	
@@ -105,31 +105,31 @@ class Markers extends TwitchData:
 
 	## An ID that identifies this marker.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The UTC date and time (in RFC3339 format) of when the user created the marker.
 	@export var created_at: String:
-		set(val): 
+		set(val):
 			created_at = val
 			track_data(&"created_at", val)
 	
 	## The description that the user gave the marker to help them remember why they marked the location. Is an empty string if the user didn’t provide one.
 	@export var description: String:
-		set(val): 
+		set(val):
 			description = val
 			track_data(&"description", val)
 	
 	## The relative offset (in seconds) of the marker from the beginning of the stream.
 	@export var position_seconds: int:
-		set(val): 
+		set(val):
 			position_seconds = val
 			track_data(&"position_seconds", val)
 	
 	## A URL that opens the video in Twitch Highlighter.
 	@export var url: String:
-		set(val): 
+		set(val):
 			url = val
 			track_data(&"url", val)
 	

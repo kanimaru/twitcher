@@ -9,13 +9,13 @@ class_name TwitchAutoModStatus
 	
 ## The caller-defined ID passed in the request.
 @export var msg_id: String:
-	set(val): 
+	set(val):
 		msg_id = val
 		track_data(&"msg_id", val)
 
 ## A Boolean value that indicates whether Twitch would approve the message for chat or hold it for moderator review or block it from chat. Is **true** if Twitch would approve the message; otherwise, **false** if Twitch would hold the message for moderator review or block it from chat.
 @export var is_permitted: bool:
-	set(val): 
+	set(val):
 		is_permitted = val
 		track_data(&"is_permitted", val)
 

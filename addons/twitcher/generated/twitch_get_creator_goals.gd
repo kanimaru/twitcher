@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of goals. The list is empty if the broadcaster hasn’t created goals.
 	@export var data: Array[TwitchCreatorGoal]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

@@ -9,19 +9,19 @@ class_name TwitchExtensionIconUrls
 	
 ## 
 @export var _100x100: String:
-	set(val): 
+	set(val):
 		_100x100 = val
 		track_data(&"100x100", val)
 
 ## 
 @export var _24x24: String:
-	set(val): 
+	set(val):
 		_24x24 = val
 		track_data(&"24x24", val)
 
 ## 
 @export var _300x200: String:
-	set(val): 
+	set(val):
 		_300x200 = val
 		track_data(&"300x200", val)
 

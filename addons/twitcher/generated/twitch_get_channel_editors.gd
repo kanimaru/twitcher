@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list of users that are editors for the specified broadcaster. The list is empty if the broadcaster doesn’t have editors.
 	@export var data: Array[TwitchChannelEditor]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

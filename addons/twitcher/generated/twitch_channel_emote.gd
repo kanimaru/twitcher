@@ -9,13 +9,13 @@ class_name TwitchChannelEmote
 	
 ## An ID that identifies this emote.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The name of the emote. This is the name that viewers type in the chat window to get the emote to appear.
 @export var name: String:
-	set(val): 
+	set(val):
 		name = val
 		track_data(&"name", val)
 
@@ -23,13 +23,13 @@ class_name TwitchChannelEmote
 ##   
 ## **NOTE:** You should use the templated URL in the `template` field to fetch the image instead of using these URLs.
 @export var images: Images:
-	set(val): 
+	set(val):
 		images = val
 		track_data(&"images", val)
 
 ## The subscriber tier at which the emote is unlocked. This field contains the tier information only if `emote_type` is set to `subscriptions`, otherwise, it's an empty string.
 @export var tier: String:
-	set(val): 
+	set(val):
 		tier = val
 		track_data(&"tier", val)
 
@@ -39,13 +39,13 @@ class_name TwitchChannelEmote
 ## * follower — A custom follower emote.
 ## * subscriptions — A custom subscriber emote.
 @export var emote_type: String:
-	set(val): 
+	set(val):
 		emote_type = val
 		track_data(&"emote_type", val)
 
 ## An ID that identifies the emote set that the emote belongs to.
 @export var emote_set_id: String:
-	set(val): 
+	set(val):
 		emote_set_id = val
 		track_data(&"emote_set_id", val)
 
@@ -54,7 +54,7 @@ class_name TwitchChannelEmote
 ## * animated — An animated GIF is available for this emote.
 ## * static — A static PNG file is available for this emote.
 @export var format: Array[String]:
-	set(val): 
+	set(val):
 		format = val
 		track_data(&"format", val)
 
@@ -64,7 +64,7 @@ class_name TwitchChannelEmote
 ## * 2.0 — A medium version (56px x 56px) is available.
 ## * 3.0 — A large version (112px x 112px) is available.
 @export var scale: Array[String]:
-	set(val): 
+	set(val):
 		scale = val
 		track_data(&"scale", val)
 
@@ -73,7 +73,7 @@ class_name TwitchChannelEmote
 ## * dark
 ## * light
 @export var theme_mode: Array[String]:
-	set(val): 
+	set(val):
 		theme_mode = val
 		track_data(&"theme_mode", val)
 
@@ -133,19 +133,19 @@ class Images extends TwitchData:
 
 	## A URL to the small version (28px x 28px) of the emote.
 	@export var url_1x: String:
-		set(val): 
+		set(val):
 			url_1x = val
 			track_data(&"url_1x", val)
 	
 	## A URL to the medium version (56px x 56px) of the emote.
 	@export var url_2x: String:
-		set(val): 
+		set(val):
 			url_2x = val
 			track_data(&"url_2x", val)
 	
 	## A URL to the large version (112px x 112px) of the emote.
 	@export var url_4x: String:
-		set(val): 
+		set(val):
 			url_4x = val
 			track_data(&"url_4x", val)
 	

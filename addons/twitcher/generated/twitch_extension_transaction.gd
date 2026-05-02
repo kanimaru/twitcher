@@ -9,49 +9,49 @@ class_name TwitchExtensionTransaction
 	
 ## An ID that identifies the transaction.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The UTC date and time (in RFC3339 format) of the transaction.
 @export var timestamp: String:
-	set(val): 
+	set(val):
 		timestamp = val
 		track_data(&"timestamp", val)
 
 ## The ID of the broadcaster that owns the channel where the transaction occurred.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s login name.
 @export var broadcaster_login: String:
-	set(val): 
+	set(val):
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The broadcaster’s display name.
 @export var broadcaster_name: String:
-	set(val): 
+	set(val):
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The ID of the user that purchased the digital product.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s login name.
 @export var user_login: String:
-	set(val): 
+	set(val):
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The user’s display name.
 @export var user_name: String:
-	set(val): 
+	set(val):
 		user_name = val
 		track_data(&"user_name", val)
 
@@ -59,13 +59,13 @@ class_name TwitchExtensionTransaction
 ##   
 ## * BITS\_IN\_EXTENSION
 @export var product_type: String:
-	set(val): 
+	set(val):
 		product_type = val
 		track_data(&"product_type", val)
 
 ## Contains details about the digital product.
 @export var product_data: ProductData:
-	set(val): 
+	set(val):
 		product_data = val
 		track_data(&"product_data", val)
 
@@ -120,43 +120,43 @@ class ProductData extends TwitchData:
 
 	## An ID that identifies the digital product.
 	@export var sku: String:
-		set(val): 
+		set(val):
 			sku = val
 			track_data(&"sku", val)
 	
 	## Set to `twitch.ext.` \+ `<the extension's ID>`.
 	@export var domain: String:
-		set(val): 
+		set(val):
 			domain = val
 			track_data(&"domain", val)
 	
 	## Contains details about the digital product’s cost.
 	@export var cost: Cost:
-		set(val): 
+		set(val):
 			cost = val
 			track_data(&"cost", val)
 	
 	## A Boolean value that determines whether the product is in development. Is **true** if the digital product is in development and cannot be exchanged.
 	@export var inDevelopment: bool:
-		set(val): 
+		set(val):
 			inDevelopment = val
 			track_data(&"inDevelopment", val)
 	
 	## The name of the digital product.
 	@export var displayName: String:
-		set(val): 
+		set(val):
 			displayName = val
 			track_data(&"displayName", val)
 	
 	## This field is always empty since you may purchase only unexpired products.
 	@export var expiration: String:
-		set(val): 
+		set(val):
 			expiration = val
 			track_data(&"expiration", val)
 	
 	## A Boolean value that determines whether the data was broadcast to all instances of the extension. Is **true** if the data was broadcast to all instances.
 	@export var broadcast: bool:
-		set(val): 
+		set(val):
 			broadcast = val
 			track_data(&"broadcast", val)
 	
@@ -202,7 +202,7 @@ class Cost extends TwitchData:
 
 	## The amount exchanged for the digital product.
 	@export var amount: int:
-		set(val): 
+		set(val):
 			amount = val
 			track_data(&"amount", val)
 	
@@ -210,7 +210,7 @@ class Cost extends TwitchData:
 	##   
 	## * bits
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	

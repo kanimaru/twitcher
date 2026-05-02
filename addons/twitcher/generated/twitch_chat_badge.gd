@@ -9,13 +9,13 @@ class_name TwitchChatBadge
 	
 ## An ID that identifies this set of chat badges. For example, Bits or Subscriber.
 @export var set_id: String:
-	set(val): 
+	set(val):
 		set_id = val
 		track_data(&"set_id", val)
 
 ## The list of chat badges in this set.
 @export var versions: Array[Versions]:
-	set(val): 
+	set(val):
 		versions = val
 		track_data(&"versions", val)
 
@@ -48,49 +48,49 @@ class Versions extends TwitchData:
 
 	## An ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## A URL to the small version (18px x 18px) of the badge.
 	@export var image_url_1x: String:
-		set(val): 
+		set(val):
 			image_url_1x = val
 			track_data(&"image_url_1x", val)
 	
 	## A URL to the medium version (36px x 36px) of the badge.
 	@export var image_url_2x: String:
-		set(val): 
+		set(val):
 			image_url_2x = val
 			track_data(&"image_url_2x", val)
 	
 	## A URL to the large version (72px x 72px) of the badge.
 	@export var image_url_4x: String:
-		set(val): 
+		set(val):
 			image_url_4x = val
 			track_data(&"image_url_4x", val)
 	
 	## The title of the badge.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## The description of the badge.
 	@export var description: String:
-		set(val): 
+		set(val):
 			description = val
 			track_data(&"description", val)
 	
 	## The action to take when clicking on the badge. Set to `null` if no action is specified.
 	@export var click_action: String:
-		set(val): 
+		set(val):
 			click_action = val
 			track_data(&"click_action", val)
 	
 	## The URL to navigate to when clicking on the badge. Set to `null` if no URL is specified.
 	@export var click_url: String:
-		set(val): 
+		set(val):
 			click_url = val
 			track_data(&"click_url", val)
 	

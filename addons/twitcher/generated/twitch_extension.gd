@@ -9,13 +9,13 @@ class_name TwitchExtension
 	
 ## The name of the user or organization that owns the extension.
 @export var author_name: String:
-	set(val): 
+	set(val):
 		author_name = val
 		track_data(&"author_name", val)
 
 ## A Boolean value that determines whether the extension has features that use Bits. Is **true** if the extension has features that use Bits.
 @export var bits_enabled: bool:
-	set(val): 
+	set(val):
 		bits_enabled = val
 		track_data(&"bits_enabled", val)
 
@@ -23,7 +23,7 @@ class_name TwitchExtension
 ##   
 ## Typically, this is set to **false** if the extension is currently in testing mode and requires users to be allowlisted (the allowlist is configured on Twitch’s [developer site](https://dev.twitch.tv/console/extensions) under the **Extensions** \-> **Extension** \-> **Version** \-> **Access**).
 @export var can_install: bool:
-	set(val): 
+	set(val):
 		can_install = val
 		track_data(&"can_install", val)
 
@@ -33,67 +33,67 @@ class_name TwitchExtension
 ## * custom — The Extension Backend Service (EBS) hosts the configuration.
 ## * none — The extension doesn't require configuration.
 @export var configuration_location: String:
-	set(val): 
+	set(val):
 		configuration_location = val
 		track_data(&"configuration_location", val)
 
 ## A longer description of the extension. It appears on the details page.
 @export var description: String:
-	set(val): 
+	set(val):
 		description = val
 		track_data(&"description", val)
 
 ## A URL to the extension’s Terms of Service.
 @export var eula_tos_url: String:
-	set(val): 
+	set(val):
 		eula_tos_url = val
 		track_data(&"eula_tos_url", val)
 
 ## A Boolean value that determines whether the extension can communicate with the installed channel’s chat. Is **true** if the extension can communicate with the channel’s chat room.
 @export var has_chat_support: bool:
-	set(val): 
+	set(val):
 		has_chat_support = val
 		track_data(&"has_chat_support", val)
 
 ## A URL to the default icon that’s displayed in the Extensions directory.
 @export var icon_url: String:
-	set(val): 
+	set(val):
 		icon_url = val
 		track_data(&"icon_url", val)
 
 ## 
 @export var icon_urls: TwitchExtensionIconUrls:
-	set(val): 
+	set(val):
 		icon_urls = val
 		track_data(&"icon_urls", val)
 
 ## The extension’s ID.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The extension’s name.
 @export var name: String:
-	set(val): 
+	set(val):
 		name = val
 		track_data(&"name", val)
 
 ## A URL to the extension’s privacy policy.
 @export var privacy_policy_url: String:
-	set(val): 
+	set(val):
 		privacy_policy_url = val
 		track_data(&"privacy_policy_url", val)
 
 ## A Boolean value that determines whether the extension wants to explicitly ask viewers to link their Twitch identity.
 @export var request_identity_link: bool:
-	set(val): 
+	set(val):
 		request_identity_link = val
 		track_data(&"request_identity_link", val)
 
 ## A list of URLs to screenshots that are shown in the Extensions marketplace.
 @export var screenshot_urls: Array[String]:
-	set(val): 
+	set(val):
 		screenshot_urls = val
 		track_data(&"screenshot_urls", val)
 
@@ -109,7 +109,7 @@ class_name TwitchExtension
 ## * Rejected
 ## * Released
 @export var state: String:
-	set(val): 
+	set(val):
 		state = val
 		track_data(&"state", val)
 
@@ -118,49 +118,49 @@ class_name TwitchExtension
 ## * none — The extension can't view the user’s subscription level.
 ## * optional — The extension can view the user’s subscription level.
 @export var subscriptions_support_level: String:
-	set(val): 
+	set(val):
 		subscriptions_support_level = val
 		track_data(&"subscriptions_support_level", val)
 
 ## A short description of the extension that streamers see when hovering over the discovery splash screen in the Extensions manager.
 @export var summary: String:
-	set(val): 
+	set(val):
 		summary = val
 		track_data(&"summary", val)
 
 ## The email address that users use to get support for the extension.
 @export var support_email: String:
-	set(val): 
+	set(val):
 		support_email = val
 		track_data(&"support_email", val)
 
 ## The extension’s version number.
 @export var version: String:
-	set(val): 
+	set(val):
 		version = val
 		track_data(&"version", val)
 
 ## A brief description displayed on the channel to explain how the extension works.
 @export var viewer_summary: String:
-	set(val): 
+	set(val):
 		viewer_summary = val
 		track_data(&"viewer_summary", val)
 
 ## Describes all views-related information such as how the extension is displayed on mobile devices.
 @export var views: Views:
-	set(val): 
+	set(val):
 		views = val
 		track_data(&"views", val)
 
 ## Allowlisted configuration URLs for displaying the extension (the allowlist is configured on Twitch’s [developer site](https://dev.twitch.tv/console/extensions) under the **Extensions** \-> **Extension** \-> **Version** \-> **Capabilities**).
 @export var allowlisted_config_urls: Array[String]:
-	set(val): 
+	set(val):
 		allowlisted_config_urls = val
 		track_data(&"allowlisted_config_urls", val)
 
 ## Allowlisted panel URLs for displaying the extension (the allowlist is configured on Twitch’s [developer site](https://dev.twitch.tv/console/extensions) under the **Extensions** \-> **Extension** \-> **Version** \-> **Capabilities**).
 @export var allowlisted_panel_urls: Array[String]:
-	set(val): 
+	set(val):
 		allowlisted_panel_urls = val
 		track_data(&"allowlisted_panel_urls", val)
 
@@ -260,31 +260,31 @@ class Views extends TwitchData:
 
 	## Describes how the extension is displayed on mobile devices.
 	@export var mobile: Mobile:
-		set(val): 
+		set(val):
 			mobile = val
 			track_data(&"mobile", val)
 	
 	## Describes how the extension is rendered if the extension may be activated as a panel extension.
 	@export var panel: TwitchPanel:
-		set(val): 
+		set(val):
 			panel = val
 			track_data(&"panel", val)
 	
 	## Describes how the extension is rendered if the extension may be activated as a video-overlay extension.
 	@export var video_overlay: VideoOverlay:
-		set(val): 
+		set(val):
 			video_overlay = val
 			track_data(&"video_overlay", val)
 	
 	## Describes how the extension is rendered if the extension may be activated as a video-component extension.
 	@export var component: Component:
-		set(val): 
+		set(val):
 			component = val
 			track_data(&"component", val)
 	
 	## Describes the view that is shown to broadcasters while they are configuring your extension within the Extension Manager.
 	@export var config: Config:
-		set(val): 
+		set(val):
 			config = val
 			track_data(&"config", val)
 	
@@ -324,7 +324,7 @@ class Mobile extends TwitchData:
 
 	## The HTML file that is shown to viewers on mobile devices. This page is presented to viewers as a panel behind the chat area of the mobile app.
 	@export var viewer_url: String:
-		set(val): 
+		set(val):
 			viewer_url = val
 			track_data(&"viewer_url", val)
 	
@@ -352,19 +352,19 @@ class TwitchPanel extends TwitchData:
 
 	## The HTML file that is shown to viewers on the channel page when the extension is activated in a Panel slot.
 	@export var viewer_url: String:
-		set(val): 
+		set(val):
 			viewer_url = val
 			track_data(&"viewer_url", val)
 	
 	## The height, in pixels, of the panel component that the extension is rendered in.
 	@export var height: int:
-		set(val): 
+		set(val):
 			height = val
 			track_data(&"height", val)
 	
 	## A Boolean value that determines whether the extension can link to non-Twitch domains.
 	@export var can_link_external_content: bool:
-		set(val): 
+		set(val):
 			can_link_external_content = val
 			track_data(&"can_link_external_content", val)
 	
@@ -398,13 +398,13 @@ class VideoOverlay extends TwitchData:
 
 	## The HTML file that is shown to viewers on the channel page when the extension is activated on the Video - Overlay slot.
 	@export var viewer_url: String:
-		set(val): 
+		set(val):
 			viewer_url = val
 			track_data(&"viewer_url", val)
 	
 	## A Boolean value that determines whether the extension can link to non-Twitch domains.
 	@export var can_link_external_content: bool:
-		set(val): 
+		set(val):
 			can_link_external_content = val
 			track_data(&"can_link_external_content", val)
 	
@@ -435,43 +435,43 @@ class Component extends TwitchData:
 
 	## The HTML file that is shown to viewers on the channel page when the extension is activated in a Video - Component slot.
 	@export var viewer_url: String:
-		set(val): 
+		set(val):
 			viewer_url = val
 			track_data(&"viewer_url", val)
 	
 	## The width value of the ratio (width : height) which determines the extension’s width, and how the extension’s iframe will resize in different video player environments.
 	@export var aspect_ratio_x: int:
-		set(val): 
+		set(val):
 			aspect_ratio_x = val
 			track_data(&"aspect_ratio_x", val)
 	
 	## The height value of the ratio (width : height) which determines the extension’s height, and how the extension’s iframe will resize in different video player environments.
 	@export var aspect_ratio_y: int:
-		set(val): 
+		set(val):
 			aspect_ratio_y = val
 			track_data(&"aspect_ratio_y", val)
 	
 	## A Boolean value that determines whether to apply CSS zoom. If **true**, a CSS zoom is applied such that the size of the extension is variable but the inner dimensions are fixed based on Scale Pixels. This allows your extension to render as if it is of fixed width and height. If **false**, the inner dimensions of the extension iframe are variable, meaning your extension must implement responsiveness.
 	@export var autoscale: bool:
-		set(val): 
+		set(val):
 			autoscale = val
 			track_data(&"autoscale", val)
 	
 	## The base width, in pixels, of the extension to use when scaling (see `autoscale`). This value is ignored if `autoscale` is **false**.
 	@export var scale_pixels: int:
-		set(val): 
+		set(val):
 			scale_pixels = val
 			track_data(&"scale_pixels", val)
 	
 	## The height as a percent of the maximum height of a video component extension. Values are between 1% - 100%.
 	@export var target_height: int:
-		set(val): 
+		set(val):
 			target_height = val
 			track_data(&"target_height", val)
 	
 	## A Boolean value that determines whether the extension can link to non-Twitch domains.
 	@export var can_link_external_content: bool:
-		set(val): 
+		set(val):
 			can_link_external_content = val
 			track_data(&"can_link_external_content", val)
 	
@@ -517,13 +517,13 @@ class Config extends TwitchData:
 
 	## The HTML file shown to broadcasters while they are configuring your extension within the Extension Manager.
 	@export var viewer_url: String:
-		set(val): 
+		set(val):
 			viewer_url = val
 			track_data(&"viewer_url", val)
 	
 	## A Boolean value that determines whether the extension can link to non-Twitch domains.
 	@export var can_link_external_content: bool:
-		set(val): 
+		set(val):
 			can_link_external_content = val
 			track_data(&"can_link_external_content", val)
 	

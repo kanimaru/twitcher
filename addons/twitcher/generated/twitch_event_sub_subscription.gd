@@ -9,7 +9,7 @@ class_name TwitchEventSubSubscription
 	
 ## An ID that identifies the subscription.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
@@ -32,43 +32,43 @@ class_name TwitchEventSubSubscription
 ## * websocket\_network\_timeout — The Twitch WebSocket server timed out writing the message to the client.
 ## * websocket\_network\_error — The Twitch WebSocket server experienced a network error writing the message to the client.
 @export var status: String:
-	set(val): 
+	set(val):
 		status = val
 		track_data(&"status", val)
 
 ## The subscription's type. See [Subscription Types](https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#subscription-types).
 @export var type: String:
-	set(val): 
+	set(val):
 		type = val
 		track_data(&"type", val)
 
 ## The version number that identifies this definition of the subscription's data.
 @export var version: String:
-	set(val): 
+	set(val):
 		version = val
 		track_data(&"version", val)
 
 ## The subscription's parameter values. This is a string-encoded JSON object whose contents are determined by the subscription type.
 @export var condition: Dictionary:
-	set(val): 
+	set(val):
 		condition = val
 		track_data(&"condition", val)
 
 ## The date and time (in RFC3339 format) of when the subscription was created.
 @export var created_at: String:
-	set(val): 
+	set(val):
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The transport details used to send the notifications.
 @export var transport: Transport:
-	set(val): 
+	set(val):
 		transport = val
 		track_data(&"transport", val)
 
 ## The amount that the subscription counts against your limit. [Learn More](https://dev.twitch.tv/docs/eventsub/manage-subscriptions/#subscription-limits)
 @export var cost: int:
-	set(val): 
+	set(val):
 		cost = val
 		track_data(&"cost", val)
 
@@ -120,31 +120,31 @@ class Transport extends TwitchData:
 	## * webhook
 	## * websocket
 	@export var method: String:
-		set(val): 
+		set(val):
 			method = val
 			track_data(&"method", val)
 	
 	## The callback URL where the notifications are sent. Included only if `method` is set to **webhook**.
 	@export var callback: String:
-		set(val): 
+		set(val):
 			callback = val
 			track_data(&"callback", val)
 	
 	## An ID that identifies the WebSocket that notifications are sent to. Included only if `method` is set to **websocket**.
 	@export var session_id: String:
-		set(val): 
+		set(val):
 			session_id = val
 			track_data(&"session_id", val)
 	
 	## The UTC date and time that the WebSocket connection was established. Included only if `method` is set to **websocket**.
 	@export var connected_at: String:
-		set(val): 
+		set(val):
 			connected_at = val
 			track_data(&"connected_at", val)
 	
 	## The UTC date and time that the WebSocket connection was lost. Included only if `method` is set to **websocket**.
 	@export var disconnected_at: String:
-		set(val): 
+		set(val):
 			disconnected_at = val
 			track_data(&"disconnected_at", val)
 	

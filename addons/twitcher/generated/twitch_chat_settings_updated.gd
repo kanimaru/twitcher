@@ -9,13 +9,13 @@ class_name TwitchChatSettingsUpdated
 	
 ## The ID of the broadcaster specified in the request.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## A Boolean value that determines whether chat messages must contain only emotes. Is **true** if chat messages may contain only emotes; otherwise, **false**.
 @export var emote_mode: bool:
-	set(val): 
+	set(val):
 		emote_mode = val
 		track_data(&"emote_mode", val)
 
@@ -25,31 +25,31 @@ class_name TwitchChatSettingsUpdated
 ##   
 ## See the `follower_mode_duration` field for how long users must follow the broadcaster before being able to participate in the chat room.
 @export var follower_mode: bool:
-	set(val): 
+	set(val):
 		follower_mode = val
 		track_data(&"follower_mode", val)
 
 ## The length of time, in minutes, that users must follow the broadcaster before being able to participate in the chat room. Is **null** if `follower_mode` is **false**.
 @export var follower_mode_duration: int:
-	set(val): 
+	set(val):
 		follower_mode_duration = val
 		track_data(&"follower_mode_duration", val)
 
 ## The moderator’s ID. The response includes this field only if the request specifies a user access token that includes the **moderator:read:chat\_settings** scope.
 @export var moderator_id: String:
-	set(val): 
+	set(val):
 		moderator_id = val
 		track_data(&"moderator_id", val)
 
 ## A Boolean value that determines whether the broadcaster adds a short delay before chat messages appear in the chat room. This gives chat moderators and bots a chance to remove them before viewers can see the message. See the `non_moderator_chat_delay_duration` field for the length of the delay. Is **true** if the broadcaster applies a delay; otherwise, **false**.
 @export var non_moderator_chat_delay: bool:
-	set(val): 
+	set(val):
 		non_moderator_chat_delay = val
 		track_data(&"non_moderator_chat_delay", val)
 
 ## The amount of time, in seconds, that messages are delayed before appearing in chat. Is **null** if `non_moderator_chat_delay` is **false**.
 @export var non_moderator_chat_delay_duration: int:
-	set(val): 
+	set(val):
 		non_moderator_chat_delay_duration = val
 		track_data(&"non_moderator_chat_delay_duration", val)
 
@@ -59,7 +59,7 @@ class_name TwitchChatSettingsUpdated
 ##   
 ## See the `slow_mode_wait_time` field for the delay.
 @export var slow_mode: bool:
-	set(val): 
+	set(val):
 		slow_mode = val
 		track_data(&"slow_mode", val)
 
@@ -67,7 +67,7 @@ class_name TwitchChatSettingsUpdated
 ##   
 ## Is **null** if slow\_mode is **false**.
 @export var slow_mode_wait_time: int:
-	set(val): 
+	set(val):
 		slow_mode_wait_time = val
 		track_data(&"slow_mode_wait_time", val)
 
@@ -75,7 +75,7 @@ class_name TwitchChatSettingsUpdated
 ##   
 ## Is **true** if the broadcaster restricts the chat room to subscribers only; otherwise, **false**.
 @export var subscriber_mode: bool:
-	set(val): 
+	set(val):
 		subscriber_mode = val
 		track_data(&"subscriber_mode", val)
 
@@ -83,7 +83,7 @@ class_name TwitchChatSettingsUpdated
 ##   
 ## Is **true** if the broadcaster requires unique messages only; otherwise, **false**.
 @export var unique_chat_mode: bool:
-	set(val): 
+	set(val):
 		unique_chat_mode = val
 		track_data(&"unique_chat_mode", val)
 

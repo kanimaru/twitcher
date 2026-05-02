@@ -9,31 +9,31 @@ class_name TwitchDropsEntitlement
 	
 ## An ID that identifies the entitlement.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## An ID that identifies the benefit (reward).
 @export var benefit_id: String:
-	set(val): 
+	set(val):
 		benefit_id = val
 		track_data(&"benefit_id", val)
 
 ## The UTC date and time (in RFC3339 format) of when the entitlement was granted.
 @export var timestamp: String:
-	set(val): 
+	set(val):
 		timestamp = val
 		track_data(&"timestamp", val)
 
 ## An ID that identifies the user who was granted the entitlement.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## An ID that identifies the game the user was playing when the reward was entitled.
 @export var game_id: String:
-	set(val): 
+	set(val):
 		game_id = val
 		track_data(&"game_id", val)
 
@@ -42,13 +42,13 @@ class_name TwitchDropsEntitlement
 ## * CLAIMED
 ## * FULFILLED
 @export var fulfillment_status: String:
-	set(val): 
+	set(val):
 		fulfillment_status = val
 		track_data(&"fulfillment_status", val)
 
 ## The UTC date and time (in RFC3339 format) of when the entitlement was last updated.
 @export var last_updated: String:
-	set(val): 
+	set(val):
 		last_updated = val
 		track_data(&"last_updated", val)
 

@@ -13,13 +13,13 @@ class Body extends TwitchData:
 
 	## Conduit ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The new number of shards for this conduit.
 	@export var shard_count: int:
-		set(val): 
+		set(val):
 			shard_count = val
 			track_data(&"shard_count", val)
 	
@@ -50,7 +50,7 @@ class Response extends TwitchData:
 
 	## List of information about the client’s conduits.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -80,13 +80,13 @@ class ResponseData extends TwitchData:
 
 	## Conduit ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## Number of shards associated with this conduit after the update.
 	@export var shard_count: int:
-		set(val): 
+		set(val):
 			shard_count = val
 			track_data(&"shard_count", val)
 	var response: BufferedHTTPClient.ResponseData

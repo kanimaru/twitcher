@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of categories and games. The list is empty if the specified categories and games weren’t found.
 	@export var data: Array[TwitchGame]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,19 +43,19 @@ class Opt extends TwitchData:
 
 	## The ID of the category or game to get. Include this parameter for each category or game you want to get. For example, `&id=1234&id=5678`. You may specify a maximum of 100 IDs. The endpoint ignores duplicate and invalid IDs or IDs that weren’t found.
 	@export var id: Array[String]:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The name of the category or game to get. The name must exactly match the category’s or game’s title. Include this parameter for each category or game you want to get. For example, `&name=foo&name=bar`. You may specify a maximum of 100 names. The endpoint ignores duplicate names and names that weren’t found.
 	@export var name: Array[String]:
-		set(val): 
+		set(val):
 			name = val
 			track_data(&"name", val)
 	
 	## The [IGDB](https://www.igdb.com/) ID of the game to get. Include this parameter for each game you want to get. For example, `&igdb_id=1234&igdb_id=5678`. You may specify a maximum of 100 IDs. The endpoint ignores duplicate and invalid IDs or IDs that weren’t found.
 	@export var igdb_id: Array[String]:
-		set(val): 
+		set(val):
 			igdb_id = val
 			track_data(&"igdb_id", val)
 	

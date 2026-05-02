@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## 
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,31 +43,31 @@ class ResponseData extends TwitchData:
 
 	## The unique identifier for the shared chat session.
 	@export var session_id: String:
-		set(val): 
+		set(val):
 			session_id = val
 			track_data(&"session_id", val)
 	
 	## The User ID of the host channel.
 	@export var host_broadcaster_id: String:
-		set(val): 
+		set(val):
 			host_broadcaster_id = val
 			track_data(&"host_broadcaster_id", val)
 	
 	## The list of participants in the session.
 	@export var participants: Array[ResponseParticipants]:
-		set(val): 
+		set(val):
 			participants = val
 			track_data(&"participants", val)
 	
 	## The UTC date and time (in RFC3339 format) for when the session was created.
 	@export var created_at: String:
-		set(val): 
+		set(val):
 			created_at = val
 			track_data(&"created_at", val)
 	
 	## The UTC date and time (in RFC3339 format) for when the session was last updated.
 	@export var updated_at: String:
-		set(val): 
+		set(val):
 			updated_at = val
 			track_data(&"updated_at", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -109,7 +109,7 @@ class ResponseParticipants extends TwitchData:
 
 	## The User ID of the participant channel.
 	@export var broadcaster_id: String:
-		set(val): 
+		set(val):
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	var response: BufferedHTTPClient.ResponseData

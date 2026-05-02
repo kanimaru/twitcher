@@ -13,13 +13,13 @@ class Response extends TwitchData:
 
 	## The list of redemptions for the specified reward. The list is empty if there are no redemptions that match the redemption criteria.
 	@export var data: Array[TwitchCustomRewardRedemption]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through.[Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 	@export var pagination: ResponsePagination:
-		set(val): 
+		set(val):
 			pagination = val
 			track_data(&"pagination", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -69,17 +69,17 @@ class Response extends TwitchData:
 		iter[0] = data[0]
 		_cur_iter = 1
 		return true
-		
-		
+	
+	
 	func _iter_next(iter: Array) -> bool:
 		if data.size() > _cur_iter:
 			iter[0] = data[_cur_iter]
 			_cur_iter += 1
-		elif not _has_pagination(): 
+		elif not _has_pagination():
 			return false
 		return true
-		
-		
+	
+	
 	func _iter_get(iter: Variant) -> Variant:
 		if data.size() == _cur_iter && _has_pagination():
 			await next_page()
@@ -92,7 +92,7 @@ class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request’s _after_ query parameter.
 	@export var cursor: String:
-		set(val): 
+		set(val):
 			cursor = val
 			track_data(&"cursor", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -127,7 +127,7 @@ class Opt extends TwitchData:
 	##   
 	## **NOTE**: Canceled and fulfilled redemptions are returned for only a few days after they’re canceled or fulfilled.
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
@@ -135,7 +135,7 @@ class Opt extends TwitchData:
 	##   
 	## Duplicate IDs are ignored. The response contains only the IDs that were found. If none of the IDs were found, the response is 404 Not Found.
 	@export var id: Array[String]:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
@@ -146,19 +146,19 @@ class Opt extends TwitchData:
 	##   
 	## The default is OLDEST.
 	@export var sort: String:
-		set(val): 
+		set(val):
 			sort = val
 			track_data(&"sort", val)
 	
 	## The cursor used to get the next page of results. The **Pagination** object in the response contains the cursor’s value. [Read more](https://dev.twitch.tv/docs/api/guide#pagination)
 	@export var after: String:
-		set(val): 
+		set(val):
 			after = val
 			track_data(&"after", val)
 	
 	## The maximum number of redemptions to return per page in the response. The minimum page size is 1 redemption per page and the maximum is 50\. The default is 20.
 	@export var first: int:
-		set(val): 
+		set(val):
 			first = val
 			track_data(&"first", val)
 	

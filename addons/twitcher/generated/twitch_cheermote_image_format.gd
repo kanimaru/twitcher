@@ -9,31 +9,31 @@ class_name TwitchCheermoteImageFormat
 	
 ## 
 @export var _1: String:
-	set(val): 
+	set(val):
 		_1 = val
 		track_data(&"1", val)
 
 ## 
 @export var _2: String:
-	set(val): 
+	set(val):
 		_2 = val
 		track_data(&"2", val)
 
 ## 
 @export var _3: String:
-	set(val): 
+	set(val):
 		_3 = val
 		track_data(&"3", val)
 
 ## 
 @export var _4: String:
-	set(val): 
+	set(val):
 		_4 = val
 		track_data(&"4", val)
 
 ## 
 @export var _1_5: String:
-	set(val): 
+	set(val):
 		_1_5 = val
 		track_data(&"1.5", val)
 

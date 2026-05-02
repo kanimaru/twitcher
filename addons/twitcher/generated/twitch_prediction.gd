@@ -9,49 +9,49 @@ class_name TwitchPrediction
 	
 ## An ID that identifies this prediction.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## An ID that identifies the broadcaster that created the prediction.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s display name.
 @export var broadcaster_name: String:
-	set(val): 
+	set(val):
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The broadcaster’s login name.
 @export var broadcaster_login: String:
-	set(val): 
+	set(val):
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The question that the prediction asks. For example, _Will I finish this entire pizza?_
 @export var title: String:
-	set(val): 
+	set(val):
 		title = val
 		track_data(&"title", val)
 
 ## The ID of the winning outcome. Is **null** unless `status` is RESOLVED.
 @export var winning_outcome_id: String:
-	set(val): 
+	set(val):
 		winning_outcome_id = val
 		track_data(&"winning_outcome_id", val)
 
 ## The list of possible outcomes for the prediction.
 @export var outcomes: Array[TwitchPredictionOutcome]:
-	set(val): 
+	set(val):
 		outcomes = val
 		track_data(&"outcomes", val)
 
 ## The length of time (in seconds) that the prediction will run for.
 @export var prediction_window: int:
-	set(val): 
+	set(val):
 		prediction_window = val
 		track_data(&"prediction_window", val)
 
@@ -62,25 +62,25 @@ class_name TwitchPrediction
 ## * LOCKED — The broadcaster locked the Prediction, which means viewers can no longer make predictions.
 ## * RESOLVED — The winning outcome was determined and the Channel Points were distributed to the viewers who predicted the correct outcome.
 @export var status: String:
-	set(val): 
+	set(val):
 		status = val
 		track_data(&"status", val)
 
 ## The UTC date and time of when the Prediction began.
 @export var created_at: String:
-	set(val): 
+	set(val):
 		created_at = val
 		track_data(&"created_at", val)
 
 ## The UTC date and time of when the Prediction ended. If `status` is ACTIVE, this is set to **null**.
 @export var ended_at: String:
-	set(val): 
+	set(val):
 		ended_at = val
 		track_data(&"ended_at", val)
 
 ## The UTC date and time of when the Prediction was locked. If `status` is not LOCKED, this is set to **null**.
 @export var locked_at: String:
-	set(val): 
+	set(val):
 		locked_at = val
 		track_data(&"locked_at", val)
 

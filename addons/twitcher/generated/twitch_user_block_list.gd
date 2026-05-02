@@ -9,19 +9,19 @@ class_name TwitchUserBlockList
 	
 ## An ID that identifies the blocked user.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The blocked user’s login name.
 @export var user_login: String:
-	set(val): 
+	set(val):
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The blocked user’s display name.
 @export var display_name: String:
-	set(val): 
+	set(val):
 		display_name = val
 		track_data(&"display_name", val)
 

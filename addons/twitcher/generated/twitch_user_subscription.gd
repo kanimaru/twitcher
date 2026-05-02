@@ -9,43 +9,43 @@ class_name TwitchUserSubscription
 	
 ## An ID that identifies the broadcaster.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s login name.
 @export var broadcaster_login: String:
-	set(val): 
+	set(val):
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The broadcaster’s display name.
 @export var broadcaster_name: String:
-	set(val): 
+	set(val):
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The ID of the user that gifted the subscription. The object includes this field only if `is_gift` is **true**.
 @export var gifter_id: String:
-	set(val): 
+	set(val):
 		gifter_id = val
 		track_data(&"gifter_id", val)
 
 ## The gifter’s login name. The object includes this field only if `is_gift` is **true**.
 @export var gifter_login: String:
-	set(val): 
+	set(val):
 		gifter_login = val
 		track_data(&"gifter_login", val)
 
 ## The gifter’s display name. The object includes this field only if `is_gift` is **true**.
 @export var gifter_name: String:
-	set(val): 
+	set(val):
 		gifter_name = val
 		track_data(&"gifter_name", val)
 
 ## A Boolean value that determines whether the subscription is a gift subscription. Is **true** if the subscription was gifted.
 @export var is_gift: bool:
-	set(val): 
+	set(val):
 		is_gift = val
 		track_data(&"is_gift", val)
 
@@ -55,7 +55,7 @@ class_name TwitchUserSubscription
 ## * 2000 — Tier 2
 ## * 3000 — Tier 3
 @export var tier: String:
-	set(val): 
+	set(val):
 		tier = val
 		track_data(&"tier", val)
 

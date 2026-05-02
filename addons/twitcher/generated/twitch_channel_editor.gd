@@ -9,19 +9,19 @@ class_name TwitchChannelEditor
 	
 ## An ID that uniquely identifies a user with editor permissions.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s display name.
 @export var user_name: String:
-	set(val): 
+	set(val):
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The date and time, in RFC3339 format, when the user became one of the broadcaster’s editors.
 @export var created_at: String:
-	set(val): 
+	set(val):
 		created_at = val
 		track_data(&"created_at", val)
 

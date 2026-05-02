@@ -9,37 +9,37 @@ class_name TwitchExtensionBitsProduct
 	
 ## The product's SKU. The SKU is unique across an extension's products.
 @export var sku: String:
-	set(val): 
+	set(val):
 		sku = val
 		track_data(&"sku", val)
 
 ## An object that contains the product's cost information.
 @export var cost: Cost:
-	set(val): 
+	set(val):
 		cost = val
 		track_data(&"cost", val)
 
 ## A Boolean value that indicates whether the product is in development. If **true**, the product is not available for public use.
 @export var in_development: bool:
-	set(val): 
+	set(val):
 		in_development = val
 		track_data(&"in_development", val)
 
 ## The product's name as displayed in the extension.
 @export var display_name: String:
-	set(val): 
+	set(val):
 		display_name = val
 		track_data(&"display_name", val)
 
 ## The date and time, in RFC3339 format, when the product expires.
 @export var expiration: String:
-	set(val): 
+	set(val):
 		expiration = val
 		track_data(&"expiration", val)
 
 ## A Boolean value that determines whether Bits product purchase events are broadcast to all instances of an extension on a channel. The events are broadcast via the `onTransactionComplete` helper callback. Is **true** if the event is broadcast to all instances.
 @export var is_broadcast: bool:
-	set(val): 
+	set(val):
 		is_broadcast = val
 		track_data(&"is_broadcast", val)
 
@@ -82,7 +82,7 @@ class Cost extends TwitchData:
 
 	## The product's price.
 	@export var amount: int:
-		set(val): 
+		set(val):
 			amount = val
 			track_data(&"amount", val)
 	
@@ -90,7 +90,7 @@ class Cost extends TwitchData:
 	##   
 	## * bits
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	

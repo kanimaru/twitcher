@@ -13,13 +13,13 @@ class Body extends TwitchData:
 
 	## The ID of the broadcaster that’s streaming content. This ID must match the user ID in the access token or the user in the access token must be one of the broadcaster’s editors.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## A short description of the marker to help the user remember why they marked the location. The maximum length of the description is 140 characters.
 	@export var description: String:
-		set(val): 
+		set(val):
 			description = val
 			track_data(&"description", val)
 	
@@ -49,7 +49,7 @@ class Response extends TwitchData:
 
 	## A list that contains the single marker that you added.
 	@export var data: Array[TwitchStreamMarkerCreated]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

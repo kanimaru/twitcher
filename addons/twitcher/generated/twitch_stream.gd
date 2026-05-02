@@ -9,37 +9,37 @@ class_name TwitchStream
 	
 ## An ID that identifies the stream. You can use this ID later to look up the video on demand (VOD).
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The ID of the user that’s broadcasting the stream.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s login name.
 @export var user_login: String:
-	set(val): 
+	set(val):
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The user’s display name.
 @export var user_name: String:
-	set(val): 
+	set(val):
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The ID of the category or game being played.
 @export var game_id: String:
-	set(val): 
+	set(val):
 		game_id = val
 		track_data(&"game_id", val)
 
 ## The ID of the category or game being played.
 @export var game_name: String:
-	set(val): 
+	set(val):
 		game_name = val
 		track_data(&"game_name", val)
 
@@ -49,37 +49,37 @@ class_name TwitchStream
 ##   
 ## If an error occurs, this field is set to an empty string.
 @export var type: String:
-	set(val): 
+	set(val):
 		type = val
 		track_data(&"type", val)
 
 ## The stream’s title. Is an empty string if not set.
 @export var title: String:
-	set(val): 
+	set(val):
 		title = val
 		track_data(&"title", val)
 
 ## The number of users watching the stream.
 @export var viewer_count: int:
-	set(val): 
+	set(val):
 		viewer_count = val
 		track_data(&"viewer_count", val)
 
 ## The UTC date and time (in RFC3339 format) of when the broadcast began.
 @export var started_at: String:
-	set(val): 
+	set(val):
 		started_at = val
 		track_data(&"started_at", val)
 
 ## The language that the stream uses. This is an ISO 639-1 two-letter language code or _other_ if the stream uses a language not in the list of [supported stream languages](https://help.twitch.tv/s/article/languages-on-twitch#streamlang).
 @export var language: String:
-	set(val): 
+	set(val):
 		language = val
 		track_data(&"language", val)
 
 ## A URL to an image of a frame from the last 5 minutes of the stream. Replace the width and height placeholders in the URL (`{width}x{height}`) with the size of the image you want, in pixels.
 @export var thumbnail_url: String:
-	set(val): 
+	set(val):
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
 
@@ -87,13 +87,13 @@ class_name TwitchStream
 ##   
 ## The list of tags that apply to the stream. The list contains IDs only when the channel is steaming live. For a list of possible tags, see [List of All Tags](https://www.twitch.tv/directory/all/tags). The list doesn’t include Category Tags.
 @export var tag_ids: Array[String]:
-	set(val): 
+	set(val):
 		tag_ids = val
 		track_data(&"tag_ids", val)
 
 ## The tags applied to the stream.
 @export var tags: Array[String]:
-	set(val): 
+	set(val):
 		tags = val
 		track_data(&"tags", val)
 
@@ -101,7 +101,7 @@ class_name TwitchStream
 ##   
 ## A Boolean value that indicates whether the stream is meant for mature audiences.
 @export var is_mature: bool:
-	set(val): 
+	set(val):
 		is_mature = val
 		track_data(&"is_mature", val)
 

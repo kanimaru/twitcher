@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of chat badges. The list is sorted in ascending order by `set_id`, and within a set, the list is sorted in ascending order by `id`.
 	@export var data: Array[TwitchChatBadge]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

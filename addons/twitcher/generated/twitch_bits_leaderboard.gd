@@ -9,31 +9,31 @@ class_name TwitchBitsLeaderboard
 	
 ## An ID that identifies a user on the leaderboard.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s login name.
 @export var user_login: String:
-	set(val): 
+	set(val):
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The user’s display name.
 @export var user_name: String:
-	set(val): 
+	set(val):
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The user’s position on the leaderboard.
 @export var rank: int:
-	set(val): 
+	set(val):
 		rank = val
 		track_data(&"rank", val)
 
 ## The number of Bits the user has cheered.
 @export var score: int:
-	set(val): 
+	set(val):
 		score = val
 		track_data(&"score", val)
 

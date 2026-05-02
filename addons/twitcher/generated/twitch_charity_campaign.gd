@@ -9,61 +9,61 @@ class_name TwitchCharityCampaign
 	
 ## An ID that identifies the charity campaign.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## An ID that identifies the broadcaster that’s running the campaign.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s login name.
 @export var broadcaster_login: String:
-	set(val): 
+	set(val):
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The broadcaster’s display name.
 @export var broadcaster_name: String:
-	set(val): 
+	set(val):
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The charity’s name.
 @export var charity_name: String:
-	set(val): 
+	set(val):
 		charity_name = val
 		track_data(&"charity_name", val)
 
 ## A description of the charity.
 @export var charity_description: String:
-	set(val): 
+	set(val):
 		charity_description = val
 		track_data(&"charity_description", val)
 
 ## A URL to an image of the charity’s logo. The image’s type is PNG and its size is 100px X 100px.
 @export var charity_logo: String:
-	set(val): 
+	set(val):
 		charity_logo = val
 		track_data(&"charity_logo", val)
 
 ## A URL to the charity’s website.
 @export var charity_website: String:
-	set(val): 
+	set(val):
 		charity_website = val
 		track_data(&"charity_website", val)
 
 ## The current amount of donations that the campaign has received.
 @export var current_amount: CurrentAmount:
-	set(val): 
+	set(val):
 		current_amount = val
 		track_data(&"current_amount", val)
 
 ## The campaign’s fundraising goal. This field is **null** if the broadcaster has not defined a fundraising goal.
 @export var target_amount: TargetAmount:
-	set(val): 
+	set(val):
 		target_amount = val
 		track_data(&"target_amount", val)
 
@@ -118,7 +118,7 @@ class CurrentAmount extends TwitchData:
 
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
 	@export var value: int:
-		set(val): 
+		set(val):
 			value = val
 			track_data(&"value", val)
 	
@@ -126,13 +126,13 @@ class CurrentAmount extends TwitchData:
 	##   
 	## `value / 10^decimal_places`
 	@export var decimal_places: int:
-		set(val): 
+		set(val):
 			decimal_places = val
 			track_data(&"decimal_places", val)
 	
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
 	@export var currency: String:
-		set(val): 
+		set(val):
 			currency = val
 			track_data(&"currency", val)
 	
@@ -166,7 +166,7 @@ class TargetAmount extends TwitchData:
 
 	## The monetary amount. The amount is specified in the currency’s minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, `value` is set to 550.
 	@export var value: int:
-		set(val): 
+		set(val):
 			value = val
 			track_data(&"value", val)
 	
@@ -174,13 +174,13 @@ class TargetAmount extends TwitchData:
 	##   
 	## `value / 10^decimal_places`
 	@export var decimal_places: int:
-		set(val): 
+		set(val):
 			decimal_places = val
 			track_data(&"decimal_places", val)
 	
 	## The ISO-4217 three-letter currency code that identifies the type of currency in `value`.
 	@export var currency: String:
-		set(val): 
+		set(val):
 			currency = val
 			track_data(&"currency", val)
 	

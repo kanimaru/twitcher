@@ -9,25 +9,25 @@ class_name TwitchCreatorGoal
 	
 ## An ID that identifies this goal.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## An ID that identifies the broadcaster that created the goal.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s display name.
 @export var broadcaster_name: String:
-	set(val): 
+	set(val):
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The broadcaster’s login name.
 @export var broadcaster_login: String:
-	set(val): 
+	set(val):
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
@@ -39,13 +39,13 @@ class_name TwitchCreatorGoal
 ## * new\_subscription — The goal is to increase subscriptions. This type shows only the net increase in tier points associated with the subscriptions (it does not account for users that unsubscribed since the goal started).
 ## * new\_subscription\_count — The goal is to increase subscriptions. This type shows only the net increase in the number of subscriptions (it does not account for users that unsubscribed since the goal started).
 @export var type: String:
-	set(val): 
+	set(val):
 		type = val
 		track_data(&"type", val)
 
 ## A description of the goal. Is an empty string if not specified.
 @export var description: String:
-	set(val): 
+	set(val):
 		description = val
 		track_data(&"description", val)
 
@@ -59,19 +59,19 @@ class_name TwitchCreatorGoal
 ## * If `type` is new\_subscription, this field is increased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased by 2, not 1.
 ## * If `type` is new\_subscription\_count, this field is increased by 1 for each new subscription.
 @export var current_amount: int:
-	set(val): 
+	set(val):
 		current_amount = val
 		track_data(&"current_amount", val)
 
 ## The goal’s target value. For example, if the broadcaster has 200 followers before creating the goal, and their goal is to double that number, this field is set to 400.
 @export var target_amount: int:
-	set(val): 
+	set(val):
 		target_amount = val
 		track_data(&"target_amount", val)
 
 ## The UTC date and time (in RFC3339 format) that the broadcaster created the goal.
 @export var created_at: String:
-	set(val): 
+	set(val):
 		created_at = val
 		track_data(&"created_at", val)
 

@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list containing the created clip.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,7 +43,7 @@ class ResponseData extends TwitchData:
 
 	## An ID that uniquely identifies the clip.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
@@ -51,7 +51,7 @@ class ResponseData extends TwitchData:
 	##   
 	## The URL is valid for up to 24 hours or until the clip is published, whichever comes first.
 	@export var edit_url: String:
-		set(val): 
+		set(val):
 			edit_url = val
 			track_data(&"edit_url", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -82,13 +82,13 @@ class Opt extends TwitchData:
 
 	## The title of the clip.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## The length of the clip in seconds. Possible values range from 5 to 60 inclusively with a precision of 0.1\. The default is 30.
 	@export var duration: float:
-		set(val): 
+		set(val):
 			duration = val
 			track_data(&"duration", val)
 	

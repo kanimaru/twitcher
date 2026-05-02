@@ -13,13 +13,13 @@ class Response extends TwitchData:
 
 	## The list of published videos that match the filter criteria.
 	@export var data: Array[TwitchVideo]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
 	## Contains the information used to page through the list of results. The object is empty if there are no more pages left to page through. [Read More](https://dev.twitch.tv/docs/api/guide#pagination)
 	@export var pagination: ResponsePagination:
-		set(val): 
+		set(val):
 			pagination = val
 			track_data(&"pagination", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -69,17 +69,17 @@ class Response extends TwitchData:
 		iter[0] = data[0]
 		_cur_iter = 1
 		return true
-		
-		
+	
+	
 	func _iter_next(iter: Array) -> bool:
 		if data.size() > _cur_iter:
 			iter[0] = data[_cur_iter]
 			_cur_iter += 1
-		elif not _has_pagination(): 
+		elif not _has_pagination():
 			return false
 		return true
-		
-		
+	
+	
 	func _iter_get(iter: Variant) -> Variant:
 		if data.size() == _cur_iter && _has_pagination():
 			await next_page()
@@ -92,7 +92,7 @@ class ResponsePagination extends TwitchData:
 
 	## The cursor used to get the next page of results. Use the cursor to set the request's _after_ or _before_ query parameter depending on whether you're paging forwards or backwards through the results.
 	@export var cursor: String:
-		set(val): 
+		set(val):
 			cursor = val
 			track_data(&"cursor", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -121,7 +121,7 @@ class Opt extends TwitchData:
 	##   
 	## The _id_, _user\_id_, and _game\_id_ parameters are mutually exclusive.
 	@export var id: Array[String]:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
@@ -129,7 +129,7 @@ class Opt extends TwitchData:
 	##   
 	## The _id_, _user\_id_, and _game\_id_ parameters are mutually exclusive.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
@@ -137,7 +137,7 @@ class Opt extends TwitchData:
 	##   
 	## The _id_, _user\_id_, and _game\_id_ parameters are mutually exclusive.
 	@export var game_id: String:
-		set(val): 
+		set(val):
 			game_id = val
 			track_data(&"game_id", val)
 	
@@ -145,7 +145,7 @@ class Opt extends TwitchData:
 	##   
 	## Specify this parameter only if you specify the _game\_id_ query parameter.
 	@export var language: String:
-		set(val): 
+		set(val):
 			language = val
 			track_data(&"language", val)
 	
@@ -160,7 +160,7 @@ class Opt extends TwitchData:
 	##   
 	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
 	@export var period: String:
-		set(val): 
+		set(val):
 			period = val
 			track_data(&"period", val)
 	
@@ -174,7 +174,7 @@ class Opt extends TwitchData:
 	##   
 	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
 	@export var sort: String:
-		set(val): 
+		set(val):
 			sort = val
 			track_data(&"sort", val)
 	
@@ -189,7 +189,7 @@ class Opt extends TwitchData:
 	##   
 	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
@@ -197,7 +197,7 @@ class Opt extends TwitchData:
 	##   
 	## Specify this parameter only if you specify the _game\_id_ or _user\_id_ query parameter.
 	@export var first: String:
-		set(val): 
+		set(val):
 			first = val
 			track_data(&"first", val)
 	
@@ -205,7 +205,7 @@ class Opt extends TwitchData:
 	##   
 	## Specify this parameter only if you specify the _user\_id_ query parameter.
 	@export var after: String:
-		set(val): 
+		set(val):
 			after = val
 			track_data(&"after", val)
 	
@@ -213,7 +213,7 @@ class Opt extends TwitchData:
 	##   
 	## Specify this parameter only if you specify the _user\_id_ query parameter.
 	@export var before: String:
-		set(val): 
+		set(val):
 			before = val
 			track_data(&"before", val)
 	

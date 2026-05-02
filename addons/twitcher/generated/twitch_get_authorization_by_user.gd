@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## List of users and their authorized scopes.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,25 +43,25 @@ class ResponseData extends TwitchData:
 
 	## The user’s ID.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user’s display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The user’s login name.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## An array of all the scopes the user has granted to the client ID.
 	@export var scopes: Array[String]:
-		set(val): 
+		set(val):
 			scopes = val
 			track_data(&"scopes", val)
 	var response: BufferedHTTPClient.ResponseData

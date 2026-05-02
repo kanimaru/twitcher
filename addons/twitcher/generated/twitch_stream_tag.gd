@@ -9,25 +9,25 @@ class_name TwitchStreamTag
 	
 ## An ID that identifies this tag.
 @export var tag_id: String:
-	set(val): 
+	set(val):
 		tag_id = val
 		track_data(&"tag_id", val)
 
 ## A Boolean value that determines whether the tag is an automatic tag. An automatic tag is one that Twitch adds to the stream. Broadcasters may not add automatic tags to their channel. The value is **true** if the tag is an automatic tag; otherwise, **false**.
 @export var is_auto: bool:
-	set(val): 
+	set(val):
 		is_auto = val
 		track_data(&"is_auto", val)
 
 ## A dictionary that contains the localized names of the tag. The key is in the form, <locale>-<coutry/region>. For example, en-us. The value is the localized name.
 @export var localization_names: Dictionary:
-	set(val): 
+	set(val):
 		localization_names = val
 		track_data(&"localization_names", val)
 
 ## A dictionary that contains the localized descriptions of the tag. The key is in the form, <locale>-<coutry/region>. For example, en-us. The value is the localized description.
 @export var localization_descriptions: Dictionary:
-	set(val): 
+	set(val):
 		localization_descriptions = val
 		track_data(&"localization_descriptions", val)
 

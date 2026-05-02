@@ -13,13 +13,13 @@ class Response extends TwitchData:
 
 	## The list of global emotes.
 	@export var data: Array[TwitchGlobalEmote]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
 	## A templated URL. Use the values from the `id`, `format`, `scale`, and `theme_mode` fields to replace the like-named placeholder strings in the templated URL to create a CDN (content delivery network) URL that you use to fetch the emote. For information about what the template looks like and how to use it to fetch emotes, see [Emote CDN URL format](https://dev.twitch.tv/docs/irc/emotes#cdn-template). You should use this template instead of using the URLs in the `images` object.
 	@export var template: String:
-		set(val): 
+		set(val):
 			template = val
 			track_data(&"template", val)
 	var response: BufferedHTTPClient.ResponseData

@@ -9,55 +9,55 @@ class_name TwitchCustomRewardRedemption
 	
 ## The ID that uniquely identifies the broadcaster.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s login name.
 @export var broadcaster_login: String:
-	set(val): 
+	set(val):
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The broadcaster’s display name.
 @export var broadcaster_name: String:
-	set(val): 
+	set(val):
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The ID that uniquely identifies this redemption..
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The ID of the user that redeemed the reward.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user’s display name.
 @export var user_name: String:
-	set(val): 
+	set(val):
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The user’s login name.
 @export var user_login: String:
-	set(val): 
+	set(val):
 		user_login = val
 		track_data(&"user_login", val)
 
 ## An object that describes the reward that the user redeemed.
 @export var reward: Reward:
-	set(val): 
+	set(val):
 		reward = val
 		track_data(&"reward", val)
 
 ## The text that the user entered at the prompt when they redeemed the reward; otherwise, an empty string if user input was not required.
 @export var user_input: String:
-	set(val): 
+	set(val):
 		user_input = val
 		track_data(&"user_input", val)
 
@@ -67,13 +67,13 @@ class_name TwitchCustomRewardRedemption
 ## * FULFILLED
 ## * UNFULFILLED
 @export var status: String:
-	set(val): 
+	set(val):
 		status = val
 		track_data(&"status", val)
 
 ## The date and time of when the reward was redeemed, in RFC3339 format.
 @export var redeemed_at: String:
-	set(val): 
+	set(val):
 		redeemed_at = val
 		track_data(&"redeemed_at", val)
 
@@ -131,25 +131,25 @@ class Reward extends TwitchData:
 
 	## The ID that uniquely identifies the reward.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The reward’s title.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## The prompt displayed to the viewer if user input is required.
 	@export var prompt: String:
-		set(val): 
+		set(val):
 			prompt = val
 			track_data(&"prompt", val)
 	
 	## The reward’s cost, in Channel Points.
 	@export var cost: int:
-		set(val): 
+		set(val):
 			cost = val
 			track_data(&"cost", val)
 	

@@ -9,61 +9,61 @@ class_name TwitchPoll
 	
 ## An ID that identifies the poll.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## An ID that identifies the broadcaster that created the poll.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s display name.
 @export var broadcaster_name: String:
-	set(val): 
+	set(val):
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## The broadcaster’s login name.
 @export var broadcaster_login: String:
-	set(val): 
+	set(val):
 		broadcaster_login = val
 		track_data(&"broadcaster_login", val)
 
 ## The question that viewers are voting on. For example, _What game should I play next?_ The title may contain a maximum of 60 characters.
 @export var title: String:
-	set(val): 
+	set(val):
 		title = val
 		track_data(&"title", val)
 
 ## A list of choices that viewers can choose from. The list will contain a minimum of two choices and up to a maximum of five choices.
 @export var choices: Array[Choices]:
-	set(val): 
+	set(val):
 		choices = val
 		track_data(&"choices", val)
 
 ## Not used; will be set to **false**.
 @export var bits_voting_enabled: bool:
-	set(val): 
+	set(val):
 		bits_voting_enabled = val
 		track_data(&"bits_voting_enabled", val)
 
 ## Not used; will be set to 0.
 @export var bits_per_vote: int:
-	set(val): 
+	set(val):
 		bits_per_vote = val
 		track_data(&"bits_per_vote", val)
 
 ## A Boolean value that indicates whether viewers may cast additional votes using Channel Points. For information about Channel Points, see [Channel Points Guide](https://help.twitch.tv/s/article/channel-points-guide).
 @export var channel_points_voting_enabled: bool:
-	set(val): 
+	set(val):
 		channel_points_voting_enabled = val
 		track_data(&"channel_points_voting_enabled", val)
 
 ## The number of points the viewer must spend to cast one additional vote.
 @export var channel_points_per_vote: int:
-	set(val): 
+	set(val):
 		channel_points_per_vote = val
 		track_data(&"channel_points_per_vote", val)
 
@@ -76,25 +76,25 @@ class_name TwitchPoll
 ## * MODERATED — The poll was deleted.
 ## * INVALID — Something went wrong while determining the state.
 @export var status: String:
-	set(val): 
+	set(val):
 		status = val
 		track_data(&"status", val)
 
 ## The length of time (in seconds) that the poll will run for.
 @export var duration: int:
-	set(val): 
+	set(val):
 		duration = val
 		track_data(&"duration", val)
 
 ## The UTC date and time (in RFC3339 format) of when the poll began.
 @export var started_at: String:
-	set(val): 
+	set(val):
 		started_at = val
 		track_data(&"started_at", val)
 
 ## The UTC date and time (in RFC3339 format) of when the poll ended. If `status` is ACTIVE, this field is set to **null**.
 @export var ended_at: String:
-	set(val): 
+	set(val):
 		ended_at = val
 		track_data(&"ended_at", val)
 
@@ -163,31 +163,31 @@ class Choices extends TwitchData:
 
 	## An ID that identifies this choice.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The choice’s title. The title may contain a maximum of 25 characters.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## The total number of votes cast for this choice.
 	@export var votes: int:
-		set(val): 
+		set(val):
 			votes = val
 			track_data(&"votes", val)
 	
 	## The number of votes cast using Channel Points.
 	@export var channel_points_votes: int:
-		set(val): 
+		set(val):
 			channel_points_votes = val
 			track_data(&"channel_points_votes", val)
 	
 	## Not used; will be set to 0.
 	@export var bits_votes: int:
-		set(val): 
+		set(val):
 			bits_votes = val
 			track_data(&"bits_votes", val)
 	

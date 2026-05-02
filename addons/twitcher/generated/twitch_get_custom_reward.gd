@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list of custom rewards. The list is in ascending order by `id`. If the broadcaster hasn’t created custom rewards, the list is empty.
 	@export var data: Array[TwitchCustomReward]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -45,13 +45,13 @@ class Opt extends TwitchData:
 	##   
 	## Duplicate IDs are ignored. The response contains only the IDs that were found. If none of the IDs were found, the response is 404 Not Found.
 	@export var id: Array[String]:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## A Boolean value that determines whether the response contains only the custom rewards that the app may manage (the app is identified by the ID in the Client-Id header). Set to **true** to get only the custom rewards that the app may manage. The default is **false**.
 	@export var only_manageable_rewards: bool:
-		set(val): 
+		set(val):
 			only_manageable_rewards = val
 			track_data(&"only_manageable_rewards", val)
 	

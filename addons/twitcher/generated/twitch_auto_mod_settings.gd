@@ -9,67 +9,67 @@ class_name TwitchAutoModSettings
 	
 ## The broadcaster’s ID.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The moderator’s ID.
 @export var moderator_id: String:
-	set(val): 
+	set(val):
 		moderator_id = val
 		track_data(&"moderator_id", val)
 
 ## The default AutoMod level for the broadcaster. This field is **null** if the broadcaster has set one or more of the individual settings.
 @export var overall_level: int:
-	set(val): 
+	set(val):
 		overall_level = val
 		track_data(&"overall_level", val)
 
 ## The Automod level for discrimination against disability.
 @export var disability: int:
-	set(val): 
+	set(val):
 		disability = val
 		track_data(&"disability", val)
 
 ## The Automod level for hostility involving aggression.
 @export var aggression: int:
-	set(val): 
+	set(val):
 		aggression = val
 		track_data(&"aggression", val)
 
 ## The AutoMod level for discrimination based on sexuality, sex, or gender.
 @export var sexuality_sex_or_gender: int:
-	set(val): 
+	set(val):
 		sexuality_sex_or_gender = val
 		track_data(&"sexuality_sex_or_gender", val)
 
 ## The Automod level for discrimination against women.
 @export var misogyny: int:
-	set(val): 
+	set(val):
 		misogyny = val
 		track_data(&"misogyny", val)
 
 ## The Automod level for hostility involving name calling or insults.
 @export var bullying: int:
-	set(val): 
+	set(val):
 		bullying = val
 		track_data(&"bullying", val)
 
 ## The Automod level for profanity.
 @export var swearing: int:
-	set(val): 
+	set(val):
 		swearing = val
 		track_data(&"swearing", val)
 
 ## The Automod level for racial discrimination.
 @export var race_ethnicity_or_religion: int:
-	set(val): 
+	set(val):
 		race_ethnicity_or_religion = val
 		track_data(&"race_ethnicity_or_religion", val)
 
 ## The Automod level for sexual content.
 @export var sex_based_terms: int:
-	set(val): 
+	set(val):
 		sex_based_terms = val
 		track_data(&"sex_based_terms", val)
 

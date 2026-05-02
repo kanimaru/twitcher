@@ -9,25 +9,25 @@ class_name TwitchExtensionAnalytics
 	
 ## An ID that identifies the extension that the report was generated for.
 @export var extension_id: String:
-	set(val): 
+	set(val):
 		extension_id = val
 		track_data(&"extension_id", val)
 
 ## The URL that you use to download the report. The URL is valid for 5 minutes.
 @export var URL: String:
-	set(val): 
+	set(val):
 		URL = val
 		track_data(&"URL", val)
 
 ## The type of report.
 @export var type: String:
-	set(val): 
+	set(val):
 		type = val
 		track_data(&"type", val)
 
 ## The reporting window’s start and end dates, in RFC3339 format.
 @export var date_range: DateRange:
-	set(val): 
+	set(val):
 		date_range = val
 		track_data(&"date_range", val)
 
@@ -64,13 +64,13 @@ class DateRange extends TwitchData:
 
 	## The reporting window’s start date.
 	@export var started_at: String:
-		set(val): 
+		set(val):
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The reporting window’s end date.
 	@export var ended_at: String:
-		set(val): 
+		set(val):
 			ended_at = val
 			track_data(&"ended_at", val)
 	

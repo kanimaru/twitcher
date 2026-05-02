@@ -9,13 +9,13 @@ class_name TwitchGuestStarInvite
 	
 ## Twitch User ID corresponding to the invited guest
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## Timestamp when this user was invited to the session.
 @export var invited_at: String:
-	set(val): 
+	set(val):
 		invited_at = val
 		track_data(&"invited_at", val)
 
@@ -25,31 +25,31 @@ class_name TwitchGuestStarInvite
 ## * `ACCEPTED`: The invited user has acknowledged the invite and joined the waiting room, but may still be setting up their media devices or otherwise preparing to join the call.
 ## * `READY`: The invited user has signaled they are ready to join the call from the waiting room.
 @export var status: String:
-	set(val): 
+	set(val):
 		status = val
 		track_data(&"status", val)
 
 ## Flag signaling that the invited user has chosen to disable their local video device. The user has hidden themselves, but they may choose to reveal their video feed upon joining the session.
 @export var is_video_enabled: bool:
-	set(val): 
+	set(val):
 		is_video_enabled = val
 		track_data(&"is_video_enabled", val)
 
 ## Flag signaling that the invited user has chosen to disable their local audio device. The user has muted themselves, but they may choose to unmute their audio feed upon joining the session.
 @export var is_audio_enabled: bool:
-	set(val): 
+	set(val):
 		is_audio_enabled = val
 		track_data(&"is_audio_enabled", val)
 
 ## Flag signaling that the invited user has a video device available for sharing.
 @export var is_video_available: bool:
-	set(val): 
+	set(val):
 		is_video_available = val
 		track_data(&"is_video_available", val)
 
 ## Flag signaling that the invited user has an audio device available for sharing.
 @export var is_audio_available: bool:
-	set(val): 
+	set(val):
 		is_audio_available = val
 		track_data(&"is_audio_available", val)
 

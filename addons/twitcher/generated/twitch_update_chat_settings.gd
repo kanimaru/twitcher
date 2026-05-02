@@ -15,7 +15,7 @@ class Body extends TwitchData:
 	##   
 	## Set to **true** if only emotes are allowed; otherwise, **false**. The default is **false**.
 	@export var emote_mode: bool:
-		set(val): 
+		set(val):
 			emote_mode = val
 			track_data(&"emote_mode", val)
 	
@@ -25,13 +25,13 @@ class Body extends TwitchData:
 	##   
 	## To specify how long users must follow the broadcaster before being able to participate in the chat room, see the `follower_mode_duration` field.
 	@export var follower_mode: bool:
-		set(val): 
+		set(val):
 			follower_mode = val
 			track_data(&"follower_mode", val)
 	
 	## The length of time, in minutes, that users must follow the broadcaster before being able to participate in the chat room. Set only if `follower_mode` is **true**. Possible values are: 0 (no restriction) through 129600 (3 months). The default is 0.
 	@export var follower_mode_duration: int:
-		set(val): 
+		set(val):
 			follower_mode_duration = val
 			track_data(&"follower_mode_duration", val)
 	
@@ -41,7 +41,7 @@ class Body extends TwitchData:
 	##   
 	## To specify the length of the delay, see the `non_moderator_chat_delay_duration` field.
 	@export var non_moderator_chat_delay: bool:
-		set(val): 
+		set(val):
 			non_moderator_chat_delay = val
 			track_data(&"non_moderator_chat_delay", val)
 	
@@ -51,7 +51,7 @@ class Body extends TwitchData:
 	## * 4 — 4 second delay
 	## * 6 — 6 second delay
 	@export var non_moderator_chat_delay_duration: int:
-		set(val): 
+		set(val):
 			non_moderator_chat_delay_duration = val
 			track_data(&"non_moderator_chat_delay_duration", val)
 	
@@ -59,7 +59,7 @@ class Body extends TwitchData:
 	##   
 	## To specify the delay, see the `slow_mode_wait_time` field.
 	@export var slow_mode: bool:
-		set(val): 
+		set(val):
 			slow_mode = val
 			track_data(&"slow_mode", val)
 	
@@ -67,7 +67,7 @@ class Body extends TwitchData:
 	##   
 	## Possible values are: 3 (3 second delay) through 120 (2 minute delay). The default is 30 seconds.
 	@export var slow_mode_wait_time: int:
-		set(val): 
+		set(val):
 			slow_mode_wait_time = val
 			track_data(&"slow_mode_wait_time", val)
 	
@@ -75,7 +75,7 @@ class Body extends TwitchData:
 	##   
 	## Set to **true** if the broadcaster restricts the chat room to subscribers only; otherwise, **false**. The default is **false**.
 	@export var subscriber_mode: bool:
-		set(val): 
+		set(val):
 			subscriber_mode = val
 			track_data(&"subscriber_mode", val)
 	
@@ -83,7 +83,7 @@ class Body extends TwitchData:
 	##   
 	## Set to **true** if the broadcaster allows only unique messages; otherwise, **false**. The default is **false**.
 	@export var unique_chat_mode: bool:
-		set(val): 
+		set(val):
 			unique_chat_mode = val
 			track_data(&"unique_chat_mode", val)
 	
@@ -126,7 +126,7 @@ class Response extends TwitchData:
 
 	## The list of chat settings. The list contains a single object with all the settings.
 	@export var data: Array[TwitchChatSettingsUpdated]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

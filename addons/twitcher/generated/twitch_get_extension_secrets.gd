@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of shared secrets that the extension created.
 	@export var data: Array[TwitchExtensionSecret]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list that contains a single object with information about the pending raid.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,7 +43,7 @@ class ResponseData extends TwitchData:
 
 	## The UTC date and time, in RFC3339 format, of when the raid was requested.
 	@export var created_at: String:
-		set(val): 
+		set(val):
 			created_at = val
 			track_data(&"created_at", val)
 	
@@ -51,7 +51,7 @@ class ResponseData extends TwitchData:
 	##   
 	## A Boolean value that indicates whether the channel being raided contains mature content.
 	@export var is_mature: bool:
-		set(val): 
+		set(val):
 			is_mature = val
 			track_data(&"is_mature", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -82,13 +82,13 @@ class Opt extends TwitchData:
 
 	## The ID of the broadcaster that’s sending the raiding party. This ID must match the user ID in the user access token.
 	@export var from_broadcaster_id: String:
-		set(val): 
+		set(val):
 			from_broadcaster_id = val
 			track_data(&"from_broadcaster_id", val)
 	
 	## The ID of the broadcaster to raid.
 	@export var to_broadcaster_id: String:
-		set(val): 
+		set(val):
 			to_broadcaster_id = val
 			track_data(&"to_broadcaster_id", val)
 	

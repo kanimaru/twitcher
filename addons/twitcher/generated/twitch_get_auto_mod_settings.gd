@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of AutoMod settings. The list contains a single object that contains all the AutoMod settings.
 	@export var data: Array[TwitchAutoModSettings]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

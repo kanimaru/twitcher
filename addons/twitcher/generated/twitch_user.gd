@@ -9,19 +9,19 @@ class_name TwitchUser
 	
 ## An ID that identifies the user.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The user's login name.
 @export var login: String:
-	set(val): 
+	set(val):
 		login = val
 		track_data(&"login", val)
 
 ## The user's display name.
 @export var display_name: String:
-	set(val): 
+	set(val):
 		display_name = val
 		track_data(&"display_name", val)
 
@@ -32,7 +32,7 @@ class_name TwitchUser
 ## * staff — Twitch staff
 ## * "" — Normal user
 @export var type: String:
-	set(val): 
+	set(val):
 		type = val
 		track_data(&"type", val)
 
@@ -42,25 +42,25 @@ class_name TwitchUser
 ## * partner — A [partner broadcaster](https://help.twitch.tv/s/article/partner-program-overview)
 ## * "" — A normal broadcaster
 @export var broadcaster_type: String:
-	set(val): 
+	set(val):
 		broadcaster_type = val
 		track_data(&"broadcaster_type", val)
 
 ## The user's description of their channel.
 @export var description: String:
-	set(val): 
+	set(val):
 		description = val
 		track_data(&"description", val)
 
 ## A URL to the user's profile image.
 @export var profile_image_url: String:
-	set(val): 
+	set(val):
 		profile_image_url = val
 		track_data(&"profile_image_url", val)
 
 ## A URL to the user's offline image.
 @export var offline_image_url: String:
-	set(val): 
+	set(val):
 		offline_image_url = val
 		track_data(&"offline_image_url", val)
 
@@ -68,7 +68,7 @@ class_name TwitchUser
 ##   
 ## **NOTE**: This field has been deprecated (see [Get Users API endpoint – "view\_count" deprecation](https://discuss.dev.twitch.tv/t/get-users-api-endpoint-view-count-deprecation/37777)). Any data in this field is not valid and should not be used.
 @export var view_count: int:
-	set(val): 
+	set(val):
 		view_count = val
 		track_data(&"view_count", val)
 
@@ -76,13 +76,13 @@ class_name TwitchUser
 ##   
 ## If the request contains more than one user, only the user associated with the access token that provided consent will include an email address — the email address for all other users will be empty.
 @export var email: String:
-	set(val): 
+	set(val):
 		email = val
 		track_data(&"email", val)
 
 ## The UTC date and time that the user's account was created. The timestamp is in RFC3339 format.
 @export var created_at: String:
-	set(val): 
+	set(val):
 		created_at = val
 		track_data(&"created_at", val)
 

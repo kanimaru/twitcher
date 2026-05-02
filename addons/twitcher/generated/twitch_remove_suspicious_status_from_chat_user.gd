@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## An array with one object containing information about the suspicious user action.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,37 +43,37 @@ class ResponseData extends TwitchData:
 
 	## The ID of the user having the suspicious status removed.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user ID of the broadcaster indicating in which channel the status is being removed.
 	@export var broadcaster_id: String:
-		set(val): 
+		set(val):
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
 	## The user ID of the moderator who modified the last status.
 	@export var moderator_id: String:
-		set(val): 
+		set(val):
 			moderator_id = val
 			track_data(&"moderator_id", val)
 	
 	## The timestamp of the last time this user’s status was updated.
 	@export var updated_at: String:
-		set(val): 
+		set(val):
 			updated_at = val
 			track_data(&"updated_at", val)
 	
 	## The type of suspicious status. Possible values are: NO\_TREATMENT
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
 	## An array of strings representing the type(s) of suspicious user this is. Possible values are: MANUALLY\_ADDED, DETECTED\_BAN\_EVADER, DETECTED\_SUS\_CHATTER, BANNED\_IN\_SHARED\_CHANNEL
 	@export var types: Array[String]:
-		set(val): 
+		set(val):
 			types = val
 			track_data(&"types", val)
 	var response: BufferedHTTPClient.ResponseData

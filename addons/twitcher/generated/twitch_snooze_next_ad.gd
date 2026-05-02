@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list that contains information about the channel’s snoozes and next upcoming ad after successfully snoozing.
 	@export var data: Array[ResponseData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,19 +43,19 @@ class ResponseData extends TwitchData:
 
 	## The number of snoozes available for the broadcaster.
 	@export var snooze_count: int:
-		set(val): 
+		set(val):
 			snooze_count = val
 			track_data(&"snooze_count", val)
 	
 	## The UTC timestamp when the broadcaster will gain an additional snooze, in RFC3339 format. Can be `0`.
 	@export var snooze_refresh_at: int:
-		set(val): 
+		set(val):
 			snooze_refresh_at = val
 			track_data(&"snooze_refresh_at", val)
 	
 	## The UTC timestamp of the broadcaster’s next scheduled ad, in RFC3339 format. `0` if the channel has no ad scheduled or is not live.
 	@export var next_ad_at: int:
-		set(val): 
+		set(val):
 			next_ad_at = val
 			track_data(&"next_ad_at", val)
 	var response: BufferedHTTPClient.ResponseData

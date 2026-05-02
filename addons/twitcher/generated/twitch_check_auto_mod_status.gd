@@ -13,7 +13,7 @@ class Body extends TwitchData:
 
 	## The list of messages to check. The list must contain at least one message and may contain up to a maximum of 100 messages.
 	@export var data: Array[BodyData]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
@@ -43,13 +43,13 @@ class BodyData extends TwitchData:
 
 	## A caller-defined ID used to correlate this message with the same message in the response.
 	@export var msg_id: String:
-		set(val): 
+		set(val):
 			msg_id = val
 			track_data(&"msg_id", val)
 	
 	## The message to check.
 	@export var msg_text: String:
-		set(val): 
+		set(val):
 			msg_text = val
 			track_data(&"msg_text", val)
 	
@@ -80,7 +80,7 @@ class Response extends TwitchData:
 
 	## The list of messages and whether Twitch would approve them for chat.
 	@export var data: Array[TwitchAutoModStatus]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

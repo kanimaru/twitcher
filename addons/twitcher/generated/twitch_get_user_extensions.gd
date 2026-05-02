@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## The list of extensions that the user has installed.
 	@export var data: Array[TwitchUserExtension]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

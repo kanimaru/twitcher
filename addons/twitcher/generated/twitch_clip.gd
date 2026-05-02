@@ -9,91 +9,91 @@ class_name TwitchClip
 	
 ## An ID that uniquely identifies the clip.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## A URL to the clip.
 @export var url: String:
-	set(val): 
+	set(val):
 		url = val
 		track_data(&"url", val)
 
 ## A URL that you can use in an iframe to embed the clip (see [Embedding Video and Clips](https://dev.twitch.tv/docs/embed/video-and-clips/)).
 @export var embed_url: String:
-	set(val): 
+	set(val):
 		embed_url = val
 		track_data(&"embed_url", val)
 
 ## An ID that identifies the broadcaster that the video was clipped from.
 @export var broadcaster_id: String:
-	set(val): 
+	set(val):
 		broadcaster_id = val
 		track_data(&"broadcaster_id", val)
 
 ## The broadcaster’s display name.
 @export var broadcaster_name: String:
-	set(val): 
+	set(val):
 		broadcaster_name = val
 		track_data(&"broadcaster_name", val)
 
 ## An ID that identifies the user that created the clip.
 @export var creator_id: String:
-	set(val): 
+	set(val):
 		creator_id = val
 		track_data(&"creator_id", val)
 
 ## The user’s display name.
 @export var creator_name: String:
-	set(val): 
+	set(val):
 		creator_name = val
 		track_data(&"creator_name", val)
 
 ## An ID that identifies the video that the clip came from. This field contains an empty string if the video is not available.
 @export var video_id: String:
-	set(val): 
+	set(val):
 		video_id = val
 		track_data(&"video_id", val)
 
 ## The ID of the game that was being played when the clip was created.
 @export var game_id: String:
-	set(val): 
+	set(val):
 		game_id = val
 		track_data(&"game_id", val)
 
 ## The ISO 639-1 two-letter language code that the broadcaster broadcasts in. For example, _en_ for English. The value is _other_ if the broadcaster uses a language that Twitch doesn’t support.
 @export var language: String:
-	set(val): 
+	set(val):
 		language = val
 		track_data(&"language", val)
 
 ## The title of the clip.
 @export var title: String:
-	set(val): 
+	set(val):
 		title = val
 		track_data(&"title", val)
 
 ## The number of times the clip has been viewed.
 @export var view_count: int:
-	set(val): 
+	set(val):
 		view_count = val
 		track_data(&"view_count", val)
 
 ## The date and time of when the clip was created. The date and time is in RFC3339 format.
 @export var created_at: String:
-	set(val): 
+	set(val):
 		created_at = val
 		track_data(&"created_at", val)
 
 ## A URL to a thumbnail image of the clip.
 @export var thumbnail_url: String:
-	set(val): 
+	set(val):
 		thumbnail_url = val
 		track_data(&"thumbnail_url", val)
 
 ## The length of the clip, in seconds. Precision is 0.1.
 @export var duration: float:
-	set(val): 
+	set(val):
 		duration = val
 		track_data(&"duration", val)
 
@@ -101,13 +101,13 @@ class_name TwitchClip
 ##   
 ## Note that there’s a delay between when a clip is created during a broadcast and when the offset is set. During the delay period, `vod_offset` is **null**. The delay is indeterminant but is typically minutes long.
 @export var vod_offset: int:
-	set(val): 
+	set(val):
 		vod_offset = val
 		track_data(&"vod_offset", val)
 
 ## A Boolean value that indicates if the clip is featured or not.
 @export var is_featured: bool:
-	set(val): 
+	set(val):
 		is_featured = val
 		track_data(&"is_featured", val)
 

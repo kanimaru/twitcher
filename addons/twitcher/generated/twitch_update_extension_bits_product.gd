@@ -13,37 +13,37 @@ class Body extends TwitchData:
 
 	## The product's SKU. The SKU must be unique within an extension. The product's SKU cannot be changed. The SKU may contain only alphanumeric characters, dashes (-), underscores (\_), and periods (.) and is limited to a maximum of 255 characters. No spaces.
 	@export var sku: String:
-		set(val): 
+		set(val):
 			sku = val
 			track_data(&"sku", val)
 	
 	## An object that contains the product's cost information.
 	@export var cost: BodyCost:
-		set(val): 
+		set(val):
 			cost = val
 			track_data(&"cost", val)
 	
 	## The product's name as displayed in the extension. The maximum length is 255 characters.
 	@export var display_name: String:
-		set(val): 
+		set(val):
 			display_name = val
 			track_data(&"display_name", val)
 	
 	## A Boolean value that indicates whether the product is in development. Set to **true** if the product is in development and not available for public use. The default is **false**.
 	@export var in_development: bool:
-		set(val): 
+		set(val):
 			in_development = val
 			track_data(&"in_development", val)
 	
 	## The date and time, in RFC3339 format, when the product expires. If not set, the product does not expire. To disable the product, set the expiration date to a date in the past.
 	@export var expiration: String:
-		set(val): 
+		set(val):
 			expiration = val
 			track_data(&"expiration", val)
 	
 	## A Boolean value that determines whether Bits product purchase events are broadcast to all instances of the extension on a channel. The events are broadcast via the `onTransactionComplete` helper callback. The default is **false**.
 	@export var is_broadcast: bool:
-		set(val): 
+		set(val):
 			is_broadcast = val
 			track_data(&"is_broadcast", val)
 	
@@ -83,7 +83,7 @@ class BodyCost extends TwitchData:
 
 	## The product's price.
 	@export var amount: int:
-		set(val): 
+		set(val):
 			amount = val
 			track_data(&"amount", val)
 	
@@ -91,7 +91,7 @@ class BodyCost extends TwitchData:
 	##   
 	## * bits — The minimum price is 1 and the maximum is 10000.
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
@@ -122,7 +122,7 @@ class Response extends TwitchData:
 
 	## A list of Bits products that the extension created. The list is in ascending SKU order. The list is empty if the extension hasn't created any products or they're all expired or disabled.
 	@export var data: Array[TwitchExtensionBitsProduct]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData

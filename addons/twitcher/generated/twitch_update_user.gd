@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list contains the single user that you updated.
 	@export var data: Array[TwitchUser]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -45,7 +45,7 @@ class Opt extends TwitchData:
 	##   
 	## To remove the description, specify this parameter but don’t set it’s value (for example, `?description=`).
 	@export var description: String:
-		set(val): 
+		set(val):
 			description = val
 			track_data(&"description", val)
 	

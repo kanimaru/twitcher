@@ -17,7 +17,7 @@ class Body extends TwitchData:
 	##   
 	## For component extensions, the key’s value includes the above fields plus the `x` and `y` fields, which identify the coordinate where the extension is placed.
 	@export var data: BodyData:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
@@ -49,19 +49,19 @@ class BodyData extends TwitchData:
 
 	## 
 	@export var panel: Dictionary:
-		set(val): 
+		set(val):
 			panel = val
 			track_data(&"panel", val)
 	
 	## 
 	@export var overlay: Dictionary:
-		set(val): 
+		set(val):
 			overlay = val
 			track_data(&"overlay", val)
 	
 	## 
 	@export var component: Dictionary:
-		set(val): 
+		set(val):
 			component = val
 			track_data(&"component", val)
 	
@@ -92,7 +92,7 @@ class Response extends TwitchData:
 
 	## The extensions that the broadcaster updated.
 	@export var data: ResponseData:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -120,19 +120,19 @@ class ResponseData extends TwitchData:
 
 	## A dictionary that contains the data for a panel extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the panel’s data for each key.
 	@export var panel: Dictionary:
-		set(val): 
+		set(val):
 			panel = val
 			track_data(&"panel", val)
 	
 	## A dictionary that contains the data for a video-overlay extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the overlay’s data for each key.
 	@export var overlay: Dictionary:
-		set(val): 
+		set(val):
 			overlay = val
 			track_data(&"overlay", val)
 	
 	## A dictionary that contains the data for a video-component extension. The dictionary’s key is a sequential number beginning with 1\. The following fields contain the component’s data for each key.
 	@export var component: Dictionary:
-		set(val): 
+		set(val):
 			component = val
 			track_data(&"component", val)
 	var response: BufferedHTTPClient.ResponseData

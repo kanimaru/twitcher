@@ -13,7 +13,7 @@ class Response extends TwitchData:
 
 	## A list that contains the specified extension.
 	@export var data: Array[TwitchExtension]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	var response: BufferedHTTPClient.ResponseData
@@ -43,7 +43,7 @@ class Opt extends TwitchData:
 
 	## The version of the extension to get. If not specified, it returns the latest version.
 	@export var extension_version: String:
-		set(val): 
+		set(val):
 			extension_version = val
 			track_data(&"extension_version", val)
 	
