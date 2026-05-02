@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID for the channel you want to get subscription gift notifications for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,64 +40,70 @@ class Event extends TwitchData:
 
 	## The user ID of the user who sent the subscription gift. Set to null if it was an anonymous subscription gift.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user login of the user who sent the gift. Set to null if it was an anonymous subscription gift.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user display name of the user who sent the gift. Set to null if it was an anonymous subscription gift.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The broadcaster user ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The number of subscriptions in the subscription gift.
 	@export var total: int:
-		set(val): 
+		set(val):
 			total = val
 			track_data(&"total", val)
 	
 	## The tier of subscriptions in the subscription gift.
 	@export var tier: String:
-		set(val): 
+		set(val):
 			tier = val
 			track_data(&"tier", val)
 	
 	## The number of subscriptions gifted by this user in the channel. This value is null for anonymous gifts or if the gifter has opted out of sharing this information.
 	@export var cumulative_total: int:
-		set(val): 
+		set(val):
 			cumulative_total = val
 			track_data(&"cumulative_total", val)
 	
 	## Whether the subscription gift was anonymous.
 	@export var is_anonymous: bool:
-		set(val): 
+		set(val):
 			is_anonymous = val
 			track_data(&"is_anonymous", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

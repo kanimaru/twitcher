@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The ID of the broadcaster that you want to get Hype Train end notifications for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,82 +40,88 @@ class Event extends TwitchData:
 
 	## The Hype Train ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The requested broadcaster ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The requested broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The requested broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## Total points contributed to the Hype Train.
 	@export var total: int:
-		set(val): 
+		set(val):
 			total = val
 			track_data(&"total", val)
 	
 	## The contributors with the most points contributed.
 	@export var top_contributions: Array[TopContributions]:
-		set(val): 
+		set(val):
 			top_contributions = val
 			track_data(&"top_contributions", val)
 	
 	## The current level of the Hype Train.
 	@export var level: int:
-		set(val): 
+		set(val):
 			level = val
 			track_data(&"level", val)
 	
 	## Optional. Non-null for a shared Hype Train. Contains the list of broadcasters in the shared Hype Train.
 	@export var shared_train_participants: Array[SharedTrainParticipants]:
-		set(val): 
+		set(val):
 			shared_train_participants = val
 			track_data(&"shared_train_participants", val)
 	
 	## The time when the Hype Train started.
 	@export var started_at: String:
-		set(val): 
+		set(val):
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The time when the Hype Train cooldown ends so that the next Hype Train can start.
 	@export var cooldown_ends_at: String:
-		set(val): 
+		set(val):
 			cooldown_ends_at = val
 			track_data(&"cooldown_ends_at", val)
 	
 	## The time when the Hype Train ended.
 	@export var ended_at: String:
-		set(val): 
+		set(val):
 			ended_at = val
 			track_data(&"ended_at", val)
 	
 	## The type of the Hype Train. Possible values are: treasure golden_kappa regular
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## Indicates if the Hype Train is shared. When true, shared_train_participants will contain the list of broadcasters the train is shared with.
 	@export var is_shared_train: bool:
-		set(val): 
+		set(val):
 			is_shared_train = val
 			track_data(&"is_shared_train", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:
@@ -151,34 +164,40 @@ class TopContributions extends TwitchData:
 
 	## The ID of the user that made the contribution.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user's login name.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user's display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The contribution method used. Possible values are: bits - Bits contributions with Cheering, Power-ups, and Extensions. subscription - Subscription activity like subscribing or gifting subscriptions. other - Covers other contribution methods not listed.
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## The total amount contributed. If type is bits, total represents the amount of Bits used. If type is subscription, total is 500, 1000, or 2500 to represent tier 1, 2, or 3 subscriptions, respectively.
 	@export var total: int:
-		set(val): 
+		set(val):
 			total = val
 			track_data(&"total", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> TopContributions:
+		var top_contributions: TopContributions = TopContributions.new()
+		return top_contributions
 	
 	
 	static func from_json(d: Dictionary) -> TopContributions:
@@ -203,22 +222,28 @@ class SharedTrainParticipants extends TwitchData:
 
 	## The ID of the broadcaster participating in the shared Hype Train.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the broadcaster participating in the shared Hype Train.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The display name of the broadcaster participating in the shared Hype Train.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedTrainParticipants:
+		var shared_train_participants: SharedTrainParticipants = SharedTrainParticipants.new()
+		return shared_train_participants
 	
 	
 	static func from_json(d: Dictionary) -> SharedTrainParticipants:

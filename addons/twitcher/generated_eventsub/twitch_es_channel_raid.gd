@@ -13,16 +13,22 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID that created the channel raid you want to get notifications for. Use this parameter if you want to know when a specific broadcaster raids another broadcaster. The channel raid condition must include either from_broadcaster_user_id or to_broadcaster_user_id .
 	@export var from_broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			from_broadcaster_user_id = val
 			track_data(&"from_broadcaster_user_id", val)
 	
 	## The broadcaster user ID that received the channel raid you want to get notifications for. Use this parameter if you want to know when a specific broadcaster is raided by another broadcaster. The channel raid condition must include either from_broadcaster_user_id or to_broadcaster_user_id .
 	@export var to_broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			to_broadcaster_user_id = val
 			track_data(&"to_broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Condition:
+		var condition: Condition = Condition.new()
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,46 +47,52 @@ class Event extends TwitchData:
 
 	## The broadcaster ID that created the raid.
 	@export var from_broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			from_broadcaster_user_id = val
 			track_data(&"from_broadcaster_user_id", val)
 	
 	## The broadcaster login that created the raid.
 	@export var from_broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			from_broadcaster_user_login = val
 			track_data(&"from_broadcaster_user_login", val)
 	
 	## The broadcaster display name that created the raid.
 	@export var from_broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			from_broadcaster_user_name = val
 			track_data(&"from_broadcaster_user_name", val)
 	
 	## The broadcaster ID that received the raid.
 	@export var to_broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			to_broadcaster_user_id = val
 			track_data(&"to_broadcaster_user_id", val)
 	
 	## The broadcaster login that received the raid.
 	@export var to_broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			to_broadcaster_user_login = val
 			track_data(&"to_broadcaster_user_login", val)
 	
 	## The broadcaster display name that received the raid.
 	@export var to_broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			to_broadcaster_user_name = val
 			track_data(&"to_broadcaster_user_name", val)
 	
 	## The number of viewers in the raid.
 	@export var viewers: int:
-		set(val): 
+		set(val):
 			viewers = val
 			track_data(&"viewers", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

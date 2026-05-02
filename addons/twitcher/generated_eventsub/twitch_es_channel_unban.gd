@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID for the channel you want to get unban notifications for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,58 +40,64 @@ class Event extends TwitchData:
 
 	## The user id for the user who was unbanned on the specified channel.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user login for the user who was unbanned on the specified channel.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user display name for the user who was unbanned on the specified channel.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The requested broadcaster ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The requested broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The requested broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The user ID of the issuer of the unban.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
 	## The user login of the issuer of the unban.
 	@export var moderator_user_login: String:
-		set(val): 
+		set(val):
 			moderator_user_login = val
 			track_data(&"moderator_user_login", val)
 	
 	## The user name of the issuer of the unban.
 	@export var moderator_user_name: String:
-		set(val): 
+		set(val):
 			moderator_user_name = val
 			track_data(&"moderator_user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

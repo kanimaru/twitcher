@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## The User ID of the broadcaster.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The User ID of the moderator.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String, _moderator_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		condition.moderator_user_id = _moderator_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,40 +49,46 @@ class Event extends TwitchData:
 
 	## The user ID of the broadcaster.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the broadcaster.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The user name of the broadcaster.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The ID of the user that has acknowledged their warning.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user that has acknowledged their warning.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user that has acknowledged their warning.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

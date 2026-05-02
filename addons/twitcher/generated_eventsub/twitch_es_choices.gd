@@ -9,34 +9,40 @@ class_name TwitchESChoices
 	
 ## ID for the choice.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## Text displayed for the choice.
 @export var title: String:
-	set(val): 
+	set(val):
 		title = val
 		track_data(&"title", val)
 
 ## Not used; will be set to 0.
 @export var bits_votes: int:
-	set(val): 
+	set(val):
 		bits_votes = val
 		track_data(&"bits_votes", val)
 
 ## Number of votes received via Channel Points.
 @export var channel_points_votes: int:
-	set(val): 
+	set(val):
 		channel_points_votes = val
 		track_data(&"channel_points_votes", val)
 
 ## Total number of votes received for the choice across all methods of voting.
 @export var votes: int:
-	set(val): 
+	set(val):
 		votes = val
 		track_data(&"votes", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESChoices:
+	var twitch_es_choices: TwitchESChoices = TwitchESChoices.new()
+	return twitch_es_choices
 
 
 static func from_json(d: Dictionary) -> TwitchESChoices:

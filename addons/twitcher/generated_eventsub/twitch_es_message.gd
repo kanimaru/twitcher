@@ -9,16 +9,22 @@ class_name TwitchESMessage
 	
 ## The text of the resubscription chat message.
 @export var text: String:
-	set(val): 
+	set(val):
 		text = val
 		track_data(&"text", val)
 
 ## An array that includes the emote ID and start and end positions for where the emote appears in the text.
 @export var emotes: TwitchESEmotes:
-	set(val): 
+	set(val):
 		emotes = val
 		track_data(&"emotes", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESMessage:
+	var twitch_es_message: TwitchESMessage = TwitchESMessage.new()
+	return twitch_es_message
 
 
 static func from_json(d: Dictionary) -> TwitchESMessage:

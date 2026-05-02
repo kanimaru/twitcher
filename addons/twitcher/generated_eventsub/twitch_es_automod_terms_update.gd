@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## User ID of the broadcaster (channel). Maximum:1.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## User ID of the moderator creating the subscription. Maximum:1
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String, _moderator_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		condition.moderator_user_id = _moderator_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,58 +49,64 @@ class Event extends TwitchData:
 
 	## The ID of the broadcaster specified in the request.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the broadcaster specified in the request.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The user name of the broadcaster specified in the request.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The ID of the moderator who changed the channel settings.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
 	## The moderator's login.
 	@export var moderator_user_login: String:
-		set(val): 
+		set(val):
 			moderator_user_login = val
 			track_data(&"moderator_user_login", val)
 	
 	## The moderator's user name.
 	@export var moderator_user_name: String:
-		set(val): 
+		set(val):
 			moderator_user_name = val
 			track_data(&"moderator_user_name", val)
 	
 	## The status change applied to the terms. Possible options are: add_permitted remove_permitted add_blocked remove_blocked
 	@export var action: String:
-		set(val): 
+		set(val):
 			action = val
 			track_data(&"action", val)
 	
 	## Indicates whether this term was added due to an Automod message approve/deny action.
 	@export var from_automod: bool:
-		set(val): 
+		set(val):
 			from_automod = val
 			track_data(&"from_automod", val)
 	
 	## The list of terms that had a status change.
 	@export var terms: Array[String]:
-		set(val): 
+		set(val):
 			terms = val
 			track_data(&"terms", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

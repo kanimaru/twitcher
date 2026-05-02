@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID for the channel you want to get updates for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,52 +40,58 @@ class Event extends TwitchData:
 
 	## The broadcaster's user ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster's user login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The broadcaster's user display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The channel's stream title.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## The channel's broadcast language.
 	@export var language: String:
-		set(val): 
+		set(val):
 			language = val
 			track_data(&"language", val)
 	
 	## The channel's category ID.
 	@export var category_id: String:
-		set(val): 
+		set(val):
 			category_id = val
 			track_data(&"category_id", val)
 	
 	## The category name.
 	@export var category_name: String:
-		set(val): 
+		set(val):
 			category_name = val
 			track_data(&"category_name", val)
 	
 	## Array of content classification label IDs currently applied on the Channel. To retrieve a list of all possible IDs, use the Get Content Classification Labels API endpoint.
 	@export var content_classification_labels: Array[String]:
-		set(val): 
+		set(val):
 			content_classification_labels = val
 			track_data(&"content_classification_labels", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

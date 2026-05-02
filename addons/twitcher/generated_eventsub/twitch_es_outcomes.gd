@@ -9,40 +9,46 @@ class_name TwitchESOutcomes
 	
 ## The outcome ID.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The outcome title.
 @export var title: String:
-	set(val): 
+	set(val):
 		title = val
 		track_data(&"title", val)
 
 ## The color for the outcome. Valid values are pink and blue .
 @export var color: String:
-	set(val): 
+	set(val):
 		color = val
 		track_data(&"color", val)
 
 ## The number of users who used Channel Points on this outcome.
 @export var users: int:
-	set(val): 
+	set(val):
 		users = val
 		track_data(&"users", val)
 
 ## The total number of Channel Points used on this outcome.
 @export var channel_points: int:
-	set(val): 
+	set(val):
 		channel_points = val
 		track_data(&"channel_points", val)
 
 ## An array of users who used the most Channel Points on this outcome.
 @export var top_predictors: TwitchESTopPredictors:
-	set(val): 
+	set(val):
 		top_predictors = val
 		track_data(&"top_predictors", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESOutcomes:
+	var twitch_es_outcomes: TwitchESOutcomes = TwitchESOutcomes.new()
+	return twitch_es_outcomes
 
 
 static func from_json(d: Dictionary) -> TwitchESOutcomes:

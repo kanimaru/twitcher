@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The User ID of the channel to receive shared chat session update events for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,52 +40,58 @@ class Event extends TwitchData:
 
 	## The unique identifier for the shared chat session.
 	@export var session_id: String:
-		set(val): 
+		set(val):
 			session_id = val
 			track_data(&"session_id", val)
 	
 	## The User ID of the channel in the subscription condition.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The display name of the channel in the subscription condition.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The user login of the channel in the subscription condition.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The User ID of the host channel.
 	@export var host_broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			host_broadcaster_user_id = val
 			track_data(&"host_broadcaster_user_id", val)
 	
 	## The display name of the host channel.
 	@export var host_broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			host_broadcaster_user_name = val
 			track_data(&"host_broadcaster_user_name", val)
 	
 	## The user login of the host channel.
 	@export var host_broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			host_broadcaster_user_login = val
 			track_data(&"host_broadcaster_user_login", val)
 	
 	## The list of participants in the session.
 	@export var participants: Array[Participants]:
-		set(val): 
+		set(val):
 			participants = val
 			track_data(&"participants", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:
@@ -110,22 +123,28 @@ class Participants extends TwitchData:
 
 	## The User ID of the participant channel.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The display name of the participant channel.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The user login of the participant channel.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Participants:
+		var participants: Participants = Participants.new()
+		return participants
 	
 	
 	static func from_json(d: Dictionary) -> Participants:

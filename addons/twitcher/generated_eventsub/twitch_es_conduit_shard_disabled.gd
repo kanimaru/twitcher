@@ -13,16 +13,23 @@ class Condition extends TwitchData:
 
 	## Your application's client id. The provided client_id must match the client ID in the application access token.
 	@export var client_id: String:
-		set(val): 
+		set(val):
 			client_id = val
 			track_data(&"client_id", val)
 	
 	## The conduit ID to receive events for. If omitted, events for all of this client's conduits are sent.
 	@export var conduit_id: String:
-		set(val): 
+		set(val):
 			conduit_id = val
 			track_data(&"conduit_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_client_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.client_id = _client_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,58 +48,64 @@ class Event extends TwitchData:
 
 	## The ID of the conduit.
 	@export var conduit_id: String:
-		set(val): 
+		set(val):
 			conduit_id = val
 			track_data(&"conduit_id", val)
 	
 	## The ID of the disabled shard.
 	@export var shard_id: String:
-		set(val): 
+		set(val):
 			shard_id = val
 			track_data(&"shard_id", val)
 	
 	## The new status of the transport.
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
 	## The disabled transport.
 	@export var transport: Dictionary:
-		set(val): 
+		set(val):
 			transport = val
 			track_data(&"transport", val)
 	
 	## websocket or webhook
 	@export var method: String:
-		set(val): 
+		set(val):
 			method = val
 			track_data(&"method", val)
 	
 	## Optional. Webhook callback URL. Null if method is set to websocket .
 	@export var callback: String:
-		set(val): 
+		set(val):
 			callback = val
 			track_data(&"callback", val)
 	
 	## Optional. WebSocket session ID. Null if method is set to webhook .
 	@export var session_id: String:
-		set(val): 
+		set(val):
 			session_id = val
 			track_data(&"session_id", val)
 	
 	## Optional. Time that the WebSocket session connected. Null if method is set to webhook .
 	@export var connected_at: String:
-		set(val): 
+		set(val):
 			connected_at = val
 			track_data(&"connected_at", val)
 	
 	## Optional. Time that the WebSocket session disconnected. Null if method is set to webhook .
 	@export var disconnected_at: String:
-		set(val): 
+		set(val):
 			disconnected_at = val
 			track_data(&"disconnected_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

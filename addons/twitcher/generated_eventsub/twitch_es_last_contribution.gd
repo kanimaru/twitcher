@@ -9,34 +9,40 @@ class_name TwitchESLastContribution
 	
 ## The ID of the user that made the contribution.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The user's login name.
 @export var user_login: String:
-	set(val): 
+	set(val):
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The user's display name.
 @export var user_name: String:
-	set(val): 
+	set(val):
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The contribution method used. Possible values are: bits — Cheering with Bits. subscription — Subscription activity like subscribing or gifting subscriptions. other — Covers other contribution methods not listed.
 @export var type: String:
-	set(val): 
+	set(val):
 		type = val
 		track_data(&"type", val)
 
 ## The total amount contributed. If type is bits , total represents the amount of Bits used. If type is subscription , total is 500, 1000, or 2500 to represent tier 1, 2, or 3 subscriptions, respectively.
 @export var total: int:
-	set(val): 
+	set(val):
 		total = val
 		track_data(&"total", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESLastContribution:
+	var twitch_es_last_contribution: TwitchESLastContribution = TwitchESLastContribution.new()
+	return twitch_es_last_contribution
 
 
 static func from_json(d: Dictionary) -> TwitchESLastContribution:

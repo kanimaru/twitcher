@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID of the channel for which "prediction end" notifications will be received.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,64 +40,70 @@ class Event extends TwitchData:
 
 	## Channel Points Prediction ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The requested broadcaster ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The requested broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The requested broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## Title for the Channel Points Prediction.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## ID of the winning outcome.
 	@export var winning_outcome_id: String:
-		set(val): 
+		set(val):
 			winning_outcome_id = val
 			track_data(&"winning_outcome_id", val)
 	
 	## An array of outcomes for the Channel Points Prediction. Includes top_predictors .
 	@export var outcomes: TwitchESOutcomes:
-		set(val): 
+		set(val):
 			outcomes = val
 			track_data(&"outcomes", val)
 	
 	## The status of the Channel Points Prediction. Valid values are resolved and canceled .
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
 	## The time the Channel Points Prediction started.
 	@export var started_at: String:
-		set(val): 
+		set(val):
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The time the Channel Points Prediction ended.
 	@export var ended_at: String:
-		set(val): 
+		set(val):
 			ended_at = val
 			track_data(&"ended_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

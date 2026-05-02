@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID for the channel you want to receive channel points reward add notifications for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,10 +40,17 @@ class V2Condition extends TwitchData:
 
 	## The broadcaster user ID for the channel you want to receive channel points reward add notifications for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> V2Condition:
+		var v_2_condition: V2Condition = V2Condition.new()
+		v_2_condition.broadcaster_user_id = _broadcaster_user_id
+		return v_2_condition
 	
 	
 	static func from_json(d: Dictionary) -> V2Condition:
@@ -53,70 +67,76 @@ class Event extends TwitchData:
 
 	## The ID of the channel where the reward was redeemed.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the channel where the reward was redeemed.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The display name of the channel where the reward was redeemed.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The ID of the redeeming user.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the redeeming user.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The display name of the redeeming user.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The ID of the Redemption.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## An object that contains the reward information.
 	@export var reward: Reward:
-		set(val): 
+		set(val):
 			reward = val
 			track_data(&"reward", val)
 	
 	## An object that contains the user message and emote information needed to recreate the message.
 	@export var message: Message:
-		set(val): 
+		set(val):
 			message = val
 			track_data(&"message", val)
 	
 	## Optional. A string that the user entered if the reward requires input.
 	@export var user_input: String:
-		set(val): 
+		set(val):
 			user_input = val
 			track_data(&"user_input", val)
 	
 	## The UTC date and time (in RFC3339 format) of when the reward was redeemed.
 	@export var redeemed_at: String:
-		set(val): 
+		set(val):
 			redeemed_at = val
 			track_data(&"redeemed_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:
@@ -153,22 +173,28 @@ class Reward extends TwitchData:
 
 	## The type of reward. One of: single_message_bypass_sub_mode send_highlighted_message random_sub_emote_unlock chosen_sub_emote_unlock chosen_modified_sub_emote_unlock message_effect gigantify_an_emote celebration
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## The reward cost.
 	@export var cost: int:
-		set(val): 
+		set(val):
 			cost = val
 			track_data(&"cost", val)
 	
 	## Optional. Emote that was unlocked.
 	@export var unlocked_emote: UnlockedEmote:
-		set(val): 
+		set(val):
 			unlocked_emote = val
 			track_data(&"unlocked_emote", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Reward:
+		var reward: Reward = Reward.new()
+		return reward
 	
 	
 	static func from_json(d: Dictionary) -> Reward:
@@ -189,16 +215,22 @@ class UnlockedEmote extends TwitchData:
 
 	## The emote ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The human readable emote token.
 	@export var name: String:
-		set(val): 
+		set(val):
 			name = val
 			track_data(&"name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> UnlockedEmote:
+		var unlocked_emote: UnlockedEmote = UnlockedEmote.new()
+		return unlocked_emote
 	
 	
 	static func from_json(d: Dictionary) -> UnlockedEmote:
@@ -217,16 +249,22 @@ class Message extends TwitchData:
 
 	## The text of the chat message.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## An array that includes the emote ID and start and end positions for where the emote appears in the text.
 	@export var emotes: Array[Emotes]:
-		set(val): 
+		set(val):
 			emotes = val
 			track_data(&"emotes", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Message:
+		var message: Message = Message.new()
+		return message
 	
 	
 	static func from_json(d: Dictionary) -> Message:
@@ -246,22 +284,28 @@ class Emotes extends TwitchData:
 
 	## The emote ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The index of where the Emote starts in the text.
 	@export var begin: int:
-		set(val): 
+		set(val):
 			begin = val
 			track_data(&"begin", val)
 	
 	## The index of where the Emote ends in the text.
 	@export var end: int:
-		set(val): 
+		set(val):
 			end = val
 			track_data(&"end", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Emotes:
+		var emotes: Emotes = Emotes.new()
+		return emotes
 	
 	
 	static func from_json(d: Dictionary) -> Emotes:
@@ -282,64 +326,70 @@ class V2Event extends TwitchData:
 
 	## The ID of the channel where the reward was redeemed.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the channel where the reward was redeemed.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The display name of the channel where the reward was redeemed.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The ID of the redeeming user.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the redeeming user.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The display name of the redeeming user.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The ID of the Redemption.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## An object that contains the reward information.
 	@export var reward: RewardV2:
-		set(val): 
+		set(val):
 			reward = val
 			track_data(&"reward", val)
 	
 	## Optional. An object that contains the user message and emote information needed to recreate the message.
 	@export var message: MessageV2:
-		set(val): 
+		set(val):
 			message = val
 			track_data(&"message", val)
 	
 	## The UTC date and time (in RFC3339 format) of when the reward was redeemed.
 	@export var redeemed_at: String:
-		set(val): 
+		set(val):
 			redeemed_at = val
 			track_data(&"redeemed_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> V2Event:
+		var v_2_event: V2Event = V2Event.new()
+		return v_2_event
 	
 	
 	static func from_json(d: Dictionary) -> V2Event:
@@ -374,22 +424,28 @@ class RewardV2 extends TwitchData:
 
 	## The type of reward. One of: single_message_bypass_sub_mode send_highlighted_message random_sub_emote_unlock chosen_sub_emote_unlock chosen_modified_sub_emote_unlock
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## Number of channel points used.
 	@export var channel_points: int:
-		set(val): 
+		set(val):
 			channel_points = val
 			track_data(&"channel_points", val)
 	
 	## Optional. Emote associated with the reward.
 	@export var emote: EmoteV2:
-		set(val): 
+		set(val):
 			emote = val
 			track_data(&"emote", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> RewardV2:
+		var reward_v_2: RewardV2 = RewardV2.new()
+		return reward_v_2
 	
 	
 	static func from_json(d: Dictionary) -> RewardV2:
@@ -410,16 +466,22 @@ class EmoteV2 extends TwitchData:
 
 	## The emote ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The human readable emote token.
 	@export var name: String:
-		set(val): 
+		set(val):
 			name = val
 			track_data(&"name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> EmoteV2:
+		var emote_v_2: EmoteV2 = EmoteV2.new()
+		return emote_v_2
 	
 	
 	static func from_json(d: Dictionary) -> EmoteV2:
@@ -438,16 +500,22 @@ class MessageV2 extends TwitchData:
 
 	## The chat message in plain text.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## The ordered list of chat message fragments.
 	@export var fragments: Array[FragmentsV2]:
-		set(val): 
+		set(val):
 			fragments = val
 			track_data(&"fragments", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> MessageV2:
+		var message_v_2: MessageV2 = MessageV2.new()
+		return message_v_2
 	
 	
 	static func from_json(d: Dictionary) -> MessageV2:
@@ -467,22 +535,28 @@ class FragmentsV2 extends TwitchData:
 
 	## The message text in fragment.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## The type of message fragment. Possible values are: text emote
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## Optional. The metadata pertaining to the emote.
 	@export var emote: Fragments_EmoteV2:
-		set(val): 
+		set(val):
 			emote = val
 			track_data(&"emote", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> FragmentsV2:
+		var fragments_v_2: FragmentsV2 = FragmentsV2.new()
+		return fragments_v_2
 	
 	
 	static func from_json(d: Dictionary) -> FragmentsV2:
@@ -503,10 +577,16 @@ class Fragments_EmoteV2 extends TwitchData:
 
 	## The ID that uniquely identifies this emote.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Fragments_EmoteV2:
+		var fragments_emote_v_2: Fragments_EmoteV2 = Fragments_EmoteV2.new()
+		return fragments_emote_v_2
 	
 	
 	static func from_json(d: Dictionary) -> Fragments_EmoteV2:

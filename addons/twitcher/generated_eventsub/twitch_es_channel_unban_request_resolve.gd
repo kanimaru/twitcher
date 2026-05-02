@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## The ID of the user that has permission to moderate the broadcaster's channel and has granted your app permission to subscribe to this subscription type.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
 	## The ID of the broadcaster you want to get unban request resolution notifications for. Maximum: 1.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_moderator_user_id: String, _broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.moderator_user_id = _moderator_user_id
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,76 +49,82 @@ class Event extends TwitchData:
 
 	## The ID of the unban request.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The broadcaster's user ID for the channel the unban request was updated for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster's login name.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The broadcaster's display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## Optional. User ID of moderator who approved/denied the request.
 	@export var moderator_id: String:
-		set(val): 
+		set(val):
 			moderator_id = val
 			track_data(&"moderator_id", val)
 	
 	## Optional. The moderator's login name
 	@export var moderator_login: String:
-		set(val): 
+		set(val):
 			moderator_login = val
 			track_data(&"moderator_login", val)
 	
 	## Optional. The moderator's display name
 	@export var moderator_name: String:
-		set(val): 
+		set(val):
 			moderator_name = val
 			track_data(&"moderator_name", val)
 	
 	## User ID of user that requested to be unbanned.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user's login name.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user's display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## Optional. Resolution text supplied by the mod/broadcaster upon approval/denial of the request.
 	@export var resolution_text: String:
-		set(val): 
+		set(val):
 			resolution_text = val
 			track_data(&"resolution_text", val)
 	
 	## Dictates whether the unban request was approved or denied. Can be the following: approved canceled denied
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

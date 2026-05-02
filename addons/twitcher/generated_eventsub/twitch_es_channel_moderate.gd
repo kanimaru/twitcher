@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## The user ID of the broadcaster.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The user ID of the moderator.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String, _moderator_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		condition.moderator_user_id = _moderator_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,16 +49,24 @@ class V2Condition extends TwitchData:
 
 	## The user ID of the broadcaster.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The user ID of the moderator.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String, _moderator_user_id: String) -> V2Condition:
+		var v_2_condition: V2Condition = V2Condition.new()
+		v_2_condition.broadcaster_user_id = _broadcaster_user_id
+		v_2_condition.moderator_user_id = _moderator_user_id
+		return v_2_condition
 	
 	
 	static func from_json(d: Dictionary) -> V2Condition:
@@ -69,184 +85,190 @@ class Event extends TwitchData:
 
 	## The ID of the broadcaster.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the broadcaster.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The user name of the broadcaster.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The channel in which the action originally occurred. Is the same as the broadcaster_user_id if not in shared chat.
 	@export var source_broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			source_broadcaster_user_id = val
 			track_data(&"source_broadcaster_user_id", val)
 	
 	## The channel in which the action originally occurred. Is the same as the broadcaster_user_login if not in shared chat.
 	@export var source_broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			source_broadcaster_user_login = val
 			track_data(&"source_broadcaster_user_login", val)
 	
 	## The channel in which the action originally occurred. Is null when the moderator action happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			source_broadcaster_user_name = val
 			track_data(&"source_broadcaster_user_name", val)
 	
 	## The ID of the moderator who performed the action.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
 	## The login of the moderator.
 	@export var moderator_user_login: String:
-		set(val): 
+		set(val):
 			moderator_user_login = val
 			track_data(&"moderator_user_login", val)
 	
 	## The user name of the moderator.
 	@export var moderator_user_name: String:
-		set(val): 
+		set(val):
 			moderator_user_name = val
 			track_data(&"moderator_user_name", val)
 	
 	## The type of action: Possible values are: ban timeout unban untimeout clear emoteonly emoteonlyoff followers followersoff uniquechat uniquechatoff slow slowoff subscribers subscribersoff unraid delete unvip vip raid add_blocked_term add_permitted_term remove_blocked_term remove_permitted_term mod unmod approve_unban_request deny_unban_request shared_chat_ban shared_chat_timeout shared_chat_untimeout shared_chat_unban shared_chat_delete
 	@export var action: String:
-		set(val): 
+		set(val):
 			action = val
 			track_data(&"action", val)
 	
 	## Optional .. Metadata associated with the followers command.
 	@export var followers: Followers:
-		set(val): 
+		set(val):
 			followers = val
 			track_data(&"followers", val)
 	
 	## Optional . Metadata associated with the slow command.
 	@export var slow: Slow:
-		set(val): 
+		set(val):
 			slow = val
 			track_data(&"slow", val)
 	
 	## Optional . Metadata associated with the vip command.
 	@export var vip: Vip:
-		set(val): 
+		set(val):
 			vip = val
 			track_data(&"vip", val)
 	
 	## Optional . Metadata associated with the unvip command.
 	@export var unvip: Unvip:
-		set(val): 
+		set(val):
 			unvip = val
 			track_data(&"unvip", val)
 	
 	## Optional . Metadata associated with the mod command.
 	@export var mod: Mod:
-		set(val): 
+		set(val):
 			mod = val
 			track_data(&"mod", val)
 	
 	## Optional . Metadata associated with the unmod command.
 	@export var unmod: Unmod:
-		set(val): 
+		set(val):
 			unmod = val
 			track_data(&"unmod", val)
 	
 	## Optional . Metadata associated with the ban command.
 	@export var ban: Ban:
-		set(val): 
+		set(val):
 			ban = val
 			track_data(&"ban", val)
 	
 	## Optional . Metadata associated with the unban command.
 	@export var unban: Unban:
-		set(val): 
+		set(val):
 			unban = val
 			track_data(&"unban", val)
 	
 	## Optional .. Metadata associated with the timeout command.
 	@export var timeout: Timeout:
-		set(val): 
+		set(val):
 			timeout = val
 			track_data(&"timeout", val)
 	
 	## Optional . Metadata associated with the untimeout command.
 	@export var untimeout: Untimeout:
-		set(val): 
+		set(val):
 			untimeout = val
 			track_data(&"untimeout", val)
 	
 	## Optional .. Metadata associated with the raid command.
 	@export var raid: Raid:
-		set(val): 
+		set(val):
 			raid = val
 			track_data(&"raid", val)
 	
 	## Optional . Metadata associated with the unraid command.
 	@export var unraid: Unraid:
-		set(val): 
+		set(val):
 			unraid = val
 			track_data(&"unraid", val)
 	
 	## Optional . Metadata associated with the delete command.
 	@export var delete: Delete:
-		set(val): 
+		set(val):
 			delete = val
 			track_data(&"delete", val)
 	
 	## Optional . Metadata associated with the automod terms changes.
 	@export var automod_terms: AutomodTerms:
-		set(val): 
+		set(val):
 			automod_terms = val
 			track_data(&"automod_terms", val)
 	
 	## Optional . Metadata associated with an unban request.
 	@export var unban_request: UnbanRequest:
-		set(val): 
+		set(val):
 			unban_request = val
 			track_data(&"unban_request", val)
 	
 	## Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_ban: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_ban = val
 			track_data(&"shared_chat_ban", val)
 	
 	## Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_unban: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_unban = val
 			track_data(&"shared_chat_unban", val)
 	
 	## Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_timeout: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_timeout = val
 			track_data(&"shared_chat_timeout", val)
 	
 	## Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_untimeout: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_untimeout = val
 			track_data(&"shared_chat_untimeout", val)
 	
 	## Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_delete: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_delete = val
 			track_data(&"shared_chat_delete", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:
@@ -321,10 +343,16 @@ class Followers extends TwitchData:
 
 	## The length of time, in minutes, that the followers must have followed the broadcaster to participate in the chat room.
 	@export var follow_duration_minutes: int:
-		set(val): 
+		set(val):
 			follow_duration_minutes = val
 			track_data(&"follow_duration_minutes", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Followers:
+		var followers: Followers = Followers.new()
+		return followers
 	
 	
 	static func from_json(d: Dictionary) -> Followers:
@@ -341,10 +369,16 @@ class Slow extends TwitchData:
 
 	## The amount of time, in seconds, that users need to wait between sending messages.
 	@export var wait_time_seconds: int:
-		set(val): 
+		set(val):
 			wait_time_seconds = val
 			track_data(&"wait_time_seconds", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Slow:
+		var slow: Slow = Slow.new()
+		return slow
 	
 	
 	static func from_json(d: Dictionary) -> Slow:
@@ -361,22 +395,28 @@ class Vip extends TwitchData:
 
 	## The ID of the user gaining VIP status.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user gaining VIP status.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user gaining VIP status.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Vip:
+		var vip: Vip = Vip.new()
+		return vip
 	
 	
 	static func from_json(d: Dictionary) -> Vip:
@@ -397,22 +437,28 @@ class Unvip extends TwitchData:
 
 	## The ID of the user losing VIP status.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user losing VIP status.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user losing VIP status.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Unvip:
+		var unvip: Unvip = Unvip.new()
+		return unvip
 	
 	
 	static func from_json(d: Dictionary) -> Unvip:
@@ -433,22 +479,28 @@ class Mod extends TwitchData:
 
 	## The ID of the user gaining mod status.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user gaining mod status.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user gaining mod status.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Mod:
+		var mod: Mod = Mod.new()
+		return mod
 	
 	
 	static func from_json(d: Dictionary) -> Mod:
@@ -469,22 +521,28 @@ class Unmod extends TwitchData:
 
 	## The ID of the user losing mod status.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user losing mod status.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user losing mod status.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Unmod:
+		var unmod: Unmod = Unmod.new()
+		return unmod
 	
 	
 	static func from_json(d: Dictionary) -> Unmod:
@@ -505,28 +563,34 @@ class Ban extends TwitchData:
 
 	## The ID of the user being banned.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being banned.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user being banned.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## Optional . Reason given for the ban.
 	@export var reason: String:
-		set(val): 
+		set(val):
 			reason = val
 			track_data(&"reason", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Ban:
+		var ban: Ban = Ban.new()
+		return ban
 	
 	
 	static func from_json(d: Dictionary) -> Ban:
@@ -549,22 +613,28 @@ class Unban extends TwitchData:
 
 	## The ID of the user being unbanned.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being unbanned.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user being unbanned.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Unban:
+		var unban: Unban = Unban.new()
+		return unban
 	
 	
 	static func from_json(d: Dictionary) -> Unban:
@@ -585,34 +655,40 @@ class Timeout extends TwitchData:
 
 	## The ID of the user being timed out.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being timed out.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user being timed out.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## Optional .. The reason given for the timeout.
 	@export var reason: String:
-		set(val): 
+		set(val):
 			reason = val
 			track_data(&"reason", val)
 	
 	## The time at which the timeout ends.
 	@export var expires_at: String:
-		set(val): 
+		set(val):
 			expires_at = val
 			track_data(&"expires_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Timeout:
+		var timeout: Timeout = Timeout.new()
+		return timeout
 	
 	
 	static func from_json(d: Dictionary) -> Timeout:
@@ -637,22 +713,28 @@ class Untimeout extends TwitchData:
 
 	## The ID of the user being untimed out.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being untimed out.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user untimed out.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Untimeout:
+		var untimeout: Untimeout = Untimeout.new()
+		return untimeout
 	
 	
 	static func from_json(d: Dictionary) -> Untimeout:
@@ -673,28 +755,34 @@ class Raid extends TwitchData:
 
 	## The ID of the user being raided.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being raided.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user raided.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The viewer count.
 	@export var viewer_count: int:
-		set(val): 
+		set(val):
 			viewer_count = val
 			track_data(&"viewer_count", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Raid:
+		var raid: Raid = Raid.new()
+		return raid
 	
 	
 	static func from_json(d: Dictionary) -> Raid:
@@ -717,22 +805,28 @@ class Unraid extends TwitchData:
 
 	## The ID of the user no longer being raided.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user no longer being raided.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the no longer user raided.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Unraid:
+		var unraid: Unraid = Unraid.new()
+		return unraid
 	
 	
 	static func from_json(d: Dictionary) -> Unraid:
@@ -753,34 +847,40 @@ class Delete extends TwitchData:
 
 	## The ID of the user whose message is being deleted.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The ID of the message being deleted.
 	@export var message_id: String:
-		set(val): 
+		set(val):
 			message_id = val
 			track_data(&"message_id", val)
 	
 	## The message body of the message being deleted.
 	@export var message_body: String:
-		set(val): 
+		set(val):
 			message_body = val
 			track_data(&"message_body", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Delete:
+		var delete: Delete = Delete.new()
+		return delete
 	
 	
 	static func from_json(d: Dictionary) -> Delete:
@@ -805,28 +905,34 @@ class AutomodTerms extends TwitchData:
 
 	## Either "add" or "remove".
 	@export var action: String:
-		set(val): 
+		set(val):
 			action = val
 			track_data(&"action", val)
 	
 	## Either "blocked" or "permitted".
 	@export var list: String:
-		set(val): 
+		set(val):
 			list = val
 			track_data(&"list", val)
 	
 	## Terms being added or removed.
 	@export var terms: Array[String]:
-		set(val): 
+		set(val):
 			terms = val
 			track_data(&"terms", val)
 	
 	## Whether the terms were added due to an Automod message approve/deny action.
 	@export var from_automod: bool:
-		set(val): 
+		set(val):
 			from_automod = val
 			track_data(&"from_automod", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> AutomodTerms:
+		var automod_terms: AutomodTerms = AutomodTerms.new()
+		return automod_terms
 	
 	
 	static func from_json(d: Dictionary) -> AutomodTerms:
@@ -850,34 +956,40 @@ class UnbanRequest extends TwitchData:
 
 	## Whether or not the unban request was approved or denied.
 	@export var is_approved: bool:
-		set(val): 
+		set(val):
 			is_approved = val
 			track_data(&"is_approved", val)
 	
 	## The ID of the banned user.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The message included by the moderator explaining their approval or denial.
 	@export var moderator_message: String:
-		set(val): 
+		set(val):
 			moderator_message = val
 			track_data(&"moderator_message", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> UnbanRequest:
+		var unban_request: UnbanRequest = UnbanRequest.new()
+		return unban_request
 	
 	
 	static func from_json(d: Dictionary) -> UnbanRequest:
@@ -902,190 +1014,196 @@ class EventV2 extends TwitchData:
 
 	## The ID of the broadcaster.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the broadcaster.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The user name of the broadcaster.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The channel in which the action originally occurred. Is the same as the broadcaster_user_id if not in shared chat.
 	@export var source_broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			source_broadcaster_user_id = val
 			track_data(&"source_broadcaster_user_id", val)
 	
 	## The channel in which the action originally occurred. Is the same as the broadcaster_user_login if not in shared chat.
 	@export var source_broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			source_broadcaster_user_login = val
 			track_data(&"source_broadcaster_user_login", val)
 	
 	## The channel in which the action originally occurred. Is null when the moderator action happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			source_broadcaster_user_name = val
 			track_data(&"source_broadcaster_user_name", val)
 	
 	## The ID of the moderator who performed the action.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
 	## The login of the moderator.
 	@export var moderator_user_login: String:
-		set(val): 
+		set(val):
 			moderator_user_login = val
 			track_data(&"moderator_user_login", val)
 	
 	## The user name of the moderator.
 	@export var moderator_user_name: String:
-		set(val): 
+		set(val):
 			moderator_user_name = val
 			track_data(&"moderator_user_name", val)
 	
 	## The action performed. Possible values are: ban timeout unban untimeout clear emoteonly emoteonlyoff followers followersoff uniquechat uniquechatoff slow slowoff subscribers subscribersoff unraid delete unvip vip raid add_blocked_term add_permitted_term remove_blocked_term remove_permitted_term mod unmod approve_unban_request deny_unban_request warn shared_chat_ban shared_chat_timeout shared_chat_unban shared_chat_untimeout shared_chat_delete
 	@export var action: String:
-		set(val): 
+		set(val):
 			action = val
 			track_data(&"action", val)
 	
 	## Optional . Metadata associated with the followers command.
 	@export var followers: FollowersV2:
-		set(val): 
+		set(val):
 			followers = val
 			track_data(&"followers", val)
 	
 	## Optional . Metadata associated with the slow command.
 	@export var slow: SlowV2:
-		set(val): 
+		set(val):
 			slow = val
 			track_data(&"slow", val)
 	
 	## Optional . Metadata associated with the vip command.
 	@export var vip: VipV2:
-		set(val): 
+		set(val):
 			vip = val
 			track_data(&"vip", val)
 	
 	## Optional . Metadata associated with the unvip command.
 	@export var unvip: UnvipV2:
-		set(val): 
+		set(val):
 			unvip = val
 			track_data(&"unvip", val)
 	
 	## Optional . Metadata associated with the mod command.
 	@export var mod: ModV2:
-		set(val): 
+		set(val):
 			mod = val
 			track_data(&"mod", val)
 	
 	## Optional . Metadata associated with the unmod command.
 	@export var unmod: UnmodV2:
-		set(val): 
+		set(val):
 			unmod = val
 			track_data(&"unmod", val)
 	
 	## Optional . Metadata associated with the ban command.
 	@export var ban: BanV2:
-		set(val): 
+		set(val):
 			ban = val
 			track_data(&"ban", val)
 	
 	## Optional . Metadata associated with the unban command.
 	@export var unban: UnbanV2:
-		set(val): 
+		set(val):
 			unban = val
 			track_data(&"unban", val)
 	
 	## Optional . Metadata associated with the timeout command.
 	@export var timeout: TimeoutV2:
-		set(val): 
+		set(val):
 			timeout = val
 			track_data(&"timeout", val)
 	
 	## Optional . Metadata associated with the untimeout command.
 	@export var untimeout: UntimeoutV2:
-		set(val): 
+		set(val):
 			untimeout = val
 			track_data(&"untimeout", val)
 	
 	## Optional . Metadata associated with the raid command.
 	@export var raid: RaidV2:
-		set(val): 
+		set(val):
 			raid = val
 			track_data(&"raid", val)
 	
 	## Optional . Metadata associated with the unraid command.
 	@export var unraid: UnraidV2:
-		set(val): 
+		set(val):
 			unraid = val
 			track_data(&"unraid", val)
 	
 	## Optional . Metadata associated with the delete command.
 	@export var delete: DeleteV2:
-		set(val): 
+		set(val):
 			delete = val
 			track_data(&"delete", val)
 	
 	## Optional . Metadata associated with the automod terms changes.
 	@export var automod_terms: AutomodTermsV2:
-		set(val): 
+		set(val):
 			automod_terms = val
 			track_data(&"automod_terms", val)
 	
 	## Optional . Metadata associated with an unban request.
 	@export var unban_request: UnbanRequestV2:
-		set(val): 
+		set(val):
 			unban_request = val
 			track_data(&"unban_request", val)
 	
 	## Optional . Metadata associated with the warn command.
 	@export var warn: WarnV2:
-		set(val): 
+		set(val):
 			warn = val
 			track_data(&"warn", val)
 	
 	## Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_ban: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_ban = val
 			track_data(&"shared_chat_ban", val)
 	
 	## Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_unban: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_unban = val
 			track_data(&"shared_chat_unban", val)
 	
 	## Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_timeout: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_timeout = val
 			track_data(&"shared_chat_timeout", val)
 	
 	## Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_untimeout: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_untimeout = val
 			track_data(&"shared_chat_untimeout", val)
 	
 	## Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_delete: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_delete = val
 			track_data(&"shared_chat_delete", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> EventV2:
+		var event_v_2: EventV2 = EventV2.new()
+		return event_v_2
 	
 	
 	static func from_json(d: Dictionary) -> EventV2:
@@ -1162,10 +1280,16 @@ class FollowersV2 extends TwitchData:
 
 	## The length of time, in minutes, that the followers must have followed the broadcaster to participate in the chat room.
 	@export var follow_duration_minutes: int:
-		set(val): 
+		set(val):
 			follow_duration_minutes = val
 			track_data(&"follow_duration_minutes", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> FollowersV2:
+		var followers_v_2: FollowersV2 = FollowersV2.new()
+		return followers_v_2
 	
 	
 	static func from_json(d: Dictionary) -> FollowersV2:
@@ -1182,10 +1306,16 @@ class SlowV2 extends TwitchData:
 
 	## The amount of time, in seconds, that users need to wait between sending messages.
 	@export var wait_time_seconds: int:
-		set(val): 
+		set(val):
 			wait_time_seconds = val
 			track_data(&"wait_time_seconds", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SlowV2:
+		var slow_v_2: SlowV2 = SlowV2.new()
+		return slow_v_2
 	
 	
 	static func from_json(d: Dictionary) -> SlowV2:
@@ -1202,22 +1332,28 @@ class VipV2 extends TwitchData:
 
 	## The ID of the user gaining VIP status.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user gaining VIP status.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user gaining VIP status.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> VipV2:
+		var vip_v_2: VipV2 = VipV2.new()
+		return vip_v_2
 	
 	
 	static func from_json(d: Dictionary) -> VipV2:
@@ -1238,22 +1374,28 @@ class UnvipV2 extends TwitchData:
 
 	## The ID of the user losing VIP status.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user losing VIP status.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user losing VIP status.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> UnvipV2:
+		var unvip_v_2: UnvipV2 = UnvipV2.new()
+		return unvip_v_2
 	
 	
 	static func from_json(d: Dictionary) -> UnvipV2:
@@ -1274,22 +1416,28 @@ class ModV2 extends TwitchData:
 
 	## The ID of the user gaining mod status.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user gaining mod status.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user gaining mod status.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> ModV2:
+		var mod_v_2: ModV2 = ModV2.new()
+		return mod_v_2
 	
 	
 	static func from_json(d: Dictionary) -> ModV2:
@@ -1310,22 +1458,28 @@ class UnmodV2 extends TwitchData:
 
 	## The ID of the user losing mod status.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user losing mod status.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user losing mod status.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> UnmodV2:
+		var unmod_v_2: UnmodV2 = UnmodV2.new()
+		return unmod_v_2
 	
 	
 	static func from_json(d: Dictionary) -> UnmodV2:
@@ -1346,28 +1500,34 @@ class BanV2 extends TwitchData:
 
 	## The ID of the user being banned.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being banned.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user being banned.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## Optional . Reason given for the ban.
 	@export var reason: String:
-		set(val): 
+		set(val):
 			reason = val
 			track_data(&"reason", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> BanV2:
+		var ban_v_2: BanV2 = BanV2.new()
+		return ban_v_2
 	
 	
 	static func from_json(d: Dictionary) -> BanV2:
@@ -1390,22 +1550,28 @@ class UnbanV2 extends TwitchData:
 
 	## The ID of the user being unbanned.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being unbanned.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user being unbanned.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> UnbanV2:
+		var unban_v_2: UnbanV2 = UnbanV2.new()
+		return unban_v_2
 	
 	
 	static func from_json(d: Dictionary) -> UnbanV2:
@@ -1426,34 +1592,40 @@ class TimeoutV2 extends TwitchData:
 
 	## The ID of the user being timed out.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being timed out.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user being timed out.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## Optional . The reason given for the timeout.
 	@export var reason: String:
-		set(val): 
+		set(val):
 			reason = val
 			track_data(&"reason", val)
 	
 	## The time at which the timeout ends.
 	@export var expires_at: String:
-		set(val): 
+		set(val):
 			expires_at = val
 			track_data(&"expires_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> TimeoutV2:
+		var timeout_v_2: TimeoutV2 = TimeoutV2.new()
+		return timeout_v_2
 	
 	
 	static func from_json(d: Dictionary) -> TimeoutV2:
@@ -1478,22 +1650,28 @@ class UntimeoutV2 extends TwitchData:
 
 	## The ID of the user being untimed out.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being untimed out.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user untimed out.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> UntimeoutV2:
+		var untimeout_v_2: UntimeoutV2 = UntimeoutV2.new()
+		return untimeout_v_2
 	
 	
 	static func from_json(d: Dictionary) -> UntimeoutV2:
@@ -1514,28 +1692,34 @@ class RaidV2 extends TwitchData:
 
 	## The ID of the user being raided.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being raided.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user raided.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The viewer count.
 	@export var viewer_count: int:
-		set(val): 
+		set(val):
 			viewer_count = val
 			track_data(&"viewer_count", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> RaidV2:
+		var raid_v_2: RaidV2 = RaidV2.new()
+		return raid_v_2
 	
 	
 	static func from_json(d: Dictionary) -> RaidV2:
@@ -1558,22 +1742,28 @@ class UnraidV2 extends TwitchData:
 
 	## The ID of the user no longer being raided.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user no longer being raided.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the no longer user raided.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> UnraidV2:
+		var unraid_v_2: UnraidV2 = UnraidV2.new()
+		return unraid_v_2
 	
 	
 	static func from_json(d: Dictionary) -> UnraidV2:
@@ -1594,34 +1784,40 @@ class DeleteV2 extends TwitchData:
 
 	## The ID of the user whose message is being deleted.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The ID of the message being deleted.
 	@export var message_id: String:
-		set(val): 
+		set(val):
 			message_id = val
 			track_data(&"message_id", val)
 	
 	## The message body of the message being deleted.
 	@export var message_body: String:
-		set(val): 
+		set(val):
 			message_body = val
 			track_data(&"message_body", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> DeleteV2:
+		var delete_v_2: DeleteV2 = DeleteV2.new()
+		return delete_v_2
 	
 	
 	static func from_json(d: Dictionary) -> DeleteV2:
@@ -1646,28 +1842,34 @@ class AutomodTermsV2 extends TwitchData:
 
 	## Either "add" or "remove".
 	@export var action: String:
-		set(val): 
+		set(val):
 			action = val
 			track_data(&"action", val)
 	
 	## Either "blocked" or "permitted".
 	@export var list: String:
-		set(val): 
+		set(val):
 			list = val
 			track_data(&"list", val)
 	
 	## Terms being added or removed.
 	@export var terms: Array[String]:
-		set(val): 
+		set(val):
 			terms = val
 			track_data(&"terms", val)
 	
 	## Whether the terms were added due to an Automod message approve/deny action.
 	@export var from_automod: bool:
-		set(val): 
+		set(val):
 			from_automod = val
 			track_data(&"from_automod", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> AutomodTermsV2:
+		var automod_terms_v_2: AutomodTermsV2 = AutomodTermsV2.new()
+		return automod_terms_v_2
 	
 	
 	static func from_json(d: Dictionary) -> AutomodTermsV2:
@@ -1691,34 +1893,40 @@ class UnbanRequestV2 extends TwitchData:
 
 	## Whether or not the unban request was approved or denied.
 	@export var is_approved: bool:
-		set(val): 
+		set(val):
 			is_approved = val
 			track_data(&"is_approved", val)
 	
 	## The ID of the banned user.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The message included by the moderator explaining their approval or denial.
 	@export var moderator_message: String:
-		set(val): 
+		set(val):
 			moderator_message = val
 			track_data(&"moderator_message", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> UnbanRequestV2:
+		var unban_request_v_2: UnbanRequestV2 = UnbanRequestV2.new()
+		return unban_request_v_2
 	
 	
 	static func from_json(d: Dictionary) -> UnbanRequestV2:
@@ -1743,34 +1951,40 @@ class WarnV2 extends TwitchData:
 
 	## The ID of the user being warned.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login of the user being warned.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user name of the user being warned.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## Optional . Reason given for the warning.
 	@export var reason: String:
-		set(val): 
+		set(val):
 			reason = val
 			track_data(&"reason", val)
 	
 	## Optional . Chat rules cited for the warning.
 	@export var chat_rules_cited: Array[String]:
-		set(val): 
+		set(val):
 			chat_rules_cited = val
 			track_data(&"chat_rules_cited", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> WarnV2:
+		var warn_v_2: WarnV2 = WarnV2.new()
+		return warn_v_2
 	
 	
 	static func from_json(d: Dictionary) -> WarnV2:

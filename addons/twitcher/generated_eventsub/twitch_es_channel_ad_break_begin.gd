@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The ID of the broadcaster that you want to get Channel Ad Break begin notifications for. Maximum: 1
 	@export var broadcaster_id: String:
-		set(val): 
+		set(val):
 			broadcaster_id = val
 			track_data(&"broadcaster_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_id = _broadcaster_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,58 +40,64 @@ class Event extends TwitchData:
 
 	## Length in seconds of the mid-roll ad break requested
 	@export var duration_seconds: int:
-		set(val): 
+		set(val):
 			duration_seconds = val
 			track_data(&"duration_seconds", val)
 	
 	## The UTC timestamp of when the ad break began, in RFC3339 format. Note that there is potential delay between this event, when the streamer requested the ad break, and when the viewers will see ads.
 	@export var started_at: String:
-		set(val): 
+		set(val):
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## Indicates if the ad was automatically scheduled via Ads Manager
 	@export var is_automatic: bool:
-		set(val): 
+		set(val):
 			is_automatic = val
 			track_data(&"is_automatic", val)
 	
 	## The broadcaster's user ID for the channel the ad was run on.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster's user login for the channel the ad was run on.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The broadcaster's user display name for the channel the ad was run on.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The ID of the user that requested the ad. For automatic ads, this will be the ID of the broadcaster.
 	@export var requester_user_id: String:
-		set(val): 
+		set(val):
 			requester_user_id = val
 			track_data(&"requester_user_id", val)
 	
 	## The login of the user that requested the ad.
 	@export var requester_user_login: String:
-		set(val): 
+		set(val):
 			requester_user_login = val
 			track_data(&"requester_user_login", val)
 	
 	## The display name of the user that requested the ad.
 	@export var requester_user_name: String:
-		set(val): 
+		set(val):
 			requester_user_name = val
 			track_data(&"requester_user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

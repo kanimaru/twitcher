@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## User ID of the channel to receive chat notification events for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The user ID to read chat as.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String, _user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		condition.user_id = _user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,256 +49,262 @@ class Event extends TwitchData:
 
 	## The broadcaster user ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The user ID of the user that sent the message.
 	@export var chatter_user_id: String:
-		set(val): 
+		set(val):
 			chatter_user_id = val
 			track_data(&"chatter_user_id", val)
 	
 	## The user login of the user that sent the message.
 	@export var chatter_user_name: String:
-		set(val): 
+		set(val):
 			chatter_user_name = val
 			track_data(&"chatter_user_name", val)
 	
 	## Whether or not the chatter is anonymous.
 	@export var chatter_is_anonymous: bool:
-		set(val): 
+		set(val):
 			chatter_is_anonymous = val
 			track_data(&"chatter_is_anonymous", val)
 	
 	## The color of the user's name in the chat room.
 	@export var color: String:
-		set(val): 
+		set(val):
 			color = val
 			track_data(&"color", val)
 	
 	## The color of the user's name in the chat room.
 	@export var badges: Array[Badges]:
-		set(val): 
+		set(val):
 			badges = val
 			track_data(&"badges", val)
 	
 	## The message Twitch shows in the chat room for this notice.
 	@export var system_message: String:
-		set(val): 
+		set(val):
 			system_message = val
 			track_data(&"system_message", val)
 	
 	## A UUID that identifies the message.
 	@export var message_id: String:
-		set(val): 
+		set(val):
 			message_id = val
 			track_data(&"message_id", val)
 	
 	## The structured chat message.
 	@export var message: Message:
-		set(val): 
+		set(val):
 			message = val
 			track_data(&"message", val)
 	
 	## The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement
 	@export var notice_type: String:
-		set(val): 
+		set(val):
 			notice_type = val
 			track_data(&"notice_type", val)
 	
 	## Information about the sub event. Null if notice_type is not sub .
 	@export var sub: Sub:
-		set(val): 
+		set(val):
 			sub = val
 			track_data(&"sub", val)
 	
 	## Information about the resub event. Null if notice_type is not resub .
 	@export var resub: Resub:
-		set(val): 
+		set(val):
 			resub = val
 			track_data(&"resub", val)
 	
 	## Information about the gift sub event. Null if notice_type is not sub_gift.
 	@export var sub_gift: SubGift:
-		set(val): 
+		set(val):
 			sub_gift = val
 			track_data(&"sub_gift", val)
 	
 	## Information about the community gift sub event. Null if notice_type is not community_sub_gift .
 	@export var community_sub_gift: CommunitySubGift:
-		set(val): 
+		set(val):
 			community_sub_gift = val
 			track_data(&"community_sub_gift", val)
 	
 	## Information about the community gift paid upgrade event. Null if notice_type is not gift_paid_upgrade .
 	@export var gift_paid_upgrade: GiftPaidUpgrade:
-		set(val): 
+		set(val):
 			gift_paid_upgrade = val
 			track_data(&"gift_paid_upgrade", val)
 	
 	## Information about the Prime gift paid upgrade event. Null if notice_type is not prime_paid_upgrade
 	@export var prime_paid_upgrade: PrimePaidUpgrade:
-		set(val): 
+		set(val):
 			prime_paid_upgrade = val
 			track_data(&"prime_paid_upgrade", val)
 	
 	## Information about the pay it forward event. Null if notice_type is not pay_it_forward
 	@export var pay_it_forward: PayItForward:
-		set(val): 
+		set(val):
 			pay_it_forward = val
 			track_data(&"pay_it_forward", val)
 	
 	## Information about the raid event. Null if notice_type is not raid
 	@export var raid: Raid:
-		set(val): 
+		set(val):
 			raid = val
 			track_data(&"raid", val)
 	
 	## Returns an empty payload if notice_type is not unraid , otherwise returns null.
 	@export var unraid: Dictionary:
-		set(val): 
+		set(val):
 			unraid = val
 			track_data(&"unraid", val)
 	
 	## Information about the announcement event. Null if notice_type is not announcement
 	@export var announcement: Announcement:
-		set(val): 
+		set(val):
 			announcement = val
 			track_data(&"announcement", val)
 	
 	## Information about the Bits badge tier event. Null if notice_type is not bits_badge_tier
 	@export var bits_badge_tier: BitsBadgeTier:
-		set(val): 
+		set(val):
 			bits_badge_tier = val
 			track_data(&"bits_badge_tier", val)
 	
 	## Information about the announcement event. Null if notice_type is not charity_donation
 	@export var charity_donation: String:
-		set(val): 
+		set(val):
 			charity_donation = val
 			track_data(&"charity_donation", val)
 	
 	## Name of the charity.
 	@export var charity_name: String:
-		set(val): 
+		set(val):
 			charity_name = val
 			track_data(&"charity_name", val)
 	
 	## An object that contains the amount of money that the user paid.
 	@export var amount: Amount:
-		set(val): 
+		set(val):
 			amount = val
 			track_data(&"amount", val)
 	
 	## Information about the Watch Streak event. Null if notice_type is not watch_streak .
 	@export var watch_streak: WatchStreak:
-		set(val): 
+		set(val):
 			watch_streak = val
 			track_data(&"watch_streak", val)
 	
 	## Optional . The broadcaster user ID of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			source_broadcaster_user_id = val
 			track_data(&"source_broadcaster_user_id", val)
 	
 	## Optional . The user name of the broadcaster of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			source_broadcaster_user_name = val
 			track_data(&"source_broadcaster_user_name", val)
 	
 	## Optional . The login of the broadcaster of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			source_broadcaster_user_login = val
 			track_data(&"source_broadcaster_user_login", val)
 	
 	## Optional . The UUID that identifies the source message from the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_message_id: String:
-		set(val): 
+		set(val):
 			source_message_id = val
 			track_data(&"source_message_id", val)
 	
 	## Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_badges: Array[SourceBadges]:
-		set(val): 
+		set(val):
 			source_badges = val
 			track_data(&"source_badges", val)
 	
 	## Optional . Whether the notification is only sent to the source channel. Is null if the notification is not in a shared chat session.
 	@export var is_source_only: bool:
-		set(val): 
+		set(val):
 			is_source_only = val
 			track_data(&"is_source_only", val)
 	
 	## Optional . Information about the shared_chat_sub event. Is null if notice_type is not shared_chat_sub . This field has the same information as the sub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_sub: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_sub = val
 			track_data(&"shared_chat_sub", val)
 	
 	## Optional . Information about the shared_chat_resub event. Is null if notice_type is not shared_chat_resub . This field has the same information as the resub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_resub: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_resub = val
 			track_data(&"shared_chat_resub", val)
 	
 	## Optional . Information about the shared_chat_sub_gift event. Is null if notice_type is not shared_chat_sub_gift . This field has the same information as the chat_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_sub_gift: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_sub_gift = val
 			track_data(&"shared_chat_sub_gift", val)
 	
 	## Optional . Information about the shared_chat_community_sub_gift event. Is null if notice_type is not shared_chat_community_sub_gift . This field has the same information as the community_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_community_sub_gift: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_community_sub_gift = val
 			track_data(&"shared_chat_community_sub_gift", val)
 	
 	## Optional . Information about the shared_chat_gift_paid_upgrade event. Is null if notice_type is not shared_chat_gift_paid_upgrade . This field has the same information as the gift_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_gift_paid_upgrade: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_gift_paid_upgrade = val
 			track_data(&"shared_chat_gift_paid_upgrade", val)
 	
 	## Optional . Information about the shared_chat_chat_prime_paid_upgrade event. Is null if notice_type is not shared_chat_prime_paid_upgrade . This field has the same information as the prime_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_prime_paid_upgrade: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_prime_paid_upgrade = val
 			track_data(&"shared_chat_prime_paid_upgrade", val)
 	
 	## Optional . Information about the shared_chat_pay_it_forward event. Is null if notice_type is not shared_chat_pay_it_forward . This field has the same information as the pay_it_forward field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_pay_it_forward: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_pay_it_forward = val
 			track_data(&"shared_chat_pay_it_forward", val)
 	
 	## Optional . Information about the shared_chat_raid event. Is null if notice_type is not shared_chat_raid . This field has the same information as the raid field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_raid: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_raid = val
 			track_data(&"shared_chat_raid", val)
 	
 	## Optional . Information about the shared_chat_announcement event. Is null if notice_type is not shared_chat_announcement . This field has the same information as the announcement field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
 	@export var shared_chat_announcement: Dictionary:
-		set(val): 
+		set(val):
 			shared_chat_announcement = val
 			track_data(&"shared_chat_announcement", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:
@@ -391,22 +405,28 @@ class Badges extends TwitchData:
 
 	## An ID that identifies this set of chat badges. For example, Bits or Subscriber.
 	@export var set_id: String:
-		set(val): 
+		set(val):
 			set_id = val
 			track_data(&"set_id", val)
 	
 	## An ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber.
 	@export var info: String:
-		set(val): 
+		set(val):
 			info = val
 			track_data(&"info", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Badges:
+		var badges: Badges = Badges.new()
+		return badges
 	
 	
 	static func from_json(d: Dictionary) -> Badges:
@@ -427,16 +447,22 @@ class Message extends TwitchData:
 
 	## The chat message in plain text.
 	@export var text: Dictionary:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## Ordered list of chat message fragments.
 	@export var fragments: Array[Fragments]:
-		set(val): 
+		set(val):
 			fragments = val
 			track_data(&"fragments", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Message:
+		var message: Message = Message.new()
+		return message
 	
 	
 	static func from_json(d: Dictionary) -> Message:
@@ -456,34 +482,40 @@ class Fragments extends TwitchData:
 
 	## The type of message fragment. Possible values: text cheermote emote mention
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## Message text in fragment.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## Optional . Metadata pertaining to the cheermote.
 	@export var cheermote: Cheermote:
-		set(val): 
+		set(val):
 			cheermote = val
 			track_data(&"cheermote", val)
 	
 	## Optional . Metadata pertaining to the emote.
 	@export var emote: Emote:
-		set(val): 
+		set(val):
 			emote = val
 			track_data(&"emote", val)
 	
 	## Optional . Metadata pertaining to the mention.
 	@export var mention: Mention:
-		set(val): 
+		set(val):
 			mention = val
 			track_data(&"mention", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Fragments:
+		var fragments: Fragments = Fragments.new()
+		return fragments
 	
 	
 	static func from_json(d: Dictionary) -> Fragments:
@@ -508,22 +540,28 @@ class Cheermote extends TwitchData:
 
 	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: Dictionary:
-		set(val): 
+		set(val):
 			prefix = val
 			track_data(&"prefix", val)
 	
 	## The amount of Bits cheered.
 	@export var bits: int:
-		set(val): 
+		set(val):
 			bits = val
 			track_data(&"bits", val)
 	
 	## The tier level of the cheermote.
 	@export var tier: int:
-		set(val): 
+		set(val):
 			tier = val
 			track_data(&"tier", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Cheermote:
+		var cheermote: Cheermote = Cheermote.new()
+		return cheermote
 	
 	
 	static func from_json(d: Dictionary) -> Cheermote:
@@ -544,28 +582,34 @@ class Emote extends TwitchData:
 
 	## An ID that uniquely identifies this emote.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## An ID that identifies the emote set that the emote belongs to.
 	@export var emote_set_id: String:
-		set(val): 
+		set(val):
 			emote_set_id = val
 			track_data(&"emote_set_id", val)
 	
 	## The ID of the broadcaster who owns the emote.
 	@export var owner_id: String:
-		set(val): 
+		set(val):
 			owner_id = val
 			track_data(&"owner_id", val)
 	
 	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote.
 	@export var format: Array[String]:
-		set(val): 
+		set(val):
 			format = val
 			track_data(&"format", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Emote:
+		var emote: Emote = Emote.new()
+		return emote
 	
 	
 	static func from_json(d: Dictionary) -> Emote:
@@ -589,22 +633,28 @@ class Mention extends TwitchData:
 
 	## The user ID of the mentioned user.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user name of the mentioned user.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The user login of the mentioned user.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Mention:
+		var mention: Mention = Mention.new()
+		return mention
 	
 	
 	static func from_json(d: Dictionary) -> Mention:
@@ -625,22 +675,28 @@ class Sub extends TwitchData:
 
 	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
-		set(val): 
+		set(val):
 			sub_tier = val
 			track_data(&"sub_tier", val)
 	
 	## Indicates if the subscription was obtained through Amazon Prime.
 	@export var is_prime: bool:
-		set(val): 
+		set(val):
 			is_prime = val
 			track_data(&"is_prime", val)
 	
 	## The number of months the subscription is for.
 	@export var duration_months: int:
-		set(val): 
+		set(val):
 			duration_months = val
 			track_data(&"duration_months", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Sub:
+		var sub: Sub = Sub.new()
+		return sub
 	
 	
 	static func from_json(d: Dictionary) -> Sub:
@@ -661,64 +717,70 @@ class Resub extends TwitchData:
 
 	## The total number of months the user has subscribed.
 	@export var cumulative_months: int:
-		set(val): 
+		set(val):
 			cumulative_months = val
 			track_data(&"cumulative_months", val)
 	
 	## The number of months the subscription is for.
 	@export var duration_months: int:
-		set(val): 
+		set(val):
 			duration_months = val
 			track_data(&"duration_months", val)
 	
 	## The total number of months the user has subscribed.
 	@export var streak_months: int:
-		set(val): 
+		set(val):
 			streak_months = val
 			track_data(&"streak_months", val)
 	
 	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
-		set(val): 
+		set(val):
 			sub_tier = val
 			track_data(&"sub_tier", val)
 	
 	## Optional . The number of consecutive months the user has subscribed.
 	@export var is_prime: bool:
-		set(val): 
+		set(val):
 			is_prime = val
 			track_data(&"is_prime", val)
 	
 	## Whether or not the resub was a result of a gift.
 	@export var is_gift: bool:
-		set(val): 
+		set(val):
 			is_gift = val
 			track_data(&"is_gift", val)
 	
 	## Optional . Whether or not the gift was anonymous.
 	@export var gifter_is_anonymous: bool:
-		set(val): 
+		set(val):
 			gifter_is_anonymous = val
 			track_data(&"gifter_is_anonymous", val)
 	
 	## The user ID of the subscription gifter. Null if anonymous.
 	@export var gifter_user_id: String:
-		set(val): 
+		set(val):
 			gifter_user_id = val
 			track_data(&"gifter_user_id", val)
 	
 	## The user name of the subscription gifter. Null if anonymous.
 	@export var gifter_user_name: String:
-		set(val): 
+		set(val):
 			gifter_user_name = val
 			track_data(&"gifter_user_name", val)
 	
 	## Optional . The user login of the subscription gifter. Null if anonymous.
 	@export var gifter_user_login: String:
-		set(val): 
+		set(val):
 			gifter_user_login = val
 			track_data(&"gifter_user_login", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Resub:
+		var resub: Resub = Resub.new()
+		return resub
 	
 	
 	static func from_json(d: Dictionary) -> Resub:
@@ -753,46 +815,52 @@ class SubGift extends TwitchData:
 
 	## The number of months the subscription is for.
 	@export var duration_months: int:
-		set(val): 
+		set(val):
 			duration_months = val
 			track_data(&"duration_months", val)
 	
 	## Optional . The amount of gifts the gifter has given in this channel. Null if anonymous.
 	@export var cumulative_total: int:
-		set(val): 
+		set(val):
 			cumulative_total = val
 			track_data(&"cumulative_total", val)
 	
 	## The user ID of the subscription gift recipient.
 	@export var recipient_user_id: String:
-		set(val): 
+		set(val):
 			recipient_user_id = val
 			track_data(&"recipient_user_id", val)
 	
 	## The user name of the subscription gift recipient.
 	@export var recipient_user_name: String:
-		set(val): 
+		set(val):
 			recipient_user_name = val
 			track_data(&"recipient_user_name", val)
 	
 	## The user login of the subscription gift recipient.
 	@export var recipient_user_login: String:
-		set(val): 
+		set(val):
 			recipient_user_login = val
 			track_data(&"recipient_user_login", val)
 	
 	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
-		set(val): 
+		set(val):
 			sub_tier = val
 			track_data(&"sub_tier", val)
 	
 	## Optional . The ID of the associated community gift. Null if not associated with a community gift.
 	@export var community_gift_id: String:
-		set(val): 
+		set(val):
 			community_gift_id = val
 			track_data(&"community_gift_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SubGift:
+		var sub_gift: SubGift = SubGift.new()
+		return sub_gift
 	
 	
 	static func from_json(d: Dictionary) -> SubGift:
@@ -821,28 +889,34 @@ class CommunitySubGift extends TwitchData:
 
 	## The ID of the associated community gift.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## Number of subscriptions being gifted.
 	@export var total: int:
-		set(val): 
+		set(val):
 			total = val
 			track_data(&"total", val)
 	
 	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
-		set(val): 
+		set(val):
 			sub_tier = val
 			track_data(&"sub_tier", val)
 	
 	## Optional . The amount of gifts the gifter has given in this channel. Null if anonymous.
 	@export var cumulative_total: int:
-		set(val): 
+		set(val):
 			cumulative_total = val
 			track_data(&"cumulative_total", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> CommunitySubGift:
+		var community_sub_gift: CommunitySubGift = CommunitySubGift.new()
+		return community_sub_gift
 	
 	
 	static func from_json(d: Dictionary) -> CommunitySubGift:
@@ -865,22 +939,28 @@ class GiftPaidUpgrade extends TwitchData:
 
 	## Whether the gift was given anonymously.
 	@export var gifter_is_anonymous: bool:
-		set(val): 
+		set(val):
 			gifter_is_anonymous = val
 			track_data(&"gifter_is_anonymous", val)
 	
 	## Optional . The user ID of the user who gifted the subscription. Null if anonymous.
 	@export var gifter_user_id: String:
-		set(val): 
+		set(val):
 			gifter_user_id = val
 			track_data(&"gifter_user_id", val)
 	
 	## Optional . The user name of the user who gifted the subscription. Null if anonymous.
 	@export var gifter_user_name: String:
-		set(val): 
+		set(val):
 			gifter_user_name = val
 			track_data(&"gifter_user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> GiftPaidUpgrade:
+		var gift_paid_upgrade: GiftPaidUpgrade = GiftPaidUpgrade.new()
+		return gift_paid_upgrade
 	
 	
 	static func from_json(d: Dictionary) -> GiftPaidUpgrade:
@@ -901,10 +981,16 @@ class PrimePaidUpgrade extends TwitchData:
 
 	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
 	@export var sub_tier: String:
-		set(val): 
+		set(val):
 			sub_tier = val
 			track_data(&"sub_tier", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> PrimePaidUpgrade:
+		var prime_paid_upgrade: PrimePaidUpgrade = PrimePaidUpgrade.new()
+		return prime_paid_upgrade
 	
 	
 	static func from_json(d: Dictionary) -> PrimePaidUpgrade:
@@ -921,28 +1007,34 @@ class PayItForward extends TwitchData:
 
 	## Whether the gift was given anonymously.
 	@export var gifter_is_anonymous: bool:
-		set(val): 
+		set(val):
 			gifter_is_anonymous = val
 			track_data(&"gifter_is_anonymous", val)
 	
 	## The user ID of the user who gifted the subscription. Null if anonymous.
 	@export var gifter_user_id: String:
-		set(val): 
+		set(val):
 			gifter_user_id = val
 			track_data(&"gifter_user_id", val)
 	
 	## Optional . The user name of the user who gifted the subscription. Null if anonymous.
 	@export var gifter_user_name: String:
-		set(val): 
+		set(val):
 			gifter_user_name = val
 			track_data(&"gifter_user_name", val)
 	
 	## The user login of the user who gifted the subscription. Null if anonymous.
 	@export var gifter_user_login: String:
-		set(val): 
+		set(val):
 			gifter_user_login = val
 			track_data(&"gifter_user_login", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> PayItForward:
+		var pay_it_forward: PayItForward = PayItForward.new()
+		return pay_it_forward
 	
 	
 	static func from_json(d: Dictionary) -> PayItForward:
@@ -965,34 +1057,40 @@ class Raid extends TwitchData:
 
 	## The user ID of the broadcaster raiding this channel.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user name of the broadcaster raiding this channel.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The login name of the broadcaster raiding this channel.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The number of viewers raiding this channel from the broadcaster's channel.
 	@export var viewer_count: int:
-		set(val): 
+		set(val):
 			viewer_count = val
 			track_data(&"viewer_count", val)
 	
 	## Profile image URL of the broadcaster raiding this channel.
 	@export var profile_image_url: String:
-		set(val): 
+		set(val):
 			profile_image_url = val
 			track_data(&"profile_image_url", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Raid:
+		var raid: Raid = Raid.new()
+		return raid
 	
 	
 	static func from_json(d: Dictionary) -> Raid:
@@ -1017,10 +1115,16 @@ class Announcement extends TwitchData:
 
 	## Color of the announcement.
 	@export var color: String:
-		set(val): 
+		set(val):
 			color = val
 			track_data(&"color", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Announcement:
+		var announcement: Announcement = Announcement.new()
+		return announcement
 	
 	
 	static func from_json(d: Dictionary) -> Announcement:
@@ -1037,10 +1141,16 @@ class BitsBadgeTier extends TwitchData:
 
 	## The tier of the Bits badge the user just earned. For example, 100, 1000, or 10000.
 	@export var tier: int:
-		set(val): 
+		set(val):
 			tier = val
 			track_data(&"tier", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> BitsBadgeTier:
+		var bits_badge_tier: BitsBadgeTier = BitsBadgeTier.new()
+		return bits_badge_tier
 	
 	
 	static func from_json(d: Dictionary) -> BitsBadgeTier:
@@ -1057,22 +1167,28 @@ class Amount extends TwitchData:
 
 	## The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550.
 	@export var value: int:
-		set(val): 
+		set(val):
 			value = val
 			track_data(&"value", val)
 	
 	## The number of decimal places used by the currency. For example, USD uses two decimal places.
 	@export var decimal_place: int:
-		set(val): 
+		set(val):
 			decimal_place = val
 			track_data(&"decimal_place", val)
 	
 	## The ISO-4217 three-letter currency code that identifies the type of currency in value.
 	@export var currency: String:
-		set(val): 
+		set(val):
 			currency = val
 			track_data(&"currency", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Amount:
+		var amount: Amount = Amount.new()
+		return amount
 	
 	
 	static func from_json(d: Dictionary) -> Amount:
@@ -1093,16 +1209,22 @@ class WatchStreak extends TwitchData:
 
 	## The number of consecutive broadcasts for which the user has been watching.
 	@export var streak_count: int:
-		set(val): 
+		set(val):
 			streak_count = val
 			track_data(&"streak_count", val)
 	
 	## The number of channel points awarded for the Watch Streak milestone.
 	@export var channel_points_awarded: int:
-		set(val): 
+		set(val):
 			channel_points_awarded = val
 			track_data(&"channel_points_awarded", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> WatchStreak:
+		var watch_streak: WatchStreak = WatchStreak.new()
+		return watch_streak
 	
 	
 	static func from_json(d: Dictionary) -> WatchStreak:
@@ -1121,22 +1243,28 @@ class SourceBadges extends TwitchData:
 
 	## The ID that identifies this set of chat badges. For example, Bits or Subscriber.
 	@export var set_id: String:
-		set(val): 
+		set(val):
 			set_id = val
 			track_data(&"set_id", val)
 	
 	## The ID that identifies this version of the badge. The ID can be any value. For example, for Bits, the ID is the Bits tier level, but for World of Warcraft, it could be Alliance or Horde.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## Contains metadata related to the chat badges in the badges tag. Currently, this tag contains metadata only for subscriber badges, to indicate the number of months the user has been a subscriber.
 	@export var info: String:
-		set(val): 
+		set(val):
 			info = val
 			track_data(&"info", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SourceBadges:
+		var source_badges: SourceBadges = SourceBadges.new()
+		return source_badges
 	
 	
 	static func from_json(d: Dictionary) -> SourceBadges:

@@ -9,82 +9,88 @@ class_name TwitchESShoutoutCreate
 	
 ## An ID that identifies the broadcaster that sent the Shoutout.
 @export var broadcaster_user_id: String:
-	set(val): 
+	set(val):
 		broadcaster_user_id = val
 		track_data(&"broadcaster_user_id", val)
 
 ## The broadcaster's login name.
 @export var broadcaster_user_login: String:
-	set(val): 
+	set(val):
 		broadcaster_user_login = val
 		track_data(&"broadcaster_user_login", val)
 
 ## The broadcaster's display name.
 @export var broadcaster_user_name: String:
-	set(val): 
+	set(val):
 		broadcaster_user_name = val
 		track_data(&"broadcaster_user_name", val)
 
 ## An ID that identifies the broadcaster that received the Shoutout.
 @export var to_broadcaster_user_id: String:
-	set(val): 
+	set(val):
 		to_broadcaster_user_id = val
 		track_data(&"to_broadcaster_user_id", val)
 
 ## The broadcaster's login name.
 @export var to_broadcaster_user_login: String:
-	set(val): 
+	set(val):
 		to_broadcaster_user_login = val
 		track_data(&"to_broadcaster_user_login", val)
 
 ## The broadcaster's display name.
 @export var to_broadcaster_user_name: String:
-	set(val): 
+	set(val):
 		to_broadcaster_user_name = val
 		track_data(&"to_broadcaster_user_name", val)
 
 ## An ID that identifies the moderator that sent the Shoutout. If the broadcaster sent the Shoutout, this ID is the same as the ID in broadcaster_user_id .
 @export var moderator_user_id: String:
-	set(val): 
+	set(val):
 		moderator_user_id = val
 		track_data(&"moderator_user_id", val)
 
 ## The moderator's login name.
 @export var moderator_user_login: String:
-	set(val): 
+	set(val):
 		moderator_user_login = val
 		track_data(&"moderator_user_login", val)
 
 ## The moderator's display name.
 @export var moderator_user_name: String:
-	set(val): 
+	set(val):
 		moderator_user_name = val
 		track_data(&"moderator_user_name", val)
 
 ## The number of users that were watching the broadcaster's stream at the time of the Shoutout.
 @export var viewer_count: int:
-	set(val): 
+	set(val):
 		viewer_count = val
 		track_data(&"viewer_count", val)
 
 ## The UTC timestamp (in RFC3339 format) of when the moderator sent the Shoutout.
 @export var started_at: String:
-	set(val): 
+	set(val):
 		started_at = val
 		track_data(&"started_at", val)
 
 ## The UTC timestamp (in RFC3339 format) of when the broadcaster may send a Shoutout to a different broadcaster.
 @export var cooldown_ends_at: String:
-	set(val): 
+	set(val):
 		cooldown_ends_at = val
 		track_data(&"cooldown_ends_at", val)
 
 ## The UTC timestamp (in RFC3339 format) of when the broadcaster may send another Shoutout to the broadcaster in to_broadcaster_user_id .
 @export var target_cooldown_ends_at: String:
-	set(val): 
+	set(val):
 		target_cooldown_ends_at = val
 		track_data(&"target_cooldown_ends_at", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESShoutoutCreate:
+	var twitch_es_shoutout_create: TwitchESShoutoutCreate = TwitchESShoutoutCreate.new()
+	return twitch_es_shoutout_create
 
 
 static func from_json(d: Dictionary) -> TwitchESShoutoutCreate:

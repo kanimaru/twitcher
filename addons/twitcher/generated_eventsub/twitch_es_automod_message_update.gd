@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## User ID of the broadcaster (channel). Maximum:1.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## User ID of the moderator.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String, _moderator_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		condition.moderator_user_id = _moderator_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,94 +49,100 @@ class Event extends TwitchData:
 
 	## The ID of the broadcaster specified in the request.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the broadcaster specified in the request.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The user name of the broadcaster specified in the request.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The message sender's user ID.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The message sender's login name.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The message sender's display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The ID of the moderator.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
 	## TThe moderator's user name.
 	@export var moderator_user_name: String:
-		set(val): 
+		set(val):
 			moderator_user_name = val
 			track_data(&"moderator_user_name", val)
 	
 	## The login of the moderator.
 	@export var moderator_user_login: String:
-		set(val): 
+		set(val):
 			moderator_user_login = val
 			track_data(&"moderator_user_login", val)
 	
 	## The ID of the message that was flagged by automod.
 	@export var message_id: String:
-		set(val): 
+		set(val):
 			message_id = val
 			track_data(&"message_id", val)
 	
 	## The body of the message.
 	@export var message: Message:
-		set(val): 
+		set(val):
 			message = val
 			track_data(&"message", val)
 	
 	## The category of the message.
 	@export var category: String:
-		set(val): 
+		set(val):
 			category = val
 			track_data(&"category", val)
 	
 	## The level of severity. Measured between 1 to 4.
 	@export var level: int:
-		set(val): 
+		set(val):
 			level = val
 			track_data(&"level", val)
 	
 	## The message's status. Possible values are: Approved Denied Expired
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
 	## The timestamp of when automod saved the message.
 	@export var held_at: String:
-		set(val): 
+		set(val):
 			held_at = val
 			track_data(&"held_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:
@@ -173,16 +187,22 @@ class Message extends TwitchData:
 
 	## The contents of the message caught by automod.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## Metadata surrounding the potential inappropriate fragments of the message.
 	@export var fragments: Array[Fragments]:
-		set(val): 
+		set(val):
 			fragments = val
 			track_data(&"fragments", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Message:
+		var message: Message = Message.new()
+		return message
 	
 	
 	static func from_json(d: Dictionary) -> Message:
@@ -202,22 +222,28 @@ class Fragments extends TwitchData:
 
 	## Message text in a fragment.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## Optional. Metadata pertaining to the emote.
 	@export var emote: Emote:
-		set(val): 
+		set(val):
 			emote = val
 			track_data(&"emote", val)
 	
 	## Optional. Metadata pertaining to the cheermote.
 	@export var cheermote: Cheermote:
-		set(val): 
+		set(val):
 			cheermote = val
 			track_data(&"cheermote", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Fragments:
+		var fragments: Fragments = Fragments.new()
+		return fragments
 	
 	
 	static func from_json(d: Dictionary) -> Fragments:
@@ -238,16 +264,22 @@ class Emote extends TwitchData:
 
 	## An ID that uniquely identifies this emote.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## An ID that identifies the emote set that the emote belongs to.
 	@export var emote_set_id: String:
-		set(val): 
+		set(val):
 			emote_set_id = val
 			track_data(&"emote_set_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Emote:
+		var emote: Emote = Emote.new()
+		return emote
 	
 	
 	static func from_json(d: Dictionary) -> Emote:
@@ -266,22 +298,28 @@ class Cheermote extends TwitchData:
 
 	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: String:
-		set(val): 
+		set(val):
 			prefix = val
 			track_data(&"prefix", val)
 	
 	## The amount of Bits cheered.
 	@export var bits: int:
-		set(val): 
+		set(val):
 			bits = val
 			track_data(&"bits", val)
 	
 	## The tier level of the cheermote.
 	@export var tier: int:
-		set(val): 
+		set(val):
 			tier = val
 			track_data(&"tier", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Cheermote:
+		var cheermote: Cheermote = Cheermote.new()
+		return cheermote
 	
 	
 	static func from_json(d: Dictionary) -> Cheermote:
@@ -302,100 +340,106 @@ class EventV2 extends TwitchData:
 
 	## The ID of the broadcaster specified in the request.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the broadcaster specified in the request.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The user name of the broadcaster specified in the request.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The message sender's user ID.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The message sender's login name.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The message sender's display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The ID of the moderator.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
 	## TThe moderator's user name.
 	@export var moderator_user_name: String:
-		set(val): 
+		set(val):
 			moderator_user_name = val
 			track_data(&"moderator_user_name", val)
 	
 	## The login of the moderator.
 	@export var moderator_user_login: String:
-		set(val): 
+		set(val):
 			moderator_user_login = val
 			track_data(&"moderator_user_login", val)
 	
 	## The ID of the message that was flagged by automod.
 	@export var message_id: String:
-		set(val): 
+		set(val):
 			message_id = val
 			track_data(&"message_id", val)
 	
 	## The body of the message.
 	@export var message: MessageV2:
-		set(val): 
+		set(val):
 			message = val
 			track_data(&"message", val)
 	
 	## The message's status. Possible values are: Approved Denied Expired
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
 	## The timestamp of when automod saved the message.
 	@export var held_at: String:
-		set(val): 
+		set(val):
 			held_at = val
 			track_data(&"held_at", val)
 	
 	## The reason why the message was caught. Possible values are: automod blocked_term
 	@export var reason: String:
-		set(val): 
+		set(val):
 			reason = val
 			track_data(&"reason", val)
 	
 	## Optional. If the message was caught by automod, this will be populated.
 	@export var automod: AutomodV2:
-		set(val): 
+		set(val):
 			automod = val
 			track_data(&"automod", val)
 	
 	## Optional. If the message was caught due to a blocked term, this will be populated.
 	@export var blocked_term: BlockedTermV2:
-		set(val): 
+		set(val):
 			blocked_term = val
 			track_data(&"blocked_term", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> EventV2:
+		var event_v_2: EventV2 = EventV2.new()
+		return event_v_2
 	
 	
 	static func from_json(d: Dictionary) -> EventV2:
@@ -442,16 +486,22 @@ class MessageV2 extends TwitchData:
 
 	## The contents of the message caught by automod.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## Metadata surrounding the potential inappropriate fragments of the message.
 	@export var fragments: Array[FragmentsV2]:
-		set(val): 
+		set(val):
 			fragments = val
 			track_data(&"fragments", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> MessageV2:
+		var message_v_2: MessageV2 = MessageV2.new()
+		return message_v_2
 	
 	
 	static func from_json(d: Dictionary) -> MessageV2:
@@ -471,28 +521,34 @@ class FragmentsV2 extends TwitchData:
 
 	## Message text in a fragment.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## One of three options: text emote cheermote
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## Optional. Metadata pertaining to the emote.
 	@export var emote: EmoteV2:
-		set(val): 
+		set(val):
 			emote = val
 			track_data(&"emote", val)
 	
 	## Optional. Metadata pertaining to the cheermote.
 	@export var cheermote: CheermoteV2:
-		set(val): 
+		set(val):
 			cheermote = val
 			track_data(&"cheermote", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> FragmentsV2:
+		var fragments_v_2: FragmentsV2 = FragmentsV2.new()
+		return fragments_v_2
 	
 	
 	static func from_json(d: Dictionary) -> FragmentsV2:
@@ -515,16 +571,22 @@ class EmoteV2 extends TwitchData:
 
 	## An ID that uniquely identifies this emote.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## An ID that identifies the emote set that the emote belongs to.
 	@export var emote_set_id: String:
-		set(val): 
+		set(val):
 			emote_set_id = val
 			track_data(&"emote_set_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> EmoteV2:
+		var emote_v_2: EmoteV2 = EmoteV2.new()
+		return emote_v_2
 	
 	
 	static func from_json(d: Dictionary) -> EmoteV2:
@@ -543,22 +605,28 @@ class CheermoteV2 extends TwitchData:
 
 	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: String:
-		set(val): 
+		set(val):
 			prefix = val
 			track_data(&"prefix", val)
 	
 	## The amount of Bits cheered.
 	@export var bits: int:
-		set(val): 
+		set(val):
 			bits = val
 			track_data(&"bits", val)
 	
 	## The tier level of the cheermote.
 	@export var tier: int:
-		set(val): 
+		set(val):
 			tier = val
 			track_data(&"tier", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> CheermoteV2:
+		var cheermote_v_2: CheermoteV2 = CheermoteV2.new()
+		return cheermote_v_2
 	
 	
 	static func from_json(d: Dictionary) -> CheermoteV2:
@@ -579,22 +647,28 @@ class AutomodV2 extends TwitchData:
 
 	## The category of the caught message.
 	@export var category: String:
-		set(val): 
+		set(val):
 			category = val
 			track_data(&"category", val)
 	
 	## The level of severity (1-4).
 	@export var level: int:
-		set(val): 
+		set(val):
 			level = val
 			track_data(&"level", val)
 	
 	## The bounds of the text that caused the message to be caught.
 	@export var boundaries: Array[BoundariesV2]:
-		set(val): 
+		set(val):
 			boundaries = val
 			track_data(&"boundaries", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> AutomodV2:
+		var automod_v_2: AutomodV2 = AutomodV2.new()
+		return automod_v_2
 	
 	
 	static func from_json(d: Dictionary) -> AutomodV2:
@@ -616,16 +690,22 @@ class BoundariesV2 extends TwitchData:
 
 	## Index in the message for the start of the problem (Starting at 0).
 	@export var start_pos: int:
-		set(val): 
+		set(val):
 			start_pos = val
 			track_data(&"start_pos", val)
 	
 	## Index in the message for the end of the problem (Starting at 0).
 	@export var end_pos: int:
-		set(val): 
+		set(val):
 			end_pos = val
 			track_data(&"end_pos", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> BoundariesV2:
+		var boundaries_v_2: BoundariesV2 = BoundariesV2.new()
+		return boundaries_v_2
 	
 	
 	static func from_json(d: Dictionary) -> BoundariesV2:
@@ -644,10 +724,16 @@ class BlockedTermV2 extends TwitchData:
 
 	## The list of blocked terms found in the message.
 	@export var terms_found: Array[TermsFoundV2]:
-		set(val): 
+		set(val):
 			terms_found = val
 			track_data(&"terms_found", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> BlockedTermV2:
+		var blocked_term_v_2: BlockedTermV2 = BlockedTermV2.new()
+		return blocked_term_v_2
 	
 	
 	static func from_json(d: Dictionary) -> BlockedTermV2:
@@ -665,34 +751,40 @@ class TermsFoundV2 extends TwitchData:
 
 	## The id of the blocked term found.
 	@export var term_id: String:
-		set(val): 
+		set(val):
 			term_id = val
 			track_data(&"term_id", val)
 	
 	## The bounds of the text that caused the message to be caught.
 	@export var boundary: BoundaryV2:
-		set(val): 
+		set(val):
 			boundary = val
 			track_data(&"boundary", val)
 	
 	## The id of the broadcaster that owns the blocked term.
 	@export var owner_broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			owner_broadcaster_user_id = val
 			track_data(&"owner_broadcaster_user_id", val)
 	
 	## The login of the broadcaster that owns the blocked term.
 	@export var owner_broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			owner_broadcaster_user_login = val
 			track_data(&"owner_broadcaster_user_login", val)
 	
 	## The username of the broadcaster that owns the blocked term.
 	@export var owner_broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			owner_broadcaster_user_name = val
 			track_data(&"owner_broadcaster_user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> TermsFoundV2:
+		var terms_found_v_2: TermsFoundV2 = TermsFoundV2.new()
+		return terms_found_v_2
 	
 	
 	static func from_json(d: Dictionary) -> TermsFoundV2:
@@ -717,16 +809,22 @@ class BoundaryV2 extends TwitchData:
 
 	## Index in the message for the start of the problem (0 indexed, inclusive).
 	@export var start_pos: int:
-		set(val): 
+		set(val):
 			start_pos = val
 			track_data(&"start_pos", val)
 	
 	## Index in the message for the end of the problem (0 indexed, inclusive).
 	@export var end_pos: int:
-		set(val): 
+		set(val):
 			end_pos = val
 			track_data(&"end_pos", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> BoundaryV2:
+		var boundary_v_2: BoundaryV2 = BoundaryV2.new()
+		return boundary_v_2
 	
 	
 	static func from_json(d: Dictionary) -> BoundaryV2:

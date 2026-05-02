@@ -9,22 +9,28 @@ class_name TwitchESTwitchImage
 	
 ## URL for the image at 1x size.
 @export var url_1x: String:
-	set(val): 
+	set(val):
 		url_1x = val
 		track_data(&"url_1x", val)
 
 ## URL for the image at 2x size.
 @export var url_2x: String:
-	set(val): 
+	set(val):
 		url_2x = val
 		track_data(&"url_2x", val)
 
 ## URL for the image at 4x size.
 @export var url_4x: String:
-	set(val): 
+	set(val):
 		url_4x = val
 		track_data(&"url_4x", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESTwitchImage:
+	var twitch_es_twitch_image: TwitchESTwitchImage = TwitchESTwitchImage.new()
+	return twitch_es_twitch_image
 
 
 static func from_json(d: Dictionary) -> TwitchESTwitchImage:

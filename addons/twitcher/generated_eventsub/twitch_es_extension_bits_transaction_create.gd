@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The client ID of the extension.
 	@export var extension_client_id: String:
-		set(val): 
+		set(val):
 			extension_client_id = val
 			track_data(&"extension_client_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_extension_client_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.extension_client_id = _extension_client_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,58 +40,64 @@ class Event extends TwitchData:
 
 	## Client ID of the extension.
 	@export var extension_client_id: String:
-		set(val): 
+		set(val):
 			extension_client_id = val
 			track_data(&"extension_client_id", val)
 	
 	## Transaction ID.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The transaction's broadcaster ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The transaction's broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The transaction's broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The transaction's user ID.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The transaction's user login.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The transaction's user display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## Additional extension product information.
 	@export var product: TwitchESProduct:
-		set(val): 
+		set(val):
 			product = val
 			track_data(&"product", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

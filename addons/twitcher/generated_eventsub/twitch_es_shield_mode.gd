@@ -9,52 +9,58 @@ class_name TwitchESShieldMode
 	
 ## An ID that identifies the broadcaster whose Shield Mode status was updated.
 @export var broadcaster_user_id: String:
-	set(val): 
+	set(val):
 		broadcaster_user_id = val
 		track_data(&"broadcaster_user_id", val)
 
 ## The broadcaster's login name.
 @export var broadcaster_user_login: String:
-	set(val): 
+	set(val):
 		broadcaster_user_login = val
 		track_data(&"broadcaster_user_login", val)
 
 ## The broadcaster's display name.
 @export var broadcaster_user_name: String:
-	set(val): 
+	set(val):
 		broadcaster_user_name = val
 		track_data(&"broadcaster_user_name", val)
 
 ## An ID that identifies the moderator that updated the Shield Mode's status. If the broadcaster updated the status, this ID will be the same as broadcaster_user_id .
 @export var moderator_user_id: String:
-	set(val): 
+	set(val):
 		moderator_user_id = val
 		track_data(&"moderator_user_id", val)
 
 ## The moderator's login name.
 @export var moderator_user_login: String:
-	set(val): 
+	set(val):
 		moderator_user_login = val
 		track_data(&"moderator_user_login", val)
 
 ## The moderator's display name.
 @export var moderator_user_name: String:
-	set(val): 
+	set(val):
 		moderator_user_name = val
 		track_data(&"moderator_user_name", val)
 
 ## The UTC timestamp (in RFC3339 format) of when the moderator activated Shield Mode. The object includes this field only for channel.shield_mode.begin events.
 @export var started_at: String:
-	set(val): 
+	set(val):
 		started_at = val
 		track_data(&"started_at", val)
 
 ## The UTC timestamp (in RFC3339 format) of when the moderator deactivated Shield Mode. The object includes this field only for channel.shield_mode.end events.
 @export var ended_at: String:
-	set(val): 
+	set(val):
 		ended_at = val
 		track_data(&"ended_at", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESShieldMode:
+	var twitch_es_shield_mode: TwitchESShieldMode = TwitchESShieldMode.new()
+	return twitch_es_shield_mode
 
 
 static func from_json(d: Dictionary) -> TwitchESShieldMode:

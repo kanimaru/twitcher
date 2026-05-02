@@ -9,28 +9,34 @@ class_name TwitchESReward
 	
 ## The reward identifier.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The reward name.
 @export var title: String:
-	set(val): 
+	set(val):
 		title = val
 		track_data(&"title", val)
 
 ## The reward cost.
 @export var cost: int:
-	set(val): 
+	set(val):
 		cost = val
 		track_data(&"cost", val)
 
 ## The reward description.
 @export var prompt: String:
-	set(val): 
+	set(val):
 		prompt = val
 		track_data(&"prompt", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESReward:
+	var twitch_es_reward: TwitchESReward = TwitchESReward.new()
+	return twitch_es_reward
 
 
 static func from_json(d: Dictionary) -> TwitchESReward:

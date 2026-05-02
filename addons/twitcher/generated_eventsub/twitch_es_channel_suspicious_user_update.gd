@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## The ID of a user that has permission to moderate the broadcaster's channel and has granted your app permission to subscribe to this subscription type.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
 	## The broadcaster you want to get chat unban request notifications for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_moderator_user_id: String, _broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.moderator_user_id = _moderator_user_id
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,64 +49,70 @@ class Event extends TwitchData:
 
 	## The ID of the channel where the treatment for a suspicious user was updated.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The display name of the channel where the treatment for a suspicious user was updated.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The Login of the channel where the treatment for a suspicious user was updated.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The ID of the moderator that updated the treatment for a suspicious user.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
 	## The display name of the moderator that updated the treatment for a suspicious user.
 	@export var moderator_user_name: String:
-		set(val): 
+		set(val):
 			moderator_user_name = val
 			track_data(&"moderator_user_name", val)
 	
 	## The login of the moderator that updated the treatment for a suspicious user.
 	@export var moderator_user_login: String:
-		set(val): 
+		set(val):
 			moderator_user_login = val
 			track_data(&"moderator_user_login", val)
 	
 	## The ID of the suspicious user whose treatment was updated.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The display name of the suspicious user whose treatment was updated.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The login of the suspicious user whose treatment was updated.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The status set for the suspicious user. Can be the following: "none", "active_monitoring", or "restricted".
 	@export var low_trust_status: String:
-		set(val): 
+		set(val):
 			low_trust_status = val
 			track_data(&"low_trust_status", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

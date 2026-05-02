@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## Your application's client id. The provided client_id must match the client id in the application access token.
 	@export var client_id: String:
-		set(val): 
+		set(val):
 			client_id = val
 			track_data(&"client_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_client_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.client_id = _client_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,28 +40,34 @@ class Event extends TwitchData:
 
 	## The client_id of the application with revoked user access.
 	@export var client_id: String:
-		set(val): 
+		set(val):
 			client_id = val
 			track_data(&"client_id", val)
 	
 	## The user id for the user who has revoked authorization for your client id.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user login for the user who has revoked authorization for your client id. This is null if the user no longer exists.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user display name for the user who has revoked authorization for your client id. This is null if the user no longer exists.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

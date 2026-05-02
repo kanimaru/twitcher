@@ -9,16 +9,22 @@ class_name TwitchESChannelPointsVoting
 	
 ## Indicates if Channel Points can be used for voting.
 @export var is_enabled: bool:
-	set(val): 
+	set(val):
 		is_enabled = val
 		track_data(&"is_enabled", val)
 
 ## Number of Channel Points required to vote once with Channel Points.
 @export var amount_per_vote: int:
-	set(val): 
+	set(val):
 		amount_per_vote = val
 		track_data(&"amount_per_vote", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESChannelPointsVoting:
+	var twitch_es_channel_points_voting: TwitchESChannelPointsVoting = TwitchESChannelPointsVoting.new()
+	return twitch_es_channel_points_voting
 
 
 static func from_json(d: Dictionary) -> TwitchESChannelPointsVoting:

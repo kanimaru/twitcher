@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The user ID for the user you want update notifications for.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.user_id = _user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,40 +40,46 @@ class Event extends TwitchData:
 
 	## The user's user id.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user's user login.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user's user display name.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The user's email address. The event includes the user's email address only if the app used to request this event type includes the user:read:email scope for the user; otherwise, the field is set to an empty string. See Create EventSub Subscription .
 	@export var email: String:
-		set(val): 
+		set(val):
 			email = val
 			track_data(&"email", val)
 	
 	## A Boolean value that determines whether Twitch has verified the user's email address. Is true if Twitch has verified the email address; otherwise, false. NOTE: Ignore this field if the email field contains an empty string.
 	@export var email_verified: bool:
-		set(val): 
+		set(val):
 			email_verified = val
 			track_data(&"email_verified", val)
 	
 	## The user's description.
 	@export var description: String:
-		set(val): 
+		set(val):
 			description = val
 			track_data(&"description", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

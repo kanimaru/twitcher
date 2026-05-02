@@ -9,34 +9,40 @@ class_name TwitchESTopPredictors
 	
 ## The ID of the user.
 @export var user_id: String:
-	set(val): 
+	set(val):
 		user_id = val
 		track_data(&"user_id", val)
 
 ## The login of the user.
 @export var user_login: String:
-	set(val): 
+	set(val):
 		user_login = val
 		track_data(&"user_login", val)
 
 ## The display name of the user.
 @export var user_name: String:
-	set(val): 
+	set(val):
 		user_name = val
 		track_data(&"user_name", val)
 
 ## The number of Channel Points won. This value is always null in the event payload for Prediction progress and Prediction lock. This value is 0 if the outcome did not win or if the Prediction was canceled and Channel Points were refunded.
 @export var channel_points_won: int:
-	set(val): 
+	set(val):
 		channel_points_won = val
 		track_data(&"channel_points_won", val)
 
 ## The number of Channel Points used to participate in the Prediction.
 @export var channel_points_used: int:
-	set(val): 
+	set(val):
 		channel_points_used = val
 		track_data(&"channel_points_used", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESTopPredictors:
+	var twitch_es_top_predictors: TwitchESTopPredictors = TwitchESTopPredictors.new()
+	return twitch_es_top_predictors
 
 
 static func from_json(d: Dictionary) -> TwitchESTopPredictors:

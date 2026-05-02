@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The user ID of the channel broadcaster. Maximum: 1.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,70 +40,76 @@ class Event extends TwitchData:
 
 	## The User ID of the channel where the Bits were redeemed.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the channel where the Bits were used.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The display name of the channel where the Bits were used.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The User ID of the redeeming user.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The login name of the redeeming user.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The display name of the redeeming user.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The number of Bits used.
 	@export var bits: int:
-		set(val): 
+		set(val):
 			bits = val
 			track_data(&"bits", val)
 	
 	## Possible values are: cheer power_up custom_power_up
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## Optional. An object that contains the user message and emote information needed to recreate the message.
 	@export var message: Message:
-		set(val): 
+		set(val):
 			message = val
 			track_data(&"message", val)
 	
 	## Optional. Data about a default (i.e. built-in) Power-up.
 	@export var power_up: PowerUp:
-		set(val): 
+		set(val):
 			power_up = val
 			track_data(&"power_up", val)
 	
 	## Optional. Data about a custom Power-up.
 	@export var custom_power_up: CustomPowerUp:
-		set(val): 
+		set(val):
 			custom_power_up = val
 			track_data(&"custom_power_up", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:
@@ -133,16 +146,22 @@ class Message extends TwitchData:
 
 	## The chat message in plain text.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## The ordered list of chat message fragments.
 	@export var fragments: Array[Fragments]:
-		set(val): 
+		set(val):
 			fragments = val
 			track_data(&"fragments", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Message:
+		var message: Message = Message.new()
+		return message
 	
 	
 	static func from_json(d: Dictionary) -> Message:
@@ -162,28 +181,34 @@ class Fragments extends TwitchData:
 
 	## The message text in fragment.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
 	## The type of message fragment. Possible values are: text cheermote emote
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## Optional. The metadata pertaining to the emote.
 	@export var emote: Emote:
-		set(val): 
+		set(val):
 			emote = val
 			track_data(&"emote", val)
 	
 	## Optional. The metadata pertaining to the cheermote.
 	@export var cheermote: Cheermote:
-		set(val): 
+		set(val):
 			cheermote = val
 			track_data(&"cheermote", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Fragments:
+		var fragments: Fragments = Fragments.new()
+		return fragments
 	
 	
 	static func from_json(d: Dictionary) -> Fragments:
@@ -206,28 +231,34 @@ class Emote extends TwitchData:
 
 	## The ID that uniquely identifies this emote.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The ID that identifies the emote set that the emote belongs to.
 	@export var emote_set_id: String:
-		set(val): 
+		set(val):
 			emote_set_id = val
 			track_data(&"emote_set_id", val)
 	
 	## The ID of the broadcaster who owns the emote.
 	@export var owner_id: String:
-		set(val): 
+		set(val):
 			owner_id = val
 			track_data(&"owner_id", val)
 	
 	## The formats that the emote is available in. For example, if the emote is available only as a static PNG, the array contains only static. But if the emote is available as a static PNG and an animated GIF, the array contains static and animated. The possible formats are: animated - An animated GIF is available for this emote. static - A static PNG file is available for this emote.
 	@export var format: Array[String]:
-		set(val): 
+		set(val):
 			format = val
 			track_data(&"format", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Emote:
+		var emote: Emote = Emote.new()
+		return emote
 	
 	
 	static func from_json(d: Dictionary) -> Emote:
@@ -251,22 +282,28 @@ class Cheermote extends TwitchData:
 
 	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: String:
-		set(val): 
+		set(val):
 			prefix = val
 			track_data(&"prefix", val)
 	
 	## The amount of Bits cheered.
 	@export var bits: int:
-		set(val): 
+		set(val):
 			bits = val
 			track_data(&"bits", val)
 	
 	## The tier level of the cheermote.
 	@export var tier: int:
-		set(val): 
+		set(val):
 			tier = val
 			track_data(&"tier", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Cheermote:
+		var cheermote: Cheermote = Cheermote.new()
+		return cheermote
 	
 	
 	static func from_json(d: Dictionary) -> Cheermote:
@@ -287,22 +324,28 @@ class PowerUp extends TwitchData:
 
 	## Possible values: message_effect celebration gigantify_an_emote
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## Optional. Emote associated with the reward.
 	@export var emote: PowerUp_Emote:
-		set(val): 
+		set(val):
 			emote = val
 			track_data(&"emote", val)
 	
 	## Optional. The ID of the message effect.
 	@export var message_effect_id: String:
-		set(val): 
+		set(val):
 			message_effect_id = val
 			track_data(&"message_effect_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> PowerUp:
+		var power_up: PowerUp = PowerUp.new()
+		return power_up
 	
 	
 	static func from_json(d: Dictionary) -> PowerUp:
@@ -323,16 +366,22 @@ class PowerUp_Emote extends TwitchData:
 
 	## The ID that uniquely identifies this emote.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The human readable emote token.
 	@export var name: String:
-		set(val): 
+		set(val):
 			name = val
 			track_data(&"name", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> PowerUp_Emote:
+		var power_up_emote: PowerUp_Emote = PowerUp_Emote.new()
+		return power_up_emote
 	
 	
 	static func from_json(d: Dictionary) -> PowerUp_Emote:
@@ -351,16 +400,22 @@ class CustomPowerUp extends TwitchData:
 
 	## The title of the custom Power-up.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## The ID of the custom Power-up.
 	@export var reward_id: String:
-		set(val): 
+		set(val):
 			reward_id = val
 			track_data(&"reward_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> CustomPowerUp:
+		var custom_power_up: CustomPowerUp = CustomPowerUp.new()
+		return custom_power_up
 	
 	
 	static func from_json(d: Dictionary) -> CustomPowerUp:

@@ -9,16 +9,22 @@ class_name TwitchESGlobalCooldown
 	
 ## Is the setting enabled.
 @export var is_enabled: bool:
-	set(val): 
+	set(val):
 		is_enabled = val
 		track_data(&"is_enabled", val)
 
 ## The cooldown in seconds.
 @export var seconds: int:
-	set(val): 
+	set(val):
 		seconds = val
 		track_data(&"seconds", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESGlobalCooldown:
+	var twitch_es_global_cooldown: TwitchESGlobalCooldown = TwitchESGlobalCooldown.new()
+	return twitch_es_global_cooldown
 
 
 static func from_json(d: Dictionary) -> TwitchESGlobalCooldown:

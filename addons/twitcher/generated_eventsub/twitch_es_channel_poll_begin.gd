@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID of the channel for which "poll begin" notifications will be received.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,64 +40,70 @@ class Event extends TwitchData:
 
 	## ID of the poll.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The requested broadcaster ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The requested broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The requested broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## Question displayed for the poll.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## An array of choices for the poll.
 	@export var choices: TwitchESChoices:
-		set(val): 
+		set(val):
 			choices = val
 			track_data(&"choices", val)
 	
 	## Not supported.
 	@export var bits_voting: TwitchESBitsVoting:
-		set(val): 
+		set(val):
 			bits_voting = val
 			track_data(&"bits_voting", val)
 	
 	## The Channel Points voting settings for the poll.
 	@export var channel_points_voting: int:
-		set(val): 
+		set(val):
 			channel_points_voting = val
 			track_data(&"channel_points_voting", val)
 	
 	## The time the poll started.
 	@export var started_at: String:
-		set(val): 
+		set(val):
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The time the poll will end.
 	@export var ends_at: String:
-		set(val): 
+		set(val):
 			ends_at = val
 			track_data(&"ends_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

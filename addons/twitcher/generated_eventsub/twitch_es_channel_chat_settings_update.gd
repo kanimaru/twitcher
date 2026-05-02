@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## User ID of the channel to receive chat settings update events for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The user ID to read chat as.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String, _user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		condition.user_id = _user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,64 +49,70 @@ class Event extends TwitchData:
 
 	## The ID of the broadcaster specified in the request.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The login of the broadcaster specified in the request.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The user name of the broadcaster specified in the request.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## A Boolean value that determines whether chat messages must contain only emotes. True if only messages that are 100% emotes are allowed; otherwise false.
 	@export var emote_mode: bool:
-		set(val): 
+		set(val):
 			emote_mode = val
 			track_data(&"emote_mode", val)
 	
 	## A Boolean value that determines whether the broadcaster restricts the chat room to followers only, based on how long they've followed. True if the broadcaster restricts the chat room to followers only; otherwise false. See follower_mode_duration_minutes for how long the followers must have followed the broadcaster to participate in the chat room.
 	@export var follower_mode: bool:
-		set(val): 
+		set(val):
 			follower_mode = val
 			track_data(&"follower_mode", val)
 	
 	## The length of time, in minutes, that the followers must have followed the broadcaster to participate in the chat room. See follower_mode . Null if follower_mode is false.
 	@export var follower_mode_duration_minutes: int:
-		set(val): 
+		set(val):
 			follower_mode_duration_minutes = val
 			track_data(&"follower_mode_duration_minutes", val)
 	
 	## A Boolean value that determines whether the broadcaster limits how often users in the chat room are allowed to send messages. Is true, if the broadcaster applies a delay; otherwise, false. See slow_mode_wait_time_seconds for the delay.
 	@export var slow_mode: bool:
-		set(val): 
+		set(val):
 			slow_mode = val
 			track_data(&"slow_mode", val)
 	
 	## The amount of time, in seconds, that users need to wait between sending messages. See slow_mode . Null if slow_mode is false.
 	@export var slow_mode_wait_time_seconds: int:
-		set(val): 
+		set(val):
 			slow_mode_wait_time_seconds = val
 			track_data(&"slow_mode_wait_time_seconds", val)
 	
 	## A Boolean value that determines whether only users that subscribe to the broadcaster's channel can talk in the chat room. True if the broadcaster restricts the chat room to subscribers only; otherwise false.
 	@export var subscriber_mode: bool:
-		set(val): 
+		set(val):
 			subscriber_mode = val
 			track_data(&"subscriber_mode", val)
 	
 	## A Boolean value that determines whether the broadcaster requires users to post only unique messages in the chat room. True if the broadcaster requires unique messages only; otherwise false.
 	@export var unique_chat_mode: bool:
-		set(val): 
+		set(val):
 			unique_chat_mode = val
 			track_data(&"unique_chat_mode", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

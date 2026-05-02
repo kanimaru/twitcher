@@ -13,22 +13,29 @@ class Condition extends TwitchData:
 
 	## The organization ID of the organization that owns the game on the developer portal.
 	@export var organization_id: String:
-		set(val): 
+		set(val):
 			organization_id = val
 			track_data(&"organization_id", val)
 	
 	## The category (or game) ID of the game for which entitlement notifications will be received.
 	@export var category_id: String:
-		set(val): 
+		set(val):
 			category_id = val
 			track_data(&"category_id", val)
 	
 	## The campaign ID for a specific campaign for which entitlement notifications will be received.
 	@export var campaign_id: String:
-		set(val): 
+		set(val):
 			campaign_id = val
 			track_data(&"campaign_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_organization_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.organization_id = _organization_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -49,16 +56,22 @@ class Event extends TwitchData:
 
 	## Individual event ID, as assigned by EventSub. Use this for de-duplicating messages.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## Entitlement object.
 	@export var data: Array[Variant]:
-		set(val): 
+		set(val):
 			data = val
 			track_data(&"data", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

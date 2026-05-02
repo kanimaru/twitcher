@@ -9,16 +9,22 @@ class_name TwitchESMaxPerUserPerStream
 	
 ## Is the setting enabled.
 @export var is_enabled: bool:
-	set(val): 
+	set(val):
 		is_enabled = val
 		track_data(&"is_enabled", val)
 
 ## The max per user per stream limit.
 @export var value: int:
-	set(val): 
+	set(val):
 		value = val
 		track_data(&"value", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESMaxPerUserPerStream:
+	var twitch_es_max_per_user_per_stream: TwitchESMaxPerUserPerStream = TwitchESMaxPerUserPerStream.new()
+	return twitch_es_max_per_user_per_stream
 
 
 static func from_json(d: Dictionary) -> TwitchESMaxPerUserPerStream:

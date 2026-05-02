@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID for the channel you want to get resubscription chat message notifications for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,70 +40,76 @@ class Event extends TwitchData:
 
 	## The user ID of the user who sent a resubscription chat message.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## The user login of the user who sent a resubscription chat message.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## The user display name of the user who a resubscription chat message.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The broadcaster user ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The tier of the user's subscription.
 	@export var tier: String:
-		set(val): 
+		set(val):
 			tier = val
 			track_data(&"tier", val)
 	
 	## An object that contains the resubscription message and emote information needed to recreate the message.
 	@export var message: TwitchESMessage:
-		set(val): 
+		set(val):
 			message = val
 			track_data(&"message", val)
 	
 	## The total number of months the user has been subscribed to the channel.
 	@export var cumulative_months: int:
-		set(val): 
+		set(val):
 			cumulative_months = val
 			track_data(&"cumulative_months", val)
 	
 	## The number of consecutive months the user's current subscription has been active. This value is null if the user has opted out of sharing this information.
 	@export var streak_months: int:
-		set(val): 
+		set(val):
 			streak_months = val
 			track_data(&"streak_months", val)
 	
 	## The month duration of the subscription.
 	@export var duration_months: int:
-		set(val): 
+		set(val):
 			duration_months = val
 			track_data(&"duration_months", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

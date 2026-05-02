@@ -9,28 +9,34 @@ class_name TwitchESProduct
 	
 ## Product name.
 @export var name: String:
-	set(val): 
+	set(val):
 		name = val
 		track_data(&"name", val)
 
 ## Bits involved in the transaction.
 @export var bits: int:
-	set(val): 
+	set(val):
 		bits = val
 		track_data(&"bits", val)
 
 ## Unique identifier for the product acquired.
 @export var sku: String:
-	set(val): 
+	set(val):
 		sku = val
 		track_data(&"sku", val)
 
 ## Flag indicating if the product is in development. If in_development is true, bits will be 0.
 @export var in_development: bool:
-	set(val): 
+	set(val):
 		in_development = val
 		track_data(&"in_development", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESProduct:
+	var twitch_es_product: TwitchESProduct = TwitchESProduct.new()
+	return twitch_es_product
 
 
 static func from_json(d: Dictionary) -> TwitchESProduct:

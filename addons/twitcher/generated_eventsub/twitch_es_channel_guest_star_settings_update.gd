@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID of the channel hosting the Guest Star Session
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The user ID of the moderator or broadcaster of the specified channel.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String, _moderator_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		condition.moderator_user_id = _moderator_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,46 +49,52 @@ class Event extends TwitchData:
 
 	## User ID of the host channel.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster display name
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## he broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## Flag determining if Guest Star moderators have access to control whether a guest is live once assigned to a slot.
 	@export var is_moderator_send_live_enabled: bool:
-		set(val): 
+		set(val):
 			is_moderator_send_live_enabled = val
 			track_data(&"is_moderator_send_live_enabled", val)
 	
 	## Number of slots the Guest Star call interface will allow the host to add to a call.
 	@export var slot_count: int:
-		set(val): 
+		set(val):
 			slot_count = val
 			track_data(&"slot_count", val)
 	
 	## Flag determining if browser sources subscribed to sessions on this channel should output audio.
 	@export var is_browser_source_audio_enabled: bool:
-		set(val): 
+		set(val):
 			is_browser_source_audio_enabled = val
 			track_data(&"is_browser_source_audio_enabled", val)
 	
 	## This setting determines how the guests within a session should be laid out within a group browser source. Can be one of the following values: tiled — All live guests are tiled within the browser source with the same size. screenshare — All live guests are tiled within the browser source with the same size. If there is an active screen share, it is sized larger than the other guests. horizontal_top — Indicates the group layout will contain all participants in a top-aligned horizontal stack. horizontal_bottom — Indicates the group layout will contain all participants in a bottom-aligned horizontal stack. vertical_left — Indicates the group layout will contain all participants in a left-aligned vertical stack. vertical_right — Indicates the group layout will contain all participants in a right-aligned vertical stack.
 	@export var group_layout: String:
-		set(val): 
+		set(val):
 			group_layout = val
 			track_data(&"group_layout", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

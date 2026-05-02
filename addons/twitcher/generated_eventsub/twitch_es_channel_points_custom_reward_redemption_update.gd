@@ -13,16 +13,23 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID for the channel you want to receive channel points custom reward redemption update notifications for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## Optional . Specify a reward id to only receive notifications for a specific reward.
 	@export var reward_id: String:
-		set(val): 
+		set(val):
 			reward_id = val
 			track_data(&"reward_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,70 +48,76 @@ class Event extends TwitchData:
 
 	## The redemption identifier.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The requested broadcaster ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The requested broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The requested broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## User ID of the user that redeemed the reward.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
 	## Login of the user that redeemed the reward.
 	@export var user_login: String:
-		set(val): 
+		set(val):
 			user_login = val
 			track_data(&"user_login", val)
 	
 	## Display name of the user that redeemed the reward.
 	@export var user_name: String:
-		set(val): 
+		set(val):
 			user_name = val
 			track_data(&"user_name", val)
 	
 	## The user input provided. Empty string if not provided.
 	@export var user_input: String:
-		set(val): 
+		set(val):
 			user_input = val
 			track_data(&"user_input", val)
 	
 	## Will be fulfilled or canceled . Possible values are unknown , unfulfilled , fulfilled , and canceled .
 	@export var status: String:
-		set(val): 
+		set(val):
 			status = val
 			track_data(&"status", val)
 	
 	## Basic information about the reward that was redeemed, at the time it was redeemed.
 	@export var reward: TwitchESReward:
-		set(val): 
+		set(val):
 			reward = val
 			track_data(&"reward", val)
 	
 	## RFC3339 timestamp of when the reward was redeemed.
 	@export var redeemed_at: String:
-		set(val): 
+		set(val):
 			redeemed_at = val
 			track_data(&"redeemed_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

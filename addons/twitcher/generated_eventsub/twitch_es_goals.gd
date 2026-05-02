@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The ID of the broadcaster to get notified about. The ID must match the user_id in the OAuth access token.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,70 +40,76 @@ class Event extends TwitchData:
 
 	## An ID that identifies this event.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## An ID that uniquely identifies the broadcaster.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The broadcaster's display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The broadcaster's user handle.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The type of goal. Possible values are: follow — The goal is to increase followers. subscription — The goal is to increase subscriptions. This type shows the net increase or decrease in tier points associated with the subscriptions. subscription_count — The goal is to increase subscriptions. This type shows the net increase or decrease in the number of subscriptions. new_subscription — The goal is to increase subscriptions. This type shows only the net increase in tier points associated with the subscriptions (it does not account for users that unsubscribed since the goal started). new_subscription_count — The goal is to increase subscriptions. This type shows only the net increase in the number of subscriptions (it does not account for users that unsubscribed since the goal started). new_bit — The goal is to increase the amount of Bits used on the channel. new_cheerer — The goal is to increase the number of unique Cheerers to Cheer on the channel.
 	@export var type: String:
-		set(val): 
+		set(val):
 			type = val
 			track_data(&"type", val)
 	
 	## A description of the goal, if specified. The description may contain a maximum of 40 characters.
 	@export var description: String:
-		set(val): 
+		set(val):
 			description = val
 			track_data(&"description", val)
 	
 	## A Boolean value that indicates whether the broadcaster achieved their goal. Is true if the goal was achieved; otherwise, false . Only the channel.goal.end event includes this field.
 	@export var is_achieved: bool:
-		set(val): 
+		set(val):
 			is_achieved = val
 			track_data(&"is_achieved", val)
 	
 	## The goal's current value. The goal's type determines how this value is increased or decreased. If type is follow, this field is set to the broadcaster's current number of followers. This number increases with new followers and decreases when users unfollow the broadcaster. If type is subscription, this field is increased and decreased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased or decreased by 2, not 1. If type is subscription_count, this field is increased by 1 for each new subscription and decreased by 1 for each user that unsubscribes. If type is new_subscription, this field is increased by the points value associated with the subscription tier. For example, if a tier-two subscription is worth 2 points, this field is increased by 2, not 1. If type is new_subscription_count, this field is increased by 1 for each new subscription.
 	@export var current_amount: int:
-		set(val): 
+		set(val):
 			current_amount = val
 			track_data(&"current_amount", val)
 	
 	## The goal's target value. For example, if the broadcaster has 200 followers before creating the goal, and their goal is to double that number, this field is set to 400.
 	@export var target_amount: int:
-		set(val): 
+		set(val):
 			target_amount = val
 			track_data(&"target_amount", val)
 	
 	## The UTC timestamp in RFC 3339 format, which indicates when the broadcaster created the goal.
 	@export var started_at: String:
-		set(val): 
+		set(val):
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## The UTC timestamp in RFC 3339 format, which indicates when the broadcaster ended the goal. Only the channel.goal.end event includes this field.
 	@export var ended_at: String:
-		set(val): 
+		set(val):
 			ended_at = val
 			track_data(&"ended_at", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

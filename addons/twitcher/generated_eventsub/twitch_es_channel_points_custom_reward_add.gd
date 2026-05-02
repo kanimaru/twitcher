@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID for the channel you want to receive channel points custom reward add notifications for.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,124 +40,130 @@ class Event extends TwitchData:
 
 	## The reward identifier.
 	@export var id: String:
-		set(val): 
+		set(val):
 			id = val
 			track_data(&"id", val)
 	
 	## The requested broadcaster ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The requested broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## The requested broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## Is the reward currently enabled. If false, the reward won't show up to viewers.
 	@export var is_enabled: bool:
-		set(val): 
+		set(val):
 			is_enabled = val
 			track_data(&"is_enabled", val)
 	
 	## Is the reward currently paused. If true, viewers can't redeem.
 	@export var is_paused: bool:
-		set(val): 
+		set(val):
 			is_paused = val
 			track_data(&"is_paused", val)
 	
 	## Is the reward currently in stock. If false, viewers can't redeem.
 	@export var is_in_stock: bool:
-		set(val): 
+		set(val):
 			is_in_stock = val
 			track_data(&"is_in_stock", val)
 	
 	## The reward title.
 	@export var title: String:
-		set(val): 
+		set(val):
 			title = val
 			track_data(&"title", val)
 	
 	## The reward cost.
 	@export var cost: int:
-		set(val): 
+		set(val):
 			cost = val
 			track_data(&"cost", val)
 	
 	## The reward description.
 	@export var prompt: String:
-		set(val): 
+		set(val):
 			prompt = val
 			track_data(&"prompt", val)
 	
 	## Does the viewer need to enter information when redeeming the reward.
 	@export var is_user_input_required: bool:
-		set(val): 
+		set(val):
 			is_user_input_required = val
 			track_data(&"is_user_input_required", val)
 	
 	## Should redemptions be set to fulfilled status immediately when redeemed and skip the request queue instead of the normal unfulfilled status.
 	@export var should_redemptions_skip_request_queue: bool:
-		set(val): 
+		set(val):
 			should_redemptions_skip_request_queue = val
 			track_data(&"should_redemptions_skip_request_queue", val)
 	
 	## Whether a maximum per stream is enabled and what the maximum is.
 	@export var max_per_stream: TwitchESMaxPerStream:
-		set(val): 
+		set(val):
 			max_per_stream = val
 			track_data(&"max_per_stream", val)
 	
 	## Whether a maximum per user per stream is enabled and what the maximum is.
 	@export var max_per_user_per_stream: TwitchESMaxPerUserPerStream:
-		set(val): 
+		set(val):
 			max_per_user_per_stream = val
 			track_data(&"max_per_user_per_stream", val)
 	
 	## Custom background color for the reward. Format: Hex with # prefix. Example: #FA1ED2 .
 	@export var background_color: String:
-		set(val): 
+		set(val):
 			background_color = val
 			track_data(&"background_color", val)
 	
 	## Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded.
 	@export var image: Variant:
-		set(val): 
+		set(val):
 			image = val
 			track_data(&"image", val)
 	
 	## Set of default images of 1x, 2x and 4x sizes for the reward.
 	@export var default_image: TwitchESTwitchImage:
-		set(val): 
+		set(val):
 			default_image = val
 			track_data(&"default_image", val)
 	
 	## Whether a cooldown is enabled and what the cooldown is in seconds.
 	@export var global_cooldown: TwitchESGlobalCooldown:
-		set(val): 
+		set(val):
 			global_cooldown = val
 			track_data(&"global_cooldown", val)
 	
 	## Timestamp of the cooldown expiration. null if the reward isn't on cooldown.
 	@export var cooldown_expires_at: String:
-		set(val): 
+		set(val):
 			cooldown_expires_at = val
 			track_data(&"cooldown_expires_at", val)
 	
 	## The number of redemptions redeemed during the current live stream. Counts against the max_per_stream limit. null if the broadcasters stream isn't live or max_per_stream isn't enabled.
 	@export var redemptions_redeemed_current_stream: int:
-		set(val): 
+		set(val):
 			redemptions_redeemed_current_stream = val
 			track_data(&"redemptions_redeemed_current_stream", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

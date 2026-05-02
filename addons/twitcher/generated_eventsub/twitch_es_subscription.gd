@@ -9,46 +9,52 @@ class_name TwitchESSubscription
 	
 ## Your client ID.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
 ## The notification's subscription type.
 @export var type: String:
-	set(val): 
+	set(val):
 		type = val
 		track_data(&"type", val)
 
 ## The version of the subscription.
 @export var version: String:
-	set(val): 
+	set(val):
 		version = val
 		track_data(&"version", val)
 
 ## The status of the subscription.
 @export var status: String:
-	set(val): 
+	set(val):
 		status = val
 		track_data(&"status", val)
 
 ## How much the subscription counts against your limit. See Subscription Limits for more information.
 @export var cost: int:
-	set(val): 
+	set(val):
 		cost = val
 		track_data(&"cost", val)
 
 ## Subscription-specific parameters.
 @export var condition: Dictionary:
-	set(val): 
+	set(val):
 		condition = val
 		track_data(&"condition", val)
 
 ## The time the notification was created.
 @export var created_at: String:
-	set(val): 
+	set(val):
 		created_at = val
 		track_data(&"created_at", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESSubscription:
+	var twitch_es_subscription: TwitchESSubscription = TwitchESSubscription.new()
+	return twitch_es_subscription
 
 
 static func from_json(d: Dictionary) -> TwitchESSubscription:

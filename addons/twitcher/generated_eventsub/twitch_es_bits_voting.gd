@@ -9,16 +9,22 @@ class_name TwitchESBitsVoting
 	
 ## Not used; will be set to false .
 @export var is_enabled: bool:
-	set(val): 
+	set(val):
 		is_enabled = val
 		track_data(&"is_enabled", val)
 
 ## Not used; will be set to 0.
 @export var amount_per_vote: int:
-	set(val): 
+	set(val):
 		amount_per_vote = val
 		track_data(&"amount_per_vote", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESBitsVoting:
+	var twitch_es_bits_voting: TwitchESBitsVoting = TwitchESBitsVoting.new()
+	return twitch_es_bits_voting
 
 
 static func from_json(d: Dictionary) -> TwitchESBitsVoting:

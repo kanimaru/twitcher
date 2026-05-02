@@ -13,16 +13,24 @@ class Condition extends TwitchData:
 
 	## The broadcaster user ID of the channel hosting the Guest Star Session
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The user ID of the moderator or broadcaster of the specified channel.
 	@export var moderator_user_id: String:
-		set(val): 
+		set(val):
 			moderator_user_id = val
 			track_data(&"moderator_user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_broadcaster_user_id: String, _moderator_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.broadcaster_user_id = _broadcaster_user_id
+		condition.moderator_user_id = _moderator_user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -41,58 +49,64 @@ class Event extends TwitchData:
 
 	## The non-host broadcaster user ID.
 	@export var broadcaster_user_id: String:
-		set(val): 
+		set(val):
 			broadcaster_user_id = val
 			track_data(&"broadcaster_user_id", val)
 	
 	## The non-host broadcaster display name.
 	@export var broadcaster_user_name: String:
-		set(val): 
+		set(val):
 			broadcaster_user_name = val
 			track_data(&"broadcaster_user_name", val)
 	
 	## The non-host broadcaster login.
 	@export var broadcaster_user_login: String:
-		set(val): 
+		set(val):
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
 	## ID representing the unique session that was started.
 	@export var session_id: String:
-		set(val): 
+		set(val):
 			session_id = val
 			track_data(&"session_id", val)
 	
 	## RFC3339 timestamp indicating the time the session began.
 	@export var started_at: String:
-		set(val): 
+		set(val):
 			started_at = val
 			track_data(&"started_at", val)
 	
 	## RFC3339 timestamp indicating the time the session ended.
 	@export var ended_at: String:
-		set(val): 
+		set(val):
 			ended_at = val
 			track_data(&"ended_at", val)
 	
 	## User ID of the host channel.
 	@export var host_user_id: String:
-		set(val): 
+		set(val):
 			host_user_id = val
 			track_data(&"host_user_id", val)
 	
 	## The host display name.
 	@export var host_user_name: String:
-		set(val): 
+		set(val):
 			host_user_name = val
 			track_data(&"host_user_name", val)
 	
 	## The host login.
 	@export var host_user_login: String:
-		set(val): 
+		set(val):
 			host_user_login = val
 			track_data(&"host_user_login", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:

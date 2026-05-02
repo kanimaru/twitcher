@@ -13,10 +13,17 @@ class Condition extends TwitchData:
 
 	## The user_id of the person receiving whispers.
 	@export var user_id: String:
-		set(val): 
+		set(val):
 			user_id = val
 			track_data(&"user_id", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create(_user_id: String) -> Condition:
+		var condition: Condition = Condition.new()
+		condition.user_id = _user_id
+		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
@@ -33,52 +40,58 @@ class Event extends TwitchData:
 
 	## The ID of the user sending the message.
 	@export var from_user_id: String:
-		set(val): 
+		set(val):
 			from_user_id = val
 			track_data(&"from_user_id", val)
 	
 	## The name of the user sending the message.
 	@export var from_user_name: String:
-		set(val): 
+		set(val):
 			from_user_name = val
 			track_data(&"from_user_name", val)
 	
 	## The login of the user sending the message.
 	@export var from_user_login: String:
-		set(val): 
+		set(val):
 			from_user_login = val
 			track_data(&"from_user_login", val)
 	
 	## The ID of the user receiving the message.
 	@export var to_user_id: String:
-		set(val): 
+		set(val):
 			to_user_id = val
 			track_data(&"to_user_id", val)
 	
 	## The name of the user receiving the message.
 	@export var to_user_name: String:
-		set(val): 
+		set(val):
 			to_user_name = val
 			track_data(&"to_user_name", val)
 	
 	## The login of the user receiving the message.
 	@export var to_user_login: String:
-		set(val): 
+		set(val):
 			to_user_login = val
 			track_data(&"to_user_login", val)
 	
 	## The whisper ID.
 	@export var whisper_id: String:
-		set(val): 
+		set(val):
 			whisper_id = val
 			track_data(&"whisper_id", val)
 	
 	## Object containing whisper information.
 	@export var whisper: Whisper:
-		set(val): 
+		set(val):
 			whisper = val
 			track_data(&"whisper", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Event:
+		var event: Event = Event.new()
+		return event
 	
 	
 	static func from_json(d: Dictionary) -> Event:
@@ -109,10 +122,16 @@ class Whisper extends TwitchData:
 
 	## The body of the whisper message.
 	@export var text: String:
-		set(val): 
+		set(val):
 			text = val
 			track_data(&"text", val)
 	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Whisper:
+		var whisper: Whisper = Whisper.new()
+		return whisper
 	
 	
 	static func from_json(d: Dictionary) -> Whisper:

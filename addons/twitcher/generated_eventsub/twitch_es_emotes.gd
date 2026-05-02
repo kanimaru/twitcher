@@ -9,22 +9,28 @@ class_name TwitchESEmotes
 	
 ## The index of where the Emote starts in the text.
 @export var begin: int:
-	set(val): 
+	set(val):
 		begin = val
 		track_data(&"begin", val)
 
 ## The index of where the Emote ends in the text.
 @export var end: int:
-	set(val): 
+	set(val):
 		end = val
 		track_data(&"end", val)
 
 ## The emote ID.
 @export var id: String:
-	set(val): 
+	set(val):
 		id = val
 		track_data(&"id", val)
 
+
+
+## Constructor with all required fields.
+static func create() -> TwitchESEmotes:
+	var twitch_es_emotes: TwitchESEmotes = TwitchESEmotes.new()
+	return twitch_es_emotes
 
 
 static func from_json(d: Dictionary) -> TwitchESEmotes:
