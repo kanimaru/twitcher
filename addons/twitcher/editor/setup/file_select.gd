@@ -25,10 +25,6 @@ func _ready() -> void:
 	if pick_folder: file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
 	line_edit.text_submitted.connect(_on_path_changed)
 	line_edit.placeholder_text = placeholder
-	
-	_update_filepath(path)
-	_update_filters(filters)
-	
 	file_dialog.current_path = path
 
 
@@ -36,13 +32,13 @@ func _update_filepath(new_path: String) -> void:
 	if new_path == null || new_path == "":
 		new_path = default_path
 	path = new_path
-	if not is_node_ready(): return
+	if not is_node_ready(): await ready
 	line_edit.text = path
 
 
 func _update_filters(new_filters: PackedStringArray) -> void:
 	filters = new_filters
-	if is_inside_tree():
+	if not is_node_ready(): await ready
 	file_dialog.filters = new_filters
 
 

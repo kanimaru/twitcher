@@ -33,8 +33,8 @@ func _get_encryption_secret() -> String:
 	if is_instance_valid(current_key_data):
 		return current_key_data.key
 
-	var config = ConfigFile.new()
-	var error = config.load(encrpytion_secret_location)
+	var config: ConfigFile = ConfigFile.new()
+	var error: int = config.load(encrpytion_secret_location)
 	if error == ERR_FILE_NOT_FOUND:
 		_create_secret(config)
 	elif error != OK:
@@ -57,7 +57,7 @@ func _create_secret(config: ConfigFile) -> String:
 	var secret_data : PackedByteArray = crypto.generate_random_bytes(16)
 	var secret : String = secret_data.hex_encode()
 	config.set_value(_CONFIG_PACKAGE_KEY, _CONFIG_SECRET_KEY, secret)
-	var err = config.save(encrpytion_secret_location)
+	var err: int = config.save(encrpytion_secret_location)
 	if err != OK: push_error("Couldn't save encryption key cause of ", error_string(err))
 	return secret
 

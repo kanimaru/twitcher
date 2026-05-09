@@ -14,6 +14,10 @@ const TwitchEditorNodeUtils = preload("res://addons/twitcher/editor/twitch_edito
 @export var setting: OAuthSetting
 
 func _ready() -> void:
+	if not token:
+		token = TwitchEditorSettings.editor_oauth_token
+	if not setting:
+		setting = TwitchEditorSettings.editor_oauth_setting
 	fetch_all_rewards.pressed.connect(_on_fetch_all)
 	fetch_manageable_rewards.pressed.connect(_on_fetch_manageable)
 	file_select.file_selected.connect(_on_file_selected)
@@ -29,7 +33,7 @@ func _download_rewards(all: bool) -> void:
 	add_child(api)
 	var media_loader: TwitchMediaLoader = TwitchEditorNodeUtils.create_media_loader(api)
 	add_child(media_loader)
-	var broadcaster: TwitchUser = await TwitchService.get_current_user_via_api(api)
+	var broadcaster: TwitchUser = TwitchEditorSettings.default_user
 	var rewards: Array[TwitchCustomReward] = await _fetch_rewards(api, all, broadcaster)
 	var twitch_rewards: Array[TwitchReward] = []
 	for reward in rewards:
@@ -40,16 +44,16 @@ func _download_rewards(all: bool) -> void:
 		file_name = RegEx.create_from_string("[^\\w_-]").sub(file_name, "")
 		var folder: String = file_select.path
 		if not folder: folder = "res://"
-		printt(twitch_reward.title, twitch_reward.id)
-		
 		ResourceSaver.save(twitch_reward, folder + "/" + file_name + ".tres")
+
+	_info("Loaded %s rewards" % rewards.size())
 	media_loader.queue_free()
 	api.queue_free()
 
 
 func _fetch_rewards(api: TwitchAPI, all: bool, broadcaster: TwitchUser) -> Array[TwitchCustomReward]:
 	if not TwitchEditorSettings.is_valid():
-		_info("Editor is not authorizd yet. Use 'Test Credentials' from the previous page to authorize the editor.")
+		_info("Editor is not authorizd yet.")
 		TwitchEditorSettings.editor_oauth_token.authorized.connect(func(): _info(""), CONNECT_ONE_SHOT)
 		return []
 

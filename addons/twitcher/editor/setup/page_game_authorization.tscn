@@ -1,0 +1,144 @@
+[gd_scene format=3 uid="uid://1luoys8urcb4"]
+
+[ext_resource type="ButtonGroup" uid="uid://dh8v0oxpn5ub7" path="res://addons/twitcher/editor/setup/flow_button_group.tres" id="1_fle8u"]
+[ext_resource type="Script" uid="uid://cppbrsn4ohgvf" path="res://addons/twitcher/editor/setup/page_game_authorization.gd" id="1_kw2ke"]
+[ext_resource type="Script" uid="uid://ddugotjvuahex" path="res://addons/twitcher/editor/setup/focus_child_show.gd" id="2_kw2ke"]
+[ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="4_rjqkn"]
+
+[node name="GameAuthorization" type="VBoxContainer" unique_id=1308072025]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kw2ke")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=2028986793]
+layout_mode = 2
+theme_type_variation = &"PanelForeground"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=328649995]
+layout_mode = 2
+
+[node name="AuthorizationTitle" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1744375576]
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "Game Setup"
+horizontal_alignment = 1
+
+[node name="ToDocumentation" type="Button" parent="PanelContainer/VBoxContainer/AuthorizationTitle" unique_id=83421676]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -52.0
+offset_top = -15.5
+offset_bottom = 15.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "DOCS"
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1566687027]
+layout_mode = 2
+text = "What kind of Authorization you want for your game?"
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/VBoxContainer" unique_id=393641045]
+layout_mode = 2
+columns = 2
+
+[node name="DeviceCodeFlow" type="CheckBox" parent="PanelContainer/VBoxContainer/GridContainer" unique_id=1077455466]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+button_group = ExtResource("1_fle8u")
+text = "Device Code Flow"
+
+[node name="DeviceCodeFlowExplain" type="RichTextLabel" parent="PanelContainer/VBoxContainer/GridContainer" unique_id=1213027049]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "Bit more complicated, works everywhere. User need one more extra step. [url=https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#device-code-grant-flow]Documention[/url]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="ImplicitFlow" type="CheckBox" parent="PanelContainer/VBoxContainer/GridContainer" unique_id=1009168600]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = ExtResource("1_fle8u")
+text = "Implicit Flow "
+
+[node name="ImplicitFlowExplain" type="RichTextLabel" parent="PanelContainer/VBoxContainer/GridContainer" unique_id=1912424999]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "Easiest way for user but possibly [url=https://developer.okta.com/blog/2019/05/01/is-the-oauth-implicit-flow-dead]insecure[/url]. Also may not work on any device. [url=https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow]Documention[/url]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer" unique_id=485700838]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="AuthExplain" type="RichTextLabel" parent="PanelContainer/VBoxContainer" unique_id=1361465452]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "You need to create an application for accessing Twitch. You can request your credentials at [url=https://dev.twitch.tv/console/apps/create]Twitch Dev Console[/url] for more informations see [url=https://twitcher.kani.dev/editor/editor-authorization.html]Documentation[/url]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="AuthorizationOptions" type="GridContainer" parent="PanelContainer/VBoxContainer" unique_id=870952052 node_paths=PackedStringArray("show_elements")]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+columns = 2
+script = ExtResource("2_kw2ke")
+show_elements = [NodePath("../AuthExplain")]
+
+[node name="ClientIdLabel" type="Label" parent="PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=460669814]
+layout_mode = 2
+text = "Client ID:"
+
+[node name="ClientId" type="LineEdit" parent="PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=601871116]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RedirectURLLabel" type="Label" parent="PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=348319349]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Redirect URL:"
+
+[node name="RedirectURL" type="LineEdit" parent="PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=2074955370]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Location that Twitch is calling after the login process. Take care that this one is the same that you used during creation of the application within the twitch dev console."
+
+[node name="FileSelectTitle" type="Label" parent="PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=274380141]
+layout_mode = 2
+text = "Storage:"
+
+[node name="FileSelect" parent="PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=2127292718 instance=ExtResource("4_rjqkn")]
+unique_name_in_owner = true
+layout_mode = 2
+path = "res://twitch_oauth_setting.tres"
+placeholder = "Path to store the settings."
+
+[node name="OAuthSave" type="Button" parent="PanelContainer/VBoxContainer" unique_id=391962091]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save"

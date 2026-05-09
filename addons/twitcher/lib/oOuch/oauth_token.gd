@@ -35,10 +35,11 @@ func _init() -> void:
 	_creation_stack = get_stack()
 
 
+var _loading: bool = false
 var _access_token: String = "":
 	set(val):
 		_access_token = val
-		if val != "": authorized.emit()
+		if val != "" and not _loading: authorized.emit()
 var _refresh_token: String = ""
 
 
@@ -106,6 +107,7 @@ func load_tokens() -> bool:
 	var key: String = _get_storage_key()
 	var status: Error = _config_file.load(_cache_path)
 	if status == OK && _config_file.has_section(key):
+		_loading = true
 		_expire_date = _config_file.get_value(key, "expire_date", 0)
 		var encrypted_access_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(key, "access_token"))
 		var encrypted_refresh_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(key, "refresh_token"))
@@ -113,6 +115,7 @@ func load_tokens() -> bool:
 		_refresh_token = _crypto_key_provider.decrypt(encrypted_refresh_token).get_string_from_utf8()
 		type = _config_file.get_value(key, "type", &"")
 		_scopes = _config_file.get_value(key, "scopes", "").split(",", false)
+		_loading = false
 		emit_changed()
 		logDebug("Token %s got loaded" % self)
 		return true

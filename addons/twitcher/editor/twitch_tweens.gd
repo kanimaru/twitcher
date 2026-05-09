@@ -1,3 +1,5 @@
+@tool
+
 static func flash(object: Control, color: Color, duration: float = .25) -> void:
 	var tween = object.create_tween()
 	tween.tween_property(object, ^"modulate", color, duration)\

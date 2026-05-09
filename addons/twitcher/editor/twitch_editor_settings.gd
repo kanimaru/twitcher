@@ -8,6 +8,7 @@ const EDITOR_OAUTH_SETTING: String = "user://editor_oauth_setting.tres"
 const GAME_OAUTH_TOKEN: String = "res://twitch_oauth_token.tres"
 const GAME_OAUTH_SETTING: String = "res://twitch_oauth_setting.tres"
 const TWITCH_DEFAULT_SCOPE: String = "res://addons/twitcher/auth/preset_overlay_scopes.tres"
+const TWITCH_DEFAULT_USER: String = "res://twitch_default_user.tres"
 
 const PRESET_GAME: StringName = &"Game"
 const PRESET_OVERLAY: StringName = &"Overlay"
@@ -45,6 +46,14 @@ static var scopes: TwitchOAuthScopes:
 		scopes = val
 		if not _reloading: _scope_property.set_val(val.resource_path)
 
+static var _default_user_property: ProjectSettingProperty
+static var default_user: TwitchUser:
+	set(val):
+		default_user = val
+		if not _reloading:
+			var err = ResourceSaver.save(default_user)
+			if not err: _default_user_property.set_val(val.resource_path)
+
 static var _show_setup_on_startup: ProjectSettingProperty
 static var show_setup_on_startup: bool:
 	set(val): _show_setup_on_startup.set_val(val)
@@ -64,6 +73,7 @@ static var _reward_folder: ProjectSettingProperty
 static var reward_folder: String:
 	set(val): _reward_folder.set_val(val)
 	get: return _reward_folder.get_val()
+
 
 static var _initialized: bool
 static var _reloading: bool
@@ -93,6 +103,9 @@ static func _setup_project_settings() -> void:
 	_scope_property = ProjectSettingProperty.new("twitcher/editor/default_scopes", TWITCH_DEFAULT_SCOPE)
 	_scope_property.as_file("*.res,*.tres")
 
+	_default_user_property = ProjectSettingProperty.new("twitcher/editor/default_twitch_user", TWITCH_DEFAULT_USER)
+	_default_user_property.as_file("*.res,*.tres")
+
 	_show_setup_on_startup = ProjectSettingProperty.new("twitcher/editor/show_setup_on_startup", true)
 
 	_project_preset = ProjectSettingProperty.new("twitcher/editor/project_preset")
@@ -107,24 +120,28 @@ static func _setup_project_settings() -> void:
 
 static func _reload_setting() -> void:
 	_reloading = true
-	editor_oauth_setting = load(_editor_oauth_setting_property.get_val())
-	editor_oauth_token = load(_editor_oauth_token_property.get_val())
-	game_oauth_setting = load(_game_oauth_setting_property.get_val())
-	game_oauth_token = load(_game_oauth_token_property.get_val())
 
 	var editor_oauth_token_path: String = _editor_oauth_token_property.get_val()
 	if editor_oauth_token_path:
 		if not FileAccess.file_exists(editor_oauth_token_path):
 			_create_editor_oauth_token()
+		else:
+			editor_oauth_token = load(editor_oauth_token_path)
 
 	var editor_oauth_setting_path: String = _editor_oauth_setting_property.get_val()
 	if editor_oauth_setting_path:
 		if not FileAccess.file_exists(editor_oauth_setting_path):
 			_create_editor_oauth_setting()
+		else:
+			editor_oauth_setting = load(editor_oauth_setting_path)
 
-	var scope_path: String = get_scope_path()
-	if scope_path and FileAccess.file_exists(scope_path):
-		scopes = load(scope_path)
+	var default_user_path: String = _default_user_property.get_val()
+	if default_user_path:
+		if not FileAccess.file_exists(default_user_path):
+			_create_default_user_placeholder()
+		else:
+			default_user = load(default_user_path)
+
 	_reloading = false
 
 
@@ -138,12 +155,41 @@ static func save_editor_oauth_token() -> void:
 	ResourceSaver.save(editor_oauth_token)
 
 
+static func save_default_user() -> void:
+	_log.d("Saves default user")
+	ResourceSaver.save(default_user)
+
+
 static func get_scope_path() -> String:
 	return _scope_property.get_val()
 
 
 static func set_scope_path(path: String) -> void:
 	_scope_property.set_val(path)
+
+
+static func get_default_user_path() -> String:
+	return _default_user_property.get_val()
+
+
+static func set_default_user_path(path: String) -> void:
+	_default_user_property.set_val(path)
+
+
+static func get_game_auth_setting_path() -> String:
+	return _game_oauth_setting_property.get_val()
+
+
+static func set_game_auth_setting_path(path: String) -> void:
+	_game_oauth_setting_property.set_val(path)
+
+
+static func get_editor_auth_setting_path() -> String:
+	return _editor_oauth_setting_property.get_val()
+
+
+static func set_editor_auth_setting_path(path: String) -> void:
+	_editor_oauth_setting_property.set_val(path)
 
 
 static func is_valid() -> bool:
@@ -166,6 +212,16 @@ static func _create_editor_oauth_setting() -> void:
 	_log.i("Create new Editor Oauth settings")
 	var path: String = _editor_oauth_setting_property.get_val()
 	var setting: OAuthSetting = TwitchAuth.create_default_oauth_setting()
+	setting.authorization_flow = OAuth.AuthorizationFlow.CLIENT_CREDENTIALS
 	setting.take_over_path(path)
 	editor_oauth_setting = setting
 	save_editor_oauth_setting()
+
+
+static func _create_default_user_placeholder() -> void:
+	_log.i("Create placeholder for default user")
+	var path: String = _default_user_property.get_val()
+	var user: TwitchUser = TwitchUser.new()
+	user.take_over_path(path)
+	default_user = user
+	save_default_user()

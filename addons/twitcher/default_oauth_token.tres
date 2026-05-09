@@ -4,4 +4,5 @@
 [ext_resource type="Script" uid="uid://b52xp7c23ucfk" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="2_phbii"]
 
 [resource]
+resource_name = "EditorToken"
 script = ExtResource("2_phbii")

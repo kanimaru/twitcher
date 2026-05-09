@@ -3,8 +3,15 @@ extends EditorPlugin
 
 static var _log : TwitchLogger = TwitchLogger.new("Twitcher Plugin")
 
-const REGENERATE_API_LABEL: String = "Regenerate Twitch Api"
-const OPEN_SETUP_LABEL: String = "Twitcher Setup"
+# Tooltip Menu
+const TOOLMENU_CATEGORY: String = "Twitcher"
+const REGENERATE_API_LABEL: String = "Regenerate Twitch Api & Eventsub"
+const OPEN_SETUP_LABEL: String = "Setup"
+const REWARD_MANAGER_LABEL: String = "Reward Manager"
+
+enum TwitcherTooltipIds {
+	SETUP, REWARD_MANAGER, REGENERATE_API
+}
 
 # oOuch imports
 const OauthSettingInspector = preload("res://addons/twitcher/lib/oOuch/oauth_setting_inspector.gd")
@@ -39,7 +46,10 @@ var reward_inspector: TwitchRewardInspector = TwitchRewardInspector.new()
 var encryption_inspector: EncryptionInspector = EncryptionInspector.new()
 var settings: TwitchEditorSettings = TwitchEditorSettings.new()
 var bot_inspector: TwitchBotInspector = TwitchBotInspector.new()
+
 var current_setup_window: Node
+var current_reward_manager_window: Node
+var popup_menu: PopupMenu
 
 func _enter_tree():
 	_log.i("Start Twitcher loading...")
@@ -47,8 +57,7 @@ func _enter_tree():
 
 	token_inspector.token_info_scene = preload("res://addons/twitcher/editor/inspector/twitch_token_info.tscn")
 
-	add_tool_menu_item(REGENERATE_API_LABEL, generate_api)
-	add_tool_menu_item(OPEN_SETUP_LABEL, open_setup)
+	add_twitcher_menu()
 
 	add_inspector_plugin(eventsub_config_inspector)
 	add_inspector_plugin(eventsub_inspector)
@@ -86,17 +95,36 @@ func _exit_tree():
 	remove_inspector_plugin(encryption_inspector)
 	remove_inspector_plugin(bot_inspector)
 	if Engine.is_editor_hint():
-		remove_tool_menu_item(OPEN_SETUP_LABEL)
-		remove_tool_menu_item(REGENERATE_API_LABEL)
+		remove_tool_menu_item(TOOLMENU_CATEGORY)
 
 	_log.i("Twitcher Unloaded")
 
 
+
+func add_twitcher_menu() -> void:
+	var popup_menu = PopupMenu.new()
+	popup_menu.add_item(OPEN_SETUP_LABEL, TwitcherTooltipIds.SETUP)
+	popup_menu.add_item(REWARD_MANAGER_LABEL, TwitcherTooltipIds.REWARD_MANAGER)
+	popup_menu.add_item(REGENERATE_API_LABEL, TwitcherTooltipIds.REGENERATE_API)
+	popup_menu.id_pressed.connect(func(id):
+		match id:
+			TwitcherTooltipIds.SETUP: open_setup()
+			TwitcherTooltipIds.REWARD_MANAGER: open_reward_manager()
+			TwitcherTooltipIds.REGENERATE_API: generate_api()
+	)
+	add_tool_submenu_item(TOOLMENU_CATEGORY, popup_menu)
+
+
 func open_setup() -> void:
 	if is_instance_valid(current_setup_window): return
-	
 	current_setup_window = load("res://addons/twitcher/editor/setup/setup.tscn").instantiate()
 	add_child(current_setup_window)
+
+
+func open_reward_manager() -> void:
+	if is_instance_valid(current_reward_manager_window): return
+	current_reward_manager_window = load("res://addons/twitcher/editor/twitch_reward_manager.tscn").instantiate()
+	add_child(current_reward_manager_window)
 
 
 func generate_api() -> void:

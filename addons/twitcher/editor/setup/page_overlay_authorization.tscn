@@ -1,0 +1,134 @@
+[gd_scene format=3 uid="uid://dm6jvnuikxtei"]
+
+[ext_resource type="Script" uid="uid://dxql15j5ornlc" path="res://addons/twitcher/editor/setup/page_overlay_authorization.gd" id="1_78hk7"]
+[ext_resource type="Script" uid="uid://ddugotjvuahex" path="res://addons/twitcher/editor/setup/focus_child_show.gd" id="3_o4tdm"]
+[ext_resource type="PackedScene" uid="uid://bps647tfof0ej" path="res://addons/twitcher/editor/setup/section_default_user_view.tscn" id="5_6v7gf"]
+[ext_resource type="PackedScene" uid="uid://bfksyo3klyvdn" path="res://addons/twitcher/editor/setup/test_credentials.tscn" id="5_dbhpx"]
+
+[node name="Authorization" type="MarginContainer" unique_id=1961758844]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("1_78hk7")
+metadata/_tab_index = 1
+
+[node name="Layout" type="VBoxContainer" parent="." unique_id=993977772]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="Layout" unique_id=818719415]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Authorization"
+horizontal_alignment = 1
+
+[node name="ToDocumentation" type="Button" parent="Layout/Title" unique_id=1419492933]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -52.0
+offset_top = -15.5
+offset_bottom = 15.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "DOCS"
+metadata/_edit_use_anchors_ = true
+
+[node name="PanelContainer" type="PanelContainer" parent="Layout" unique_id=1928741069]
+layout_mode = 2
+theme_type_variation = &"PanelForeground"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Layout/PanelContainer" unique_id=1597037597]
+layout_mode = 2
+
+[node name="AuthorizationTitle" type="Label" parent="Layout/PanelContainer/VBoxContainer" unique_id=1917096125]
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "Editor Support"
+horizontal_alignment = 1
+
+[node name="AuthExplain" type="RichTextLabel" parent="Layout/PanelContainer/VBoxContainer" unique_id=548722577]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "The credentials that are used by the editor to connect to Twitch. You can request your credentials [url=https://dev.twitch.tv/console/apps/create]Twitch Dev Console[/url] for more informations see [url=https://twitcher.kani.dev/editor/editor-authorization.html]Documentation[/url]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="AuthorizationOptions" type="GridContainer" parent="Layout/PanelContainer/VBoxContainer" unique_id=2090344334 node_paths=PackedStringArray("show_elements")]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+columns = 2
+script = ExtResource("3_o4tdm")
+show_elements = [NodePath("../AuthExplain")]
+
+[node name="ClientIdLabel" type="Label" parent="Layout/PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=1096624186]
+layout_mode = 2
+text = "Client ID:"
+
+[node name="ClientId" type="LineEdit" parent="Layout/PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=1163344680]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ClientSecretLabel" type="Label" parent="Layout/PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=1153874555]
+layout_mode = 2
+text = "Client Secret:"
+
+[node name="ClientSecret" type="LineEdit" parent="Layout/PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=1448539638]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+secret = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Layout/PanelContainer/VBoxContainer" unique_id=390723869]
+layout_mode = 2
+
+[node name="TestCredentials" parent="Layout/PanelContainer/VBoxContainer/HBoxContainer" unique_id=2029646275 node_paths=PackedStringArray("test_response") instance=ExtResource("5_dbhpx")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Authorize Editor"
+test_response = NodePath("../../TestResponse")
+
+[node name="TestResponse" type="Label" parent="Layout/PanelContainer/VBoxContainer" unique_id=880424117]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+
+[node name="DefaultUser" type="PanelContainer" parent="Layout" unique_id=718040010]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PanelForeground"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Layout/DefaultUser" unique_id=1649474567]
+layout_mode = 2
+
+[node name="AuthorizationTitle" type="Label" parent="Layout/DefaultUser/VBoxContainer" unique_id=1095400967]
+layout_mode = 2
+theme_type_variation = &"HeaderMedium"
+text = "Default User"
+horizontal_alignment = 1
+
+[node name="DefaultUserView" parent="Layout/DefaultUser/VBoxContainer" unique_id=1372832032 instance=ExtResource("5_6v7gf")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OAuthSave" type="Button" parent="Layout" unique_id=2091978501]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save"

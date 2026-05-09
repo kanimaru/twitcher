@@ -48,7 +48,7 @@ func _init() -> void:
 	child_entered_tree.connect(_on_enter_child)
 	# There could be better locations but this ensures that its there when an
 	# auth is needed.
-	var http_logger = TwitchLogger.new("Http")
+	var http_logger: TwitchLogger = TwitchLogger.new("Http")
 	HttpUtil.set_logger(http_logger.e, http_logger.i, http_logger.d)
 
 
@@ -66,11 +66,11 @@ func _ready() -> void:
 func _ensure_children() -> void:
 	if token_handler == null:
 		token_handler = TwitchTokenHandler.new()
-		token_handler.name = "TokenHandler"
+		token_handler.name = &"TokenHandler"
 
 	if auth == null:
 		auth = OAuth.new()
-		auth.name = "OAuth"
+		auth.name = &"OAuth"
 
 	_sync_childs()
 
@@ -89,7 +89,7 @@ func _sync_childs() -> void:
 	auth.token_handler = token_handler
 	auth.oauth_setting = oauth_setting
 	auth.scopes = scopes
-	auth.force_verify = &"true" if force_verify else &"false"
+	auth.force_verify = "true" if force_verify else "false"
 
 
 ## Authorize twitch if it is logged in it will shortcut and return true

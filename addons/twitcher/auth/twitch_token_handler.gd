@@ -10,8 +10,8 @@ var _validation_timer: Timer
 func _ready() -> void:
 	super._ready()
 	_validation_timer = Timer.new()
-	_validation_timer.name = "ValidationTimer"
-	_validation_timer.wait_time = 60*60 # 1 Hour
+	_validation_timer.name = &"ValidationTimer"
+	_validation_timer.wait_time = 60.0*60.0 # 1 Hour
 	_validation_timer.timeout.connect(validate_token)
 	add_child(_validation_timer)
 	validate_token()

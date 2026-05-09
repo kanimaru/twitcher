@@ -21,7 +21,6 @@ signal authorized
 
 
 func _ready() -> void:
-	pressed.connect(_pressed)
 	oauth_setting = TwitchEditorSettings.editor_oauth_setting
 	oauth_token = TwitchEditorSettings.editor_oauth_token
 	twitch_auth.scopes = scopes
@@ -34,25 +33,25 @@ func _notification(what: int) -> void:
 
 func _pressed() -> void:
 	if test_response:
-		_set_test_response("Authorizing...")
+		set_test_response("Authorizing...")
 		if o_auth.login_in_process:
-			_set_test_response("Another login trial is in process. Wait for timeout!", Color.YELLOW)
+			set_test_response("Another login trial is in process. Wait for timeout!", Color.YELLOW)
 			if await token_handler.token_resolved == null:
-				_set_test_response("Login unsuccessful!", Color.RED)
+				set_test_response("Login unsuccessful!", Color.RED)
 
 	TwitchTweens.loading(self)
 	await twitch_auth.authorize(true)
 
 	if twitch_auth.token.is_token_valid():
-		_set_test_response("Credentials are valid!", Color.GREEN)
+		set_test_response("Credentials are valid!", Color.GREEN)
 		TwitchTweens.flash(self, Color.GREEN)
 		authorized.emit()
 	else:
-		_set_test_response("Credentials are invalid!", Color.RED)
+		set_test_response("Credentials are invalid!", Color.RED)
 		TwitchTweens.flash(self, Color.RED)
 
 
-func _set_test_response(info: String, color: Color = Color.TRANSPARENT) -> void:
+func set_test_response(info: String, color: Color = Color.TRANSPARENT) -> void:
 	if test_response:
 		test_response.text = info
 		if color == Color.TRANSPARENT:

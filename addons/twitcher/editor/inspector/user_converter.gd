@@ -35,8 +35,8 @@ func _ready() -> void:
 	_id.text_submitted.connect(_on_text_submitted)
 	_id.focus_exited.connect(_on_focus_exited)
 	_swap_view.pressed.connect(_on_swap_view)
-	_load_current_user.call_deferred()
-	search.pressed.connect(_on_changed)
+	_load_default_user.call_deferred()
+	search.pressed.connect(_on_search)
 
 
 func update_user(new_user: TwitchUser, notify: bool = false) -> void:
@@ -50,14 +50,11 @@ func update_user(new_user: TwitchUser, notify: bool = false) -> void:
 	if notify: changed.emit(new_user)
 
 
-## Experimental tries to load user from api key
-func _load_current_user() -> void:
-	if _current_user == null:
-		var users: TwitchGetUsers.Opt = TwitchGetUsers.Opt.new()
-		_current_user = await _load_user(users)
-	
-	if _current_user && not user_login && not user_id && TwitchEditorSettings.load_current_twitch_user:
-		update_user(_current_user, true)
+## Experimental tries to load default user
+func _load_default_user() -> void:
+	if not TwitchEditorSettings.load_current_twitch_user or user_login or user_id: return
+	_current_user = TwitchEditorSettings.default_user
+	if _current_user: update_user(_current_user, false)
 
 
 func _on_swap_view() -> void:
@@ -135,7 +132,7 @@ func _on_text_submitted(new_text: String) -> void:
 	reload()
 
 
-func _on_changed() -> void:
+func _on_search() -> void:
 	reload()
 
 

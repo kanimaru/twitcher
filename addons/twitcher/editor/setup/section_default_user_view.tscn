@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://bps647tfof0ej"]
+
+[ext_resource type="PackedScene" uid="uid://cus81w3pidhjo" path="res://addons/twitcher/editor/inspector/user_converter.tscn" id="1_rh3py"]
+[ext_resource type="Script" uid="uid://bkvsg1os5pj6a" path="res://addons/twitcher/editor/setup/section_default_user_view.gd" id="1_xjgh0"]
+[ext_resource type="Script" uid="uid://ddugotjvuahex" path="res://addons/twitcher/editor/setup/focus_child_show.gd" id="2_t4ldm"]
+[ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="3_xjgh0"]
+[ext_resource type="Script" uid="uid://cnmohrdxqihr0" path="res://addons/twitcher/generated/twitch_user.gd" id="4_igxqu"]
+
+[sub_resource type="Resource" id="Resource_ovbsk"]
+script = ExtResource("4_igxqu")
+
+[node name="DefaultUserView" type="VBoxContainer" unique_id=1372832032]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xjgh0")
+
+[node name="LoadCurrentTwitchUser" type="CheckButton" parent="." unique_id=448401637]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Should TwitchUser Inspector automatically load the current user when empty?"
+
+[node name="Explain" type="RichTextLabel" parent="." unique_id=1624425703]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "Choose a default user that is used in all nodes by default (like broadcaster user and sender user)"
+fit_content = true
+vertical_alignment = 1
+
+[node name="Config" type="GridContainer" parent="." unique_id=1201708400 node_paths=PackedStringArray("show_elements")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+columns = 2
+script = ExtResource("2_t4ldm")
+show_elements = [NodePath("../Explain")]
+
+[node name="DefaultUserTitle" type="Label" parent="Config" unique_id=947766137]
+layout_mode = 2
+text = "Default User:"
+
+[node name="DefaultUser" parent="Config" unique_id=344646364 instance=ExtResource("1_rh3py")]
+unique_name_in_owner = true
+layout_mode = 2
+user = SubResource("Resource_ovbsk")
+
+[node name="FileSelectTitle" type="Label" parent="Config" unique_id=836386862]
+layout_mode = 2
+text = "Storage:"
+
+[node name="FileSelect" parent="Config" unique_id=605665709 instance=ExtResource("3_xjgh0")]
+unique_name_in_owner = true
+layout_mode = 2
+path = "res://twitch_default_user.tres"
+placeholder = "Path to store the default user."
