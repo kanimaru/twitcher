@@ -14,7 +14,7 @@ signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
 
 ## Where and how to authorize.
 @export var oauth_setting: OAuthSetting:
-	set(val): 
+	set(val):
 		oauth_setting = val
 		if auth != null: auth.oauth_setting = oauth_setting
 		if token_handler != null: token_handler.oauth_setting = oauth_setting
@@ -46,7 +46,7 @@ var is_authenticated: bool:
 
 func _init() -> void:
 	child_entered_tree.connect(_on_enter_child)
-	# There could be better locations but this ensures that its there when an 
+	# There could be better locations but this ensures that its there when an
 	# auth is needed.
 	var http_logger = TwitchLogger.new("Http")
 	HttpUtil.set_logger(http_logger.e, http_logger.i, http_logger.d)
@@ -67,17 +67,17 @@ func _ensure_children() -> void:
 	if token_handler == null:
 		token_handler = TwitchTokenHandler.new()
 		token_handler.name = "TokenHandler"
-		
+
 	if auth == null:
 		auth = OAuth.new()
 		auth.name = "OAuth"
-		
+
 	_sync_childs()
 
 	if not auth.is_inside_tree():
 		add_child(auth)
 		auth.owner = get_tree().edited_scene_root if Engine.is_editor_hint() else owner
-		
+
 	if not token_handler.is_inside_tree():
 		add_child(token_handler)
 		token_handler.owner = get_tree().edited_scene_root if Engine.is_editor_hint() else owner
@@ -90,7 +90,7 @@ func _sync_childs() -> void:
 	auth.oauth_setting = oauth_setting
 	auth.scopes = scopes
 	auth.force_verify = &"true" if force_verify else &"false"
-	
+
 
 ## Authorize twitch if it is logged in it will shortcut and return true
 ## force: do the login even when already logged in
@@ -105,7 +105,7 @@ func authorize(force: bool = false) -> bool:
 func do_unsetup() -> void:
 	token_handler.revoke_token()
 	_log.d("revoked tokens on twitch side during unsetup")
-	
+
 
 func refresh_token() -> void:
 	auth.refresh_token()
@@ -119,13 +119,13 @@ static func create_default_oauth_setting() -> OAuthSetting:
 	oauth_setting.authorization_url = "https://id.twitch.tv/oauth2/authorize"
 	oauth_setting.redirect_url = "http://localhost:7170"
 	return oauth_setting
-	
+
 
 ## Checks if the correctly setup
 func is_configured() -> bool:
 	return _get_configuration_warnings().is_empty()
-	
-	
+
+
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
 	if oauth_setting == null:

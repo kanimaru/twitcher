@@ -22,7 +22,7 @@ var user_login: String:
 
 var user_id: String:
 	set = _update_user_id
-	
+
 
 signal changed(user: TwitchUser)
 
@@ -48,7 +48,7 @@ func update_user(new_user: TwitchUser, notify: bool = false) -> void:
 		user_id = ""
 	user = new_user
 	if notify: changed.emit(new_user)
-	
+
 
 ## Experimental tries to load user from api key
 func _load_current_user() -> void:
@@ -69,8 +69,8 @@ func _on_swap_view() -> void:
 		_login.visible = true
 		_id.visible = false
 		_swap_view.text = "Name"
-	
-	
+
+
 func _update_user_login(val: String) -> void:
 	user_login = val
 	_login.text = val
@@ -86,8 +86,8 @@ func _update_user_id(val: String) -> void:
 func _on_id_changed(new_text: String) -> void:
 	_login.text = ""
 	TwitchTweens.loading(self, Color.AQUA)
-	
-	
+
+
 func _on_login_changed(new_text: String) -> void:
 	_id.text = ""
 	TwitchTweens.loading(self, Color.AQUA)
@@ -100,21 +100,21 @@ func reload() -> void:
 		await TwitchTweens.flash(self, Color.GREEN)
 		changed.emit(null)
 		return
-	
-	if user != null && new_user_login == user.login && new_user_id == user.id: 
+
+	if user != null && new_user_login == user.login && new_user_id == user.id:
 		return
-	
+
 	var users: TwitchGetUsers.Opt = TwitchGetUsers.Opt.new()
-		
+
 	if new_user_login != "" && (not user || user.login != new_user_login):
 		users.login = [ new_user_login ]
 	elif new_user_id != "" && (not user || user.id != new_user_id):
 		users.id = [ new_user_id ]
-		
+
 	var new_user: TwitchUser = await _load_user(users)
 	if new_user != null: update_user(new_user, true)
-	
-	
+
+
 func _load_user(users: TwitchGetUsers.Opt) -> TwitchUser:
 	TwitchTweens.loading(self)
 	if users.id != null || users.login != null:
@@ -129,8 +129,8 @@ func _load_user(users: TwitchGetUsers.Opt) -> TwitchUser:
 
 func _on_focus_exited() -> void:
 	reload()
-	
-	
+
+
 func _on_text_submitted(new_text: String) -> void:
 	reload()
 

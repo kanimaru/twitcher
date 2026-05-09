@@ -2,7 +2,7 @@
 @abstract
 extends Twitcher
 
-## A single command like !lurk 
+## A single command like !lurk
 class_name TwitchCommandBase
 
 ## Constant to convert from seconds to milliseconds
@@ -45,7 +45,7 @@ enum WhereFlag {
 @export_multiline var description: String
 
 ## Wich role of user is allowed to use it
-@export_flags("VIP:1", "Subscriber:2", "Moderator:4", "Lead Moderator:16", "Streamer:8", "Mods & Streamer:28", "Non Regulars:31") 
+@export_flags("VIP:1", "Subscriber:2", "Moderator:4", "Lead Moderator:16", "Streamer:8", "Mods & Streamer:28", "Non Regulars:31")
 var permission_level: int = PermissionFlag.EVERYONE
 ## Where is it allowed to use chat or whisper or both
 @export var where: WhereFlag = WhereFlag.CHAT
@@ -97,7 +97,7 @@ func _enter_tree() -> void:
 	if eventsub == null: eventsub = TwitchEventsub.instance
 	if eventsub != null:
 		eventsub.event_received.connect(_on_event)
-	
+
 
 func _exit_tree() -> void:
 	if eventsub != null:
@@ -116,7 +116,7 @@ func _on_event(event: TwitchEventsub.Event) -> void:
 		var info: TwitchCommandInfo = TwitchCommandInfo.new(self, channel_name, username, user_id, chat_message, message)
 		if not _should_handle(info): return
 		_handle_command(info)
-		
+
 	if event.type == TwitchEventsubDefinition.USER_WHISPER_MESSAGE:
 		if where & WhereFlag.WHISPER != WhereFlag.WHISPER: return
 		var data: TwitchESWhisperReceived.Event = event.typed_data
@@ -174,24 +174,24 @@ func is_on_globalcooldown() -> bool:
 			return true
 		_global_cooldown = Time.get_ticks_msec() + (global_cooldown * S_TO_MS)
 	return false
-	
+
 
 func _handle_command(info: TwitchCommandInfo) -> void:
 	if _can_handle_command(info):
 		command_received.emit(info.username, info, info.arguments)
-	
-	
+
+
 ## Checks if the parsed command can be handled
 func _can_handle_command(info: TwitchCommandInfo) -> bool:
 	if not _has_permission(info.username, info.original_message):
 		invalid_permission.emit(info.username, info, info.arguments)
 		return false
-			
+
 	if is_on_cooldown(info.username):
 		var cooldown_left: float = get_user_cooldown(info.username)
 		cooldown.emit(info.username, info, info.arguments, cooldown_left)
 		return false
-	
+
 	if is_on_globalcooldown():
 		var cooldown_left: float = get_globalcooldown()
 		cooldown.emit(info.username, info, info.arguments, cooldown_left)

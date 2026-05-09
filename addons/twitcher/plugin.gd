@@ -22,9 +22,9 @@ const EncryptionInspector = preload("uid://dlcq0bqmlypko")
 const TwitchBotInspector = preload("uid://d2m042af2shx8")
 
 var generator_eventsub: TwitchEventsubGenerator
-var generator_api: TwitchAPIGenerator 
-var parser_eventsub: TwitchAPIParser 
-var parser_api: TwitchAPIParser 
+var generator_api: TwitchAPIGenerator
+var parser_eventsub: TwitchAPIParser
+var parser_api: TwitchAPIParser
 
 var gif_importer_imagemagick: GifImporterImagemagick = GifImporterImagemagick.new()
 var gif_importer_native: GifImporterNative = GifImporterNative.new()
@@ -44,12 +44,12 @@ var current_setup_window: Node
 func _enter_tree():
 	_log.i("Start Twitcher loading...")
 	TwitchEditorSettings.setup()
-	
+
 	token_inspector.token_info_scene = preload("res://addons/twitcher/editor/inspector/twitch_token_info.tscn")
-		
+
 	add_tool_menu_item(REGENERATE_API_LABEL, generate_api)
 	add_tool_menu_item(OPEN_SETUP_LABEL, open_setup)
-			
+
 	add_inspector_plugin(eventsub_config_inspector)
 	add_inspector_plugin(eventsub_inspector)
 	add_inspector_plugin(scope_inspector)
@@ -63,10 +63,10 @@ func _enter_tree():
 	add_import_plugin(gif_importer_native)
 	if is_magick_available():
 		add_import_plugin(gif_importer_imagemagick)
-		
+
 	if TwitchEditorSettings.show_setup_on_startup: open_setup()
 	await _try_authorize_editor()
-	
+
 	_log.i("Twitcher loading ended")
 
 
@@ -88,7 +88,7 @@ func _exit_tree():
 	if Engine.is_editor_hint():
 		remove_tool_menu_item(OPEN_SETUP_LABEL)
 		remove_tool_menu_item(REGENERATE_API_LABEL)
-		
+
 	_log.i("Twitcher Unloaded")
 
 
@@ -106,7 +106,7 @@ func generate_api() -> void:
 	parser_eventsub.api = "https://raw.githubusercontent.com/kanimaru/twitch-eventsub-swagger/refs/heads/master/twitch_eventsub_swagger.json"
 	parser_api = TwitchAPIParser.new()
 	parser_api.api = "https://raw.githubusercontent.com/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json"
-	
+
 	generator_eventsub.parser = parser_eventsub
 	generator_api.parser = parser_api
 	add_child(generator_eventsub)
@@ -131,7 +131,7 @@ func is_magick_available() -> bool:
 func _try_authorize_editor() -> void:
 	var oauth_setting: OAuthSetting = TwitchEditorSettings.editor_oauth_setting
 	var oauth_token: OAuthToken = TwitchEditorSettings.editor_oauth_token
-	if not oauth_setting.is_valid(): 
+	if not oauth_setting.is_valid():
 		_log.d("Can't validate editor token cause OAuthSettings are invalid.")
 		return
 	var auth: TwitchAuth = TwitchAuth.new()

@@ -18,12 +18,12 @@ func _ready() -> void:
 	fetch_manageable_rewards.pressed.connect(_on_fetch_manageable)
 	file_select.file_selected.connect(_on_file_selected)
 	file_select.path = TwitchEditorSettings.reward_folder
-	
-	
+
+
 func _on_file_selected(path: String) -> void:
 	TwitchEditorSettings.reward_folder = path
-	
-	
+
+
 func _download_rewards(all: bool) -> void:
 	var api: TwitchAPI = TwitchEditorNodeUtils.create_api(token, setting)
 	add_child(api)
@@ -45,15 +45,15 @@ func _download_rewards(all: bool) -> void:
 		ResourceSaver.save(twitch_reward, folder + "/" + file_name + ".tres")
 	media_loader.queue_free()
 	api.queue_free()
-	
-	
+
+
 func _fetch_rewards(api: TwitchAPI, all: bool, broadcaster: TwitchUser) -> Array[TwitchCustomReward]:
-	if not TwitchEditorSettings.is_valid(): 
+	if not TwitchEditorSettings.is_valid():
 		_info("Editor is not authorizd yet. Use 'Test Credentials' from the previous page to authorize the editor.")
 		TwitchEditorSettings.editor_oauth_token.authorized.connect(func(): _info(""), CONNECT_ONE_SHOT)
 		return []
-		
-	
+
+
 	var opt: TwitchGetCustomReward.Opt = TwitchGetCustomReward.Opt.create()
 	opt.only_manageable_rewards = not all
 	var response: TwitchGetCustomReward.Response = await api.get_custom_reward(opt, broadcaster.id)
@@ -63,14 +63,14 @@ func _fetch_rewards(api: TwitchAPI, all: bool, broadcaster: TwitchUser) -> Array
 	_info("Couldn't fetch Rewards cause of %s" % response_data)
 	return []
 
-	
+
 func _info(text: String) -> void:
 	info.text = text
-	
-	
+
+
 func _on_fetch_all() -> void:
 	_download_rewards(true)
-	
-	
+
+
 func _on_fetch_manageable() -> void:
 	_download_rewards(false)

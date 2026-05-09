@@ -19,7 +19,7 @@ const PageAuthorization = preload("res://addons/twitcher/editor/setup/page_autho
 @onready var startup_check: CheckButton = %StartupCheck
 
 
-func _ready(): 
+func _ready():
 	close_requested.connect(_on_close)
 	close.pressed.connect(_on_close)
 	startup_check.toggled.connect(_on_toggle_startup_check)

@@ -10,8 +10,8 @@ class_name TwitchChatCommandRespond
 
 func _ready() -> void:
 	command_received.connect(_on_command_received)
-	
-	
+
+
 func _on_command_received(_from_username: String, info: TwitchCommandInfo, _args: PackedStringArray) -> void:
 	var chat_message: TwitchChatMessage = info.original_message
 	if use_bot:

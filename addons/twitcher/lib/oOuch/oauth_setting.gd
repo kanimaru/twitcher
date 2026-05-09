@@ -17,12 +17,12 @@ class_name OAuthSetting
 @export var device_authorization_url: String
 ## Client ID to authorize
 @export var client_id: String:
-	set(val): 
+	set(val):
 		client_id = val
 		emit_changed()
 ## Client Secret to authorize (optional depending on flow)
 @export_custom(PROPERTY_HINT_PASSWORD, "encrypted") var client_secret: String:
-	set(val): 
+	set(val):
 		client_secret = val if val != null || val != "" else ""
 		emit_changed()
 ## Defines the authorization flow.
@@ -44,7 +44,7 @@ var redirect_port: int:
 		if redirect_port == 0 and redirect_url != "": _update_redirect_url(redirect_url)
 		return redirect_port
 
-		
+
 
 var _crypto: Crypto = Crypto.new()
 
@@ -74,11 +74,11 @@ func get_client_secret() -> String:
 	var value_raw = Marshalls.base64_to_raw(client_secret)
 	var value_bytes := _encryption_key_provider.decrypt(value_raw)
 	return value_bytes.get_string_from_utf8()
-	
-	
+
+
 func set_client_secret(plain_secret: String) -> void:
 	var encrypted_value := _encryption_key_provider.encrypt(plain_secret.to_utf8_buffer())
-	client_secret = Marshalls.raw_to_base64(encrypted_value)
+		client_secret = Marshalls.raw_to_base64(encrypted_value)
 
 
 func _validate_property(property: Dictionary) -> void:

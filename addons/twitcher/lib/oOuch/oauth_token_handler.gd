@@ -44,21 +44,21 @@ func _ready() -> void:
 	_http_client = OAuthHTTPClient.new()
 	_http_client.name = "OAuthTokenClient"
 	add_child(_http_client)
-	
+
 	_expiration_check_timer = Timer.new()
 	_expiration_check_timer.name = "ExpirationCheck"
 	_expiration_check_timer.timeout.connect(refresh_tokens)
 	add_child(_expiration_check_timer)
 	token.load_tokens()
-	
-	
+
+
 func _enter_tree() -> void:
-	if token and not token.changed.is_connected(update_expiration_check): 
+	if token and not token.changed.is_connected(update_expiration_check):
 		token.changed.connect(update_expiration_check)
 
 
 func _exit_tree() -> void:
-	if token and token.changed.is_connected(update_expiration_check): 
+	if token and token.changed.is_connected(update_expiration_check):
 		token.changed.disconnect(update_expiration_check)
 
 
@@ -73,28 +73,28 @@ func _update_token(val: OAuthToken) -> void:
 func update_expiration_check() -> void:
 	var current_time: float = Time.get_unix_time_from_system()
 	var expiration: int = token.get_expiration()
-	if expiration == 0: 
+	if expiration == 0:
 		logDebug("Disable automate use of refresh token (%s)" % token)
 		_expiration_check_timer.stop()
 		return
-	
+
 	var wait_time: float = expiration - current_time - SECONDS_TO_CHECK_EARLIER
 	if wait_time <= 0:
 		logDebug("Token (%s) is already expired or expiring soon, triggering immediate refresh" % token)
 		_expiration_check_timer.stop()
 		refresh_tokens()
 		return
-		
+
 	_expiration_check_timer.start(wait_time)
 	logDebug("token (%s) got updated next refresh in %s seconds" % [ token, roundf(_expiration_check_timer.wait_time)])
 
 
 ## Requests the tokens
 func request_token(grant_type: String, auth_code: String = "") -> OAuthToken:
-	if _requesting_token: 
+	if _requesting_token:
 		await _request_finished
 		return token
-		
+
 	_requesting_token = true
 	logInfo("Request token (for %s) via '%s'" % [token, grant_type])
 	var request_params: Array[String] = [
@@ -118,7 +118,7 @@ func request_token(grant_type: String, auth_code: String = "") -> OAuthToken:
 
 
 func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes: String, grant_type: String = "urn:ietf:params:oauth:grant-type:device_code") -> void:
-	if _requesting_token: 
+	if _requesting_token:
 		await _request_finished
 		return
 	_requesting_token = true
@@ -162,21 +162,21 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 
 ## Uses the refresh token if possible to refresh all tokens
 func refresh_tokens() -> void:
-	if not token.has_refresh_token(): 
+	if not token.has_refresh_token():
 		logDebug("%s has no refresh token can't refresh" % token)
 		unauthenticated.emit()
 		_expiration_check_timer.stop()
 		return
-	
-	if not oauth_setting.is_valid(): 
+
+	if not oauth_setting.is_valid():
 		logError("Try to refresh token (%s) but oauth settings are invalid. Can't refresh token." % token)
 		_expiration_check_timer.stop()
 		return
 
-	if _requesting_token: 
+	if _requesting_token:
 		await _request_finished
 		return
-		
+
 	_requesting_token = true
 	logInfo("use refresh (%s) token" % token)
 	var request_body: String = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % \
@@ -196,7 +196,7 @@ func _handle_token_request(request: OAuthHTTPClient.RequestData) -> bool:
 	var response = await _http_client.wait_for_request(request)
 	logDebug("Handle token response for %s" % token)
 	var response_string: String = response.response_data.get_string_from_utf8()
-	
+
 	if response.response_code == 200:
 		var result: Dictionary = JSON.parse_string(response_string)
 		_update_tokens_from_response(result)
@@ -217,7 +217,7 @@ func _handle_token_request(request: OAuthHTTPClient.RequestData) -> bool:
 func _update_tokens_from_response(result: Dictionary):
 	var scopes: Array[String] = []
 	for scope in result.get("scope", []): scopes.append(scope)
-	var type: StringName = &"" 
+	var type: StringName = &""
 	if oauth_setting.authorization_flow == OAuth.AuthorizationFlow.CLIENT_CREDENTIALS:
 		type = OAuthToken.APP_ACCESS_TOKEN
 	else:
@@ -257,7 +257,7 @@ func get_access_token() -> String:
 		await refresh_tokens()
 	elif _requesting_token:
 		await _request_finished
-		
+
 	return token.get_access_token()
 
 

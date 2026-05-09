@@ -24,7 +24,7 @@ func validate_token(access_token: String = "") -> BufferedHTTPClient.ResponseDat
 	if access_token == "":
 		return null
 	access_token = access_token.trim_prefix(OAuth.DEBUGGER_PROTECTION)
-		
+
 	var validation_request = _http_client.request("https://id.twitch.tv/oauth2/validate", HTTPClient.METHOD_GET, {
 		"Authorization": "OAuth %s" % access_token
 	}, "")
@@ -44,8 +44,8 @@ func validate_token(access_token: String = "") -> BufferedHTTPClient.ResponseDat
 
 
 func revoke_token() -> void:
-	var request = _http_client.request("https://id.twitch.tv/oauth2/revoke", HTTPClient.METHOD_POST, 
-		{ "Content-Type": "application/x-www-form-urlencoded" }, 
+	var request = _http_client.request("https://id.twitch.tv/oauth2/revoke", HTTPClient.METHOD_POST,
+		{ "Content-Type": "application/x-www-form-urlencoded" },
 		"client_id=%s&token=%s" % [oauth_setting.client_id, await token.get_access_token()])
 	var response: BufferedHTTPClient.ResponseData = await _http_client.wait_for_request(request)
 	if response.error:

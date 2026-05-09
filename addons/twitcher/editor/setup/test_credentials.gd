@@ -13,7 +13,7 @@ const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor
 @onready var token_handler: TwitchTokenHandler = %TokenHandler
 
 var scopes: OAuthScopes:
-	set(val): 
+	set(val):
 		scopes = val
 		if twitch_auth: twitch_auth.scopes = scopes
 
@@ -25,8 +25,8 @@ func _ready() -> void:
 	oauth_setting = TwitchEditorSettings.editor_oauth_setting
 	oauth_token = TwitchEditorSettings.editor_oauth_token
 	twitch_auth.scopes = scopes
-	
-	
+
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE:
 		oauth_token.authorized.disconnect(_on_authorized)
@@ -39,10 +39,10 @@ func _pressed() -> void:
 			_set_test_response("Another login trial is in process. Wait for timeout!", Color.YELLOW)
 			if await token_handler.token_resolved == null:
 				_set_test_response("Login unsuccessful!", Color.RED)
-	
+
 	TwitchTweens.loading(self)
 	await twitch_auth.authorize(true)
-	
+
 	if twitch_auth.token.is_token_valid():
 		_set_test_response("Credentials are valid!", Color.GREEN)
 		TwitchTweens.flash(self, Color.GREEN)
@@ -64,7 +64,7 @@ func _set_test_response(info: String, color: Color = Color.TRANSPARENT) -> void:
 func update_oauth_token(new_oauth_token: OAuthToken) -> void:
 	if oauth_token && oauth_token.authorized.is_connected(_on_authorized):
 		oauth_token.authorized.disconnect(_on_authorized)
-		
+
 	oauth_token = new_oauth_token
 	if not oauth_token.authorized.is_connected(_on_authorized):
 		oauth_token.authorized.connect(_on_authorized)
