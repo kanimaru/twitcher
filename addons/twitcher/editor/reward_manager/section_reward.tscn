@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://d2x3efon6jftb"]
 
 [ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="1_i70mb"]
-[ext_resource type="Script" uid="uid://byv7ndmkuf3pf" path="res://addons/twitcher/editor/setup/section_reward.gd" id="1_p2e20"]
+[ext_resource type="Script" uid="uid://byv7ndmkuf3pf" path="res://addons/twitcher/editor/reward_manager/section_reward.gd" id="1_p2e20"]
 [ext_resource type="Resource" path="user://editor_oauth_token.tres" id="2_liw5c"]
 [ext_resource type="Resource" path="user://editor_oauth_setting.tres" id="3_l628l"]
 
@@ -36,6 +36,7 @@ layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=592865414]
 layout_mode = 2
+size_flags_vertical = 10
 
 [node name="FetchAllRewards" type="Button" parent="HBoxContainer" unique_id=30275842]
 unique_name_in_owner = true

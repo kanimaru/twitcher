@@ -134,7 +134,6 @@ text = "Storage:"
 [node name="FileSelect" parent="PanelContainer/VBoxContainer/AuthorizationOptions" unique_id=2127292718 instance=ExtResource("4_rjqkn")]
 unique_name_in_owner = true
 layout_mode = 2
-path = "res://twitch_oauth_setting.tres"
 placeholder = "Path to store the settings."
 
 [node name="OAuthSave" type="Button" parent="PanelContainer/VBoxContainer" unique_id=391962091]

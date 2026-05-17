@@ -31,7 +31,6 @@ func _ready():
 	overlay.pressed.connect(_on_overlay_pressed)
 
 
-
 func _on_game_pressed() -> void:
 	type_selection.hide()
 	game_setup.show()
@@ -66,6 +65,6 @@ func _on_close() -> void:
 		popup.dialog_text = "You have unsaved changes! Are you sure to close the setup?"
 		popup.confirmed.connect(queue_free)
 		add_child(popup)
-		popup.popup_centered()
+		popup.popup_centered.call_deferred()
 	else:
 		queue_free()

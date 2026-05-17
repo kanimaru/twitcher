@@ -49,7 +49,7 @@ const CD_UNIT_DAY: int = 3
 var undo_redo: EditorUndoRedoManager
 var twitch_reward: TwitchReward:
 	set = _update_twitch_reward
-	
+
 var _cooldown_multiplier: int:
 	get():
 		match cooldown_time_unit.selected:
@@ -57,13 +57,13 @@ var _cooldown_multiplier: int:
 			CD_UNIT_HOUR: return HOUR_IN_SEC
 			CD_UNIT_DAY: return DAY_IN_SEC
 			_: return 1
-			
+
 
 func _ready() -> void:
 	load.pressed.connect(_on_load)
 	save.pressed.connect(_on_save)
 	delete.pressed.connect(_on_delete)
-	
+
 	if twitch_reward == null: return # Happens on bootup
 	_update_twitch_reward(twitch_reward)
 
@@ -76,15 +76,15 @@ func _ready() -> void:
 	cost.value_changed.connect(func(new_value: float) -> void: twitch_reward.cost = new_value)
 	background_color.color_changed.connect(func(new_color: Color) -> void: twitch_reward.background_color = new_color.to_html(false))
 	skip_reward_queue.toggled.connect(func(state: bool) -> void: twitch_reward.should_redemptions_skip_request_queue = state)
-	cooldown_time.value_changed.connect(func(new_value: float) -> void: 
+	cooldown_time.value_changed.connect(func(new_value: float) -> void:
 		twitch_reward.global_cooldown_seconds = new_value * _cooldown_multiplier
 		twitch_reward.is_global_cooldown_enabled = twitch_reward.global_cooldown_seconds > 0
 	)
-	limit_per_stream.value_changed.connect(func(new_value: float) -> void: 
+	limit_per_stream.value_changed.connect(func(new_value: float) -> void:
 		twitch_reward.max_per_stream = new_value
 		twitch_reward.is_max_per_stream_enabled = new_value > 0
 	)
-	limit_per_stream_per_user.value_changed.connect(func(new_value: float) -> void: 
+	limit_per_stream_per_user.value_changed.connect(func(new_value: float) -> void:
 		twitch_reward.max_per_user_per_stream = new_value
 		twitch_reward.is_max_per_user_per_stream_enabled = new_value > 0
 	)
@@ -96,18 +96,18 @@ func _update_twitch_reward(reward: TwitchReward) -> void:
 			var old_update_method: Callable = _update_twitch_reward.bind(twitch_reward)
 			if twitch_reward.changed.is_connected(old_update_method):
 				twitch_reward.changed.disconnect(old_update_method)
-			
+
 		twitch_reward = reward
 		var update_method: Callable = _update_twitch_reward.bind(reward)
 		if not reward.changed.is_connected(update_method):
 			reward.changed.connect(update_method)
-	
+
 	if not is_node_ready(): return
 	if reward == null:
 		load.disabled = true
 		save.disabled = true
 		return
-	
+
 	id.text = reward.id if reward.id else "NEW"
 	title.text = reward.title
 	description.text = reward.description
@@ -121,20 +121,20 @@ func _update_twitch_reward(reward: TwitchReward) -> void:
 	_update_cooldown(reward.global_cooldown_seconds)
 	limit_per_stream.value = reward.max_per_stream
 	limit_per_stream_per_user.value = reward.max_per_user_per_stream
-	
+
 	enable.set_pressed_no_signal(reward.is_enabled)
 	pause.set_pressed_no_signal(reward.is_paused)
-	
+
 	in_stock.set_pressed_no_signal(reward.is_in_stock)
 	current_stream.set_value_no_signal(reward.redemptions_redeemed_current_stream)
 	cooldown_expire_at.text = reward.cooldown_expires_at if reward.cooldown_expires_at else "no data"
-	
+
 	delete.disabled = reward.id == ""
 	load.disabled = reward.id == ""
 	save.disabled = false
-	
-	
-	
+
+
+
 func _update_cooldown(cd_in_sec: int) -> void:
 	if(fmod(cd_in_sec, DAY_IN_SEC) == 0):
 		cooldown_time.value = cd_in_sec / DAY_IN_SEC
@@ -148,7 +148,7 @@ func _update_cooldown(cd_in_sec: int) -> void:
 	else:
 		cooldown_time.value = cd_in_sec
 		cooldown_time_unit.select(CD_UNIT_SECONDS)
-	
+
 #region Twitch Interactions
 
 func _on_load() -> void:
@@ -184,7 +184,7 @@ func _on_delete() -> void:
 		add_child(api)
 		var twitch_reward_service: TwitchRewardEditorService = TwitchRewardEditorService.new(api, null)
 		await twitch_reward_service.delete_reward(twitch_reward)
-		api.queue_free() 
+		api.queue_free()
 		EditorInterface.get_editor_toaster().push_toast("Deleted reward '%s' succesfully" % twitch_reward.title)
 	)
 	EditorInterface.popup_dialog_centered(dialog)

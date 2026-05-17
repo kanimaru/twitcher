@@ -1,9 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cjbs70ori3ian"]
+[gd_scene format=3 uid="uid://cjbs70ori3ian"]
 
 [ext_resource type="Script" uid="uid://bsvmx174wbskg" path="res://tests/communication/TestReconnect.gd" id="1_qpdw5"]
 
-
-[node name="TestReconnect" type="VBoxContainer"]
+[node name="TestReconnect" type="VBoxContainer" unique_id=2111606177]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,27 +10,27 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_qpdw5")
 
-[node name="Start" type="Button" parent="."]
+[node name="Start" type="Button" parent="." unique_id=872996637]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Start Server"
 
-[node name="Connect" type="Button" parent="."]
+[node name="Connect" type="Button" parent="." unique_id=1203398870]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Connect Client"
 
-[node name="Send" type="Button" parent="."]
+[node name="Send" type="Button" parent="." unique_id=647625872]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Send request"
 
-[node name="Stop" type="Button" parent="."]
+[node name="Stop" type="Button" parent="." unique_id=53219064]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Stop Server"
 
-[node name="ConnectionStatus" type="Label" parent="."]
+[node name="ConnectionStatus" type="Label" parent="." unique_id=1413562804]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Status: Not Connected"

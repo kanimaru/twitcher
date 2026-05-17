@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://6d2jst8ga4le"]
+[gd_scene format=3 uid="uid://6d2jst8ga4le"]
 
 [ext_resource type="Script" uid="uid://cht8c01quk1mb" path="res://addons/twitcher/lib/oOuch/oauth_token_info.gd" id="1_xfn6u"]
 
-[node name="TokenInfo" type="MarginContainer"]
+[node name="TokenInfo" type="MarginContainer" unique_id=244649042]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -14,60 +14,60 @@ theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 script = ExtResource("1_xfn6u")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1856850527]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="VBoxContainer"]
+[node name="Title" type="Label" parent="VBoxContainer" unique_id=1147766113]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"HeaderLarge"
 
-[node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer" unique_id=60616583]
 layout_mode = 2
 columns = 2
 
-[node name="TokenValidTitle" type="Label" parent="VBoxContainer/GridContainer"]
+[node name="TokenValidTitle" type="Label" parent="VBoxContainer/GridContainer" unique_id=721122635]
 layout_mode = 2
 text = "Token Valid:"
 
-[node name="TokenValidValue" type="Label" parent="VBoxContainer/GridContainer"]
+[node name="TokenValidValue" type="Label" parent="VBoxContainer/GridContainer" unique_id=2112887261]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RefreshTokenTitle" type="Label" parent="VBoxContainer/GridContainer"]
+[node name="RefreshTokenTitle" type="Label" parent="VBoxContainer/GridContainer" unique_id=1637520073]
 layout_mode = 2
 text = "Refresh Token Available:"
 
-[node name="RefreshTokenValue" type="CheckBox" parent="VBoxContainer/GridContainer"]
+[node name="RefreshTokenValue" type="CheckBox" parent="VBoxContainer/GridContainer" unique_id=1820573893]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 
-[node name="TokenTypeTitle" type="Label" parent="VBoxContainer/GridContainer"]
+[node name="TokenTypeTitle" type="Label" parent="VBoxContainer/GridContainer" unique_id=1834911392]
 layout_mode = 2
 text = "Type:"
 
-[node name="TokenType" type="Label" parent="VBoxContainer/GridContainer"]
+[node name="TokenType" type="Label" parent="VBoxContainer/GridContainer" unique_id=709485407]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TokenScopeTitle" type="Label" parent="VBoxContainer/GridContainer"]
+[node name="TokenScopeTitle" type="Label" parent="VBoxContainer/GridContainer" unique_id=516380595]
 layout_mode = 2
 text = "Token Scope:"
 
-[node name="TokenScopeValue" type="VBoxContainer" parent="VBoxContainer/GridContainer"]
+[node name="TokenScopeValue" type="VBoxContainer" parent="VBoxContainer/GridContainer" unique_id=292663926]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ReloadButton" type="Button" parent="VBoxContainer/GridContainer"]
+[node name="ReloadButton" type="Button" parent="VBoxContainer/GridContainer" unique_id=284489071]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Reloads the token from file use to update the infos when the token was fetched by an application run."
 text = "Reload Info"
 
-[node name="RevokeButton" type="Button" parent="VBoxContainer/GridContainer"]
+[node name="RevokeButton" type="Button" parent="VBoxContainer/GridContainer" unique_id=1903703100]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Will remove the cached access token / refresh token to fetch a new one"

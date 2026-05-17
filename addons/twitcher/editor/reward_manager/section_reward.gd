@@ -33,7 +33,7 @@ func _download_rewards(all: bool) -> void:
 	add_child(api)
 	var media_loader: TwitchMediaLoader = TwitchEditorNodeUtils.create_media_loader(api)
 	add_child(media_loader)
-	var broadcaster: TwitchUser = TwitchEditorSettings.default_user
+	var broadcaster: TwitchUser = await TwitchService.get_current_user_via_api(api)
 	var rewards: Array[TwitchCustomReward] = await _fetch_rewards(api, all, broadcaster)
 	var twitch_rewards: Array[TwitchReward] = []
 	for reward in rewards:
@@ -54,7 +54,6 @@ func _download_rewards(all: bool) -> void:
 func _fetch_rewards(api: TwitchAPI, all: bool, broadcaster: TwitchUser) -> Array[TwitchCustomReward]:
 	if not TwitchEditorSettings.is_valid():
 		_info("Editor is not authorizd yet.")
-		TwitchEditorSettings.editor_oauth_token.authorized.connect(func(): _info(""), CONNECT_ONE_SHOT)
 		return []
 
 

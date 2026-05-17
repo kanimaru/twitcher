@@ -57,6 +57,19 @@ func _load_default_user() -> void:
 	if _current_user: update_user(_current_user, false)
 
 
+## Experimental tries to load user from api key
+func load_current_user() -> void:
+	if _current_user == null:
+		var users: TwitchGetUsers.Opt = TwitchGetUsers.Opt.new()
+		_current_user = await _load_user(users)
+
+	if _current_user \
+		and not user_login \
+		and not user_id \
+		and TwitchEditorSettings.load_current_twitch_user:
+		update_user(_current_user, true)
+
+
 func _on_swap_view() -> void:
 	if _login.visible:
 		_login.visible = false

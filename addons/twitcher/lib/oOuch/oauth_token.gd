@@ -46,6 +46,12 @@ var _refresh_token: String = ""
 ## Called when the token was resolved / accesstoken got refreshed
 signal authorized
 
+## Called when a token request finishes (success or failure) to unblock concurrent requests
+signal request_finished
+
+## Is currently requesting tokens
+var is_requesting: bool = false
+
 
 func _get_storage_key() -> String:
 	if resource_path and ResourceLoader.exists(resource_path):
@@ -195,7 +201,7 @@ func _to_string() -> String:
 	elif resource_name != "":
 		token_name = resource_name
 
-	if (resource_path == "" and resource_name == "") and _creation_stack.size() > 1:
+	if resource_path == "" and resource_name == "" and _creation_stack.size() > 1:
 		var frame = _creation_stack[1]
 		token_name += " [created at %s:%s]" % [frame.source.get_file(), frame.line]
 

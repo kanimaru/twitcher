@@ -6,6 +6,7 @@ extends Twitcher
 class_name TwitchAuth
 
 const HttpUtil = preload("res://addons/twitcher/lib/http/http_util.gd")
+const META_ONGOING_AUTHORIZATION: StringName = &"_Addons_Twitcher_Auth_TwitchAuth_ongoing"
 
 static var _log: TwitchLogger = TwitchLogger.new("TwitchAuth")
 
@@ -119,6 +120,47 @@ static func create_default_oauth_setting() -> OAuthSetting:
 	oauth_setting.authorization_url = "https://id.twitch.tv/oauth2/authorize"
 	oauth_setting.redirect_url = "http://localhost:7170"
 	return oauth_setting
+
+
+static func manual_authorize(
+		setting: OAuthSetting,
+		token_to_authorize: OAuthToken,
+		force: bool = false,
+		oauth_scopes: OAuthScopes = null) -> void:
+	# Default Editor Scopes
+	if not oauth_scopes: oauth_scopes = preload("uid://cgqldyna2cv5h") # res://addons/twitcher/assets/twitcher_editor_scopes.tres
+
+	if not setting.is_valid():
+		_log.d("Can't validate token cause OAuthSettings are invalid.")
+		return
+	var root_node: Node = EditorInterface.get_base_control() if Engine.is_editor_hint() else Engine.get_main_loop().root
+
+	if root_node.has_meta(META_ONGOING_AUTHORIZATION):
+		var twitch_auth: TwitchAuth = root_node.get_meta(META_ONGOING_AUTHORIZATION)
+		if twitch_auth.token == token_to_authorize:
+			_log.i("An authorization for the same token %s is ongoing. Waiting..." % token_to_authorize)
+			await twitch_auth.token.authorized
+			return
+		else:
+			_log.i("An authorization for a different token %s is ongoing. Waiting..." % twitch_auth.token)
+			await twitch_auth.token.authorized
+
+	var auth: TwitchAuth = TwitchAuth.new()
+	auth.oauth_setting = setting
+	auth.token = token_to_authorize
+	auth.scopes = oauth_scopes
+	root_node.set_meta(META_ONGOING_AUTHORIZATION, auth)
+	root_node.add_child(auth)
+	
+	_log.d("Do manual authorization %s" % token_to_authorize)
+	if not auth.is_node_ready(): await auth.ready
+	var success: bool = await auth.authorize(force)
+	auth.queue_free()
+	root_node.remove_meta(META_ONGOING_AUTHORIZATION)
+	if not success:
+		_log.e("Token authorization failed.")
+		return
+	_log.i("Token got authorized")
 
 
 ## Checks if the correctly setup

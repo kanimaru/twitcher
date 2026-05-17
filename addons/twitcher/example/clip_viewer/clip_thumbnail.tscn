@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://ce3e7u8p5jkjy"]
+[gd_scene format=3 uid="uid://ce3e7u8p5jkjy"]
 
-[ext_resource type="Script" uid="uid://cg1qllo8c5cwj" path="res://example/clip_viewer/clip_thumbnail.gd" id="1_sfjks"]
+[ext_resource type="Script" uid="uid://cg1qllo8c5cwj" path="res://addons/twitcher/example/clip_viewer/clip_thumbnail.gd" id="1_sfjks"]
 [ext_resource type="Texture2D" uid="uid://6nflfslr4a52" path="res://addons/twitcher/assets/no_profile.png" id="2_6cgu7"]
 
-[node name="ClipThumbnail" type="PanelContainer"]
+[node name="ClipThumbnail" type="PanelContainer" unique_id=429245012]
 custom_minimum_size = Vector2(100, 100)
 offset_right = 256.0
 offset_bottom = 256.0
@@ -11,14 +11,14 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("1_sfjks")
 
-[node name="Thumbnail" type="TextureRect" parent="."]
+[node name="Thumbnail" type="TextureRect" parent="." unique_id=162626525]
 unique_name_in_owner = true
 layout_mode = 2
 texture = ExtResource("2_6cgu7")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="." unique_id=626056454]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8

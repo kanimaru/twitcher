@@ -28,6 +28,8 @@ const TwitchRewardInspector = preload("res://addons/twitcher/editor/inspector/tw
 const EncryptionInspector = preload("uid://dlcq0bqmlypko")
 const TwitchBotInspector = preload("uid://d2m042af2shx8")
 
+const TWITCHER_EDITOR_SCOPES = preload("uid://cgqldyna2cv5h")
+
 var generator_eventsub: TwitchEventsubGenerator
 var generator_api: TwitchAPIGenerator
 var parser_eventsub: TwitchAPIParser
@@ -74,7 +76,7 @@ func _enter_tree():
 		add_import_plugin(gif_importer_imagemagick)
 
 	if TwitchEditorSettings.show_setup_on_startup: open_setup()
-	await _try_authorize_editor()
+	await try_authorize_editor()
 
 	_log.i("Twitcher loading ended")
 
@@ -117,13 +119,13 @@ func add_twitcher_menu() -> void:
 
 func open_setup() -> void:
 	if is_instance_valid(current_setup_window): return
-	current_setup_window = load("res://addons/twitcher/editor/setup/setup.tscn").instantiate()
+	current_setup_window = load("uid://wu1fprbhr62").instantiate() # setup.tscn
 	add_child(current_setup_window)
 
 
 func open_reward_manager() -> void:
 	if is_instance_valid(current_reward_manager_window): return
-	current_reward_manager_window = load("res://addons/twitcher/editor/twitch_reward_manager.tscn").instantiate()
+	current_reward_manager_window = load("uid://deqnbbm1uxpbb").instantiate() # twitch_reward_manager.tscn
 	add_child(current_reward_manager_window)
 
 
@@ -156,20 +158,23 @@ func is_magick_available() -> bool:
 	return transformer.is_supported()
 
 
-func _try_authorize_editor() -> void:
+func try_authorize_editor() -> void:
 	var oauth_setting: OAuthSetting = TwitchEditorSettings.editor_oauth_setting
 	var oauth_token: OAuthToken = TwitchEditorSettings.editor_oauth_token
 	if not oauth_setting.is_valid():
 		_log.d("Can't validate editor token cause OAuthSettings are invalid.")
 		return
-	var auth: TwitchAuth = TwitchAuth.new()
-	auth.oauth_setting = oauth_setting
-	auth.token = oauth_token
-	add_child(auth)
-	await auth.ready
-	var success: bool = await auth.authorize()
-	if success:
+	if oauth_token.is_token_valid():
+		_log.d("%s still valid, no reauthorization." % oauth_token)
+		return
+
+	await TwitchAuth.manual_authorize(
+		oauth_setting,
+		oauth_token,
+		false,
+		TWITCHER_EDITOR_SCOPES
+	)
+	if oauth_token.is_token_valid():
 		_log.i("Editor token got authorized")
 	else:
 		_log.e("Editor token didn't get authorized. Editor functionallity maybe malfunctioning.")
-	auth.queue_free()

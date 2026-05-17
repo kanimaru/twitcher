@@ -138,7 +138,7 @@ func login(force: bool = false) -> bool:
 
 	if login_in_process:
 		logInfo("Another process tries already to login. Abort")
-		await token_handler._request_finished
+		await token_handler.token.request_finished
 		return token_handler.is_token_valid()
 
 	if _last_login_attempt != 0 && Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:

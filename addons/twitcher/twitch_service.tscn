@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://djt5lvmwxbq4a"]
 
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="1_6jm7q"]
-[ext_resource type="Script" uid="uid://rdoftxfcjn86" path="res://addons/twitcher/generated/twitch_api.gd" id="1_yq54x"]
-[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://addons/twitcher/twitch_oauth_setting.tres" id="2_v2pwk"]
+[ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="1_yq54x"]
+[ext_resource type="Resource" uid="uid://ek3g270xqbad" path="res://addons/twitcher/editor_oauth_setting.tres" id="2_v2pwk"]
 [ext_resource type="Resource" uid="uid://fcmfkstye4bq" path="res://addons/twitcher/auth/preset_overlay_scopes.tres" id="3_n5rs1"]
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="3_x3t7l"]
-[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://addons/twitcher/default_oauth_token.tres" id="4_j0p3d"]
+[ext_resource type="Resource" uid="uid://bnpayc6epakvf" path="res://addons/twitcher/editor_oauth_token.tres" id="4_n5rs1"]
 [ext_resource type="Script" uid="uid://bf0wi70haua35" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="8_v2pwk"]
 [ext_resource type="Script" uid="uid://blnbogtrshw4r" path="res://addons/twitcher/auth/twitch_token_handler.gd" id="9_n5rs1"]
 [ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="10_bqnqx"]
@@ -20,7 +20,7 @@ script = ExtResource("12_uvps8")
 script = ExtResource("1_6jm7q")
 oauth_setting = ExtResource("2_v2pwk")
 scopes = ExtResource("3_n5rs1")
-token = ExtResource("4_j0p3d")
+token = ExtResource("4_n5rs1")
 
 [node name="EventSub" type="Node" parent="." unique_id=1294051238 node_paths=PackedStringArray("api")]
 script = ExtResource("3_x3t7l")
@@ -28,13 +28,13 @@ api = NodePath("../API")
 
 [node name="API" type="Node" parent="." unique_id=148563040]
 script = ExtResource("1_yq54x")
-token = ExtResource("4_j0p3d")
+token = ExtResource("4_n5rs1")
 oauth_setting = ExtResource("2_v2pwk")
 
 [node name="Auth" type="Node" parent="." unique_id=168038552]
 script = ExtResource("10_bqnqx")
 oauth_setting = ExtResource("2_v2pwk")
-token = ExtResource("4_j0p3d")
+token = ExtResource("4_n5rs1")
 scopes = ExtResource("3_n5rs1")
 
 [node name="OAuth" type="Node" parent="Auth" unique_id=1192646844 node_paths=PackedStringArray("token_handler")]
@@ -46,7 +46,7 @@ token_handler = NodePath("../TokenHandler")
 [node name="TokenHandler" type="Node" parent="Auth" unique_id=1347940629]
 script = ExtResource("9_n5rs1")
 oauth_setting = ExtResource("2_v2pwk")
-token = ExtResource("4_j0p3d")
+token = ExtResource("4_n5rs1")
 
 [node name="MediaLoader" type="Node" parent="." unique_id=591982958 node_paths=PackedStringArray("api")]
 script = ExtResource("12_2tq2g")

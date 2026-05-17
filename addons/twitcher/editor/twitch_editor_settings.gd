@@ -3,8 +3,8 @@ extends RefCounted
 
 ## Utilitiy Node for Inspector to calling API functionallity at any point
 
-const EDITOR_OAUTH_TOKEN: String = "user://editor_oauth_token.tres"
-const EDITOR_OAUTH_SETTING: String = "user://editor_oauth_setting.tres"
+const EDITOR_OAUTH_TOKEN: String = "res://addons/twitcher/editor_oauth_token.tres"
+const EDITOR_OAUTH_SETTING: String = "res://addons/twitcher/editor_oauth_setting.tres"
 const GAME_OAUTH_TOKEN: String = "res://twitch_oauth_token.tres"
 const GAME_OAUTH_SETTING: String = "res://twitch_oauth_setting.tres"
 const TWITCH_DEFAULT_SCOPE: String = "res://addons/twitcher/auth/preset_overlay_scopes.tres"
@@ -74,6 +74,11 @@ static var reward_folder: String:
 	set(val): _reward_folder.set_val(val)
 	get: return _reward_folder.get_val()
 
+static var _resource_folder: ProjectSettingProperty
+static var resource_folder: String:
+	set(val): _resource_folder.set_val(val)
+	get: return _resource_folder.get_val()
+
 
 static var _initialized: bool
 static var _reloading: bool
@@ -117,10 +122,12 @@ static func _setup_project_settings() -> void:
 	_reward_folder = ProjectSettingProperty.new("twitcher/editor/reward_folder", "res://")
 	_reward_folder.as_dir()
 
+	_resource_folder = ProjectSettingProperty.new("twitcher/editor/resource_folder", "res://")
+	_resource_folder.as_dir()
+
 
 static func _reload_setting() -> void:
 	_reloading = true
-
 	var editor_oauth_token_path: String = _editor_oauth_token_property.get_val()
 	if editor_oauth_token_path:
 		if not FileAccess.file_exists(editor_oauth_token_path):
@@ -137,9 +144,7 @@ static func _reload_setting() -> void:
 
 	var default_user_path: String = _default_user_property.get_val()
 	if default_user_path:
-		if not FileAccess.file_exists(default_user_path):
-			_create_default_user_placeholder()
-		else:
+		if FileAccess.file_exists(default_user_path):
 			default_user = load(default_user_path)
 
 	_reloading = false
@@ -193,9 +198,9 @@ static func set_editor_auth_setting_path(path: String) -> void:
 
 
 static func is_valid() -> bool:
-	var token_valid: bool = is_instance_valid(editor_oauth_token) && editor_oauth_token.is_token_valid()
-	var setting_valid : bool = is_instance_valid(editor_oauth_setting) && editor_oauth_setting.is_valid()
-	return token_valid && setting_valid
+	var token_valid: bool = is_instance_valid(editor_oauth_token) and editor_oauth_token.is_token_valid()
+	var setting_valid : bool = is_instance_valid(editor_oauth_setting) and editor_oauth_setting.is_valid()
+	return token_valid and setting_valid
 
 
 static func _create_editor_oauth_token() -> void:
@@ -216,12 +221,3 @@ static func _create_editor_oauth_setting() -> void:
 	setting.take_over_path(path)
 	editor_oauth_setting = setting
 	save_editor_oauth_setting()
-
-
-static func _create_default_user_placeholder() -> void:
-	_log.i("Create placeholder for default user")
-	var path: String = _default_user_property.get_val()
-	var user: TwitchUser = TwitchUser.new()
-	user.take_over_path(path)
-	default_user = user
-	save_default_user()

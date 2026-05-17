@@ -12,15 +12,13 @@ class_name TwitchCommandRespond
 
 func _enter_tree() -> void:
 	update_configuration_warnings()
-	var parent: Node = get_parent()
-	if parent.has_signal(&"command_received"):
-		parent.command_received.connect(_on_command_received)
+	var parent: TwitchCommandBase = get_parent() as TwitchCommandBase
+	if parent: parent.connect(&"command_received", _on_command_received)
 
 
 func _exit_tree() -> void:
-	var parent: Node = get_parent()
-	if parent.has_signal(&"command_received"):
-		parent.command_received.disconnect(_on_command_received)
+	var parent: TwitchCommandBase = get_parent() as TwitchCommandBase
+	if parent: parent.disconnect(&"command_received", _on_command_received)
 
 
 func _on_command_received(_from_username: String, info: TwitchCommandInfo, _args: PackedStringArray) -> void:

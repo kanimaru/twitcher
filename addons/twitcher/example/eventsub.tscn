@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" uid="uid://c4vxnmsvwsytd" path="res://addons/twitcher/example/eventsub.gd" id="1_xhllw"]
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="2_rsm4n"]
-[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://addons/twitcher/twitch_oauth_setting.tres" id="3_33cbv"]
+[ext_resource type="Resource" uid="uid://ek3g270xqbad" path="res://addons/twitcher/editor_oauth_setting.tres" id="3_srvv3"]
 [ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="4_ln4am"]
-[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://addons/twitcher/default_oauth_token.tres" id="5_5jcsy"]
+[ext_resource type="Resource" uid="uid://bnpayc6epakvf" path="res://addons/twitcher/editor_oauth_token.tres" id="5_64wb2"]
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="5_t2qpq"]
-[ext_resource type="Script" uid="uid://rdoftxfcjn86" path="res://addons/twitcher/generated/twitch_api.gd" id="8_7v820"]
+[ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="8_7v820"]
 [ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="8_33cbv"]
 [ext_resource type="Script" uid="uid://bf0wi70haua35" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="9_5jcsy"]
 [ext_resource type="Script" uid="uid://blnbogtrshw4r" path="res://addons/twitcher/auth/twitch_token_handler.gd" id="10_bq4ao"]
@@ -33,9 +33,9 @@ script = ExtResource("1_xhllw")
 [node name="TwitchService" type="Node" parent="." unique_id=1788205295]
 unique_name_in_owner = true
 script = ExtResource("2_rsm4n")
-oauth_setting = ExtResource("3_33cbv")
+oauth_setting = ExtResource("3_srvv3")
 scopes = SubResource("Resource_orn12")
-token = ExtResource("5_5jcsy")
+token = ExtResource("5_64wb2")
 
 [node name="Eventsub" type="Node" parent="TwitchService" unique_id=938468075 node_paths=PackedStringArray("api")]
 unique_name_in_owner = true
@@ -46,26 +46,26 @@ use_test_server = true
 [node name="API" type="Node" parent="TwitchService" unique_id=98618693]
 unique_name_in_owner = true
 script = ExtResource("8_7v820")
-token = ExtResource("5_5jcsy")
-oauth_setting = ExtResource("3_33cbv")
+token = ExtResource("5_64wb2")
+oauth_setting = ExtResource("3_srvv3")
 
 [node name="TwitchAuth" type="Node" parent="TwitchService" unique_id=1152241625]
 script = ExtResource("8_33cbv")
-oauth_setting = ExtResource("3_33cbv")
-token = ExtResource("5_5jcsy")
+oauth_setting = ExtResource("3_srvv3")
+token = ExtResource("5_64wb2")
 scopes = SubResource("Resource_orn12")
 metadata/_custom_type_script = "uid://iv0mgv0lu8b0"
 
 [node name="OAuth" type="Node" parent="TwitchService/TwitchAuth" unique_id=1823779458 node_paths=PackedStringArray("token_handler")]
 script = ExtResource("9_5jcsy")
-oauth_setting = ExtResource("3_33cbv")
+oauth_setting = ExtResource("3_srvv3")
 scopes = SubResource("Resource_orn12")
 token_handler = NodePath("../TokenHandler")
 
 [node name="TokenHandler" type="Node" parent="TwitchService/TwitchAuth" unique_id=773710223]
 script = ExtResource("10_bq4ao")
-oauth_setting = ExtResource("3_33cbv")
-token = ExtResource("5_5jcsy")
+oauth_setting = ExtResource("3_srvv3")
+token = ExtResource("5_64wb2")
 
 [node name="ChannelFollowEventListener" type="Node" parent="." unique_id=850281398 node_paths=PackedStringArray("eventsub")]
 unique_name_in_owner = true

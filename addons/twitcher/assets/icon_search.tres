@@ -1,4 +1,4 @@
-[gd_resource type="ImageTexture" load_steps=2 format=3 uid="uid://1e6nrtqsuc6"]
+[gd_resource type="ImageTexture" format=3 uid="uid://1e6nrtqsuc6"]
 
 [sub_resource type="Image" id="Image_mutbh"]
 data = {

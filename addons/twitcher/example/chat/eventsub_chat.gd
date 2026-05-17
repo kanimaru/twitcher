@@ -2,12 +2,13 @@ extends Control
 
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# Please set this settings first before running the example!
+# Please use the Twitcher Setup or set this settings first before running the example!
 # In Node 'TwitchService.OauthSettings' set:
 # - ClientID / ClientSecret
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 const ChatView = preload("res://addons/twitcher/example/chat_view.gd")
+const TwitchEditorSettings = preload("uid://kqcukq2xqnuf")
 
 ## View to display everything
 @onready var chat_view: ChatView = %ChatView
@@ -28,14 +29,14 @@ const ChatView = preload("res://addons/twitcher/example/chat_view.gd")
 @onready var bot: TwitchBot = %TwitchBot
 
 func _ready() -> void:
+	# Setup the library
 	if twitch_service.oauth_setting.client_id == "":
 		chat_view.show_configuration_warning()
 		return
 
-	# Setup the library
 	await twitch_service.setup()
-	
-	# You can skip this when 
+
+	# You can skip this when
 	if twitch_chat.broadcaster_user == null:
 		var current_user: TwitchUser = await twitch_service.get_current_user()
 		twitch_chat.broadcaster_user = current_user
@@ -45,15 +46,15 @@ func _ready() -> void:
 	chat_view.message_sent.connect(_on_sent_message)
 	hello_command.command_received.connect(_on_hello)
 	hello_command.cooldown.connect(_on_hello_cooldown)
-	
+
 	# Alternative use programatical way to listen to commands
 	var command: TwitchCommand = twitch_service.add_command("lurk", func(_from_username: String, _info: TwitchCommandInfo, _args: PackedStringArray) -> void: twitch_service.chat("Thanks for the lurk"))
 	command.description = "Go into a passive lurk mode"
 	command.user_cooldown = 10
 	command.cooldown.connect(_on_lurk_cooldown)
-		
+
 	twitch_chat.subscribe()
-	
+
 	bot_send.pressed.connect(_on_bot_send)
 	bot_announce.pressed.connect(_on_bot_announce)
 
@@ -62,8 +63,8 @@ func _on_hello(_from_username: String, info: TwitchCommandInfo, _args: PackedStr
 	if info.original_message is TwitchChatMessage:
 		var message: TwitchChatMessage = info.original_message
 		twitch_chat.send_message("Hello to you too %s" % message.chatter_user_name, message.message_id)
-	
-	
+
+
 func _on_hello_cooldown(_from_username: String, info: TwitchCommandInfo, _args: PackedStringArray, cooldown_remaining_in_s: float) -> void:
 	if info.original_message is TwitchChatMessage:
 		var message: TwitchChatMessage = info.original_message
@@ -74,7 +75,7 @@ func _on_lurk_cooldown(_from_username: String, info: TwitchCommandInfo, _args: P
 	if info.original_message is TwitchChatMessage:
 		var message: TwitchChatMessage = info.original_message
 		twitch_chat.send_message("You can't go to lurk for the next %d seconds!" % cooldown_remaining_in_s, message.message_id)
-	
+
 
 func _on_chat_message(message: TwitchChatMessage) -> void:
 	# Get all badges from the user that sends the message
@@ -150,8 +151,8 @@ func _on_bot_send() -> void:
 	var message: String = chat_view.message
 	bot.send_message(message)
 	chat_view.message = ""
-	
-	
+
+
 func _on_bot_announce() -> void:
 	var message: String = chat_view.message
 	bot.send_announcement(message)
