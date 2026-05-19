@@ -11,7 +11,7 @@ const META_ONGOING_AUTHORIZATION: StringName = &"_Addons_Twitcher_Auth_TwitchAut
 static var _log: TwitchLogger = TwitchLogger.new("TwitchAuth")
 
 ## The requested devicecode to show to the user for authorization
-signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse);
+signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse)
 
 ## Where and how to authorize.
 @export var oauth_setting: OAuthSetting:
@@ -62,6 +62,7 @@ func _ready() -> void:
 	OAuth.set_logger(_log.e, _log.i, _log.d);
 	if oauth_setting == null: oauth_setting = create_default_oauth_setting()
 	_ensure_children()
+	auth.device_code_requested.connect(device_code_requested.emit)
 
 
 func _ensure_children() -> void:
@@ -151,7 +152,7 @@ static func manual_authorize(
 	auth.scopes = oauth_scopes
 	root_node.set_meta(META_ONGOING_AUTHORIZATION, auth)
 	root_node.add_child(auth)
-	
+
 	_log.d("Do manual authorization %s" % token_to_authorize)
 	if not auth.is_node_ready(): await auth.ready
 	var success: bool = await auth.authorize(force)

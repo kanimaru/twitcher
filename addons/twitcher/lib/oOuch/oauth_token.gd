@@ -43,7 +43,8 @@ var _access_token: String = "":
 var _refresh_token: String = ""
 
 
-## Called when the token was resolved / accesstoken got refreshed
+## Called when the token was resolved / accesstoken got refreshed (may never finish on problems so
+## don't inline await for it)
 signal authorized
 
 ## Called when a token request finishes (success or failure) to unblock concurrent requests

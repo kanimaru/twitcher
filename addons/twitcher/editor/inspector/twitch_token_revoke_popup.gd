@@ -20,28 +20,28 @@ func _ready() -> void:
 	picker.base_type = "OAuthSetting"
 	picker.edited_resource = TwitchEditorSettings.game_oauth_setting
 	picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
+
 	inspector.add_child(picker)
-	
+
 	cancel.pressed.connect(_on_cancel)
 	revoke_locally.pressed.connect(_on_revoke_locally)
 	revoke_twitch.pressed.connect(_on_revoke_twitch)
-	
+
 	twitch_token_handler.token = token
 	close_requested.connect(_on_cancel)
-	
-	
+
+
 func _on_cancel() -> void:
 	revoked.emit(false)
 	queue_free()
-	
-	
+
+
 func _on_revoke_locally() -> void:
 	revoked.emit(true)
 	token.remove_tokens()
 	queue_free()
-	
-	
+
+
 func _on_revoke_twitch() -> void:
 	revoked.emit(true)
 	if is_instance_valid(picker.edited_resource):

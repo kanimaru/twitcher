@@ -50,19 +50,19 @@ class Session extends RefCounted:
 class Event extends RefCounted:
 	var type: TwitchEventsubDefinition:
 		get(): return TwitchEventsubDefinition.BY_NAME[message.payload.subscription.type]
-	var data: Dictionary: 
+	var data: Dictionary:
 		get(): return message.payload.event
 	var message: TwitchNotificationMessage
-	
+
 	var typed_data: Variant:
-		get(): 
+		get():
 			if "Event" in type.response_script:
 				return type.response_script.Event.from_json(data)
 			else:
 				return type.response_script.EventV2.from_json(data)
 
 
-	func _init(notification_message: TwitchNotificationMessage) -> void: 
+	func _init(notification_message: TwitchNotificationMessage) -> void:
 		message = notification_message
 
 
@@ -72,7 +72,7 @@ signal session_id_received(id: String)
 ## Will be called when an event is sent from Twitch.
 signal event(type: StringName, data: Dictionary)
 
-## Will be called when an event is sent from Twitch. Same like event signal but better named and easier to use in 
+## Will be called when an event is sent from Twitch. Same like event signal but better named and easier to use in
 ## inline awaits.
 signal event_received(event: Event)
 
@@ -83,8 +83,8 @@ signal events_revoked(type: StringName, status: String)
 signal message_received(message: Variant)
 
 
-## The api used to create the subscriptions (Can be empty will automatically look for first [TwitchAPI] in the 
-## scene tree)  
+## The api used to create the subscriptions (Can be empty will automatically look for first [TwitchAPI] in the
+## scene tree)
 @export var api: TwitchAPI
 ## All subscriptions this eventsub should subscribe to
 @export var _subscriptions: Array[TwitchEventsubConfig] = []
@@ -151,11 +151,11 @@ func _ready() -> void:
 
 func _enter_tree() -> void:
 	if instance == null: instance = self
-	
-	
+
+
 func _exit_tree() -> void:
 	if instance == self: instance = null
-	
+
 
 ## Propergated call from twitch service
 func do_setup() -> void:
@@ -169,7 +169,7 @@ func do_unsetup() -> void:
 		unsubscribe(subscription)
 	close_connection()
 	_log.i("Eventsub unsetup")
-	
+
 
 func wait_setup() -> void:
 	await wait_for_session_established()
@@ -220,17 +220,17 @@ func subscribe(eventsub_config: TwitchEventsubConfig) -> void:
 	_subscriptions.append(eventsub_config)
 	_add_action(eventsub_config, true)
 	_empty_connections = 0
-	
-	
+
+
 ## Returns a list of subscriptions of the given type or empty if none.
 func get_subscription_by_type(type: TwitchEventsubDefinition.Type) -> Array[TwitchEventsubConfig]:
 	var result: Array[TwitchEventsubConfig] = []
-	for subscription in _subscriptions: 
+	for subscription in _subscriptions:
 		if subscription.type == type:
 			result.append(subscription)
 	return result
-	
-	
+
+
 func has_subscription(eventsub_definition: TwitchEventsubDefinition, condition: Dictionary) -> bool:
 	for subscription: TwitchEventsubConfig in _subscriptions:
 		if subscription.definition == eventsub_definition && subscription.condition == condition:
@@ -262,7 +262,7 @@ func _execute_action_stack() -> void:
 
 ## Adds a subscribe or unsubscribe action to the queue
 func _add_action(sub: TwitchEventsubConfig, subscribe: bool) -> void:
-	var sub_action = SubscriptionAction.new()
+	var sub_action: TwitchEventsub.SubscriptionAction = SubscriptionAction.new()
 	sub_action.subscription = sub
 	sub_action.subscribe = subscribe
 	_action_stack.append(sub_action)
@@ -273,9 +273,9 @@ func _add_action(sub: TwitchEventsubConfig, subscribe: bool) -> void:
 ## Refer to https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
 ## for details on which API versions are available and which conditions are required.
 func _subscribe(subscription: TwitchEventsubConfig) -> String:
-	var event_name = subscription.definition.value
-	var version = subscription.definition.version
-	var conditions = subscription.condition
+	var event_name: StringName = subscription.definition.value
+	var version: StringName = subscription.definition.version
+	var conditions: Dictionary = subscription.condition
 
 	var data : TwitchCreateEventSubSubscription.Body = TwitchCreateEventSubSubscription.Body.new()
 	var transport : TwitchCreateEventSubSubscription.BodyTransport = TwitchCreateEventSubSubscription.BodyTransport.new()
@@ -325,9 +325,9 @@ func _data_received(data : PackedByteArray) -> void:
 		_log.e("Twitch send something undocumented: %s" % message_str)
 		return
 	var metadata : Metadata = Metadata.new(message_json["metadata"])
-	var id = metadata.message_id
-	var timestamp_str = metadata.message_timestamp
-	var timestamp = Time.get_unix_time_from_datetime_string(timestamp_str)
+	var id: String = metadata.message_id
+	var timestamp_str: String = metadata.message_timestamp
+	var timestamp: int = Time.get_unix_time_from_datetime_string(timestamp_str)
 
 	if(_message_got_processed(id) || _message_is_to_old(timestamp)):
 		return
@@ -337,27 +337,27 @@ func _data_received(data : PackedByteArray) -> void:
 
 	match metadata.message_type:
 		"session_welcome":
-			var welcome_message = TwitchWelcomeMessage.new(message_json)
+			var welcome_message: TwitchWelcomeMessage = TwitchWelcomeMessage.new(message_json)
 			session = welcome_message.payload.session
 			session_id_received.emit(session.id)
 			_log.i("Session established %s" % session.id)
 			message_received.emit(welcome_message)
 		"session_keepalive":
 			# Notification from server that the connection is still alive
-			var keep_alive_message = TwitchKeepaliveMessage.new(message_json)
+			var keep_alive_message: TwitchKeepaliveMessage = TwitchKeepaliveMessage.new(message_json)
 			message_received.emit(keep_alive_message)
 			pass
 		"session_reconnect":
-			var reconnect_message = TwitchReconnectMessage.new(message_json)
+			var reconnect_message: TwitchReconnectMessage = TwitchReconnectMessage.new(message_json)
 			message_received.emit(reconnect_message)
 			_handle_reconnect(reconnect_message)
 		"revocation":
-			var revocation_message = TwitchRevocationMessage.new(message_json)
+			var revocation_message: TwitchRevocationMessage = TwitchRevocationMessage.new(message_json)
 			message_received.emit(revocation_message)
 			events_revoked.emit(revocation_message.payload.subscription.type,
 				revocation_message.payload.subscription.status)
 		"notification":
-			var notification_message = TwitchNotificationMessage.new(message_json)
+			var notification_message: TwitchNotificationMessage = TwitchNotificationMessage.new(message_json)
 			message_received.emit(notification_message)
 			event.emit(notification_message.payload.subscription.type,
 				notification_message.payload.event)
