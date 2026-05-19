@@ -32,7 +32,8 @@ func _ready() -> void:
 	test_credentials.oauth_setting = _temp_oauth_setting
 
 	_check_authorization.call_deferred()
-	save.changed.connect(func(changes): changed.emit(changes))
+	save.changed.connect(changed.emit)
+	TwitchEditorSettings.editor_oauth_token.authorized.connect(_on_authorized)
 
 
 func _load_editor_oauth_settings() -> void:

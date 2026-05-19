@@ -29,6 +29,8 @@ const EncryptionInspector = preload("uid://dlcq0bqmlypko")
 const TwitchBotInspector = preload("uid://d2m042af2shx8")
 
 const TWITCHER_EDITOR_SCOPES = preload("uid://cgqldyna2cv5h")
+const TWITCH_REWARD_MANAGER = preload("uid://deqnbbm1uxpbb")
+const SETUP = preload("uid://wu1fprbhr62")
 
 var generator_eventsub: TwitchEventsubGenerator
 var generator_api: TwitchAPIGenerator
@@ -104,7 +106,7 @@ func _exit_tree():
 
 
 func add_twitcher_menu() -> void:
-	var popup_menu = PopupMenu.new()
+	var popup_menu: PopupMenu = PopupMenu.new()
 	popup_menu.add_item(OPEN_SETUP_LABEL, TwitcherTooltipIds.SETUP)
 	popup_menu.add_item(REWARD_MANAGER_LABEL, TwitcherTooltipIds.REWARD_MANAGER)
 	popup_menu.add_item(REGENERATE_API_LABEL, TwitcherTooltipIds.REGENERATE_API)
@@ -119,13 +121,13 @@ func add_twitcher_menu() -> void:
 
 func open_setup() -> void:
 	if is_instance_valid(current_setup_window): return
-	current_setup_window = load("uid://wu1fprbhr62").instantiate() # setup.tscn
+	current_setup_window = SETUP.instantiate()
 	add_child(current_setup_window)
 
 
 func open_reward_manager() -> void:
 	if is_instance_valid(current_reward_manager_window): return
-	current_reward_manager_window = load("uid://deqnbbm1uxpbb").instantiate() # twitch_reward_manager.tscn
+	current_reward_manager_window = TWITCH_REWARD_MANAGER.instantiate()
 	add_child(current_reward_manager_window)
 
 

@@ -26,7 +26,7 @@ fit_content = true
 unique_name_in_owner = true
 layout_mode = 2
 default_path = "res://"
-path = "res://rewards"
+path = "res://"
 placeholder = "Target folder for Reward Resources"
 pick_folder = true
 

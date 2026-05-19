@@ -14,7 +14,7 @@ const SectionReward = preload("uid://byv7ndmkuf3pf")
 func _ready() -> void:
 	if not TwitchEditorSettings.is_valid():
 		OS.alert("Editor Authorization is not valid. Check Project/Tools/Twitcher/Setup!")
-		queue_free()
+		queue_free.call_deferred()
 		return
 
 	authorize.pressed.connect(_on_authorize)

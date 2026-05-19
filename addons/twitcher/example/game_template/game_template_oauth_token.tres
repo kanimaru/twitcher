@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="OAuthToken" format=3 uid="uid://ddrqchmiend4e"]
+
+[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="1_rd41b"]
+[ext_resource type="Script" uid="uid://b52xp7c23ucfk" path="res://addons/twitcher/lib/oOuch/oauth_token.gd" id="2_erp13"]
+
+[resource]
+script = ExtResource("2_erp13")
+metadata/_custom_type_script = "uid://b52xp7c23ucfk"

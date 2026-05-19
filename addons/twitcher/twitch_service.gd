@@ -50,6 +50,9 @@ static var instance: TwitchService
 ## Time in seconds how long the user should be cached before getting reloaded
 @export var user_cache_ttl: int = 3600 # 1 hour
 
+## The requested devicecode to show to the user for authorization (forwarded from TwitchAuth Node)
+signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse)
+
 @onready var auth: TwitchAuth
 @onready var eventsub: TwitchEventsub
 @onready var api: TwitchAPI
@@ -88,7 +91,9 @@ func _exit_tree() -> void:
 
 
 func _on_child_entered(node: Node) -> void:
-	if node is TwitchAuth: auth = node
+	if node is TwitchAuth:
+		auth = node
+		auth.device_code_requested.connect(device_code_requested.emit)
 	if node is TwitchAPI: api = node
 	if node is TwitchEventsub: eventsub = node
 	if node is TwitchIRC: irc = node
@@ -113,7 +118,9 @@ func _set_in_child(property: String, value: Variant) -> void:
 
 
 func _on_child_exiting(node: Node) -> void:
-	if node is TwitchAuth: auth = null
+	if node is TwitchAuth:
+		auth.device_code_requested.disconnect(device_code_requested.emit)
+		auth = null
 	if node is TwitchAPI: api = null
 	if node is TwitchEventsub: eventsub = null
 	if node is TwitchIRC: irc = null

@@ -103,8 +103,8 @@ func authorize(force: bool = false) -> bool:
 	return false
 
 
-func do_unsetup() -> void:
-	token_handler.revoke_token()
+func wait_unsetup() -> void:
+	await token_handler.revoke_token()
 	_log.d("revoked tokens on twitch side during unsetup")
 
 

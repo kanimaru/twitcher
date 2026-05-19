@@ -50,31 +50,29 @@ metadata/_edit_use_anchors_ = true
 
 [node name="EditorSupport" type="FoldableContainer" parent="Layout" unique_id=1400959451]
 layout_mode = 2
+folded = true
 title = "Editor Support"
 title_alignment = 1
 foldable_group = ExtResource("3_6iuhk")
 
 [node name="AuthorizationView" parent="Layout/EditorSupport" unique_id=2000752896 instance=ExtResource("3_1ocoi")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="DefaultUser" type="FoldableContainer" parent="Layout" unique_id=1732854421]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
-folded = true
 title = "Default User"
 title_alignment = 1
 foldable_group = ExtResource("3_6iuhk")
 
 [node name="DefaultUserView" parent="Layout/DefaultUser" unique_id=1372832032 instance=ExtResource("5_6v7gf")]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 
 [node name="DefaultResource" type="FoldableContainer" parent="Layout" unique_id=813635557]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 folded = true
 title = "Default Resources"
