@@ -1,0 +1,68 @@
+[gd_scene format=3 uid="uid://blddelc3lr6r4"]
+
+[ext_resource type="PackedScene" uid="uid://djt5lvmwxbq4a" path="res://addons/twitcher/twitch_service.tscn" id="1_muumb"]
+[ext_resource type="Resource" uid="uid://3dm6ts8hwlys" path="res://addons/twitcher/auth/preset_game_scopes.tres" id="2_56l04"]
+[ext_resource type="Resource" uid="uid://c5jqrbtqy5tkr" path="res://addons/twitcher/example/game_template/game_template_oauth_settings.tres" id="2_aht6s"]
+[ext_resource type="Resource" uid="uid://ddrqchmiend4e" path="res://addons/twitcher/example/game_template/game_template_oauth_token.tres" id="3_aht6s"]
+[ext_resource type="Script" uid="uid://fmtyexdlsy0x" path="res://addons/twitcher/example/game_template/twitcher_devicecode.gd" id="4_n7r82"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_lhtpo"]
+font_size = 40
+shadow_color = Color(0.16, 0.16, 0.16, 1)
+shadow_offset = Vector2(5, 5)
+
+[node name="GameTemplate" type="Control" unique_id=2099273273]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TwitchService" parent="." unique_id=1988848951 instance=ExtResource("1_muumb")]
+unique_name_in_owner = true
+oauth_setting = ExtResource("2_aht6s")
+scopes = ExtResource("2_56l04")
+token = ExtResource("3_aht6s")
+
+[node name="MainMenu" type="VBoxContainer" parent="." unique_id=1614807107]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -242.5
+offset_right = 242.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameTitle" type="Label" parent="MainMenu" unique_id=1732885542]
+layout_mode = 2
+text = "My awesome new game!"
+label_settings = SubResource("LabelSettings_lhtpo")
+
+[node name="Play" type="Button" parent="MainMenu" unique_id=379007583]
+layout_mode = 2
+disabled = true
+text = "Play"
+
+[node name="Twitch" type="HBoxContainer" parent="MainMenu" unique_id=1260255398]
+layout_mode = 2
+script = ExtResource("4_n7r82")
+token = ExtResource("3_aht6s")
+
+[node name="ConnectTwitch" type="Button" parent="MainMenu/Twitch" unique_id=1666998617]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Connect Twitch Account"
+
+[node name="TwitchStatus" type="Label" parent="MainMenu/Twitch" unique_id=1201897888]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Status: Disconnected"
+
+[node name="Exit" type="Button" parent="MainMenu" unique_id=1222572742]
+layout_mode = 2
+disabled = true
+text = "Exit"

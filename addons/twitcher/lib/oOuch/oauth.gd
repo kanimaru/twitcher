@@ -89,24 +89,24 @@ func refresh_token() -> void:
 func _setup_nodes() -> void:
 	if _initialized: return
 	_initialized = true
-	
+
 	if _client == null:
 		_client = OAuthHTTPClient.new()
 		_client.name = "OAuthClient"
 		add_child(_client)
-	
+
 	if _auth_http_server == null:
 		_auth_http_server = OAuthHTTPServer.create(oauth_setting.redirect_port)
 		_auth_http_server.name = "OAuthServer"
 		add_child(_auth_http_server)
-	
+
 	if token_handler == null:
 		token_handler = OAuthTokenHandler.new()
 		add_child(token_handler)
-		
+
 	token_handler.unauthenticated.connect(_on_unauthenticated)
 	token_handler.token_resolved.connect(_on_token_resolved)
-	
+
 	_login_timeout_timer = Timer.new()
 	_login_timeout_timer.name = "LoginTimeoutTimer"
 	_login_timeout_timer.one_shot = true
@@ -124,31 +124,31 @@ func do_unsetup() -> void:
 func login(force: bool = false) -> bool:
 	if not is_node_ready(): await ready
 	_setup_nodes()
-	
-	if scopes == null: 
+
+	if scopes == null:
 		scopes = OAuthScopes.new()
-	
+
 	var is_valid: bool = token_handler.is_token_valid()
 	var scopes_changed: bool = _got_scopes_changed()
-	
-	if is_valid && not scopes_changed && not force: 
+
+	if is_valid and not scopes_changed and not force:
 		return true
-	
+
 	logDebug("Token (%s) is valid (%s) | scopes changed (%s) | force login (%s)" % [ token_handler.token, is_valid, scopes_changed, force])
 
 	if login_in_process:
 		logInfo("Another process tries already to login. Abort")
-		await token_handler._request_finished
+		await token_handler.token.request_finished
 		return token_handler.is_token_valid()
 
-	if _last_login_attempt != 0 && Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
+	if _last_login_attempt != 0 and Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
 		print("[OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
 		await get_tree().create_timer(60, true, false, true).timeout
 
 	_last_login_attempt = Time.get_ticks_msec()
 
 	# Attempt refresh if possible before starting full flow
-	if not is_valid && token_handler.has_refresh_token() && not force:
+	if not is_valid and token_handler.has_refresh_token() and not force:
 		logInfo("Token is invalid but refresh token exists. Attempting refresh...")
 		await token_handler.refresh_tokens()
 		if token_handler.is_token_valid():
@@ -176,7 +176,7 @@ func login(force: bool = false) -> bool:
 
 func _got_scopes_changed() -> bool:
 	if not check_scope_changed: return false
-	
+
 	var existing_scopes: PackedStringArray = token_handler.get_scopes()
 	var requested_scopes: Array[StringName] = scopes.used_scopes
 	if existing_scopes.size() != requested_scopes.size():
@@ -188,7 +188,7 @@ func _got_scopes_changed() -> bool:
 
 	return false
 
-	
+
 ## Called when the login process is timing out cause of misconfiguration or other natural catastrophes.
 func _on_login_timeout() -> void:
 	if token_handler.is_token_valid(): return
@@ -226,7 +226,7 @@ func _start_login_process(response_type: String) -> void:
 		OS.create_process(shell_command, parameters)
 	else:
 		OS.shell_open(url)
-		
+
 	logDebug("waiting for user to login.")
 	if response_type == _AUTHTYPE_CODE:
 		var auth_code = await _auth_succeed
@@ -290,13 +290,13 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 
 	var first_linebreak: int = request.find("\n")
 	var first_line: String = request.substr(0, first_linebreak).strip_edges()
-	
+
 	if first_line.begins_with("GET"):
 		var matcher: RegExMatch = _query_parser.search(first_line)
 		if matcher == null:
 			logDebug("Response from auth server did not match expected redirect url. Browser likely requested favicon.ico.")
 			return
-			
+
 		# Use begins_with instead of == because a user decline appends query strings to the path
 		var request_path: String = matcher.get_string(1)
 		if request_path.begins_with(oauth_setting.redirect_path):
@@ -309,32 +309,32 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 						// Twitch passes success tokens in hash (#) and errors in query string (?)
 						const hashParams = new URLSearchParams(window.location.hash.substring(1));
 						const queryParams = new URLSearchParams(window.location.search);
-						
+
 						// Merge both into a single dictionary
 						const params = Object.fromEntries(new Map([...queryParams, ...hashParams]));
-						
-						fetch('%s', { 
-							method: 'POST', 
-							headers: { 'Content-Type': 'application/json' }, 
-							body: JSON.stringify(params) 
+
+						fetch('%s', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify(params)
 						})
 						.then(() => window.close())
 						.catch(err => console.error('Failed to send payload to Godot:', err));
 					</script>
 				</body>
 			</html>""" % oauth_setting.redirect_url
-			
+
 			server.send_response(client, "200 OK", html_response.to_utf8_buffer())
 		logInfo("Sent GET response containing JS to extract tokens/errors via POST.")
-		
+
 	elif first_line.begins_with("POST"):
 		var parts: PackedStringArray = request.split("\r\n\r\n", true, 1)
 		if parts.size() < 2:
 			return  # Not a valid request
-			
+
 		var json_body: String = parts[1]
 		var token_request: Dictionary = JSON.parse_string(json_body)
-		
+
 		# 1. State Validation (Safe Access)
 		if token_request.get("state", "") != _current_state:
 			var err_html := "<html><body><h2>Error</h2><p>Unsuccessful: someone tampered with the state!</p></body></html>"
@@ -342,20 +342,20 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 			logError("State mismatch. Possible CSRF attack or invalid session.")
 			_stop_server(_AUTHTYPE_TOKEN)
 			return
-			
+
 		# 2. Handle User Declines / OAuth Errors
 		if token_request.has("error"):
 			var error_desc: String = token_request.get("error_description", "User denied access.")
 			# Replace + with spaces for readability in HTML
-			error_desc = error_desc.replace("+", " ") 
+			error_desc = error_desc.replace("+", " ")
 			var err_html := "<html><body><h2>Authentication Cancelled</h2><p>%s</p><script>setTimeout(window.close, 3000);</script></body></html>" % error_desc
-			
+
 			server.send_response(client, "200 OK", err_html.to_utf8_buffer())
 			logError("Twitch Auth Failed: " + error_desc)
 			auth_error.emit(ERROR_USER_DENY, error_desc)
 			_stop_server(_AUTHTYPE_TOKEN)
 			return
-		
+
 		if not token_request.has("access_token"):
 			server.send_response(client, "400 Bad Request", "<html><body>Missing access token!</body></html>".to_utf8_buffer())
 			_stop_server(_AUTHTYPE_TOKEN)
@@ -369,13 +369,13 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 		if enable_twitch_hacks and token_handler is TwitchTokenHandler:
 			var token: String = OAuth.DEBUGGER_PROTECTION + access_token
 			var validation_response: BufferedHTTPClient.ResponseData = await token_handler.validate_token(token)
-			
+
 			if validation_response.response_data:
 				var validation_data: Dictionary = JSON.parse_string(validation_response.response_data.get_string_from_utf8())
 				token_handler.update_tokens(token, "", validation_data.get("expires_in", expires_in), scopes)
 		else:
 			token_handler.update_tokens(access_token, "", expires_in, scopes)
-			
+
 		logInfo("Received Access Token and updated successfully.")
 		server.send_response(client, "200 OK", "<html><head><title>Login</title><script>window.close()</script></head><body>Success! You may close this window.</body></html>".to_utf8_buffer())
 		_implicit_succeed.emit()
@@ -437,7 +437,7 @@ func _handle_error(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, quer
 	logError(msg)
 	server.send_response(client, "400 BAD REQUEST",  msg.to_utf8_buffer())
 	# TODO Maybe this method can send more then ERROR_USER_DENY errors open an issue on Github if you encounter another error
-	auth_error.emit(ERROR_USER_DENY, query_params["error_description"]) 
+	auth_error.emit(ERROR_USER_DENY, query_params["error_description"])
 	_stop_server(_AUTHTYPE_CODE)
 
 #endregion
@@ -445,10 +445,10 @@ func _handle_error(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, quer
 func _start_client_credential_process() -> void:
 	var token = await token_handler.request_token("client_credentials")
 	if enable_twitch_hacks:
-		# There is a reason why this is in twitch hacks =__= 
+		# There is a reason why this is in twitch hacks =__=
 		# aka client credentials doesn't give you the scopes anywhere
 		token._update_scopes(scopes.used_scopes)
-	
+
 #endregion
 
 func _handle_other_requests(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, fist_line: String) -> void:

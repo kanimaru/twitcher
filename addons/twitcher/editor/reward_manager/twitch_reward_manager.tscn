@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://deqnbbm1uxpbb"]
+
+[ext_resource type="Theme" uid="uid://d145ou7bj00tv" path="res://addons/twitcher/assets/twitcher_theme.tres" id="1_er0vu"]
+[ext_resource type="PackedScene" uid="uid://d2x3efon6jftb" path="res://addons/twitcher/editor/reward_manager/section_reward.tscn" id="1_nd7en"]
+[ext_resource type="Script" uid="uid://ibqinjgv6wwn" path="res://addons/twitcher/editor/reward_manager/twitch_reward_manager.gd" id="2_074m4"]
+[ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="3_0wlnk"]
+[ext_resource type="Resource" uid="uid://ek3g270xqbad" path="res://addons/twitcher/editor_oauth_setting.tres" id="4_umn5w"]
+[ext_resource type="Resource" uid="uid://bnpayc6epakvf" path="res://addons/twitcher/editor_oauth_token.tres" id="5_5yb8h"]
+[ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="7_fdrce"]
+[ext_resource type="Script" uid="uid://bf0wi70haua35" path="res://addons/twitcher/lib/oOuch/oauth.gd" id="8_q8ixl"]
+[ext_resource type="Script" uid="uid://blnbogtrshw4r" path="res://addons/twitcher/auth/twitch_token_handler.gd" id="9_iocdl"]
+
+[sub_resource type="Resource" id="Resource_iip83"]
+script = ExtResource("7_fdrce")
+used_scopes = Array[StringName]([&"channel:read:redemptions", &"channel:manage:redemptions"])
+metadata/_custom_type_script = "uid://b3n3et8mebjcc"
+
+[node name="Rewards" type="Window" unique_id=1732310672]
+oversampling_override = 1.0
+title = "Rewards"
+initial_position = 1
+size = Vector2i(900, 300)
+theme = ExtResource("1_er0vu")
+script = ExtResource("2_074m4")
+
+[node name="TwitchAuth" type="Node" parent="." unique_id=926665612]
+unique_name_in_owner = true
+script = ExtResource("3_0wlnk")
+oauth_setting = ExtResource("4_umn5w")
+token = ExtResource("5_5yb8h")
+scopes = SubResource("Resource_iip83")
+metadata/_custom_type_script = "uid://iv0mgv0lu8b0"
+
+[node name="OAuth" type="Node" parent="TwitchAuth" unique_id=227510525 node_paths=PackedStringArray("token_handler")]
+script = ExtResource("8_q8ixl")
+oauth_setting = ExtResource("4_umn5w")
+scopes = SubResource("Resource_iip83")
+token_handler = NodePath("../TokenHandler")
+
+[node name="TokenHandler" type="Node" parent="TwitchAuth" unique_id=119239112]
+script = ExtResource("9_iocdl")
+oauth_setting = ExtResource("4_umn5w")
+token = ExtResource("5_5yb8h")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1162065288]
+offset_right = 900.0
+offset_bottom = 300.0
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1244461433]
+layout_mode = 2
+
+[node name="Authorization" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1777949116]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"PanelForeground"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Authorization" unique_id=1977277689]
+layout_mode = 2
+alignment = 1
+
+[node name="AuthorizeExplain" type="Label" parent="MarginContainer/VBoxContainer/Authorization/VBoxContainer" unique_id=684874808]
+layout_mode = 2
+text = "To fetch the rewards for a user we need to authorize them."
+
+[node name="Authorize" type="Button" parent="MarginContainer/VBoxContainer/Authorization/VBoxContainer" unique_id=1559422622]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Authorize"
+
+[node name="Rewards" parent="MarginContainer/VBoxContainer" unique_id=101594284 instance=ExtResource("1_nd7en")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+token = ExtResource("5_5yb8h")
+setting = ExtResource("4_umn5w")
+
+[connection signal="close_requested" from="." to="." method="queue_free"]

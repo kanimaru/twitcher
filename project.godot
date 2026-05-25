@@ -8,10 +8,6 @@
 
 config_version=5
 
-[animation]
-
-compatibility/default_parent_skeleton_in_mesh_instance_3d=true
-
 [application]
 
 config/name="Twitcher"
@@ -30,6 +26,8 @@ gdscript/warnings/unsafe_call_argument=1
 
 [display]
 
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 window/size/transparent=true
 window/per_pixel_transparency/allowed=true
 
@@ -46,13 +44,6 @@ enabled=PackedStringArray("res://addons/twitcher/plugin.cfg")
 logs/TwitchChat="debug"
 logs/TwitchAPI="debug"
 logs/TwitchService="debug"
-logs/Http="debug"
 logs/TwitchAuth="debug"
-logs/TwitchIRC="debug"
-logs/TwitchImageTransformer="debug"
-logs/TwitchMediaLoader="debug"
-editor/default_scopes="res://twitch_scopes.tres"
-editor/project_preset=&"Overlay"
-logs/TwitchEventsub="debug"
-editor/game_oauth_token="res://addons/twitcher/default_oauth_token.tres"
-editor/game_oauth_setting="res://addons/twitcher/twitch_oauth_setting.tres"
+logs/TwitchEditorSetting="debug"
+"logs/Twitcher Plugin"="debug"

@@ -1,21 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://cfe0kxk8dptag"]
+[gd_scene format=3 uid="uid://cfe0kxk8dptag"]
 
-[ext_resource type="Script" uid="uid://dac0roqrgssf1" path="res://example/chat_view.gd" id="1_wk2am"]
+[ext_resource type="Script" uid="uid://dac0roqrgssf1" path="res://addons/twitcher/example/chat_view.gd" id="1_wk2am"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_2vgfi"]
 font_size = 36
 font_color = Color(0.956209, 0, 0.289367, 1)
 
-[node name="ChatView" type="Control"]
+[node name="ChatView" type="Control" unique_id=87007564]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 script = ExtResource("1_wk2am")
 
-[node name="ChatContainer" type="VBoxContainer" parent="."]
+[node name="ChatContainer" type="VBoxContainer" parent="." unique_id=172544413]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,34 +24,34 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="ChatContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="ChatContainer" unique_id=1796024858]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 3
 
-[node name="ChatContainer" type="VBoxContainer" parent="ChatContainer/ScrollContainer"]
+[node name="ChatContainer" type="VBoxContainer" parent="ChatContainer/ScrollContainer" unique_id=1503133011]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 2
 
-[node name="InputContainer" type="HBoxContainer" parent="ChatContainer"]
+[node name="InputContainer" type="HBoxContainer" parent="ChatContainer" unique_id=389911323]
 layout_mode = 2
 
-[node name="InputLine" type="LineEdit" parent="ChatContainer/InputContainer"]
+[node name="InputLine" type="LineEdit" parent="ChatContainer/InputContainer" unique_id=349453883]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 keep_editing_on_text_submit = true
 
-[node name="Send" type="Button" parent="ChatContainer/InputContainer"]
+[node name="Send" type="Button" parent="ChatContainer/InputContainer" unique_id=1657732878]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Send"
 
-[node name="ConfigurationWarning" type="Label" parent="."]
+[node name="ConfigurationWarning" type="Label" parent="." unique_id=470506463]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1

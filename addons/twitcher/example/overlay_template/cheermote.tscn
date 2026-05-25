@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://cftudp18otteu"]
+
+[ext_resource type="Script" uid="uid://bs11kd3horowg" path="res://addons/twitcher/example/overlay_template/cheermote.gd" id="1_nqt04"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_nqt04"]
+bounce = 0.7
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_uw4cn"]
+
+[node name="Cheermote" type="RigidBody2D" unique_id=137167021]
+physics_material_override = SubResource("PhysicsMaterial_nqt04")
+script = ExtResource("1_nqt04")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1427174650]
+unique_name_in_owner = true
+shape = SubResource("CircleShape2D_uw4cn")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=598445925]
+unique_name_in_owner = true

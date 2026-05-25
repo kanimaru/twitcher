@@ -21,26 +21,26 @@ func _ready() -> void:
 	update_token_view()
 	revoke_button.pressed.connect(_on_revoke_pressed)
 	reload_button.pressed.connect(_on_reload_pressed)
-	
-	
+
+
 func _enter_tree() -> void:
 	if is_instance_valid(token):
 		token.changed.connect(_on_token_changed)
-	
-	
+
+
 func _exit_tree() -> void:
 	if is_instance_valid(token):
 		token.changed.disconnect(_on_token_changed)
-	
-	
+
+
 func _update_token(val: OAuthToken) -> void:
 	if is_instance_valid(token):
 		token.changed.disconnect(_on_token_changed)
 	token = val
 	if is_instance_valid(token) and is_inside_tree():
 		token.changed.connect(_on_token_changed)
-	
-	
+
+
 func update_token_view() -> void:
 	if token.resource_path != "":
 		title.text = token.resource_path.get_file().get_basename()
@@ -48,7 +48,7 @@ func update_token_view() -> void:
 		title.text = token.resource_name
 	else:
 		title.text = "Unnamed Token"
-		
+
 	token_valid_value.text = token.get_expiration_readable()
 	if token.is_token_valid():
 		token_valid_value.add_theme_color_override(&"font_color", Color.GREEN)
@@ -71,7 +71,7 @@ func update_token_view() -> void:
 		scope_name.text = scope
 		token_scope_value.add_child(scope_name)
 	revoke_button.disabled = false
-	
+
 
 func _on_revoke_pressed() -> void:
 	token.remove_tokens()
@@ -90,7 +90,7 @@ func _reset_token() -> void:
 	revoke_button.disabled = true
 	for child in token_scope_value.get_children():
 		child.queue_free()
-	
+
 
 func _on_token_changed() -> void:
 	update_token_view()

@@ -1,0 +1,94 @@
+[gd_scene format=3 uid="uid://d4mheqice7qcu"]
+
+[ext_resource type="Script" uid="uid://c5wx1gn2acuvp" path="res://addons/twitcher/editor/setup/section_game_authorization_view.gd" id="1_al1px"]
+[ext_resource type="ButtonGroup" uid="uid://dh8v0oxpn5ub7" path="res://addons/twitcher/editor/setup/flow_button_group.tres" id="1_wmvkj"]
+[ext_resource type="Script" uid="uid://ddugotjvuahex" path="res://addons/twitcher/editor/setup/focus_child_show.gd" id="2_adn8n"]
+[ext_resource type="Script" uid="uid://6cx1luottp33" path="res://addons/twitcher/editor/rich_text_label_os_opener.gd" id="2_al1px"]
+
+[node name="GameAuthorizationView" type="VBoxContainer" unique_id=1108317071]
+script = ExtResource("1_al1px")
+
+[node name="Label" type="Label" parent="." unique_id=418800578]
+layout_mode = 2
+text = "What kind of Authorization you want for your game?"
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=275362145]
+layout_mode = 2
+columns = 2
+
+[node name="DeviceCodeFlow" type="CheckBox" parent="GridContainer" unique_id=491007446]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+button_group = ExtResource("1_wmvkj")
+text = "Device Code Flow"
+
+[node name="DeviceCodeFlowExplain" type="RichTextLabel" parent="GridContainer" unique_id=1938128726]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "A little bit more complicated then implicit, works on all machines. User needs more steps. [url=https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#device-code-grant-flow]Documention[/url]"
+fit_content = true
+vertical_alignment = 1
+script = ExtResource("2_al1px")
+
+[node name="ImplicitFlow" type="CheckBox" parent="GridContainer" unique_id=517891354]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = ExtResource("1_wmvkj")
+text = "Implicit Flow "
+
+[node name="ImplicitFlowExplain" type="RichTextLabel" parent="GridContainer" unique_id=1988863306]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "Easiest way for user but possibly [url=https://developer.okta.com/blog/2019/05/01/is-the-oauth-implicit-flow-dead]insecure[/url]. Also may not work on webbuilds or devices that can't host their own server. [url=https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow]Documention[/url]"
+fit_content = true
+vertical_alignment = 1
+script = ExtResource("2_al1px")
+
+[node name="HSeparator" type="HSeparator" parent="." unique_id=1145670971]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="AuthExplain" type="RichTextLabel" parent="." unique_id=874813025]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "You need to create an application for accessing Twitch. You can request your credentials at [url=https://dev.twitch.tv/console/apps/create]Twitch Dev Console[/url] for more informations see [url=https://twitcher.kani.dev/editor/editor-authorization.html]Documentation[/url]"
+fit_content = true
+vertical_alignment = 1
+script = ExtResource("2_al1px")
+
+[node name="AuthorizationOptions" type="GridContainer" parent="." unique_id=1615512720 node_paths=PackedStringArray("show_elements")]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+columns = 2
+script = ExtResource("2_adn8n")
+show_elements = [NodePath("../AuthExplain")]
+
+[node name="ClientIdLabel" type="Label" parent="AuthorizationOptions" unique_id=1132171421]
+layout_mode = 2
+text = "Client ID:"
+
+[node name="ClientId" type="LineEdit" parent="AuthorizationOptions" unique_id=2022326242]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RedirectURLLabel" type="Label" parent="AuthorizationOptions" unique_id=2035733738]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "Redirect URL:"
+
+[node name="RedirectURL" type="LineEdit" parent="AuthorizationOptions" unique_id=460057561]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Location that Twitch is calling after the login process. Take care that this one is the same that you used during creation of the application within the twitch dev console."

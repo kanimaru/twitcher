@@ -16,7 +16,7 @@ const FALLBACK_TEXTURE = preload("res://addons/twitcher/assets/fallback_texture.
 const FALLBACK_PROFILE = preload("res://addons/twitcher/assets/no_profile.png")
 
 @export var api: TwitchAPI
-@export var image_transformer: TwitchImageTransformer = TwitchImageTransformer.new(): 
+@export var image_transformer: TwitchImageTransformer = TwitchImageTransformer.new():
 	set(val):
 		image_transformer = val
 		update_configuration_warnings()
@@ -58,11 +58,11 @@ func _ready() -> void:
 
 func _enter_tree() -> void:
 	if instance == null: instance = self
-	
-	
+
+
 func _exit_tree() -> void:
 	if instance == self: instance = null
-	
+
 
 ## Loading all images from the directory into the memory cache
 func _load_cache() -> void:
@@ -85,7 +85,7 @@ func _cache_directory(path: String):
 #region Emotes
 
 func preload_emotes(channel_id: String = "global") -> void:
-	
+
 	if (!_cached_emotes.has(channel_id)):
 		var response
 		if channel_id == "global":
@@ -137,19 +137,19 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 
 	for emote_definition : TwitchEmoteDefinition in requests:
 		var original_file_cache_path : String = _get_emote_cache_path(emote_definition)
-		var spriteframe_path : String = _get_emote_cache_path_spriteframe(emote_definition)		
+		var spriteframe_path : String = _get_emote_cache_path_spriteframe(emote_definition)
 		var request : BufferedHTTPClient.RequestData = requests[emote_definition]
 		var sprite_frames : SpriteFrames = await _convert_response(request, original_file_cache_path, spriteframe_path)
 		response[emote_definition] = sprite_frames
 		_cached_images.append(sprite_frames)
 		_requests_in_progress.erase(original_file_cache_path)
 		emoji_loaded.emit(emote_definition)
-		
+
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
 		if not response.has(emote_definition):
 			var cache : String = _get_emote_cache_path_spriteframe(emote_definition)
 			response[emote_definition] = ResourceLoader.load(cache)
-	
+
 	return response
 
 
@@ -185,7 +185,7 @@ func get_cached_emotes(channel_id) -> Dictionary:
 		await preload_emotes(channel_id)
 	return _cached_emotes[channel_id]
 
-#endregion 
+#endregion
 
 #region Badges
 
@@ -287,7 +287,7 @@ func preload_cheemote() -> void:
 	var cheermote_response: TwitchGetCheermotes.Response = await api.get_cheermotes(null)
 	for cheermote: TwitchCheermote in cheermote_response.data:
 		_log.d("- found %s" % cheermote.prefix)
-		var key: String = _get_cheermote_key(cheermote) 
+		var key: String = _get_cheermote_key(cheermote)
 		_cached_cheermotes[key] = cheermote
 
 
@@ -329,12 +329,12 @@ func get_cheermotes(cheermote_definition: TwitchCheermoteDefinition) -> Dictiona
 	var cheer : TwitchCheermote = _cached_cheermotes[key]
 	for tier : TwitchCheermote.Tiers in cheer.tiers:
 		var id = cheermote_definition.get_id()
-		if ResourceLoader.has_cached(id): 
+		if ResourceLoader.has_cached(id):
 			_log.d("Use cached cheer %s" % cheermote_definition)
 			response[tier] = ResourceLoader.load(id)
 		if not image_transformer.is_supporting_animation():
 			cheermote_definition.type_static()
-		else: 
+		else:
 			_log.d("Request cheer %s" % cheermote_definition)
 			requests[tier] = _request_cheermote(tier, cheermote_definition)
 
@@ -380,8 +380,8 @@ func _request_cheermote(cheer_tier: TwitchCheermote.Tiers, cheermote: TwitchChee
 	if host_result == null: return null
 	var host : String = host_result.get_string(1)
 	return _client.request(img_path, HTTPClient.METHOD_GET, {}, "")
-	
-	
+
+
 ## Get's the caching key from cheermote (TwitchCheermote or TwitchCheermoteDefinition)
 func _get_cheermote_key(cheermote: Variant) -> String:
 	if "prefix" in cheermote:
@@ -412,12 +412,12 @@ func load_image(url: String) -> Image:
 ## Get the image of an user
 func load_profile_image(user: TwitchUser) -> ImageTexture:
 	if user == null or user.profile_image_url.is_empty(): return fallback_profile
-	
+
 	# Use User ID for filename to prevent orphans
 	var cache_filename: String = "%s.res" % user.id
 	var cache_path: String = cache_profile.path_join(cache_filename)
 	var current_hash: String = user.profile_image_url.md5_text()
-	
+
 	# Check if we have a cached resource
 	if FileAccess.file_exists(cache_path):
 		var cached_res = ResourceLoader.load(cache_path)
@@ -426,7 +426,7 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 			if cached_res.has_meta("url_hash") and cached_res.get_meta("url_hash") == current_hash:
 				cached_res.take_over_path(user.profile_image_url)
 				return cached_res
-	
+
 	# If not on disk or hash mismatch, check memory cache (ResourceLoader) just in case
 	if ResourceLoader.has_cached(user.profile_image_url):
 		return ResourceLoader.load(user.profile_image_url)
@@ -436,14 +436,14 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 	var response_data := await _client.wait_for_request(request)
 	var texture : ImageTexture = ImageTexture.new()
 	var response := response_data.response_data
-	
+
 	if not response.is_empty():
 		var img := Image.new()
 		var content_type: String = response_data.response_header.get("Content-Type", "")
 		var extension: String = user.profile_image_url.get_extension()
 		var error: Error
-		
-		if content_type.containsn("image/png") or extension == "png": 
+
+		if content_type.containsn("image/png") or extension == "png":
 			error = img.load_png_from_buffer(response)
 		elif content_type.containsn("image/jpeg") or extension == "jpg" or extension == "jpeg":
 			error = img.load_jpg_from_buffer(response)
@@ -452,18 +452,18 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 			error = img.load_png_from_buffer(response)
 			if error != OK:
 				error = img.load_jpg_from_buffer(response)
-				
+
 		if error != OK:
 			push_error("Can't load profile picture of %s cause of %s" % [user.display_name, error_string(error)])
 			return fallback_profile
-			
+
 		texture.set_image(img)
-		
+
 		# Save to disk cache as .res with metadata
 		texture.set_meta("url_hash", current_hash)
 		DirAccess.make_dir_recursive_absolute(cache_profile)
 		var save_err: Error = ResourceSaver.save(texture, cache_path, ResourceSaver.SaverFlags.FLAG_COMPRESS)
-			
+
 		if save_err != OK:
 			_log.e("Failed to save profile image to cache: %s" % cache_path)
 
@@ -471,7 +471,7 @@ func load_profile_image(user: TwitchUser) -> ImageTexture:
 		# Don't use `texture = fallback_profile` as texture cause the path will be taken over
 		# for caching purpose!
 		texture.set_image(fallback_profile.get_image())
-	
+
 	texture.take_over_path(user.profile_image_url)
 	return texture
 

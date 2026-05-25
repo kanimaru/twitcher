@@ -13,7 +13,7 @@ var _current_user: TwitchUser
 
 func _init() -> void:
 	args_max = 1
-	
+
 
 func _enter_tree() -> void:
 	super._enter_tree()
@@ -25,16 +25,16 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	if command == "": command = "help"
-	
+
 	command_received.connect(_on_command_receive)
-	
+
 	# Only when you have a user in the token otherwise twitch returns a 400
 	if twitch_api.token.type == OAuthToken.USER_ACCESS_TOKEN:
 		var response: TwitchGetUsers.Response = await twitch_api.get_users(TwitchGetUsers.Opt.new())
 		_current_user = response.data[0]
 		if sender_user == null: sender_user = _current_user
-	
-	
+
+
 func _on_command_receive(from_username: String, info: TwitchCommandInfo, args: PackedStringArray) -> void:
 	if info.original_message is TwitchChatMessage:
 		var help_message: String = _generate_help_message(args, false)
@@ -63,39 +63,39 @@ func cleanup_redundant_commands() -> void:
 		command_set[command.command] = command
 	var sanatized_commands: Array = command_set.values()
 	TwitchCommand.ALL_COMMANDS.assign(sanatized_commands)
-	
-		
+
+
 func _generate_help_message(args: Array[String], whisper_only: bool) -> String:
 	var message: String = ""
 	var show_details: bool = not args.is_empty()
-		
+
 	cleanup_redundant_commands()
-		
+
 	for command in TwitchCommand.ALL_COMMANDS:
 		if command == self: continue
 		var should_be_added: bool = command.where == TwitchCommand.WhereFlag.ANYWHERE \
 			|| command.where == TwitchCommand.WhereFlag.WHISPER && whisper_only \
 			|| command.where == TwitchCommand.WhereFlag.CHAT && not whisper_only
-	
+
 		if not args.is_empty():
 			should_be_added = should_be_added && _is_command_in_args(command, args)
-		
+
 		# Only command for now, cause no idea how to show the contains / regex command in the help summary.
 		should_be_added = should_be_added && command is TwitchCommand
-		
+
 		if should_be_added:
 			if show_details:
 				message += "[%s - %s] " % [command, command.description]
 			else:
 				message += "%s, " % command
-	
+
 	if message == "":
 		return "No commands registered"
 	elif not show_details:
 		message = message.trim_suffix(", ")
 		message = "List of all Commands: %s | You can use '!help COMMAND' for details!" % message
 	return message
-	
+
 
 func _is_command_in_args(command: TwitchCommand, args: Array[String]) -> bool:
 	for arg in args:

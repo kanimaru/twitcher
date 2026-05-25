@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://dm6jvnuikxtei"]
+
+[ext_resource type="Script" uid="uid://dxql15j5ornlc" path="res://addons/twitcher/editor/setup/page_overlay_authorization.gd" id="1_78hk7"]
+[ext_resource type="Theme" uid="uid://d145ou7bj00tv" path="res://addons/twitcher/assets/twitcher_theme.tres" id="1_h1dk1"]
+[ext_resource type="PackedScene" uid="uid://cfplxaw8f38hl" path="res://addons/twitcher/editor/setup/section_overlay_authorization_view.tscn" id="3_1ocoi"]
+[ext_resource type="FoldableGroup" uid="uid://cciuf1mv73p2s" path="res://addons/twitcher/editor/setup/setting_foldable_group.tres" id="3_6iuhk"]
+[ext_resource type="PackedScene" uid="uid://cjyawyvilv700" path="res://addons/twitcher/editor/setup/section_default_resource_view.tscn" id="5_6iuhk"]
+[ext_resource type="PackedScene" uid="uid://bps647tfof0ej" path="res://addons/twitcher/editor/setup/section_default_user_view.tscn" id="5_6v7gf"]
+
+[node name="PageOverlayAuthorization" type="MarginContainer" unique_id=1961758844]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_h1dk1")
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("1_78hk7")
+metadata/_tab_index = 1
+
+[node name="Layout" type="VBoxContainer" parent="." unique_id=993977772]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="Title" type="Label" parent="Layout" unique_id=818719415]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Authorization"
+horizontal_alignment = 1
+
+[node name="ToDocumentation" type="Button" parent="Layout/Title" unique_id=1419492933]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -52.0
+offset_top = -15.5
+offset_bottom = 15.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "DOCS"
+metadata/_edit_use_anchors_ = true
+
+[node name="EditorSupport" type="FoldableContainer" parent="Layout" unique_id=1400959451]
+layout_mode = 2
+folded = true
+title = "Editor Support"
+title_alignment = 1
+foldable_group = ExtResource("3_6iuhk")
+
+[node name="OverlayAuthorizationView" parent="Layout/EditorSupport" unique_id=2000752896 instance=ExtResource("3_1ocoi")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="DefaultUser" type="FoldableContainer" parent="Layout" unique_id=1732854421]
+unique_name_in_owner = true
+layout_mode = 2
+title = "Default User"
+title_alignment = 1
+foldable_group = ExtResource("3_6iuhk")
+
+[node name="DefaultUserView" parent="Layout/DefaultUser" unique_id=1372832032 instance=ExtResource("5_6v7gf")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DefaultResource" type="FoldableContainer" parent="Layout" unique_id=813635557]
+unique_name_in_owner = true
+layout_mode = 2
+folded = true
+title = "Default Resources"
+title_alignment = 1
+foldable_group = ExtResource("3_6iuhk")
+
+[node name="DefaultRessourceView" parent="Layout/DefaultResource" unique_id=891802833 instance=ExtResource("5_6iuhk")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2

@@ -227,8 +227,6 @@ func paging_code(method: TwitchGenMethod) -> String:
 
 
 func method_code(method: TwitchGenMethod) -> String:
-	print("GENERATE METHOD ", method._name)
-
 	var result_type = get_type(method._result_type, false, true)
 
 	var template = """

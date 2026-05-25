@@ -35,15 +35,23 @@ func _init() -> void:
 	_creation_stack = get_stack()
 
 
+var _loading: bool = false
 var _access_token: String = "":
 	set(val):
 		_access_token = val
-		if val != "": authorized.emit()
+		if val != "" and not _loading: authorized.emit()
 var _refresh_token: String = ""
 
 
-## Called when the token was resolved / accesstoken got refreshed
+## Called when the token was resolved / accesstoken got refreshed (may never finish on problems so
+## don't inline await for it)
 signal authorized
+
+## Called when a token request finishes (success or failure) to unblock concurrent requests
+signal request_finished
+
+## Is currently requesting tokens
+var is_requesting: bool = false
 
 
 func _get_storage_key() -> String:
@@ -56,7 +64,7 @@ func _get_storage_key() -> String:
 	return "Auth-" + resource_name
 
 
-## Update the visual representation of the scopes (don't use it for actually changing scopes it wont work!) 
+## Update the visual representation of the scopes (don't use it for actually changing scopes it wont work!)
 # Client credential flow doesn't return used scopes and I wanted to give the use feedback over the scopes
 func _update_scopes(scopes: Array[StringName]) -> void:
 	for scope in scopes: _scopes.append(scope)
@@ -64,7 +72,7 @@ func _update_scopes(scopes: Array[StringName]) -> void:
 	emit_changed()
 
 
-## Updates the data in the scopes and persist it  
+## Updates the data in the scopes and persist it
 func update_values(access_token: String, refresh_token: String, expire_in: int, scopes: Array[String], token_type: StringName) -> void:
 	_expire_date = roundi(Time.get_unix_time_from_system() + expire_in)
 	_access_token = access_token
@@ -81,13 +89,13 @@ func _persist_tokens():
 	var encrypted_access_token: PackedByteArray  = _crypto_key_provider.encrypt(_access_token.to_utf8_buffer())
 	var encrypted_refresh_token: PackedByteArray = _crypto_key_provider.encrypt(_refresh_token.to_utf8_buffer())
 	_config_file.load(_cache_path)
-	
+
 	var token_name: String = "Unnamed (Missing Path/Name)"
 	if resource_path != "":
 		token_name = resource_path.get_file()
 	elif resource_name != "":
 		token_name = resource_name
-		
+
 	_config_file.set_value(key, "name", token_name)
 	_config_file.set_value(key, "expire_date", _expire_date)
 	_config_file.set_value(key, "type", type)
@@ -95,7 +103,7 @@ func _persist_tokens():
 	_config_file.set_value(key, "refresh_token", Marshalls.raw_to_base64(encrypted_refresh_token))
 	_config_file.set_value(key, "scopes", ",".join(_scopes))
 	var err: Error = _config_file.save(_cache_path)
-	if err != OK: 
+	if err != OK:
 		logError("Token %s could not be saved cause of %s" % [self, error_string(err)])
 	else:
 		logDebug("Token %s got persited" % self)
@@ -106,6 +114,7 @@ func load_tokens() -> bool:
 	var key: String = _get_storage_key()
 	var status: Error = _config_file.load(_cache_path)
 	if status == OK && _config_file.has_section(key):
+		_loading = true
 		_expire_date = _config_file.get_value(key, "expire_date", 0)
 		var encrypted_access_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(key, "access_token"))
 		var encrypted_refresh_token: PackedByteArray = Marshalls.base64_to_raw(_config_file.get_value(key, "refresh_token"))
@@ -113,12 +122,13 @@ func load_tokens() -> bool:
 		_refresh_token = _crypto_key_provider.decrypt(encrypted_refresh_token).get_string_from_utf8()
 		type = _config_file.get_value(key, "type", &"")
 		_scopes = _config_file.get_value(key, "scopes", "").split(",", false)
+		_loading = false
 		emit_changed()
 		logDebug("Token %s got loaded" % self)
 		return true
 	logInfo("Token %s got not loaded error -> (%s) or was not present in '%s' yet" % [self, error_string(status), _cache_path])
 	return false
-	
+
 
 
 func remove_tokens() -> void:
@@ -133,7 +143,7 @@ func remove_tokens() -> void:
 
 		_config_file.erase_section(key)
 		var err: Error = _config_file.save(_cache_path)
-		if err != OK: 
+		if err != OK:
 			logError("Token %s could not be erased cause of %s" % [self, error_string(err)])
 		emit_changed()
 		logInfo("Token %s got revoked" % self)
@@ -191,14 +201,14 @@ func _to_string() -> String:
 		token_name = resource_path.get_file()
 	elif resource_name != "":
 		token_name = resource_name
-	
-	if (resource_path == "" and resource_name == "") and _creation_stack.size() > 1:
+
+	if resource_path == "" and resource_name == "" and _creation_stack.size() > 1:
 		var frame = _creation_stack[1]
 		token_name += " [created at %s:%s]" % [frame.source.get_file(), frame.line]
-		
+
 	return "<%s#%s>" % [token_name, get_instance_id()]
-	
-	
+
+
 ## Get all token names within a config file
 static func get_identifiers(cache_file: String) -> PackedStringArray:
 	var _config_file: ConfigFile = ConfigFile.new()

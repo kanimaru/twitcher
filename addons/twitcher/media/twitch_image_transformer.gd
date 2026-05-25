@@ -30,6 +30,7 @@ func convert_image(path: String, buffer_in: PackedByteArray, output_path: String
 		texture = ImageTexture.new()
 		texture.set_image(img)
 		sprite_frames.add_frame(&"default", texture)
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output_path).get_base_dir())
 		ResourceSaver.save(sprite_frames, output_path, ResourceSaver.SaverFlags.FLAG_COMPRESS)
 		sprite_frames.take_over_path(path)
 	else:

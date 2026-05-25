@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://1luoys8urcb4"]
+
+[ext_resource type="Script" uid="uid://cppbrsn4ohgvf" path="res://addons/twitcher/editor/setup/page_game_authorization.gd" id="1_kw2ke"]
+[ext_resource type="FoldableGroup" uid="uid://cciuf1mv73p2s" path="res://addons/twitcher/editor/setup/setting_foldable_group.tres" id="2_gkw18"]
+[ext_resource type="PackedScene" uid="uid://d4mheqice7qcu" path="res://addons/twitcher/editor/setup/section_game_authorization_view.tscn" id="2_hjylh"]
+[ext_resource type="PackedScene" uid="uid://cjyawyvilv700" path="res://addons/twitcher/editor/setup/section_default_resource_view.tscn" id="4_hjylh"]
+
+[node name="PageGameAuthorization" type="MarginContainer" unique_id=1261247659]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kw2ke")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=538267532]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="Title" type="Label" parent="VBoxContainer" unique_id=1671396548]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Game Setup"
+horizontal_alignment = 1
+
+[node name="ToDocumentation" type="Button" parent="VBoxContainer/Title" unique_id=164563904]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -52.0
+offset_top = -15.5
+offset_bottom = 15.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "DOCS"
+metadata/_edit_use_anchors_ = true
+
+[node name="FoldableContainer" type="FoldableContainer" parent="VBoxContainer" unique_id=635350977]
+layout_mode = 2
+folded = true
+title = "Authorization"
+title_alignment = 1
+foldable_group = ExtResource("2_gkw18")
+
+[node name="GameAuthorizationView" parent="VBoxContainer/FoldableContainer" unique_id=1108317071 instance=ExtResource("2_hjylh")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+token = null
+setting = null
+
+[node name="FoldableContainer2" type="FoldableContainer" parent="VBoxContainer" unique_id=817938607]
+layout_mode = 2
+folded = true
+title = "Default Resource"
+title_alignment = 1
+foldable_group = ExtResource("2_gkw18")
+
+[node name="DefaultRessourceView" parent="VBoxContainer/FoldableContainer2" unique_id=891802833 instance=ExtResource("4_hjylh")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2

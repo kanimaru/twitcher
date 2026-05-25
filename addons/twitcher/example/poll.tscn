@@ -1,10 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://8aaffyevs7h3"]
+[gd_scene format=3 uid="uid://8aaffyevs7h3"]
 
-[ext_resource type="Script" uid="uid://d03wgpor12tel" path="res://example/poll.gd" id="1_l1adj"]
+[ext_resource type="Script" uid="uid://d03wgpor12tel" path="res://addons/twitcher/example/poll.gd" id="1_l1adj"]
+[ext_resource type="Resource" uid="uid://ek3g270xqbad" path="res://addons/twitcher/editor_oauth_setting.tres" id="2_h8xge"]
 [ext_resource type="Script" uid="uid://i8st3lv0lidh" path="res://addons/twitcher/twitch_service.gd" id="2_rsdnh"]
-[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://addons/twitcher/twitch_oauth_setting.tres" id="3_vxhn7"]
+[ext_resource type="Resource" uid="uid://bnpayc6epakvf" path="res://addons/twitcher/editor_oauth_token.tres" id="4_8g3uc"]
 [ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="4_uhhrj"]
-[ext_resource type="Resource" uid="uid://m7epy882axmp" path="res://addons/twitcher/default_oauth_token.tres" id="5_h73vx"]
 [ext_resource type="Script" uid="uid://blmhj3j00yk45" path="res://addons/twitcher/eventsub/twitch_eventsub.gd" id="6_v01hy"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="7_0ntit"]
 [ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="8_6trg3"]
@@ -17,7 +17,7 @@ script = ExtResource("4_uhhrj")
 used_scopes = Array[StringName]([&"channel:manage:polls", &"channel:read:polls"])
 metadata/_custom_type_script = "uid://b3n3et8mebjcc"
 
-[node name="Margin" type="MarginContainer"]
+[node name="Margin" type="MarginContainer" unique_id=1336061864]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -28,116 +28,115 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="TwitchService" type="Node" parent="."]
+[node name="TwitchService" type="Node" parent="." unique_id=1882359904]
 unique_name_in_owner = true
 script = ExtResource("2_rsdnh")
-oauth_setting = ExtResource("3_vxhn7")
+oauth_setting = ExtResource("2_h8xge")
 scopes = SubResource("Resource_orn12")
-token = ExtResource("5_h73vx")
+token = ExtResource("4_8g3uc")
 
-[node name="Eventsub" type="Node" parent="TwitchService" node_paths=PackedStringArray("api")]
+[node name="Eventsub" type="Node" parent="TwitchService" unique_id=1618683070 node_paths=PackedStringArray("api")]
 unique_name_in_owner = true
 script = ExtResource("6_v01hy")
 api = NodePath("../API")
-scopes = SubResource("Resource_orn12")
 
-[node name="API" type="Node" parent="TwitchService"]
+[node name="API" type="Node" parent="TwitchService" unique_id=1393028321]
 unique_name_in_owner = true
 script = ExtResource("7_0ntit")
-token = ExtResource("5_h73vx")
-oauth_setting = ExtResource("3_vxhn7")
+token = ExtResource("4_8g3uc")
+oauth_setting = ExtResource("2_h8xge")
 
-[node name="TwitchAuth" type="Node" parent="TwitchService"]
+[node name="TwitchAuth" type="Node" parent="TwitchService" unique_id=1850368176]
 script = ExtResource("8_6trg3")
-oauth_setting = ExtResource("3_vxhn7")
-token = ExtResource("5_h73vx")
+oauth_setting = ExtResource("2_h8xge")
+token = ExtResource("4_8g3uc")
 scopes = SubResource("Resource_orn12")
 metadata/_custom_type_script = "uid://iv0mgv0lu8b0"
 
-[node name="OAuth" type="Node" parent="TwitchService/TwitchAuth" node_paths=PackedStringArray("token_handler")]
+[node name="OAuth" type="Node" parent="TwitchService/TwitchAuth" unique_id=1681019385 node_paths=PackedStringArray("token_handler")]
 script = ExtResource("9_lfp8b")
-oauth_setting = ExtResource("3_vxhn7")
+oauth_setting = ExtResource("2_h8xge")
 scopes = SubResource("Resource_orn12")
 token_handler = NodePath("../TokenHandler")
 
-[node name="TokenHandler" type="Node" parent="TwitchService/TwitchAuth"]
+[node name="TokenHandler" type="Node" parent="TwitchService/TwitchAuth" unique_id=1125544283]
 script = ExtResource("10_o18lj")
-oauth_setting = ExtResource("3_vxhn7")
-token = ExtResource("5_h73vx")
+oauth_setting = ExtResource("2_h8xge")
+token = ExtResource("4_8g3uc")
 
-[node name="Poll" type="VBoxContainer" parent="."]
+[node name="Poll" type="VBoxContainer" parent="." unique_id=1347681860]
 layout_mode = 2
 theme_override_constants/separation = 30
 script = ExtResource("1_l1adj")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Poll"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Poll" unique_id=1163346901]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="PollSetting" type="VBoxContainer" parent="Poll/HBoxContainer"]
+[node name="PollSetting" type="VBoxContainer" parent="Poll/HBoxContainer" unique_id=331902549]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="AddTitle" type="Label" parent="Poll/HBoxContainer/PollSetting"]
+[node name="AddTitle" type="Label" parent="Poll/HBoxContainer/PollSetting" unique_id=580273106]
 layout_mode = 2
 text = "Add a Poll"
 label_settings = ExtResource("11_6ip30")
 horizontal_alignment = 1
 
-[node name="Title" type="LineEdit" parent="Poll/HBoxContainer/PollSetting"]
+[node name="Title" type="LineEdit" parent="Poll/HBoxContainer/PollSetting" unique_id=367455032]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Title"
 
-[node name="HSeparator" type="HSeparator" parent="Poll/HBoxContainer/PollSetting"]
+[node name="HSeparator" type="HSeparator" parent="Poll/HBoxContainer/PollSetting" unique_id=1048167746]
 layout_mode = 2
 
-[node name="Answers" type="VBoxContainer" parent="Poll/HBoxContainer/PollSetting"]
+[node name="Answers" type="VBoxContainer" parent="Poll/HBoxContainer/PollSetting" unique_id=714096540]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Answer" type="LineEdit" parent="Poll/HBoxContainer/PollSetting/Answers" groups=["answer"]]
+[node name="Answer" type="LineEdit" parent="Poll/HBoxContainer/PollSetting/Answers" unique_id=1259625523 groups=["answer"]]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Answer"
 
-[node name="OptionSetting" type="VBoxContainer" parent="Poll/HBoxContainer"]
+[node name="OptionSetting" type="VBoxContainer" parent="Poll/HBoxContainer" unique_id=1763567687]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OptionTitle" type="Label" parent="Poll/HBoxContainer/OptionSetting"]
+[node name="OptionTitle" type="Label" parent="Poll/HBoxContainer/OptionSetting" unique_id=550750938]
 layout_mode = 2
 text = "Options"
 label_settings = ExtResource("11_6ip30")
 horizontal_alignment = 1
 
-[node name="ChannelPointVoting" type="HBoxContainer" parent="Poll/HBoxContainer/OptionSetting"]
+[node name="ChannelPointVoting" type="HBoxContainer" parent="Poll/HBoxContainer/OptionSetting" unique_id=2135057731]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Poll/HBoxContainer/OptionSetting/ChannelPointVoting"]
+[node name="Label" type="Label" parent="Poll/HBoxContainer/OptionSetting/ChannelPointVoting" unique_id=357547012]
 layout_mode = 2
 text = "With Channelpoints:"
 
-[node name="ChannelPointVoting" type="CheckButton" parent="Poll/HBoxContainer/OptionSetting/ChannelPointVoting"]
+[node name="ChannelPointVoting" type="CheckButton" parent="Poll/HBoxContainer/OptionSetting/ChannelPointVoting" unique_id=601313887]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ChannelPoints" type="LineEdit" parent="Poll/HBoxContainer/OptionSetting/ChannelPointVoting"]
+[node name="ChannelPoints" type="LineEdit" parent="Poll/HBoxContainer/OptionSetting/ChannelPointVoting" unique_id=221983265]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Channel Points per Vote"
 
-[node name="Duration" type="HBoxContainer" parent="Poll/HBoxContainer/OptionSetting"]
+[node name="Duration" type="HBoxContainer" parent="Poll/HBoxContainer/OptionSetting" unique_id=1380455323]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Poll/HBoxContainer/OptionSetting/Duration"]
+[node name="Label" type="Label" parent="Poll/HBoxContainer/OptionSetting/Duration" unique_id=2076140728]
 layout_mode = 2
 text = "Duration"
 
-[node name="Duration" type="LineEdit" parent="Poll/HBoxContainer/OptionSetting/Duration"]
+[node name="Duration" type="LineEdit" parent="Poll/HBoxContainer/OptionSetting/Duration" unique_id=1750001184]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -145,29 +144,29 @@ text = "60"
 placeholder_text = "in seconds"
 virtual_keyboard_type = 2
 
-[node name="Send" type="Button" parent="Poll"]
+[node name="Send" type="Button" parent="Poll" unique_id=1206743272]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Send"
 
-[node name="Result" type="GridContainer" parent="Poll"]
+[node name="Result" type="GridContainer" parent="Poll" unique_id=380509024]
 unique_name_in_owner = true
 layout_mode = 2
 columns = 3
 
-[node name="Title" type="Label" parent="Poll/Result"]
+[node name="Title" type="Label" parent="Poll/Result" unique_id=1784378610]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Title"
 horizontal_alignment = 1
 
-[node name="ChannelPointVotes" type="Label" parent="Poll/Result"]
+[node name="ChannelPointVotes" type="Label" parent="Poll/Result" unique_id=797592362]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Channel Point Votes"
 horizontal_alignment = 1
 
-[node name="Votes" type="Label" parent="Poll/Result"]
+[node name="Votes" type="Label" parent="Poll/Result" unique_id=1820250911]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Votes"

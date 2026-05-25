@@ -1,23 +1,58 @@
 [gd_scene format=3 uid="uid://wu1fprbhr62"]
 
+[ext_resource type="Theme" uid="uid://d145ou7bj00tv" path="res://addons/twitcher/assets/twitcher_theme.tres" id="1_6678v"]
 [ext_resource type="Script" uid="uid://bbguje3a0cl8t" path="res://addons/twitcher/editor/setup/setup.gd" id="1_o5snq"]
-[ext_resource type="PackedScene" uid="uid://c7pja1druikbn" path="res://addons/twitcher/editor/setup/page_use_case.tscn" id="2_6678v"]
-[ext_resource type="PackedScene" uid="uid://dm6jvnuikxtei" path="res://addons/twitcher/editor/setup/page_authorization.tscn" id="3_qcivh"]
-[ext_resource type="PackedScene" uid="uid://d4l63q706mkhw" path="res://addons/twitcher/editor/setup/page_utilities.tscn" id="4_qcivh"]
+[ext_resource type="Texture2D" uid="uid://d2s360j6ude5m" path="res://addons/twitcher/assets/overlay-example.png" id="3_ut4wl"]
+[ext_resource type="Texture2D" uid="uid://bispl7nju64a2" path="res://addons/twitcher/assets/game-example.png" id="4_hr63i"]
+[ext_resource type="Script" uid="uid://bwm1n2q3swjmt" path="res://addons/twitcher/editor/button_changes.gd" id="5_ut4wl"]
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_qcivh"]
+[sub_resource type="LabelSettings" id="LabelSettings_qcivh"]
+font_size = 32
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_m8xu0"]
+texture = ExtResource("3_ut4wl")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f4eri"]
+texture = ExtResource("3_ut4wl")
+modulate_color = Color(0.25882354, 0.25882354, 0.25882354, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_a21u4"]
+texture = ExtResource("3_ut4wl")
+modulate_color = Color(0.5529412, 0.7882353, 0.7647059, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_0ud8e"]
+texture = ExtResource("3_ut4wl")
+modulate_color = Color(0.65882355, 0.65882355, 0.65882355, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_5ssvk"]
+texture = ExtResource("4_hr63i")
+modulate_color = Color(0.6201672, 0.6201667, 0.620167, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ut4wl"]
+texture = ExtResource("4_hr63i")
+modulate_color = Color(0.25808147, 0.2580817, 0.25808147, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hr63i"]
+texture = ExtResource("4_hr63i")
+modulate_color = Color(0.5511612, 0.79004085, 0.7648219, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dlsxf"]
+texture = ExtResource("4_hr63i")
+modulate_color = Color(0.65834004, 0.6583399, 0.65834004, 1)
 
 [node name="SetupWindow" type="Window" unique_id=1827582033]
 oversampling_override = 1.0
 title = "Setup Twitcher"
 initial_position = 2
-size = Vector2i(800, 800)
+size = Vector2i(1000, 900)
+theme = ExtResource("1_6678v")
 script = ExtResource("1_o5snq")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=89955671]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+offset_left = 9.0
+offset_top = 6.0
+offset_right = 991.0
+offset_bottom = 894.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 10
@@ -25,33 +60,73 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1393938258]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1967243018]
 layout_mode = 2
 
-[node name="Setup" type="TabContainer" parent="MarginContainer/VBoxContainer" unique_id=638100898]
+[node name="TypeSelection" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1873191155]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 0
+alignment = 1
 
-[node name="UseCase" parent="MarginContainer/VBoxContainer/Setup" unique_id=1624839746 instance=ExtResource("2_6678v")]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/TypeSelection" unique_id=176496759]
+layout_mode = 2
+text = "I want to create..."
+label_settings = SubResource("LabelSettings_qcivh")
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/TypeSelection" unique_id=631948832]
+layout_mode = 2
+
+[node name="Overlay" type="Button" parent="MarginContainer/VBoxContainer/TypeSelection" unique_id=1021107290]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(600, 327)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxTexture_m8xu0")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_f4eri")
+theme_override_styles/hover = SubResource("StyleBoxTexture_a21u4")
+theme_override_styles/focus = SubResource("StyleBoxTexture_0ud8e")
+text = "Overlay"
+
+[node name="Game" type="Button" parent="MarginContainer/VBoxContainer/TypeSelection" unique_id=888152333]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(600, 327)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxTexture_5ssvk")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_ut4wl")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hr63i")
+theme_override_styles/focus = SubResource("StyleBoxTexture_dlsxf")
+text = "Game"
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1393938258]
 unique_name_in_owner = true
 layout_mode = 2
-choose_button_group = SubResource("ButtonGroup_qcivh")
 
-[node name="Authorization" parent="MarginContainer/VBoxContainer/Setup" unique_id=2112939332 instance=ExtResource("3_qcivh")]
-unique_name_in_owner = true
-visible = false
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer" unique_id=2062075626]
 layout_mode = 2
-
-[node name="Utilities" parent="MarginContainer/VBoxContainer/Setup" unique_id=773191535 instance=ExtResource("4_qcivh")]
-visible = false
-layout_mode = 2
+size_flags_vertical = 10
 
 [node name="StartupCheck" type="CheckButton" parent="MarginContainer/VBoxContainer" unique_id=1949535297]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Show on startup (you can open it via 'Project/Tools/Twitcher Setup')"
+
+[node name="Bootstrap" type="Button" parent="MarginContainer/VBoxContainer" unique_id=536983620]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Create quickstart scene"
+
+[node name="Save" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1339802794]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save"
+script = ExtResource("5_ut4wl")
 
 [node name="Close" type="Button" parent="MarginContainer/VBoxContainer" unique_id=795954952]
 unique_name_in_owner = true

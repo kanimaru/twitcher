@@ -7,7 +7,7 @@ extends Twitcher
 class_name TwitchService
 
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
-## When the poll doesn't end after the offical endtime + POLL_TIMEOUT_MS. The wait loop for poll end 
+## When the poll doesn't end after the offical endtime + POLL_TIMEOUT_MS. The wait loop for poll end
 ## event will be stopped to prevent endless loops.
 const POLL_TIMEOUT_MS: int = 30000
 
@@ -46,9 +46,12 @@ static var instance: TwitchService
 		if val != null:
 			_set_in_child("token", val)
 			update_configuration_warnings()
-			
+
 ## Time in seconds how long the user should be cached before getting reloaded
 @export var user_cache_ttl: int = 3600 # 1 hour
+
+## The requested devicecode to show to the user for authorization (forwarded from TwitchAuth Node)
+signal device_code_requested(device_code: OAuth.OAuthDeviceCodeResponse)
 
 @onready var auth: TwitchAuth
 @onready var eventsub: TwitchEventsub
@@ -81,14 +84,16 @@ func _ready() -> void:
 
 func _enter_tree() -> void:
 	if instance == null: instance = self
-	
-	
+
+
 func _exit_tree() -> void:
 	if instance == self: instance = null
-	
+
 
 func _on_child_entered(node: Node) -> void:
-	if node is TwitchAuth: auth = node
+	if node is TwitchAuth:
+		auth = node
+		auth.device_code_requested.connect(device_code_requested.emit)
 	if node is TwitchAPI: api = node
 	if node is TwitchEventsub: eventsub = node
 	if node is TwitchIRC: irc = node
@@ -113,12 +118,14 @@ func _set_in_child(property: String, value: Variant) -> void:
 
 
 func _on_child_exiting(node: Node) -> void:
-	if node is TwitchAuth: auth = null
+	if node is TwitchAuth:
+		auth.device_code_requested.disconnect(device_code_requested.emit)
+		auth = null
 	if node is TwitchAPI: api = null
 	if node is TwitchEventsub: eventsub = null
 	if node is TwitchIRC: irc = null
 	if node is TwitchMediaLoader: media_loader = null
-	
+
 	if node.has_signal(&"unauthenticated"):
 		node.unauthenticated.disconnect(_on_unauthenticated)
 	update_configuration_warnings()
@@ -127,7 +134,7 @@ func _on_child_exiting(node: Node) -> void:
 ## Call this to setup the complete Twitch integration whenever you need.
 ## It boots everything up this Lib supports.
 func setup() -> bool:
-	if is_instance_valid(auth): 
+	if is_instance_valid(auth):
 		if not await auth.authorize(): return false
 	elif not token.is_token_valid():
 		push_error("Authorization Node got removed, can't setup twitch service")
@@ -139,8 +146,8 @@ func setup() -> bool:
 
 	_log.i("TwitchService setup")
 	return true
-	
-	
+
+
 func unsetup() -> void:
 	await propagate_call(&"do_unsetup")
 	for child in get_children():
@@ -237,19 +244,19 @@ func get_current_user(force_refresh: bool = false) -> TwitchUser:
 	_current_user = await get_current_user_via_api(api)
 	_current_user_timestamp = int(Time.get_unix_time_from_system())
 	return _current_user
-	
-	
+
+
 ## Helper Method to be used in the Editor Scripts
 static func get_current_user_via_api(api: TwitchAPI) -> TwitchUser:
 	if api == null:
 		_log.e("Please setup a TwitchAPI Node into TwitchService.")
 		return null
-		
+
 	var user_data : TwitchGetUsers.Response = await api.get_users(null)
 	var user: TwitchUser = user_data.data[0]
 	return user
-	
-	
+
+
 ## Get the image of an user
 func load_profile_image(user: TwitchUser) -> ImageTexture:
 	return await media_loader.load_profile_image(user)
@@ -298,7 +305,7 @@ func send_message(message: String, reply_parent_message_id: String = "", broadca
 	if not sender:
 		if not current_user: return
 		sender = current_user
-	if not broadcaster: 
+	if not broadcaster:
 		if not current_user: return
 		broadcaster = current_user
 	var body: TwitchSendChatMessage.Body = TwitchSendChatMessage.Body.create(broadcaster.id, sender.id, message)
@@ -314,11 +321,11 @@ static func shoutout(user: TwitchUser, broadcaster: TwitchUser = null, moderator
 ## Sends out a shoutout to a specific user
 func send_shoutout(user: TwitchUser, broadcaster: TwitchUser = null, moderator: TwitchUser = null) -> void:
 	var current_user: TwitchUser = await get_current_user()
-	
+
 	if not broadcaster:
 		if not current_user: return
 		broadcaster = current_user
-		
+
 	if not moderator:
 		if not current_user: return
 		moderator = current_user
@@ -336,11 +343,11 @@ func send_announcement(message: String, color: TwitchAnnouncementColor = TwitchA
 	if not broadcaster:
 		if not current_user: return
 		broadcaster = current_user
-	
+
 	if not moderator:
 		if not current_user: return
 		moderator = current_user
-	
+
 	var body: TwitchSendChatAnnouncement.Body = TwitchSendChatAnnouncement.Body.new()
 	body.message = message
 	body.color = color.value
@@ -353,11 +360,11 @@ func send_announcement(message: String, color: TwitchAnnouncementColor = TwitchA
 ## args_max == -1 => no upper limit for arguments
 func add_command(command: String, callback: Callable, args_min: int = 0, args_max: int = -1,
 	permission_level : TwitchCommand.PermissionFlag = TwitchCommand.PermissionFlag.EVERYONE,
-	where : TwitchCommand.WhereFlag = TwitchCommand.WhereFlag.CHAT, user_cooldown: float = 0, 
+	where : TwitchCommand.WhereFlag = TwitchCommand.WhereFlag.CHAT, user_cooldown: float = 0,
 	global_cooldown: float = 0) -> TwitchCommand:
 	var command_node: TwitchCommand = TwitchCommand.new()
 	command_node.command = command
-	command_node.command_received.connect(callback) 
+	command_node.command_received.connect(callback)
 	command_node.args_min = args_min
 	command_node.args_max = args_max
 	command_node.permission_level = permission_level
@@ -466,7 +473,7 @@ func get_cheermotes(definition: TwitchCheermoteDefinition) -> Dictionary:
 ## Saves it as a new reward or updates an existing reward
 func save_reward(twitch_reward: TwitchReward) -> TwitchRewardService.SaveError:
 	return await _reward_service.save_reward(twitch_reward)
-	
+
 ## Deletes a reward
 func delete_reward(twitch_reward: TwitchReward) -> TwitchRewardService.DeleteError:
 	return await _reward_service.delete_reward(twitch_reward)

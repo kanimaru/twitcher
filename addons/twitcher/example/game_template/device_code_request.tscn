@@ -1,0 +1,107 @@
+[gd_scene format=3 uid="uid://d0sdt48uvm1xq"]
+
+[ext_resource type="Theme" uid="uid://d145ou7bj00tv" path="res://addons/twitcher/assets/twitcher_theme.tres" id="1_5wvjt"]
+[ext_resource type="Script" uid="uid://pcxtxepgjdgg" path="res://addons/twitcher/example/game_template/device_code_request.gd" id="1_hivqr"]
+
+[sub_resource type="SystemFont" id="SystemFont_hivqr"]
+font_names = PackedStringArray("Monospace")
+font_weight = 600
+
+[sub_resource type="FontVariation" id="FontVariation_n7r82"]
+base_font = SubResource("SystemFont_hivqr")
+spacing_glyph = 45
+
+[sub_resource type="LabelSettings" id="LabelSettings_bue70"]
+font = SubResource("FontVariation_n7r82")
+font_size = 32
+shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Gradient" id="Gradient_2wvkc"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.74345547)
+colors = PackedColorArray(0, 0, 0, 0.35686275, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_32s84"]
+gradient = SubResource("Gradient_2wvkc")
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0, 0)
+
+[node name="DeviceCodeRequest" type="Window" unique_id=1145560435]
+oversampling_override = 1.0
+title = "Authorize to Twitch"
+initial_position = 2
+size = Vector2i(600, 253)
+theme = ExtResource("1_5wvjt")
+script = ExtResource("1_hivqr")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1440436289]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=222902090]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1397502033]
+layout_mode = 2
+theme_type_variation = &"PanelForeground"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer" unique_id=1582169677]
+layout_mode = 2
+
+[node name="Preamble" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=1269346182]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "1. Using a browser on another device, visit:
+[url]https://www.twitch.tv/activate[/url]"
+fit_content = true
+
+[node name="Label" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=2134492693]
+layout_mode = 2
+text = "2. Enter the code"
+fit_content = true
+
+[node name="Code" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=529842048]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "00000000"
+label_settings = SubResource("LabelSettings_bue70")
+horizontal_alignment = 1
+
+[node name="Background" type="TextureRect" parent="MarginContainer/VBoxContainer/PanelContainer/VBoxContainer/Code" unique_id=748457471]
+show_behind_parent = true
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_32s84")
+stretch_mode = 1
+
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1159817171]
+layout_mode = 2
+theme_type_variation = &"PanelForeground"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/PanelContainer2" unique_id=2131107480]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer2/VBoxContainer" unique_id=58374080]
+layout_mode = 2
+text = "or use this PC:"
+
+[node name="Confirm" type="Button" parent="MarginContainer/VBoxContainer/PanelContainer2/VBoxContainer" unique_id=722152039]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Open Link in Browser"

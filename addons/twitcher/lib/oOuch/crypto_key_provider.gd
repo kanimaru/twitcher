@@ -26,25 +26,25 @@ var current_key_data: KeyData
 func _init() -> void:
 	# Call defered cause the setter of encrpytion_secret_location isn't set otherwise
 	_get_encryption_secret.call_deferred()
-	
-	
+
+
 ## Don't cache it in a variable so that you accidently leak your secret when you debug
 func _get_encryption_secret() -> String:
 	if is_instance_valid(current_key_data):
 		return current_key_data.key
-		
-	var config = ConfigFile.new()
-	var error = config.load(encrpytion_secret_location)
+
+	var config: ConfigFile = ConfigFile.new()
+	var error: int = config.load(encrpytion_secret_location)
 	if error == ERR_FILE_NOT_FOUND:
 		_create_secret(config)
 	elif error != OK:
 		printerr("Can't open %s cause of %s" % [encrpytion_secret_location, error_string(error)])
 		return ""
-	
+
 	var key: String = config.get_value(_CONFIG_PACKAGE_KEY, _CONFIG_SECRET_KEY, "")
 	if key == "":
 		key = _create_secret(config)
-		
+
 	current_key_data = KeyData.new()
 	current_key_data.key = key
 	return key
@@ -57,11 +57,11 @@ func _create_secret(config: ConfigFile) -> String:
 	var secret_data : PackedByteArray = crypto.generate_random_bytes(16)
 	var secret : String = secret_data.hex_encode()
 	config.set_value(_CONFIG_PACKAGE_KEY, _CONFIG_SECRET_KEY, secret)
-	var err = config.save(encrpytion_secret_location)
+	var err: int = config.save(encrpytion_secret_location)
 	if err != OK: push_error("Couldn't save encryption key cause of ", error_string(err))
 	return secret
-	
-	
+
+
 func _pad(value: PackedByteArray) -> PackedByteArray:
 	var pad_len : int = _AES_BLOCK_SIZE - (value.size() % _AES_BLOCK_SIZE)
 	for i in range(pad_len):

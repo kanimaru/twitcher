@@ -15,10 +15,10 @@ static var instance: TwitchChat
 		update_configuration_warnings()
 ## Can be null. Then the owner of the access token will be used to send message aka the current user.
 @export var sender_user: TwitchUser
-## Media loader it uses for emotes and badges. (Can be empty will automatically look for first [TwitchMediaLoader] 
-## in the scene tree)  
+## Media loader it uses for emotes and badges. (Can be empty will automatically look for first [TwitchMediaLoader]
+## in the scene tree)
 @export var media_loader: TwitchMediaLoader
-## Eventsub to listen for the chat messages. (Can be empty will automatically look for first [TwitchEventsub] 
+## Eventsub to listen for the chat messages. (Can be empty will automatically look for first [TwitchEventsub]
 ## in the scene tree)
 @export var eventsub: TwitchEventsub
 ## API to send messages. (Can be empty will automatically look for first [TwitchAPI] in the scene tree)
@@ -40,12 +40,12 @@ func _ready() -> void:
 	eventsub.event.connect(_on_event_received)
 	if not Engine.is_editor_hint() && subscribe_on_ready:
 		subscribe()
-	
+
 
 func _enter_tree() -> void:
 	if instance == null: instance = self
-	
-	
+
+
 func _exit_tree() -> void:
 	if instance == self: instance = null
 
@@ -55,21 +55,21 @@ func subscribe() -> void:
 	if broadcaster_user == null:
 		printerr("BroadcasterUser is not set. Can't subscribe to chat.")
 		return
-		
+
 	if is_instance_valid(media_loader):
 		media_loader.preload_badges(broadcaster_user.id)
 		media_loader.preload_emotes(broadcaster_user.id)
-			
+
 	for subscription: TwitchEventsubConfig in eventsub.get_subscriptions():
 		if subscription.type == TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE and \
 			subscription.condition.broadcaster_user_id == broadcaster_user.id:
 				# it is already subscribed
 				return
-				
+
 	if sender_user == null:
 		var current_user: TwitchGetUsers.Response = await api.get_users(null)
 		sender_user = current_user.data[0]
-	
+
 	var config: TwitchEventsubConfig = TwitchEventsubConfig.new()
 	config.type = TwitchEventsubDefinition.Type.CHANNEL_CHAT_MESSAGE
 	config.condition = {

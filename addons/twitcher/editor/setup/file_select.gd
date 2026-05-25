@@ -12,6 +12,8 @@ class_name FileSelect
 @onready var button: Button = %Button
 @onready var file_dialog: FileDialog = %FileDialog
 
+var _save_timer: Timer
+
 signal file_selected(path: String)
 
 
@@ -25,26 +27,37 @@ func _ready() -> void:
 	if pick_folder: file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
 	line_edit.text_submitted.connect(_on_path_changed)
 	line_edit.placeholder_text = placeholder
-	
-	_update_filepath(path)
-	_update_filters(filters)
-	
+	line_edit.text_changed.connect(_on_path_changing)
 	file_dialog.current_path = path
-	
-	
+
+	_save_timer = Timer.new()
+	_save_timer.wait_time = 1
+	_save_timer.timeout.connect(_on_save_change)
+	add_child(_save_timer)
+
+
+func _on_path_changing(new_path: String) -> void:
+	_save_timer.start()
+
+
 func _update_filepath(new_path: String) -> void:
 	if new_path == null || new_path == "":
 		new_path = default_path
 	path = new_path
-	if not is_node_ready(): return
-	line_edit.text = path
-	
-	
+	if not is_node_ready(): await ready
+	if line_edit.text != path:
+		line_edit.text = path
+
+
+func _on_save_change() -> void:
+	_save_new_path(line_edit.text)
+
+
 func _update_filters(new_filters: PackedStringArray) -> void:
 	filters = new_filters
-	if is_inside_tree():
-		file_dialog.filters = new_filters
-	
+	if not is_node_ready(): await ready
+	file_dialog.filters = new_filters
+
 
 func _on_open_file_dialog() -> void:
 	file_dialog.show()
@@ -52,11 +65,15 @@ func _on_open_file_dialog() -> void:
 
 func _on_path_changed(new_path: String) -> void:
 	file_dialog.current_path = new_path
-	path = new_path
-	file_selected.emit(new_path)
-	
+	_save_new_path(new_path)
+
 
 func _on_file_selected(new_path: String) -> void:
 	line_edit.text = new_path
+	_save_new_path(new_path)
+
+
+func _save_new_path(new_path: String) -> void:
 	path = new_path
 	file_selected.emit(new_path)
+	_save_timer.stop()

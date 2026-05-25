@@ -1,14 +1,14 @@
 @icon("res://addons/twitcher/assets/command-icon.svg")
 extends TwitchCommandBase
 
-## A single command like !lurk 
+## A single command like !lurk
 class_name TwitchCommand
 
 @export var command_prefixes : Array[String] = ["!"]:
 	set(val):
 		command_prefixes = val
 		update_configuration_warnings()
-		
+
 ## Optional names of commands
 @export var aliases: Array[String]
 
@@ -46,8 +46,8 @@ static func create(
 func _enter_tree() -> void:
 	super._enter_tree()
 	ALL_COMMANDS.append(self)
-	
-	
+
+
 func _exit_tree() -> void:
 	super._exit_tree()
 	ALL_COMMANDS.erase(self)
@@ -55,7 +55,7 @@ func _exit_tree() -> void:
 
 func add_alias(alias: String) -> void:
 	aliases.append(alias)
-	
+
 
 func _should_handle(info: TwitchCommandInfo) -> bool:
 	if not super._should_handle(info): return false
@@ -65,13 +65,13 @@ func _should_handle(info: TwitchCommandInfo) -> bool:
 	# remove the command symbol in front
 	message = message.right(-1)
 	var split: PackedStringArray = message.split(" ", true, 1)
-	var current_command: String = split[0] 
+	var current_command: String = split[0]
 	var alias_compare_function: Callable = func(cmd) -> bool:
 		if case_insensitive:
 			return current_command.nocasecmp_to(cmd) == 0
 		else:
 			return current_command.casecmp_to(cmd) == 0
-	
+
 	var is_alias: bool = aliases.any(alias_compare_function)
 	var is_command: bool = alias_compare_function.call(command)
 
@@ -83,11 +83,11 @@ func _handle_command(info: TwitchCommandInfo) -> void:
 	# remove the command symbol in front
 	message = message.right(-1)
 	var cmd_msg: PackedStringArray = message.split(" ", true, 1)
-	
+
 	var command: String = cmd_msg[0]
 	if not _can_handle_command(info):
 		return
-		
+
 	var arguments: PackedStringArray = info.arguments
 	# Handle Argument parsing
 	if cmd_msg.size() > 1:

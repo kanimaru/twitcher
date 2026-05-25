@@ -21,9 +21,6 @@ signal token_resolved(tokens: OAuthToken)
 ## Called when token can't be refreshed cause auth was removed or refresh token expired
 signal unauthenticated()
 
-## Called internally when a token request finishes (success or failure) to unblock concurrent requests
-signal _request_finished()
-
 ## Where to get the tokens from
 @export var oauth_setting: OAuthSetting
 
@@ -33,9 +30,6 @@ signal _request_finished()
 ## Client to request new tokens
 var _http_client : OAuthHTTPClient
 
-## Is currently requesting tokens
-var _requesting_token: bool = false
-
 ## Timer to refresh tokens
 var _expiration_check_timer: Timer
 
@@ -44,21 +38,21 @@ func _ready() -> void:
 	_http_client = OAuthHTTPClient.new()
 	_http_client.name = "OAuthTokenClient"
 	add_child(_http_client)
-	
+
 	_expiration_check_timer = Timer.new()
 	_expiration_check_timer.name = "ExpirationCheck"
 	_expiration_check_timer.timeout.connect(refresh_tokens)
 	add_child(_expiration_check_timer)
 	token.load_tokens()
-	
-	
+
+
 func _enter_tree() -> void:
-	if token and not token.changed.is_connected(update_expiration_check): 
+	if token and not token.changed.is_connected(update_expiration_check):
 		token.changed.connect(update_expiration_check)
 
 
 func _exit_tree() -> void:
-	if token and token.changed.is_connected(update_expiration_check): 
+	if token and token.changed.is_connected(update_expiration_check):
 		token.changed.disconnect(update_expiration_check)
 
 
@@ -73,29 +67,29 @@ func _update_token(val: OAuthToken) -> void:
 func update_expiration_check() -> void:
 	var current_time: float = Time.get_unix_time_from_system()
 	var expiration: int = token.get_expiration()
-	if expiration == 0: 
+	if expiration == 0:
 		logDebug("Disable automate use of refresh token (%s)" % token)
 		_expiration_check_timer.stop()
 		return
-	
+
 	var wait_time: float = expiration - current_time - SECONDS_TO_CHECK_EARLIER
 	if wait_time <= 0:
 		logDebug("Token (%s) is already expired or expiring soon, triggering immediate refresh" % token)
 		_expiration_check_timer.stop()
 		refresh_tokens()
 		return
-		
+
 	_expiration_check_timer.start(wait_time)
 	logDebug("token (%s) got updated next refresh in %s seconds" % [ token, roundf(_expiration_check_timer.wait_time)])
 
 
 ## Requests the tokens
 func request_token(grant_type: String, auth_code: String = "") -> OAuthToken:
-	if _requesting_token: 
-		await _request_finished
+	if token and token.is_requesting:
+		await token.request_finished
 		return token
-		
-	_requesting_token = true
+
+	if token: token.is_requesting = true
 	logInfo("Request token (for %s) via '%s'" % [token, grant_type])
 	var request_params: Array[String] = [
 		"grant_type=%s" % grant_type,
@@ -112,16 +106,17 @@ func request_token(grant_type: String, auth_code: String = "") -> OAuthToken:
 	var request: BufferedHTTPClient.RequestData = _http_client.request(oauth_setting.token_url, \
 		HTTPClient.METHOD_POST, HEADERS, request_body)
 	await _handle_token_request(request)
-	_requesting_token = false
-	_request_finished.emit()
+	if token:
+		token.is_requesting = false
+		token.request_finished.emit()
 	return token
 
 
 func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes: String, grant_type: String = "urn:ietf:params:oauth:grant-type:device_code") -> void:
-	if _requesting_token: 
-		await _request_finished
+	if token and token.is_requesting:
+		await token.request_finished
 		return
-	_requesting_token = true
+	if token: token.is_requesting = true
 	logInfo("request token (for %s) via urn:ietf:params:oauth:grant-type:device_code" % token)
 	var parameters: Array[String] = [
 		"client_id=%s" % oauth_setting.client_id,
@@ -142,42 +137,45 @@ func request_device_token(device_code_repsonse: OAuthDeviceCodeResponse, scopes:
 		var response_data = JSON.parse_string(response_string)
 		if response.response_code == 200:
 			_update_tokens_from_response(response_data)
-			_requesting_token = false
-			_request_finished.emit()
+			if token:
+				token.is_requesting = false
+				token.request_finished.emit()
 			return
 		elif response.response_code == 400 && response_string.contains("authorization_pending"):
 			# Awaits for this amount of time until retry
 			await get_tree().create_timer(device_code_repsonse.interval, true, false, true).timeout
 		elif response.response_code == 400:
 			unauthenticated.emit()
-			_requesting_token = false
-			_request_finished.emit()
+			if token:
+				token.is_requesting = false
+				token.request_finished.emit()
 			return
 
 	# Handle Timeout
 	unauthenticated.emit()
-	_requesting_token = false
-	_request_finished.emit()
+	if token:
+		token.is_requesting = false
+		token.request_finished.emit()
 
 
 ## Uses the refresh token if possible to refresh all tokens
 func refresh_tokens() -> void:
-	if not token.has_refresh_token(): 
+	if not token.has_refresh_token():
 		logDebug("%s has no refresh token can't refresh" % token)
 		unauthenticated.emit()
 		_expiration_check_timer.stop()
 		return
-	
-	if not oauth_setting.is_valid(): 
+
+	if not oauth_setting.is_valid():
 		logError("Try to refresh token (%s) but oauth settings are invalid. Can't refresh token." % token)
 		_expiration_check_timer.stop()
 		return
 
-	if _requesting_token: 
-		await _request_finished
+	if token and token.is_requesting:
+		await token.request_finished
 		return
-		
-	_requesting_token = true
+
+	if token: token.is_requesting = true
 	logInfo("use refresh (%s) token" % token)
 	var request_body: String = "client_id=%s&client_secret=%s&refresh_token=%s&grant_type=refresh_token" % \
 		[oauth_setting.client_id, oauth_setting.get_client_secret(), token.get_refresh_token()]
@@ -187,8 +185,9 @@ func refresh_tokens() -> void:
 		logInfo("token (%s) got refreshed" % token)
 	elif not token.has_refresh_token():
 		unauthenticated.emit()
-	_requesting_token = false
-	_request_finished.emit()
+	if token:
+		token.is_requesting = false
+		token.request_finished.emit()
 
 
 ## Gets information from the response and update values returns true when success otherwise false
@@ -196,7 +195,7 @@ func _handle_token_request(request: OAuthHTTPClient.RequestData) -> bool:
 	var response = await _http_client.wait_for_request(request)
 	logDebug("Handle token response for %s" % token)
 	var response_string: String = response.response_data.get_string_from_utf8()
-	
+
 	if response.response_code == 200:
 		var result: Dictionary = JSON.parse_string(response_string)
 		_update_tokens_from_response(result)
@@ -217,7 +216,7 @@ func _handle_token_request(request: OAuthHTTPClient.RequestData) -> bool:
 func _update_tokens_from_response(result: Dictionary):
 	var scopes: Array[String] = []
 	for scope in result.get("scope", []): scopes.append(scope)
-	var type: StringName = &"" 
+	var type: StringName = &""
 	if oauth_setting.authorization_flow == OAuth.AuthorizationFlow.CLIENT_CREDENTIALS:
 		type = OAuthToken.APP_ACCESS_TOKEN
 	else:
@@ -255,9 +254,9 @@ func token_needs_refresh() -> bool:
 func get_access_token() -> String:
 	if token_needs_refresh():
 		await refresh_tokens()
-	elif _requesting_token:
-		await _request_finished
-		
+	elif token and token.is_requesting:
+		await token.request_finished
+
 	return token.get_access_token()
 
 

@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://cjyawyvilv700"]
+
+[ext_resource type="Script" uid="uid://b28mmhk5a83yy" path="res://addons/twitcher/editor/setup/section_default_resource_view.gd" id="1_2ospb"]
+[ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="1_e54f0"]
+
+[node name="DefaultRessourceView" type="VBoxContainer" unique_id=891802833]
+script = ExtResource("1_2ospb")
+
+[node name="Title" type="Label" parent="." unique_id=1784637179]
+layout_mode = 2
+text = "Where to generate default settings and tokens?"
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1590292229]
+layout_mode = 2
+columns = 2
+
+[node name="FolderSelectTitle" type="Label" parent="GridContainer" unique_id=1030308883]
+layout_mode = 2
+text = "Storage:"
+
+[node name="FileSelect" parent="GridContainer" unique_id=1025748381 instance=ExtResource("1_e54f0")]
+unique_name_in_owner = true
+layout_mode = 2
+path = "res://"
+placeholder = "Folder to store Setting and Token"
+pick_folder = true
+
+[node name="Response" type="Label" parent="." unique_id=506968878]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0, 1)
