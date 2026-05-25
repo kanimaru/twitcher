@@ -40,10 +40,3 @@ project/assembly_name="Twitcher"
 enabled=PackedStringArray("res://addons/twitcher/plugin.cfg")
 
 [twitcher]
-
-logs/TwitchChat="debug"
-logs/TwitchAPI="debug"
-logs/TwitchService="debug"
-logs/TwitchAuth="debug"
-logs/TwitchEditorSetting="debug"
-"logs/Twitcher Plugin"="debug"
