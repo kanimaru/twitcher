@@ -1,121 +1,55 @@
 @tool
 extends Node
 
-const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
-const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
+const TwitchEditorNodeUtils = preload("uid://cwvdheqhq5yrl")
+const TwitchEditorSettings = preload("uid://kqcukq2xqnuf")
+const TwitchTweens = preload("uid://duhsr84u352ef")
+const SectionGameAuthorizationView = preload("uid://c5wx1gn2acuvp")
+const SectionDefaultResourceView = preload("uid://b28mmhk5a83yy")
 
-@onready var authorization_explaination: RichTextLabel = %AuthExplain
-
-@onready var client_id: LineEdit = %ClientId
-@onready var redirect_url: LineEdit = %RedirectURL
-@onready var redirect_url_label: Label = %RedirectURLLabel
+const GAME_TEMPLATE = preload("uid://blddelc3lr6r4")
 
 @onready var to_documentation: Button = %ToDocumentation
 
-@onready var o_auth_save: Button = %OAuthSave
-
-@onready var device_code_flow: CheckBox = %DeviceCodeFlow
-@onready var device_code_flow_explian: RichTextLabel = %DeviceCodeFlowExplain
-@onready var implicit_flow: CheckBox = %ImplicitFlow
-@onready var implicit_flow_explain: RichTextLabel = %ImplicitFlowExplain
-@onready var file_select: FileSelect = %FileSelect
+@onready var game_authorization_view: SectionGameAuthorizationView = %GameAuthorizationView
+@onready var default_ressource_view: SectionDefaultResourceView = %DefaultRessourceView
 
 var has_changes: bool:
-	set(val):
-		has_changes = val
-		changed.emit.call_deferred()
-		o_auth_save.text = o_auth_save.text.trim_suffix(" (unsaved changes)")
-		if has_changes: o_auth_save.text += " (unsaved changes)"
+	get(): return game_authorization_view.has_changes or default_ressource_view.has_changes
 
 signal changed
 
-var _path: String
-var _redirect_url: String
-var _client_id: String
-var _authorization_flow: OAuth.AuthorizationFlow = OAuth.AuthorizationFlow.DEVICE_CODE_FLOW
-
 
 func _ready() -> void:
-	implicit_flow_explain.meta_clicked.connect(_on_link_clicked)
-	device_code_flow_explian.meta_clicked.connect(_on_link_clicked)
-	authorization_explaination.meta_clicked.connect(_on_link_clicked)
-
-	client_id.text_changed.connect(_on_text_changed)
-	redirect_url.text_changed.connect(_on_text_changed)
-
+	game_authorization_view.changed.connect(changed.emit)
+	default_ressource_view.changed.connect(changed.emit)
 	to_documentation.pressed.connect(_on_to_documentation_pressed)
-	o_auth_save.pressed.connect(_on_save)
-	file_select.file_selected.connect(_on_file_selected)
-	device_code_flow.pressed.connect(_select_device_code_flow)
-	implicit_flow.pressed.connect(_select_implicit_flow)
-	_load_oauth_setting()
+	var setting: OAuthSetting = TwitchEditorSettings.game_oauth_setting if TwitchEditorSettings.game_oauth_setting else TwitchAuth.create_default_oauth_setting()
+	game_authorization_view.setting = setting
+	default_ressource_view.setting = setting
+	default_ressource_view.token = TwitchEditorSettings.game_oauth_token if TwitchEditorSettings.game_oauth_token else OAuthToken.new()
 
 
-func _select_device_code_flow() -> void:
-	redirect_url.hide()
-	redirect_url_label.hide()
-	_authorization_flow = OAuth.AuthorizationFlow.DEVICE_CODE_FLOW
-	has_changes = true
-
-
-func _select_implicit_flow() -> void:
-	redirect_url.show()
-	redirect_url_label.show()
-	_authorization_flow = OAuth.AuthorizationFlow.IMPLICIT_FLOW
-	has_changes = true
-
-
-func _load_oauth_setting() -> void:
-	var setting: OAuthSetting = TwitchEditorSettings.game_oauth_setting
-	if setting:
-		_authorization_flow = setting.authorization_flow
-		_client_id = setting.client_id
-		_redirect_url = setting.redirect_url if setting.redirect_url else "http://localhost:7170"
-	_path = TwitchEditorSettings.get_game_auth_setting_path()
-
-	client_id.text = _client_id
-	redirect_url.text = _redirect_url
-	file_select.path = _path
-	match _authorization_flow:
-		OAuth.AuthorizationFlow.DEVICE_CODE_FLOW:
-			device_code_flow.button_pressed = true
-			_select_device_code_flow()
-		OAuth.AuthorizationFlow.IMPLICIT_FLOW:
-			implicit_flow.button_pressed = true
-			_select_implicit_flow()
+func save() -> bool:
+	if not game_authorization_view.save():
+		TwitchEditorSettings.game_oauth_setting = game_authorization_view.setting
+		return false
+	if not default_ressource_view.save():
+		return false
 	has_changes = false
+	return true
 
 
-func _on_link_clicked(link: Variant) -> void:
-	OS.shell_open(link)
-
-
-func _on_text_changed(val: String) -> void:
-	_client_id = client_id.text
-	_redirect_url = redirect_url.text
-	has_changes = true
-
-
-func _on_file_selected(path: String) -> void:
-	_path = path
-	has_changes = true
-
-
-func _on_save() -> void:
-	var oauth_settings: OAuthSetting = TwitchEditorSettings.game_oauth_setting
-	if not oauth_settings:
-		oauth_settings = TwitchAuth.create_default_oauth_setting()
-
-	oauth_settings.authorization_flow = _authorization_flow
-	oauth_settings.client_id = _client_id
-	oauth_settings.redirect_url = _redirect_url
-	oauth_settings.take_over_path(_path)
-	var err = ResourceSaver.save(oauth_settings)
-	if not err:
-		TwitchEditorSettings.game_oauth_setting = oauth_settings
-	ProjectSettings.save()
-	TwitchTweens.flash(o_auth_save, Color.GREEN)
-	has_changes = false
+func bootstrap() -> void:
+	if not save(): return # Save before to ensure that token and settings are there
+	TwitchEditorNodeUtils.new_scene()
+	var root_node = GAME_TEMPLATE.instantiate()
+	root_node.scene_file_path = ""
+	root_node.name = "Game"
+	var twitch_service: TwitchService = root_node.get_node(^"TwitchService")
+	twitch_service.token = TwitchEditorSettings.game_oauth_token
+	twitch_service.oauth_setting = TwitchEditorSettings.game_oauth_setting
+	EditorInterface.add_root_node(root_node)
 
 
 func _on_to_documentation_pressed() -> void:

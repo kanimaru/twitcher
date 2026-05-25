@@ -50,9 +50,7 @@ static var _default_user_property: ProjectSettingProperty
 static var default_user: TwitchUser:
 	set(val):
 		default_user = val
-		if not _reloading:
-			var err = ResourceSaver.save(default_user)
-			if not err: _default_user_property.set_val(val.resource_path)
+		if not _reloading: _default_user_property.set_val(val.resource_path)
 
 static var _show_setup_on_startup: ProjectSettingProperty
 static var show_setup_on_startup: bool:
@@ -141,6 +139,16 @@ static func _reload_setting() -> void:
 			_create_editor_oauth_setting()
 		else:
 			editor_oauth_setting = load(editor_oauth_setting_path)
+
+	var game_oauth_token_path: String = _game_oauth_token_property.get_val()
+	if game_oauth_token_path:
+		if FileAccess.file_exists(game_oauth_token_path):
+			game_oauth_token = load(game_oauth_token_path)
+
+	var game_oauth_setting_path: String = _game_oauth_setting_property.get_val()
+	if game_oauth_setting_path:
+		if FileAccess.file_exists(game_oauth_setting_path):
+			game_oauth_setting = load(game_oauth_setting_path)
 
 	var default_user_path: String = _default_user_property.get_val()
 	if default_user_path:

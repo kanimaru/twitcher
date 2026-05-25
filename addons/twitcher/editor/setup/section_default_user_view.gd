@@ -10,27 +10,25 @@ const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 @onready var default_user: UserConverter = %DefaultUser
 @onready var load_current_twitch_user: CheckButton = %LoadCurrentTwitchUser
 @onready var file_select: FileSelect = %FileSelect
-@onready var save: ButtonChanges = %Save
 @onready var response: Label = %Response
 
-var has_changes: bool:
-	get(): return save.has_changes
+var has_changes: bool
 
 var _default_user: TwitchUser
+var _load_current_twitch_user: bool
 
-signal changed(changes: bool)
+signal changed
 
 func _ready() -> void:
 	if TwitchEditorSettings.default_user:
 		_default_user = TwitchEditorSettings.default_user.duplicate()
 	file_select.path = TwitchEditorSettings.get_default_user_path()
+	load_current_twitch_user.button_pressed = TwitchEditorSettings.load_current_twitch_user
+	_on_toggle_load_current_twitch_user(TwitchEditorSettings.load_current_twitch_user)
 
 	load_current_twitch_user.toggled.connect(_on_toggle_load_current_twitch_user)
-	load_current_twitch_user.button_pressed = TwitchEditorSettings.load_current_twitch_user
 	default_user.changed.connect(_on_default_user_changed)
 	file_select.file_selected.connect(_on_default_user_path_changed)
-	save.pressed.connect(_save)
-	save.changed.connect(func(changes): changed.emit(changes))
 	_setup_current_user()
 
 
@@ -40,30 +38,55 @@ func _setup_current_user() -> void:
 	token.authorized.connect(_update_current_user)
 
 
+func _enter_tree() -> void:
+	if is_node_ready():
+		var token: OAuthToken = TwitchEditorSettings.editor_oauth_token
+		if token.is_token_valid(): _update_current_user()
+
+
 func _update_current_user() -> void:
 	if _default_user: return
+	if not is_inside_tree(): return
 	default_user.load_current_user()
 
 
 func _on_toggle_load_current_twitch_user(toggled_on: bool) -> void:
-	TwitchEditorSettings.load_current_twitch_user = toggled_on
+	_load_current_twitch_user = toggled_on
 	config.visible = toggled_on
+	changed.emit()
 
 
 func _on_default_user_changed(user: TwitchUser) -> void:
+	var previous_user: TwitchUser = _default_user
 	_default_user = user
 	if is_node_ready():
-		save.has_changes = true
+		has_changes = previous_user.id != user.id
+		changed.emit()
 
 
 func _on_default_user_path_changed(path: String) -> void:
 	if is_node_ready():
-		save.has_changes = true
+		has_changes = true
+		changed.emit()
 
 
-func _save() -> void:
-	_default_user.take_over_path(file_select.path)
-	TwitchEditorSettings.default_user = _default_user
-	save.has_changes = false
-	response.text = "Default user was saved at %s" % file_select.path
-	TwitchTweens.flash(save, Color.GREEN)
+func save() -> bool:
+	TwitchEditorSettings.load_current_twitch_user = _load_current_twitch_user
+	if _load_current_twitch_user:
+		var path: String = file_select.path
+		var error: Error = DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir()))
+		if error:
+			push_error("Error creating the twitch resources cause: ", error_string(error))
+			return false
+
+		_default_user.take_over_path(file_select.path)
+		error = ResourceSaver.save(_default_user)
+		if error:
+			push_error("Can't save default user cause ", error_string(error))
+			return false
+		TwitchEditorSettings.default_user = _default_user
+
+	has_changes = false
+	if _load_current_twitch_user:
+		response.text = "Default user was saved at %s" % file_select.path
+	return true

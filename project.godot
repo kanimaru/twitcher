@@ -26,6 +26,8 @@ gdscript/warnings/unsafe_call_argument=1
 
 [display]
 
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 window/size/transparent=true
 window/per_pixel_transparency/allowed=true
 

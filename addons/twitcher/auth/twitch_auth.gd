@@ -78,11 +78,21 @@ func _ensure_children() -> void:
 
 	if not auth.is_inside_tree():
 		add_child(auth)
-		auth.owner = get_tree().edited_scene_root if Engine.is_editor_hint() else owner
+		_set_owner_safely(auth)
 
 	if not token_handler.is_inside_tree():
 		add_child(token_handler)
-		token_handler.owner = get_tree().edited_scene_root if Engine.is_editor_hint() else owner
+		_set_owner_safely(token_handler)
+
+
+func _set_owner_safely(node: Node) -> void:
+	if owner != null:
+		node.owner = owner
+	elif Engine.is_editor_hint():
+		var edited_scene: Node = get_tree().edited_scene_root
+		if edited_scene and (edited_scene == self or edited_scene.is_ancestor_of(self)):
+			node.owner = edited_scene
+
 
 
 func _sync_childs() -> void:

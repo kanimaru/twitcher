@@ -131,7 +131,7 @@ func login(force: bool = false) -> bool:
 	var is_valid: bool = token_handler.is_token_valid()
 	var scopes_changed: bool = _got_scopes_changed()
 
-	if is_valid && not scopes_changed && not force:
+	if is_valid and not scopes_changed and not force:
 		return true
 
 	logDebug("Token (%s) is valid (%s) | scopes changed (%s) | force login (%s)" % [ token_handler.token, is_valid, scopes_changed, force])
@@ -141,14 +141,14 @@ func login(force: bool = false) -> bool:
 		await token_handler.token.request_finished
 		return token_handler.is_token_valid()
 
-	if _last_login_attempt != 0 && Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
+	if _last_login_attempt != 0 and Time.get_ticks_msec() - 60 * 1000 < _last_login_attempt:
 		print("[OAuth] Last Login attempt was within 1 minute wait 1 minute before trying again. Please enable and consult logs, cause there is an issue with your authentication!")
 		await get_tree().create_timer(60, true, false, true).timeout
 
 	_last_login_attempt = Time.get_ticks_msec()
 
 	# Attempt refresh if possible before starting full flow
-	if not is_valid && token_handler.has_refresh_token() && not force:
+	if not is_valid and token_handler.has_refresh_token() and not force:
 		logInfo("Token is invalid but refresh token exists. Attempting refresh...")
 		await token_handler.refresh_tokens()
 		if token_handler.is_token_valid():

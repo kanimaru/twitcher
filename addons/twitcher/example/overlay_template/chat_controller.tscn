@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://dkvmn2mlsi7up"]
+
+[ext_resource type="Script" uid="uid://c2s6pe7tvwbj" path="res://addons/twitcher/example/overlay_template/moveable_control.gd" id="1_n6m03"]
+[ext_resource type="Script" uid="uid://dcq1bvfrqimqq" path="res://addons/twitcher/chat/twitch_chat.gd" id="2_cf51l"]
+[ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://addons/twitcher/example/chat_view.tscn" id="4_bh8og"]
+[ext_resource type="Script" uid="uid://dd6j2o3vaa5cn" path="res://addons/twitcher/example/overlay_template/chat_controller.gd" id="5_4gcxo"]
+
+[node name="ChatController" type="PanelContainer" unique_id=775166331]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -250.0
+offset_bottom = 250.0
+grow_horizontal = 0
+grow_vertical = 2
+script = ExtResource("1_n6m03")
+
+[node name="ChatController" type="Node" parent="." unique_id=46560573]
+script = ExtResource("5_4gcxo")
+
+[node name="HideTimer" type="Timer" parent="." unique_id=129883215]
+unique_name_in_owner = true
+wait_time = 20.0
+autostart = true
+
+[node name="TwitchChat" type="Node" parent="." unique_id=1889614957]
+unique_name_in_owner = true
+script = ExtResource("2_cf51l")
+metadata/_custom_type_script = "uid://dcq1bvfrqimqq"
+
+[node name="ChatView" parent="." unique_id=87007564 instance=ExtResource("4_bh8og")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 500)
+layout_mode = 2
+
+[node name="InputContainer" parent="ChatView/ChatContainer" parent_id_path=PackedInt32Array(87007564, 172544413) index="1" unique_id=389911323]
+visible = false
+
+[editable path="ChatView"]

@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://cylmiv78ot7x1" path="res://addons/twitcher/example/clip_viewer/clip_list.gd" id="1_8c30q"]
 [ext_resource type="Script" uid="uid://iv0mgv0lu8b0" path="res://addons/twitcher/auth/twitch_auth.gd" id="2_vwnax"]
 [ext_resource type="Resource" uid="uid://ek3g270xqbad" path="res://addons/twitcher/editor_oauth_setting.tres" id="3_1mdpp"]
-[ext_resource type="Resource" uid="uid://ry64ckbckh6m" path="res://addons/twitcher/twitch_oauth_setting.tres" id="3_rtxo2"]
 [ext_resource type="Resource" uid="uid://bnpayc6epakvf" path="res://addons/twitcher/editor_oauth_token.tres" id="4_2fx44"]
 [ext_resource type="Script" uid="uid://b3n3et8mebjcc" path="res://addons/twitcher/auth/twitch_oauth_scopes.gd" id="5_frfve"]
 [ext_resource type="Script" uid="uid://cw30cwveway65" path="res://addons/twitcher/generated/twitch_api.gd" id="6_8c30q"]
@@ -51,7 +50,7 @@ token = ExtResource("4_2fx44")
 unique_name_in_owner = true
 script = ExtResource("6_8c30q")
 token = ExtResource("4_2fx44")
-oauth_setting = ExtResource("3_rtxo2")
+oauth_setting = ExtResource("3_1mdpp")
 
 [node name="TwitchMediaLoader" type="Node" parent="." unique_id=1419362192 node_paths=PackedStringArray("api")]
 unique_name_in_owner = true

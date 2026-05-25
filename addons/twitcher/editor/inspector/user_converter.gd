@@ -54,7 +54,7 @@ func update_user(new_user: TwitchUser, notify: bool = false) -> void:
 func _load_default_user() -> void:
 	if not TwitchEditorSettings.load_current_twitch_user or user_login or user_id: return
 	_current_user = TwitchEditorSettings.default_user
-	if _current_user: update_user(_current_user, false)
+	if _current_user: update_user(_current_user, true)
 
 
 ## Experimental tries to load user from api key
@@ -106,19 +106,19 @@ func _on_login_changed(new_text: String) -> void:
 func reload() -> void:
 	var new_user_login: String = _login.text
 	var new_user_id: String = _id.text
-	if new_user_id == "" && new_user_login == "":
+	if new_user_id == "" and new_user_login == "":
 		await TwitchTweens.flash(self, Color.GREEN)
 		changed.emit(null)
 		return
 
-	if user != null && new_user_login == user.login && new_user_id == user.id:
+	if user != null and new_user_login == user.login and new_user_id == user.id:
 		return
 
 	var users: TwitchGetUsers.Opt = TwitchGetUsers.Opt.new()
 
-	if new_user_login != "" && (not user || user.login != new_user_login):
+	if new_user_login != "" and (not user or user.login != new_user_login):
 		users.login = [ new_user_login ]
-	elif new_user_id != "" && (not user || user.id != new_user_id):
+	elif new_user_id != "" and (not user or user.id != new_user_id):
 		users.id = [ new_user_id ]
 
 	var new_user: TwitchUser = await _load_user(users)
@@ -127,7 +127,7 @@ func reload() -> void:
 
 func _load_user(users: TwitchGetUsers.Opt) -> TwitchUser:
 	TwitchTweens.loading(self)
-	if users.id != null || users.login != null:
+	if users.id != null or users.login != null:
 		var new_user = await _get_user(users)
 		if not new_user:
 			await TwitchTweens.flash(self, Color.RED)

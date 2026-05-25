@@ -4,7 +4,17 @@
 [ext_resource type="Script" uid="uid://bkvsg1os5pj6a" path="res://addons/twitcher/editor/setup/section_default_user_view.gd" id="1_xjgh0"]
 [ext_resource type="Script" uid="uid://ddugotjvuahex" path="res://addons/twitcher/editor/setup/focus_child_show.gd" id="2_t4ldm"]
 [ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="3_xjgh0"]
-[ext_resource type="Script" uid="uid://bwm1n2q3swjmt" path="res://addons/twitcher/editor/button_changes.gd" id="6_igxqu"]
+[ext_resource type="Script" uid="uid://cnmohrdxqihr0" path="res://addons/twitcher/generated/twitch_user.gd" id="4_igxqu"]
+
+[sub_resource type="Resource" id="Resource_ovbsk"]
+script = ExtResource("4_igxqu")
+id = "132799162"
+login = "kani_dev"
+display_name = "kani_dev"
+broadcaster_type = "affiliate"
+description = "The Kani is a unique lifeform that has developed to a software architect over a long timespan. It's highly interested in gamedev and likes technology. "
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/e59c37e4-86d4-4b2c-b054-c0ebe55318e0-profile_image-300x300.png"
+created_at = "2016-08-21T18:50:12Z"
 
 [node name="DefaultUserView" type="VBoxContainer" unique_id=1372832032]
 anchors_preset = 15
@@ -44,6 +54,7 @@ text = "Default User:"
 [node name="DefaultUser" parent="Config" unique_id=344646364 instance=ExtResource("1_rh3py")]
 unique_name_in_owner = true
 layout_mode = 2
+user = SubResource("Resource_ovbsk")
 
 [node name="FileSelectTitle" type="Label" parent="Config" unique_id=836386862]
 layout_mode = 2
@@ -59,9 +70,3 @@ placeholder = "Path to store the default user."
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0, 1)
-
-[node name="Save" type="Button" parent="." unique_id=984359933]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Save"
-script = ExtResource("6_igxqu")

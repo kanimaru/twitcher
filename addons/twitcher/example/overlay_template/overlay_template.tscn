@@ -1,0 +1,143 @@
+[gd_scene format=3 uid="uid://6121fuoll1yk"]
+
+[ext_resource type="Script" uid="uid://c2on23m2rusqb" path="res://addons/twitcher/example/overlay_template/overlay_template.gd" id="1_3kf1p"]
+[ext_resource type="PackedScene" uid="uid://djt5lvmwxbq4a" path="res://addons/twitcher/twitch_service.tscn" id="1_vej8j"]
+[ext_resource type="Resource" uid="uid://ek3g270xqbad" path="res://addons/twitcher/editor_oauth_setting.tres" id="2_vej8j"]
+[ext_resource type="Resource" uid="uid://fcmfkstye4bq" path="res://addons/twitcher/auth/preset_overlay_scopes.tres" id="3_3kf1p"]
+[ext_resource type="Resource" uid="uid://bnpayc6epakvf" path="res://addons/twitcher/editor_oauth_token.tres" id="4_ikl5g"]
+[ext_resource type="Script" uid="uid://cjug64e3433g0" path="res://addons/twitcher/eventsub/twitch_eventsub_config.gd" id="5_bkaxl"]
+[ext_resource type="Script" uid="uid://cnmohrdxqihr0" path="res://addons/twitcher/generated/twitch_user.gd" id="7_ikl5g"]
+[ext_resource type="Script" uid="uid://codle4s0o0ro4" path="res://addons/twitcher/example/overlay_template/event_listener.gd" id="7_v280k"]
+[ext_resource type="Script" uid="uid://bol5ltrjr6ux8" path="res://addons/twitcher/eventsub/twitch_event_listener.gd" id="8_3ux2t"]
+[ext_resource type="PackedScene" uid="uid://dkvmn2mlsi7up" path="res://addons/twitcher/example/overlay_template/chat_controller.tscn" id="8_ikl5g"]
+
+[sub_resource type="Resource" id="Resource_bkaxl"]
+script = ExtResource("7_ikl5g")
+id = "1051589814"
+login = "kanis_shadow"
+display_name = "kanis_shadow"
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/3cede29a-790f-4585-8e14-e4e489c39f32-profile_image-300x300.png"
+created_at = "2024-03-13T13:35:32Z"
+
+[sub_resource type="Resource" id="Resource_m36jl"]
+script = ExtResource("7_ikl5g")
+id = "1051589814"
+login = "kanis_shadow"
+display_name = "kanis_shadow"
+profile_image_url = "https://static-cdn.jtvnw.net/jtv_user_pictures/3cede29a-790f-4585-8e14-e4e489c39f32-profile_image-300x300.png"
+created_at = "2024-03-13T13:35:32Z"
+
+[sub_resource type="Resource" id="Resource_37711"]
+script = ExtResource("5_bkaxl")
+type = 5
+metadata/_custom_type_script = "uid://cjug64e3433g0"
+metadata/broadcaster_user_id_user = SubResource("Resource_bkaxl")
+metadata/moderator_user_id_user = SubResource("Resource_m36jl")
+
+[sub_resource type="Resource" id="Resource_y2eu7"]
+script = ExtResource("5_bkaxl")
+type = 20
+metadata/_custom_type_script = "uid://cjug64e3433g0"
+metadata/to_broadcaster_user_id_user = SubResource("Resource_bkaxl")
+
+[sub_resource type="Resource" id="Resource_nej5n"]
+script = ExtResource("5_bkaxl")
+type = 15
+metadata/_custom_type_script = "uid://cjug64e3433g0"
+metadata/broadcaster_user_id_user = SubResource("Resource_bkaxl")
+
+[sub_resource type="Resource" id="Resource_ikl5g"]
+script = ExtResource("5_bkaxl")
+type = 9
+metadata/_custom_type_script = "uid://cjug64e3433g0"
+metadata/broadcaster_user_id_user = SubResource("Resource_bkaxl")
+metadata/user_id_user = SubResource("Resource_bkaxl")
+
+[sub_resource type="Resource" id="Resource_p5mm4"]
+script = ExtResource("5_bkaxl")
+type = 19
+metadata/_custom_type_script = "uid://cjug64e3433g0"
+metadata/broadcaster_user_id_user = SubResource("Resource_bkaxl")
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_ikl5g"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_p5mm4"]
+normal = Vector2(0, 1)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_bkaxl"]
+normal = Vector2(1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_m36jl"]
+normal = Vector2(-1, 0)
+
+[node name="Overlay" type="Control" unique_id=533843725]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3kf1p")
+
+[node name="TwitchService" parent="." unique_id=1988848951 instance=ExtResource("1_vej8j")]
+unique_name_in_owner = true
+oauth_setting = ExtResource("2_vej8j")
+scopes = ExtResource("3_3kf1p")
+token = ExtResource("4_ikl5g")
+
+[node name="EventSub" parent="TwitchService" index="0" unique_id=1294051238]
+_subscriptions = Array[ExtResource("5_bkaxl")]([SubResource("Resource_37711"), SubResource("Resource_y2eu7"), SubResource("Resource_nej5n"), SubResource("Resource_ikl5g"), SubResource("Resource_p5mm4")])
+use_test_server = true
+
+[node name="ChatController" parent="." unique_id=775166331 instance=ExtResource("8_ikl5g")]
+layout_mode = 1
+
+[node name="EventListener" type="Node" parent="." unique_id=26421422]
+script = ExtResource("7_v280k")
+
+[node name="FollowTwitchEventListener" type="Node" parent="EventListener" unique_id=465485534 node_paths=PackedStringArray("eventsub")]
+unique_name_in_owner = true
+script = ExtResource("8_3ux2t")
+eventsub = NodePath("../../TwitchService/EventSub")
+subscription = 5
+metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
+
+[node name="RaidTwitchEventListener" type="Node" parent="EventListener" unique_id=267112608 node_paths=PackedStringArray("eventsub")]
+unique_name_in_owner = true
+script = ExtResource("8_3ux2t")
+eventsub = NodePath("../../TwitchService/EventSub")
+metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
+
+[node name="SubscriptionTwitchEventListener" type="Node" parent="EventListener" unique_id=954846060 node_paths=PackedStringArray("eventsub")]
+unique_name_in_owner = true
+script = ExtResource("8_3ux2t")
+eventsub = NodePath("../../TwitchService/EventSub")
+subscription = 15
+metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
+
+[node name="ChannelChatTwitchEventListener" type="Node" parent="EventListener" unique_id=1043998663 node_paths=PackedStringArray("eventsub")]
+unique_name_in_owner = true
+script = ExtResource("8_3ux2t")
+eventsub = NodePath("../../TwitchService/EventSub")
+subscription = 11
+metadata/_custom_type_script = "uid://bol5ltrjr6ux8"
+
+[node name="World" type="StaticBody2D" parent="." unique_id=1470512690]
+
+[node name="Bottom" type="CollisionShape2D" parent="World" unique_id=2128820166]
+position = Vector2(960, 1080)
+shape = SubResource("WorldBoundaryShape2D_ikl5g")
+
+[node name="Top" type="CollisionShape2D" parent="World" unique_id=856294189]
+position = Vector2(960, 0)
+shape = SubResource("WorldBoundaryShape2D_p5mm4")
+
+[node name="Left" type="CollisionShape2D" parent="World" unique_id=1060436373]
+position = Vector2(0, 540)
+shape = SubResource("WorldBoundaryShape2D_bkaxl")
+
+[node name="Right" type="CollisionShape2D" parent="World" unique_id=462291181]
+position = Vector2(1920, 540)
+shape = SubResource("WorldBoundaryShape2D_m36jl")
+
+[editable path="TwitchService"]

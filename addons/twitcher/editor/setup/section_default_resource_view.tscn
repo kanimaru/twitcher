@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://b28mmhk5a83yy" path="res://addons/twitcher/editor/setup/section_default_resource_view.gd" id="1_2ospb"]
 [ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="1_e54f0"]
-[ext_resource type="Script" uid="uid://bwm1n2q3swjmt" path="res://addons/twitcher/editor/button_changes.gd" id="3_seh10"]
 
 [node name="DefaultRessourceView" type="VBoxContainer" unique_id=891802833]
 script = ExtResource("1_2ospb")
@@ -22,6 +21,7 @@ text = "Storage:"
 [node name="FileSelect" parent="GridContainer" unique_id=1025748381 instance=ExtResource("1_e54f0")]
 unique_name_in_owner = true
 layout_mode = 2
+path = "res://"
 placeholder = "Folder to store Setting and Token"
 pick_folder = true
 
@@ -29,9 +29,3 @@ pick_folder = true
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0, 1)
-
-[node name="Save" type="Button" parent="." unique_id=1959120368]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Save"
-script = ExtResource("3_seh10")

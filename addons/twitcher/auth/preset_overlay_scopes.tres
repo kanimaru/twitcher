@@ -4,5 +4,5 @@
 
 [resource]
 script = ExtResource("1_2b4sa")
-used_scopes = Array[StringName]([&"user:read:chat", &"user:write:chat", &"moderator:read:followers", &"bits:read", &"channel:read:redemptions", &"channel:manage:redemptions"])
+used_scopes = Array[StringName]([&"user:read:chat", &"user:write:chat", &"moderator:read:followers", &"bits:read", &"channel:read:redemptions", &"channel:manage:redemptions", &"channel:read:subscriptions", &"channel:bot", &"user:bot"])
 metadata/_custom_type_script = "uid://b3n3et8mebjcc"

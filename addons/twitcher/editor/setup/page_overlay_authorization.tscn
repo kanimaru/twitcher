@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://dxql15j5ornlc" path="res://addons/twitcher/editor/setup/page_overlay_authorization.gd" id="1_78hk7"]
 [ext_resource type="Theme" uid="uid://d145ou7bj00tv" path="res://addons/twitcher/assets/twitcher_theme.tres" id="1_h1dk1"]
-[ext_resource type="PackedScene" uid="uid://cfplxaw8f38hl" path="res://addons/twitcher/editor/setup/section_authorization_view.tscn" id="3_1ocoi"]
-[ext_resource type="FoldableGroup" uid="uid://cciuf1mv73p2s" path="res://addons/twitcher/editor/setup/overlay_setting_foldable_group.tres" id="3_6iuhk"]
+[ext_resource type="PackedScene" uid="uid://cfplxaw8f38hl" path="res://addons/twitcher/editor/setup/section_overlay_authorization_view.tscn" id="3_1ocoi"]
+[ext_resource type="FoldableGroup" uid="uid://cciuf1mv73p2s" path="res://addons/twitcher/editor/setup/setting_foldable_group.tres" id="3_6iuhk"]
 [ext_resource type="PackedScene" uid="uid://cjyawyvilv700" path="res://addons/twitcher/editor/setup/section_default_resource_view.tscn" id="5_6iuhk"]
 [ext_resource type="PackedScene" uid="uid://bps647tfof0ej" path="res://addons/twitcher/editor/setup/section_default_user_view.tscn" id="5_6v7gf"]
 
-[node name="Authorization" type="MarginContainer" unique_id=1961758844]
+[node name="PageOverlayAuthorization" type="MarginContainer" unique_id=1961758844]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -55,7 +55,7 @@ title = "Editor Support"
 title_alignment = 1
 foldable_group = ExtResource("3_6iuhk")
 
-[node name="AuthorizationView" parent="Layout/EditorSupport" unique_id=2000752896 instance=ExtResource("3_1ocoi")]
+[node name="OverlayAuthorizationView" parent="Layout/EditorSupport" unique_id=2000752896 instance=ExtResource("3_1ocoi")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
