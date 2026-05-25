@@ -302,7 +302,7 @@ func _subscribe(subscription: TwitchEventsubConfig) -> String:
 	if eventsub_response.response.response_code < 200 || eventsub_response.response.response_code >= 300:
 		_log.e("Subscription failed for '%s'. Unknown error %s: %s" % [data.type, eventsub_response.response.response_code, eventsub_response.response.response_data.get_string_from_utf8()])
 		return ""
-	elif (eventsub_response.response.response_data.is_empty()):
+	elif eventsub_response.response.response_data.is_empty():
 		return ""
 	_log.i("Now listening to '%s' events." % data.type)
 
