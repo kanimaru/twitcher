@@ -20,10 +20,10 @@ class_name TwitchESCustomPowerUp
 		track_data(&"title", val)
 
 ## The cost of the Custom Power-up to redeem.
-@export var bits_cost: int:
+@export var bits: int:
 	set(val):
-		bits_cost = val
-		track_data(&"bits_cost", val)
+		bits = val
+		track_data(&"bits", val)
 
 ## The creator-provided description for this Power-up.
 @export var prompt: String:
@@ -45,8 +45,8 @@ static func from_json(d: Dictionary) -> TwitchESCustomPowerUp:
 		result.id = d["id"]
 	if d.get("title", null) != null:
 		result.title = d["title"]
-	if d.get("bits_cost", null) != null:
-		result.bits_cost = d["bits_cost"]
+	if d.get("bits", null) != null:
+		result.bits = d["bits"]
 	if d.get("prompt", null) != null:
 		result.prompt = d["prompt"]
 	return result
