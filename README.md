@@ -7,7 +7,7 @@
 
 **Seamless Twitch Integration for Godot 4.4+**
 
-Twitcher V2 provides a comprehensive toolkit to effortlessly connect your Godot Engine games, 
+Twitcher provides a comprehensive toolkit to effortlessly connect your Godot Engine games, 
 overlays, or applications to the Twitch platform. Integrate real-time chat, respond to events like 
 follows and subscriptions, manage rewards, handle chat commands, and utilize the full Twitch API with ease.
 
@@ -50,6 +50,21 @@ Godot doesn't natively support animated GIFs. Twitcher uses configurable "Image 
 
 Need help or have questions? Find kani_dev streaming development and answering questions on [Twitch](https://www.twitch.tv/kani_dev/). Feel free to open an Issue on GitHub for bugs or feature requests.
 
+## Development
+
+To prevent accidental commit of your Twitch `client_id` and `client_secret`, this repository includes a pre-commit hook and a GitHub Action.
+This is only for Twitcher development. In your project it's fine to commit them because they got encrypted beforehand.
+When you want to share your project with other devs, you should also share the key so that the other devs can use 
+the credentials. 
+
+### Setting up the local Pre-commit Hook
+
+To enable the local pre-commit hook that automatically clears secrets from your OAuth settings before committing, run the following command in your terminal:
+
+```bash
+git config core.hooksPath .githooks
+```
+
 ## License
 
-Twitcher V2 is released under the MIT License. See the [LICENSE](https://github.com/kanimaru/twitcher/blob/master/LICENSE) file for details.
+Twitcher is released under the MIT License. See the [LICENSE](https://github.com/kanimaru/twitcher/blob/master/LICENSE) file for details.
