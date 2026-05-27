@@ -10,8 +10,8 @@ const TwitchEditorNodeUtils = preload("res://addons/twitcher/editor/twitch_edito
 @onready var fetch_manageable_rewards: Button = %FetchManageableRewards
 @onready var info: Label = %Info
 
-@export var token: OAuthToken
-@export var setting: OAuthSetting
+var token: OAuthToken
+var setting: OAuthSetting
 
 func _ready() -> void:
 	if not token:

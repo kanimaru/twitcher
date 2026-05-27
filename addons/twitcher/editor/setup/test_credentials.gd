@@ -4,8 +4,8 @@ extends Button
 const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 
-@export var oauth_setting: OAuthSetting: set = update_oauth_setting
-@export var oauth_token: OAuthToken: set = update_oauth_token
+var oauth_setting: OAuthSetting: set = update_oauth_setting
+var oauth_token: OAuthToken: set = update_oauth_token
 @export var test_response: Label
 
 var scopes: OAuthScopes

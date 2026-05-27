@@ -2,8 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://b7smp156mdns6" path="res://addons/twitcher/editor/setup/file_select.tscn" id="1_i70mb"]
 [ext_resource type="Script" uid="uid://byv7ndmkuf3pf" path="res://addons/twitcher/editor/reward_manager/section_reward.gd" id="1_p2e20"]
-[ext_resource type="Resource" path="user://editor_oauth_token.tres" id="2_liw5c"]
-[ext_resource type="Resource" path="user://editor_oauth_setting.tres" id="3_l628l"]
 
 [node name="SectionReward" type="VBoxContainer" unique_id=642804573]
 anchors_preset = 15
@@ -12,8 +10,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_p2e20")
-token = ExtResource("2_liw5c")
-setting = ExtResource("3_l628l")
 
 [node name="Label" type="RichTextLabel" parent="." unique_id=1281127530]
 layout_mode = 2

@@ -1,0 +1,24 @@
+#!/bin/sh
+# This pre-commit hook prevents client_id and client_secret from being committed.
+# It automatically clears these fields in editor_oauth_setting.tres before staging.
+
+FILES="addons/twitcher/editor_oauth_setting.tres addons/twitcher/editor_oauth_settings.tres twitch_oauth_setting.tres twitch_oauth_settings.tres"
+
+for FILE in $FILES; do
+    if [ -f "$FILE" ]; then
+        # Check if there's anything to clean
+        if grep -qE 'client_id = "[^"]+"' "$FILE" || grep -qE 'client_secret = "[^"]+"' "$FILE"; then
+            echo "Pre-commit: Cleaning secrets from $FILE..."
+            
+            # Use sed to clear values.
+            # We use a temporary file to be safe and compatible across different sed versions.
+            sed -e 's/client_id = "[^"]*"/client_id = ""/' \
+                -e 's/client_secret = "[^"]*"/client_secret = ""/' \
+                "$FILE" > "$FILE.tmp" && mv "$FILE.tmp" "$FILE"
+                
+            # Re-add the file to the commit
+            git add "$FILE"
+            echo "Pre-commit: $FILE has been cleaned and re-staged."
+        fi
+    fi
+done

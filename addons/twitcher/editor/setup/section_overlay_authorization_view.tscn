@@ -4,16 +4,6 @@
 [ext_resource type="Script" uid="uid://ddugotjvuahex" path="res://addons/twitcher/editor/setup/focus_child_show.gd" id="1_nor3l"]
 [ext_resource type="Script" uid="uid://6cx1luottp33" path="res://addons/twitcher/editor/rich_text_label_os_opener.gd" id="2_m6ejn"]
 [ext_resource type="PackedScene" uid="uid://bfksyo3klyvdn" path="res://addons/twitcher/editor/setup/test_credentials.tscn" id="2_m323t"]
-[ext_resource type="Resource" uid="uid://c4scwuk8q0r40" path="res://addons/twitcher/lib/oOuch/default_key_provider.tres" id="3_m6ejn"]
-[ext_resource type="Script" uid="uid://00xbijwpi8xa" path="res://addons/twitcher/lib/oOuch/oauth_setting.gd" id="4_blu1m"]
-
-[sub_resource type="Resource" id="Resource_m6ejn"]
-script = ExtResource("4_blu1m")
-token_url = "https://id.twitch.tv/oauth2/token"
-authorization_url = "https://id.twitch.tv/oauth2/authorize"
-device_authorization_url = "https://id.twitch.tv/oauth2/device"
-client_id = "e0a451pmremhgy77idg3isbcwwqidd"
-client_secret = "0fJWR1HtPkRqgvPPw3vEdNdS8Dzl2l2yDTmocDtXomg="
 
 [node name="AuthorizationView" type="VBoxContainer" unique_id=2000752896]
 anchors_preset = 15
@@ -50,7 +40,6 @@ text = "Client ID:"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "e0a451pmremhgy77idg3isbcwwqidd"
 
 [node name="ClientSecretLabel" type="Label" parent="AuthorizationOptions" unique_id=1002201697]
 layout_mode = 2
@@ -60,14 +49,12 @@ text = "Client Secret:"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "6nozuey6nus66t65v6oxcltebfppt1"
 secret = true
 
 [node name="TestResponse" type="Label" parent="." unique_id=35266700]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 1, 0, 1)
-text = "Editor Token is still valid"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2114452648]
 layout_mode = 2
@@ -77,5 +64,4 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Authorize Editor"
-oauth_setting = SubResource("Resource_m6ejn")
 test_response = NodePath("../../TestResponse")
