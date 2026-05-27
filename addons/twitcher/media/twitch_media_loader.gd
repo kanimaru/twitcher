@@ -100,7 +100,7 @@ func preload_emotes(channel_id: String = "global") -> void:
 ## Returns requested emotes.
 ## Key: EmoteID as String | Value: SpriteFrames
 func get_emotes(emote_ids : Array[String]) -> Dictionary[String, SpriteFrames]:
-	_log.i("Get emotes: %s" % emote_ids)
+	_log.i("Get emotes: %s" % [emote_ids])
 	var requests: Array[TwitchEmoteDefinition] = []
 	for id: String in emote_ids:
 		requests.append(TwitchEmoteDefinition.new(id))
