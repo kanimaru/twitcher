@@ -237,6 +237,10 @@ func update_tokens(access_token: String, refresh_token: String = "", expires_in:
 	logInfo("token (%s) resolved" % token)
 
 
+func load_tokens() -> void:
+	token.load_tokens()
+
+
 func get_token_expiration() -> String:
 	return Time.get_datetime_string_from_unix_time(token._expire_date)
 

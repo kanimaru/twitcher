@@ -128,6 +128,7 @@ func login(force: bool = false) -> bool:
 	if scopes == null:
 		scopes = OAuthScopes.new()
 
+	token_handler.load_tokens()
 	var is_valid: bool = token_handler.is_token_valid()
 	var scopes_changed: bool = _got_scopes_changed()
 
