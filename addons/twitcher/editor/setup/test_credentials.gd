@@ -33,7 +33,8 @@ func _pressed() -> void:
 	await TwitchAuth.manual_authorize(
 		oauth_setting,
 		oauth_token,
-		true)
+		true,
+		scopes)
 
 	if oauth_token.is_token_valid():
 		set_test_response("Credentials are valid!", Color.GREEN)
