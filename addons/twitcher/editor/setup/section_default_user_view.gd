@@ -60,7 +60,7 @@ func _on_default_user_changed(user: TwitchUser) -> void:
 	var previous_user: TwitchUser = _default_user
 	_default_user = user
 	if is_node_ready():
-		has_changes = previous_user.id != user.id
+		has_changes = (previous_user == null and user != null) or (previous_user.id != user.id)
 		changed.emit()
 
 
