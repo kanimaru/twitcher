@@ -52,6 +52,8 @@ func _exit_tree() -> void:
 
 ## Subscribe to eventsub and preload data if not happend yet
 func subscribe() -> void:
+	if not api.token.is_token_valid(): await api.token.authorized
+
 	if broadcaster_user == null:
 		printerr("BroadcasterUser is not set. Can't subscribe to chat.")
 		return
