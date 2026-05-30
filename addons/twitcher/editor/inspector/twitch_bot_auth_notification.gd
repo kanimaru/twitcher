@@ -12,7 +12,7 @@ func _ready() -> void:
 	test_credentials.scopes = TWITCH_BOT_SCOPES
 	cancel.pressed.connect(_close)
 	close_requested.connect(_close)
-	
-	
+
+
 func _close() -> void:
 	hide()

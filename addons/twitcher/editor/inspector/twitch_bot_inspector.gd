@@ -16,13 +16,13 @@ func _parse_property(_object: Object, _type: Variant.Type, name: String, _hint_t
 
 
 class AuthorizeBotProperty extends EditorProperty:
-		
+
 	var window: Window
 
 	func _init() -> void:
 		window = TWITCH_BOT_AUTH_NOTIFICATION.instantiate()
 		window.hide()
-		
+
 		var button: Button = Button.new()
 		button.text = "Authorize Sender"
 		button.pressed.connect(_open_window)

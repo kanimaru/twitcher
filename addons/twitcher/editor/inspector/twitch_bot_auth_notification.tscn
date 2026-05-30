@@ -63,4 +63,3 @@ test_response = NodePath("../../Response")
 [node name="Response" type="Label" parent="MarginContainer/VBoxContainer" unique_id=265236612]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_dhdh5")
-
