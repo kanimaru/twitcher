@@ -3,8 +3,8 @@
 extends Node
 
 ## Helper to send messages with a second bot user and the corrosponding bot badge.
-## Take care that setup is needed that it actually works! The right scopes for the target channel 
-## and the sender user has to be set. 
+## Take care that setup is needed that it actually works! The right scopes for the target channel
+## and the sender user has to be set.
 ## See also https://dev.twitch.tv/docs/api/reference/#send-chat-message
 class_name TwitchBot
 
@@ -16,11 +16,11 @@ const TWITCH_BOT_SCOPES = preload("res://addons/twitcher/chat/twitch_bot_scopes.
 ## The base settings of the game / overlay the bot will inherit from
 @export var oauth_setting: OAuthSetting:
 	set = _update_setting
-	
+
 ## A token used for the bot specificially
 @export var bot_token: OAuthToken
 
-## Sender user that should be used. Requires user:bot scope from chatting user, 
+## Sender user that should be used. Requires user:bot scope from chatting user,
 ## and either channel:bot scope from broadcaster or moderator status.
 @export var sender: TwitchUser:
 	set = _update_sender
@@ -35,46 +35,45 @@ var _bot_api: TwitchAPI
 
 func _init() -> void:
 	child_entered_tree.connect(_on_enter_child)
-	
-	
+
+
 func _ready() -> void:
-	if bot_token == null: 
+	if bot_token == null:
 		bot_token = OAuthToken.new()
 		bot_token.resource_name = "Bot-Token"
 	_ensure_children()
 	_update_setting(oauth_setting)
-	
-	
+
+
 func _enter_tree() -> void:
 	if instance == null: instance = self
-	
-	
+
+
 func _exit_tree() -> void:
 	if instance == self: instance = null
-	
-	
+
+
 func _on_enter_child(node: Node) -> void:
 	if node is TwitchAuth: _bot_auth = node
 	if node is TwitchAPI: _bot_api = node
-	
-	
+
+
 func _ensure_children() -> void:
-	if _bot_api == null: 
+	if _bot_api == null:
 		_bot_api = TwitchAPI.new()
 		_bot_api.name = "BotApi"
+		_bot_api.token = bot_token
 		add_child(_bot_api)
 		_bot_api.owner = get_tree().edited_scene_root if Engine.is_editor_hint() else owner
 
-	if _bot_auth == null: 
+	if _bot_auth == null:
 		_bot_auth = TwitchAuth.new()
 		_bot_auth.name = "BotAuth"
 		_bot_auth.scopes = TWITCH_BOT_SCOPES
+		_bot_auth.token = bot_token
 		add_child(_bot_auth)
 		_bot_auth.owner = get_tree().edited_scene_root if Engine.is_editor_hint() else owner
-	
-	_bot_auth.token = bot_token
-	_bot_api.token = bot_token
-	
+
 	# Reset the API. The default shouldn't be the Bot API. It has way to less scopes!
 	if TwitchAPI.instance == _bot_api:
 		TwitchAPI.instance = null
@@ -93,7 +92,7 @@ static func chat(message: String, reply_parent_message_id: String = "", for_sour
 ## for_source_only: see https://dev.twitch.tv/docs/api/reference/#send-chat-message
 func send_message(message: String, reply_parent_message_id: String = "", for_source_only = true, broadcaster: TwitchUser = null) -> void:
 	if not _bot_auth.is_authenticated: await _bot_auth.authorize()
-	if broadcaster == null: 
+	if broadcaster == null:
 		broadcaster = receiver if receiver != null else sender
 	_log.d("Send message from %s to %s: %s" % [sender.display_name, broadcaster.display_name, message])
 	var body: TwitchSendChatMessage.Body = TwitchSendChatMessage.Body.create(broadcaster.id, sender.id, message)
@@ -103,7 +102,7 @@ func send_message(message: String, reply_parent_message_id: String = "", for_sou
 	for data in response.data:
 		if data.is_sent: _log.d("Message was sent %s" % [data.message_id])
 		else: _log.e("Message couldn't be send cause of [%s]: %s" % [data.drop_reason.code, data.drop_reason.message])
-	
+
 
 static func announcement(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, for_source_only = true, broadcaster: TwitchUser = null) -> void:
 	if instance:
@@ -114,7 +113,7 @@ static func announcement(message: String, color: TwitchAnnouncementColor = Twitc
 
 func send_announcement(message: String, color: TwitchAnnouncementColor = TwitchAnnouncementColor.PRIMARY, for_source_only = true, broadcaster: TwitchUser = null) -> void:
 	if not _bot_auth.is_authenticated: await _bot_auth.authorize()
-	if broadcaster == null: 
+	if broadcaster == null:
 		broadcaster = receiver if receiver != null else sender
 	_log.d("Send announcement from %s to %s: %s" % [sender.display_name, broadcaster.display_name, message])
 	var body: TwitchSendChatAnnouncement.Body = TwitchSendChatAnnouncement.Body.new()
@@ -129,7 +128,7 @@ static func shoutout(from_user: TwitchUser, target_user: TwitchUser) -> void:
 		instance.send_shoutout(from_user, target_user)
 	else:
 		push_error("No TwitchBot registered yet")
-		
+
 
 func send_shoutout(from_user: TwitchUser, target_user: TwitchUser) -> void:
 	_log.d("Sends a shoutout from %s to %s" % [from_user.display_name, target_user.display_name ])
@@ -139,32 +138,32 @@ func send_shoutout(from_user: TwitchUser, target_user: TwitchUser) -> void:
 func _update_setting(val: OAuthSetting) -> void:
 	oauth_setting = val
 	update_configuration_warnings()
-	
+
 	if oauth_setting == null || not is_inside_tree(): return
-	
+
 	var bot_setting = oauth_setting.duplicate()
 	bot_setting.authorization_flow = OAuth.AuthorizationFlow.CLIENT_CREDENTIALS
 	_bot_auth.oauth_setting = bot_setting
 	_bot_api.oauth_setting = bot_setting
-	
-	
+
+
 func _update_sender(val: TwitchUser) -> void:
 	sender = val
 	update_configuration_warnings()
-	
-	
+
+
 func _update_receiver(val: TwitchUser) -> void:
 	receiver = val
 	update_configuration_warnings()
-	
-	
+
+
 func _get_configuration_warnings() -> PackedStringArray:
 	var result: PackedStringArray = []
 	if oauth_setting == null:
 		result.append("Proper OAuth settings are needed.")
 	elif oauth_setting.client_secret == "":
 		result.append("Client Secret is needed for using the bot node.")
-		
+
 	if sender == null:
 		result.append("Sender is missing.")
 	elif receiver != null && sender.id == receiver.id:

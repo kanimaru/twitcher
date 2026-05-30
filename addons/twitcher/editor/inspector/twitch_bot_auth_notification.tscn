@@ -60,15 +60,7 @@ size_flags_horizontal = 3
 text = "Authorize"
 test_response = NodePath("../../Response")
 
-[node name="TwitchAuth" parent="MarginContainer/VBoxContainer/HBoxContainer/TestCredentials" index="0" unique_id=1792468348]
-force_verify = true
-scopes = null
-
-[node name="OAuth" parent="MarginContainer/VBoxContainer/HBoxContainer/TestCredentials/TwitchAuth" index="0" unique_id=1235100632]
-scopes = null
-
 [node name="Response" type="Label" parent="MarginContainer/VBoxContainer" unique_id=265236612]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_dhdh5")
 
-[editable path="MarginContainer/VBoxContainer/HBoxContainer/TestCredentials"]
