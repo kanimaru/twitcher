@@ -121,7 +121,10 @@ func do_unsetup() -> void:
 ## Flow types. Only one login process at the time. All other tries wait until the first process
 ## was succesful.
 ## force: a login request
-func login(force: bool = false) -> bool:
+func login(
+	force: bool = false,
+	cancellation_token: TwitchAuthCancellationToken = null,
+) -> bool:
 	if not is_node_ready(): await ready
 	_setup_nodes()
 
@@ -159,14 +162,14 @@ func login(force: bool = false) -> bool:
 
 	login_in_process = true
 	_login_timeout_timer.start()
-	logInfo("do login via flow: %s" % oauth_setting.authorization_flow)
+	logInfo("do login via flow: %s" % AuthorizationFlow.keys()[oauth_setting.authorization_flow])
 	match oauth_setting.authorization_flow:
 		AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
-			await _start_login_process(_AUTHTYPE_CODE)
+			await _start_login_process(_AUTHTYPE_CODE, cancellation_token)
 		AuthorizationFlow.CLIENT_CREDENTIALS:
 			await _start_client_credential_process()
 		AuthorizationFlow.IMPLICIT_FLOW:
-			await _start_login_process(_AUTHTYPE_TOKEN)
+			await _start_login_process(_AUTHTYPE_TOKEN, cancellation_token)
 		AuthorizationFlow.DEVICE_CODE_FLOW:
 			await _start_device_login_process()
 
@@ -198,15 +201,13 @@ func _on_login_timeout() -> void:
 	token_handler.token_resolved.emit(null)
 
 
-func _start_login_process(response_type: String) -> void:
+func _start_login_process(
+	response_type: String,
+	cancellation_token: TwitchAuthCancellationToken = null,
+) -> void:
 	if scopes == null: scopes = OAuthScopes.new()
 
 	_auth_http_server.start_listening()
-
-	if response_type == _AUTHTYPE_CODE:
-		_auth_http_server.request_received.connect(_process_code_request.bind(_auth_http_server))
-	elif response_type == _AUTHTYPE_TOKEN:
-		_auth_http_server.request_received.connect(_process_implicit_request.bind(_auth_http_server))
 
 	_current_state = _crypto.generate_random_bytes(16).hex_encode()
 	var query_param: String = "&".join([
@@ -219,6 +220,16 @@ func _start_login_process(response_type: String) -> void:
 		])
 
 	var url: String = oauth_setting.authorization_url + "?" + query_param
+	if response_type == _AUTHTYPE_CODE:
+		query_param = "&".join([
+			"state=pending",
+			"uri=%s" % url.uri_encode(),
+		])
+		url = oauth_setting.redirect_url + "?" + query_param
+		_auth_http_server.request_received.connect(_process_code_request.bind(_auth_http_server))
+	elif response_type == _AUTHTYPE_TOKEN:
+		_auth_http_server.request_received.connect(_process_implicit_request.bind(_auth_http_server))
+
 	logInfo("start login process to get token for scopes %s" % (",".join(scopes.used_scopes)))
 	logDebug("login to %s" % url)
 	if not shell_command.is_empty():
@@ -227,6 +238,10 @@ func _start_login_process(response_type: String) -> void:
 		OS.create_process(shell_command, parameters)
 	else:
 		OS.shell_open(url)
+
+	if cancellation_token != null:
+		cancellation_token.cancelled.connect(_stop_server.bind(response_type))
+		cancellation_token.cancelled.connect(_auth_succeed.emit.bind(""))
 
 	logDebug("waiting for user to login.")
 	if response_type == _AUTHTYPE_CODE:
@@ -241,8 +256,12 @@ func _start_login_process(response_type: String) -> void:
 
 func _stop_server(authtype: StringName) -> void:
 	match authtype:
-		_AUTHTYPE_CODE: _auth_http_server.request_received.disconnect(_process_code_request.bind(_auth_http_server))
-		_AUTHTYPE_TOKEN: _auth_http_server.request_received.disconnect(_process_implicit_request.bind(_auth_http_server))
+		_AUTHTYPE_CODE:
+			if _auth_http_server.request_received.is_connected(_process_code_request.bind(_auth_http_server)):
+				_auth_http_server.request_received.disconnect(_process_code_request.bind(_auth_http_server))
+		_AUTHTYPE_TOKEN:
+			if _auth_http_server.request_received.is_connected(_process_implicit_request.bind(_auth_http_server)):
+				_auth_http_server.request_received.disconnect(_process_implicit_request.bind(_auth_http_server))
 	_auth_http_server.stop_listening()
 	logInfo("authorization is done stop server")
 
@@ -411,7 +430,7 @@ func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServ
 	var state = query_params.get("state")
 	if query_params.has("error"):
 		_handle_error(server, client, query_params)
-	elif state == _current_state:
+	elif state == _current_state or state == "pending":
 		_handle_success(server, client, query_params)
 	else:
 		_handle_other_requests(server, client, first_line)
@@ -420,16 +439,22 @@ func _process_code_request(client: OAuthHTTPServer.Client, server: OAuthHTTPServ
 
 ## Returns the response for the given auth request back to the browser also emits the auth code
 func _handle_success(server: OAuthHTTPServer, client: OAuthHTTPServer.Client, query_params : Dictionary) -> void:
-	logInfo("Authentication success. Send auth code.")
-	if query_params.has("code"):
-		var succes_page: PackedByteArray = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/success-page.txt")
-		server.send_response(client, "200 OK", succes_page)
+	var page_data: PackedByteArray
+	if query_params.get("state") == "pending":
+		logInfo("Initiating authorization flow...")
+		page_data = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/page_authorization.html")
+	elif query_params.has("finished"):
+		_stop_server(_AUTHTYPE_CODE)
+		return
+	elif query_params.has("code"):
+		logInfo("Authentication success. Send auth code.")
+		page_data = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/page_success.html")
 		_auth_succeed.emit(query_params['code'])
 	else:
-		var error_page: PackedByteArray = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/error-page.txt")
-		server.send_response(client, "200 OK", error_page)
+		page_data = FileAccess.get_file_as_bytes("res://addons/twitcher/assets/page_error.html")
 		logError("Auth code expected wasn't send!")
-	_stop_server(_AUTHTYPE_CODE)
+
+	server.send_response(client, "200 OK", page_data)
 
 
 ## Handles the error in case that Auth API has a problem

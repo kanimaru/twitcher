@@ -12,6 +12,9 @@ var scopes: OAuthScopes
 
 signal authorized
 
+var _cancellation_token: TwitchAuthCancellationToken = null
+var _pending: bool = false
+var _text: String = ""
 
 func _ready() -> void:
 	if not oauth_setting:
@@ -24,25 +27,51 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE:
 		oauth_token.authorized.disconnect(_on_authorized)
 
-
 func _pressed() -> void:
-	if test_response:
-		set_test_response("Authorizing...")
+	if _pending:
+		if test_response:
+			set_test_response("Authorization cancelled")
 
-	TwitchTweens.loading(self)
-	await TwitchAuth.manual_authorize(
-		oauth_setting,
-		oauth_token,
-		true,
-		scopes)
-
-	if oauth_token.is_token_valid():
-		set_test_response("Credentials are valid!", Color.GREEN)
-		TwitchTweens.flash(self, Color.GREEN)
-		authorized.emit()
+		text = _text
+		_pending = false
+		if _cancellation_token != null:
+			_cancellation_token.cancel()
+		_cancellation_token = null
 	else:
-		set_test_response("Credentials are invalid!", Color.RED)
-		TwitchTweens.flash(self, Color.RED)
+		if test_response:
+			set_test_response("Authorizing pending...")
+
+		_pending = true
+		_cancellation_token = TwitchAuthCancellationToken.new()
+		_text = text
+		text = "Cancel Authorization Request"
+
+		TwitchTweens.loading(self)
+		await TwitchAuth.manual_authorize(
+			oauth_setting,
+			oauth_token,
+			true,
+			scopes,
+			_cancellation_token,
+		)
+
+		_pending = false
+		text = _text
+		if _cancellation_token != null:
+			_cancellation_token.cancel()
+		_cancellation_token = null
+
+		if oauth_token.is_token_valid():
+			set_test_response("Credentials are valid!", Color.GREEN)
+			TwitchTweens.flash(self, Color.GREEN)
+			authorized.emit()
+		else:
+			set_test_response("Credentials are invalid!", Color.RED)
+			TwitchTweens.flash(self, Color.RED)
+
+		var window := get_window()
+		window.request_attention()
+		window.grab_focus()
 
 
 func set_test_response(info: String, color: Color = Color.TRANSPARENT) -> void:
