@@ -131,8 +131,10 @@ func _on_event(event: TwitchEventsub.Event) -> void:
 
 ## Preflight check before the message gets actually parsed to save resources not to confuse with _can_handle_command
 func _should_handle(info: TwitchCommandInfo) -> bool:
-	if not listen_to_chatrooms.is_empty() && not listen_to_chatrooms.has(info.channel_name): return false
-	if not allowed_users.is_empty() && not allowed_users.has(info.username): return false
+	var message: TwitchChatMessage = info.original_message
+	var channel: String = message.source_broadcaster_user_login if message.source_broadcaster_user_login else info.channel_name
+	if not listen_to_chatrooms.is_empty() and not listen_to_chatrooms.has(channel): return false
+	if not allowed_users.is_empty() and not allowed_users.has(info.username): return false
 	return true
 
 

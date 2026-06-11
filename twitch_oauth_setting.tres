@@ -8,5 +8,3 @@ script = ExtResource("2_d63kr")
 token_url = "https://id.twitch.tv/oauth2/token"
 authorization_url = "https://id.twitch.tv/oauth2/authorize"
 device_authorization_url = "https://id.twitch.tv/oauth2/device"
-client_id = ""
-client_secret = ""
