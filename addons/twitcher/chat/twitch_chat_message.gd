@@ -1,7 +1,7 @@
 extends RefCounted
 
 
-## Technically deprecated by TwitchESChannelChatMessage but because it's one of the most used 
+## Technically deprecated by TwitchESChannelChatMessage but because it's one of the most used
 ## classes it will probably live until Twitcher 3.0
 class_name TwitchChatMessage
 
@@ -112,8 +112,8 @@ class Cheermote extends RefCounted:
 	var tier: int
 
 
-	func get_sprite_frames(_media_loader: TwitchMediaLoader, 
-			scale: StringName = TwitchCheermoteDefinition.SCALE_1, 
+	func get_sprite_frames(_media_loader: TwitchMediaLoader,
+			scale: StringName = TwitchCheermoteDefinition.SCALE_1,
 			theme: StringName = TwitchCheermoteDefinition.THEME_DARK,
 			type: StringName = TwitchCheermoteDefinition.TYPE_STATIC) -> SpriteFrames:
 		var cheermote_definition: TwitchCheermoteDefinition = TwitchCheermoteDefinition.new(prefix, str(tier))
@@ -149,9 +149,9 @@ class Emote extends RefCounted:
 	## Resolves the spriteframes from this emote. Check `format` for possible formats.
 	## Format: Defaults to animated when not available it uses static
 	## Scale: 1, 2, 3
-	func get_sprite_frames(_media_loader: TwitchMediaLoader, 
-			scale: int = TwitchEmoteDefinition.SCALE_1, 
-			theme: StringName = TwitchEmoteDefinition.THEME_DARK, 
+	func get_sprite_frames(_media_loader: TwitchMediaLoader,
+			scale: int = TwitchEmoteDefinition.SCALE_1,
+			theme: StringName = TwitchEmoteDefinition.THEME_DARK,
 			type: StringName = TwitchEmoteDefinition.TYPE_DEFAULT) -> SpriteFrames:
 		var definition: TwitchEmoteDefinition = TwitchEmoteDefinition.new(id)
 		definition.scale = scale
@@ -365,12 +365,12 @@ func get_color(default_color: String = "#AAAAAA") -> String:
 
 
 ## Preload all emojis in parallel to reduce loadtime
-func load_emotes_from_fragment(_media_loader: TwitchMediaLoader, 
+func load_emotes_from_fragment(_media_loader: TwitchMediaLoader,
 		scale: int = TwitchEmoteDefinition.SCALE_1,
-		theme: StringName = TwitchEmoteDefinition.THEME_DARK, 
+		theme: StringName = TwitchEmoteDefinition.THEME_DARK,
 		type: StringName = TwitchEmoteDefinition.TYPE_DEFAULT) -> Dictionary[TwitchEmoteDefinition, SpriteFrames]:
 	var emotes_to_load : Array[TwitchEmoteDefinition] = []
-	
+
 	for fragment : TwitchChatMessage.Fragment in message.fragments:
 		match fragment.type:
 			TwitchChatMessage.FragmentType.emote:

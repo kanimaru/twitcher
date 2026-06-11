@@ -99,6 +99,7 @@ func _on_changed_user(user: TwitchUser, \
 	eventsub_config.condition = conditions
 	emit_changed(&"condition", eventsub_config.condition)
 
+
 func _on_change_text(new_text: String, condition_name: StringName, input: LineEdit) -> void:
 	var eventsub_config: TwitchEventsubConfig = get_edited_object();
 	eventsub_config.condition[condition_name] = input.text
