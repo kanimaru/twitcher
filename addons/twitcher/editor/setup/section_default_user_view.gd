@@ -72,21 +72,25 @@ func _on_default_user_path_changed(path: String) -> void:
 
 func save() -> bool:
 	TwitchEditorSettings.load_current_twitch_user = _load_current_twitch_user
+	var path: String = file_select.path
 	if _load_current_twitch_user:
-		var path: String = file_select.path
 		var error: Error = DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(path.get_base_dir()))
 		if error:
 			push_error("Error creating the twitch resources cause: ", error_string(error))
 			return false
 
-		_default_user.take_over_path(file_select.path)
-		error = ResourceSaver.save(_default_user)
+		var current_default_user: TwitchUser = TwitchEditorSettings.default_user
+		var data: Dictionary = _default_user.to_dict()
+
+		for key in data:
+			current_default_user.set(key, data[key])
+		current_default_user.take_over_path(file_select.path)
+		error = ResourceSaver.save(current_default_user)
 		if error:
 			push_error("Can't save default user cause ", error_string(error))
 			return false
-		TwitchEditorSettings.default_user = _default_user
 
 	has_changes = false
 	if _load_current_twitch_user:
-		response.text = "Default user was saved at %s" % file_select.path
+		response.text = "Default user was saved at %s" % path
 	return true

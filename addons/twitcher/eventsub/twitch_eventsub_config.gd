@@ -4,6 +4,7 @@ extends Resource
 ## Defines howto subscribe to a eventsub subscription.
 class_name TwitchEventsubConfig
 static var _log: TwitchLogger = TwitchLogger.new("TwitchEventsubConfig")
+const TwitchEditorSettings = preload("uid://kqcukq2xqnuf")
 
 ## What do you want to subscribe
 @export var type: TwitchEventsubDefinition.Type:
@@ -41,7 +42,19 @@ func _update_type(val: TwitchEventsubDefinition.Type) -> void:
 			new_condition[condition_key] = condition.get(condition_key, "")
 		condition = new_condition
 		type_changed.emit(val)
+		notify_property_list_changed()
 
 
 func _to_string() -> String:
 	return "%s" % definition.get_readable_name()
+
+
+func get_conditions() -> Dictionary:
+	var result: Dictionary = {}
+	for condition_key: StringName in definition.conditions:
+		if has_meta(condition_key + "_user"):
+			var user: TwitchUser = get_meta(condition_key + "_user")
+			result[condition_key] = user.id
+		else:
+			result[condition_key] = condition[condition_key]
+	return result

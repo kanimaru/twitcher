@@ -275,7 +275,7 @@ func _add_action(sub: TwitchEventsubConfig, subscribe: bool) -> void:
 func _subscribe(subscription: TwitchEventsubConfig) -> String:
 	var event_name: StringName = subscription.definition.value
 	var version: StringName = subscription.definition.version
-	var conditions: Dictionary = subscription.condition
+	var conditions: Dictionary = subscription.get_conditions()
 
 	var data : TwitchCreateEventSubSubscription.Body = TwitchCreateEventSubSubscription.Body.new()
 	var transport : TwitchCreateEventSubSubscription.BodyTransport = TwitchCreateEventSubSubscription.BodyTransport.new()
