@@ -106,9 +106,12 @@ func _sync_childs() -> void:
 
 ## Authorize twitch if it is logged in it will shortcut and return true
 ## force: do the login even when already logged in
-func authorize(force: bool = false) -> bool:
+func authorize(
+	force: bool = false,
+	cancellation_token: TwitchAuthCancellationToken = null,
+) -> bool:
 	_sync_childs()
-	if await auth.login(force):
+	if await auth.login(force, cancellation_token):
 		token_handler.process_mode = Node.PROCESS_MODE_INHERIT
 		return true
 	return false
@@ -137,7 +140,9 @@ static func manual_authorize(
 		setting: OAuthSetting,
 		token_to_authorize: OAuthToken,
 		force: bool = false,
-		oauth_scopes: OAuthScopes = null) -> void:
+		oauth_scopes: OAuthScopes = null,
+		cancellation_token: TwitchAuthCancellationToken = null,
+) -> void:
 	# Default Editor Scopes
 	if not oauth_scopes: oauth_scopes = preload("uid://cgqldyna2cv5h") # res://addons/twitcher/assets/twitcher_editor_scopes.tres
 
@@ -165,7 +170,7 @@ static func manual_authorize(
 
 	_log.d("Do manual authorization %s" % token_to_authorize)
 	if not auth.is_node_ready(): await auth.ready
-	var success: bool = await auth.authorize(force)
+	var success: bool = await auth.authorize(force, cancellation_token)
 	auth.queue_free()
 	root_node.remove_meta(META_ONGOING_AUTHORIZATION)
 	if not success:
