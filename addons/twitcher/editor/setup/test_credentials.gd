@@ -34,7 +34,7 @@ func _pressed() -> void:
 
 		text = _text
 		_pending = false
-		if _cancellation_token != null:
+		if _cancellation_token:
 			_cancellation_token.cancel()
 		_cancellation_token = null
 	else:
