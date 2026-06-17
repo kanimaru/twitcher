@@ -144,7 +144,14 @@ static func manual_authorize(
 	if not setting.is_valid():
 		_log.d("Can't validate token cause OAuthSettings are invalid.")
 		return
-	var root_node: Node = EditorInterface.get_base_control() if Engine.is_editor_hint() else Engine.get_main_loop().root
+
+	var root_node: Node
+	if Engine.is_editor_hint():
+		# Before changing something here see: https://github.com/kanimaru/twitcher/issues/129
+		var editor_interface = Engine.get_singleton("EditorInterface")
+		root_node = editor_interface.get_base_control()
+	else:
+		root_node = Engine.get_main_loop().root
 
 	if root_node.has_meta(META_ONGOING_AUTHORIZATION):
 		var twitch_auth: TwitchAuth = root_node.get_meta(META_ONGOING_AUTHORIZATION)

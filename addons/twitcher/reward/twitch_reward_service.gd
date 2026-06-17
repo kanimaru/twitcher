@@ -48,15 +48,15 @@ func load_reward(twitch_reward: TwitchReward) -> LoadError:
 	if twitch_reward.id == "":
 		_log.e("Can't load %s it has no ID to load" % twitch_reward.title)
 		return LoadError.NO_ID_AVAILABLE
-		
+
 	var reward: TwitchCustomReward = await _get_custom_reward(twitch_reward)
 	if reward == null: return LoadError.NO_REWARD_FOUND
 	_convert_twitch_reward(twitch_reward, reward)
-	
+
 	_log.i("Loaded '%s' from Twitch" % twitch_reward.title)
 	return LoadError.OK
-	
-	
+
+
 func _convert_twitch_reward(twitch_reward: TwitchReward, reward: TwitchCustomReward) -> void:
 	twitch_reward.id = reward.id
 	twitch_reward.title = reward.title
@@ -74,7 +74,7 @@ func _convert_twitch_reward(twitch_reward: TwitchReward, reward: TwitchCustomRew
 	twitch_reward.is_paused = reward.is_paused
 	twitch_reward.should_redemptions_skip_request_queue = reward.should_redemptions_skip_request_queue
 	twitch_reward.emit_changed()
-	
+
 
 ## Tries to create or update an existing reward.
 func save_reward(twitch_reward: TwitchReward) -> SaveError:
@@ -82,7 +82,7 @@ func save_reward(twitch_reward: TwitchReward) -> SaveError:
 	if twitch_reward.id != "":
 		if await _get_custom_reward(twitch_reward) == null:
 			twitch_reward.id = ""
-	
+
 	if twitch_reward.id == "":
 		var create: TwitchCreateCustomRewards.Body = TwitchCreateCustomRewards.Body.new()
 		create.title = twitch_reward.title
@@ -102,11 +102,11 @@ func save_reward(twitch_reward: TwitchReward) -> SaveError:
 		if not twitch_reward.broadcaster_user:
 			var current_user: TwitchUser = await TwitchService.get_current_user_via_api(api)
 			twitch_reward.broadcaster_user = current_user
-		
+
 		var response = await api.create_custom_rewards(create, twitch_reward.broadcaster_user.id)
 		if response.response.response_code == 200:
 			var saved_reward: TwitchCustomReward = response.data[0]
-			twitch_reward.id = saved_reward.id 
+			twitch_reward.id = saved_reward.id
 			ResourceSaver.save(twitch_reward)
 			twitch_reward.emit_changed()
 			_log.i("Saved the reward %s" % twitch_reward.title)
@@ -141,10 +141,10 @@ func save_reward(twitch_reward: TwitchReward) -> SaveError:
 
 ## Deletes a reward on Twitch side. Will also remove the ID when succesfully.
 func delete_reward(twitch_reward: TwitchReward) -> DeleteError:
-	if not twitch_reward.id: 
+	if not twitch_reward.id:
 		_log.e("Can't delete reward has not id %s" % twitch_reward.title)
 		return DeleteError.NO_ID
-	if not twitch_reward.broadcaster_user: 
+	if not twitch_reward.broadcaster_user:
 		_log.e("Can't delete reward has not broadcaster %s" % twitch_reward.title)
 		return DeleteError.NO_BROADCASTER_USER
 	var response: BufferedHTTPClient.ResponseData = await api.delete_custom_reward(twitch_reward.id, twitch_reward.broadcaster_user.id)
@@ -153,7 +153,7 @@ func delete_reward(twitch_reward: TwitchReward) -> DeleteError:
 	else:
 		var error_message: String = response.response_data.get_string_from_utf8()
 		push_error("Couldn't delete! Twitch Response (%s): %s" % [response.response_code, error_message])
-		
+
 	return DeleteError.OK
 
 
@@ -164,16 +164,20 @@ func _reset_reward(twitch_reward: TwitchReward) -> void:
 
 
 func _get_custom_reward(twitch_reward: TwitchReward) -> TwitchCustomReward:
-	if twitch_reward.id == "": 
+	if twitch_reward.id == "":
 		return null
 	var opt: TwitchGetCustomReward.Opt = TwitchGetCustomReward.Opt.create()
 	opt.id = [twitch_reward.id]
 	var reward_response = await api.get_custom_reward(opt, twitch_reward.broadcaster_user.id)
-	if reward_response.data.is_empty(): 
+	if reward_response.data.is_empty():
 		var msg: String = "Can't load Twitch reward %s with id %s from Twitch. It doesn't exist!" % [twitch_reward.title, twitch_reward.id]
 		_reset_reward(twitch_reward)
 		_log.e(msg)
+
+		# Before changing something here see: https://github.com/kanimaru/twitcher/issues/129
 		if Engine.is_editor_hint():
-			EditorInterface.get_editor_toaster().push_toast(msg, EditorToaster.SEVERITY_WARNING)
+			var editor_interface = Engine.get_singleton("EditorInterface")
+			var editor_toaster = editor_interface.get_editor_toaster()
+			editor_toaster.push_toast(msg, 1) # EditorToaster.SEVERITY_WARNING
 		return null
 	return reward_response.data[0]
