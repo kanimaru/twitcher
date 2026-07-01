@@ -5,6 +5,7 @@ const TestCredentials = preload("res://addons/twitcher/editor/setup/test_credent
 const TwitchEditorSettings = preload("res://addons/twitcher/editor/twitch_editor_settings.gd")
 const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 const ButtonChanges = preload("uid://bwm1n2q3swjmt")
+const SetupWindow = preload("uid://bbguje3a0cl8t")
 
 @onready var client_id: LineEdit = %ClientId
 @onready var client_secret: LineEdit = %ClientSecret
@@ -19,6 +20,9 @@ signal changed
 signal authorized
 
 func _ready() -> void:
+	if get_window() is not SetupWindow:
+		return
+
 	client_id.text_changed.connect(_on_text_changed)
 	client_secret.text_changed.connect(_on_text_changed)
 	test_credentials.authorized.connect(_on_authorized)

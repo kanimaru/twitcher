@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Twitcher - Authorization Pending</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+			height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+		}
+
+		body.pending {
+			background: linear-gradient(135deg, #2d2d2d, #1e1e1e);
+			color: white;
+		}
+
+		body.success {
+			background: linear-gradient(135deg, #22c55e, #16a34a);
+			color: #133620;
+		}
+
+		body.error {
+			background: linear-gradient(135deg, #2d2d2d, #1e1e1e);
+			color: white;
+		}
+
+		.container {
+			background: rgba(255, 255, 255, 0.1);
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+			padding: 30px;
+			border-radius: 15px;
+			backdrop-filter: blur(10px);
+			max-width: 400px;
+		}
+
+		.icon {
+			font-size: 60px;
+			margin-bottom: 15px;
+		}
+
+		.error .icon {
+			color: #e63946;
+		}
+
+		.pending .icon {
+			color: #e6c639;
+		}
+
+		.header {
+			font-size: 24px;
+			font-weight: bold;
+		}
+
+		.error .header {
+			font-size: 24px;
+			font-weight: bold;
+			color: #ff6b6b;
+		}
+
+		.pending .header {
+			font-size: 24px;
+			font-weight: bold;
+			color: #c5b522;
+		}
+
+		.description {
+			font-size: 18px;
+			margin-top: 10px;
+			text-align: center;
+		}
+
+		.error .description {
+			color: #e0e0e0;
+		}
+
+		.pending .description {
+			color: #e0e0e0;
+		}
+
+		.button {
+			display: inline-block;
+			cursor: pointer;
+			margin-top: 20px;
+			padding: 12px 25px;
+			text-decoration: none;
+			font-weight: bold;
+			border-radius: 5px;
+			transition: background 0.3s ease, transform 0.2s ease;
+		}
+
+		.error .button {
+			background-color: #d62839;
+			color: white;
+		}
+
+		.pending .button {
+			background-color: #c0b01e;
+			color: #2b2b2b;
+		}
+
+		.success .button {
+			background-color: #15803d;
+			color: white;
+		}
+
+		.button:hover {
+			transform: scale(1.05);
+		}
+
+		.error .button:hover {
+			background-color: #e63946;
+		}
+
+		.pending .button:hover {
+			background-color: #d6cc3a;
+		}
+
+		.success .button:hover {
+			background-color: #2cc463;
+		}
+	</style>
+	<script>
+		/** @type {Window} */
+		let authorizationWindow = null;
+
+		window.addEventListener('message', (evt) => {
+			if (evt.origin === location.origin) {
+				if (typeof evt.data !== 'object') {
+					return;
+				}
+
+				if (typeof evt.data?.state !== 'string') {
+					return;
+				}
+
+				authorizationWindow?.close();
+				authorizationWindow = null;
+
+				setState(evt.data?.state);
+				console.info('Closing window in 5 seconds...');
+				setTimeout(window.close, 5000);
+				return;
+			}
+
+			console.error(`Received message from '${evt.origin}' instead of '${location.origin}'`);
+		});
+
+		document.addEventListener('readystatechange', () => {
+			if (document.readyState !== 'complete') {
+				return;
+			}
+
+			const searchParams = new URLSearchParams(location.search);
+			const uri = searchParams.get('uri');
+
+			if (uri === null) {
+				alert('Invalid state, please start over.');
+				window.close();
+			} else {
+				setState('pending');
+				console.debug(`Opening '${uri}'...`);
+				authorizationWindow = window.open(uri, 'Twitcher Authorization');
+			}
+		});
+
+		function setState(state) {
+			const elementBody = document.querySelector('body');
+			elementBody.className = state;
+
+			const elementHeader = document.querySelector('.header');
+			const elementDescription = document.querySelector('.description');
+			const elementButton = document.querySelector('.button');
+
+			switch (state) {
+				case 'error':
+					elementHeader.textContent = 'Authorization Failed';
+					elementDescription.textContent = 'Authorization attempt was unsuccessful. Page should close soon automatically, if it does not you will need to close it manually.';
+					elementButton.textContent = 'Close';
+					break;
+				case 'pending':
+					elementHeader.textContent = 'Authorization Pending';
+					elementDescription.textContent = 'Another window was opened to authorize Twitcher with the Twitch API...';
+					elementButton.textContent = 'Close';
+					break;
+				case 'success':
+					elementHeader.textContent = 'Authorization Succeeded';
+					elementDescription.textContent = 'Twitcher is now authorized! Page should close soon automatically, if it does not you will need to close it manually.';
+					elementButton.textContent = 'Cancel';
+					break;
+				default:
+					console.error(`Invalid state '${state}'!`);
+					break;
+			}
+		}
+	</script>
+</head>
+
+<body class="pending">
+	<div class="container">
+		<div class="header">Header</div>
+		<div class="description">Description</div>
+		<!-- TODO: "Cancel" button while still pending, would require sending a request to Twitcher, which would need a "cancellation" API endpoint -->
+		<a onclick="window.close()" class="button">Close</a>
+	</div>
+</body>
+
+</html>
