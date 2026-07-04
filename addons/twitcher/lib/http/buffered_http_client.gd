@@ -29,10 +29,13 @@ class RequestData extends RefCounted:
 	var body: String = ""
 	## Amount of retries
 	var retry: int
+	## Tick (msec) when the request got dispatched to the network, used for `log_traffic` timing
+	var started_at: int
 
 	## When you are done free the request
 	func queue_free() -> void:
-		http_request.queue_free()
+		if http_request != null:
+			http_request.queue_free()
 
 
 ## Contains the response data
@@ -57,6 +60,9 @@ class ResponseData extends RefCounted:
 ## When a request fails max_error_count then cancel that request -1 for endless amount of tries.
 @export var max_error_count : int = -1
 @export var custom_header : Dictionary[String, String] = { "Accept": "*/*" }
+## Prints queue/dispatch/completion timing for every request (path, timestamps, result/response code).
+## Useful to diagnose stalls or timeouts happening in the request queue.
+@export var log_traffic: bool = false
 
 var requests : Array[RequestData] = []
 var current_request : RequestData
@@ -83,17 +89,34 @@ func request(path: String, method: int, headers: Dictionary, body: String) -> Re
 	req.body = body
 	req.headers = headers
 	req.client = self
+	requests.append(req)
+	request_added.emit(req)
+	if log_traffic:
+		_log_traffic("queued %s (queue=%d, inflight=%s)" % [path, requests.size(), current_request.path if current_request else "none"])
+	_dispatch_next.call_deferred()
+	return req
+
+
+## Sends the next queued request when no request is in flight (sequential dispatch)
+func _dispatch_next() -> void:
+	if current_request != null || requests.is_empty():
+		return
+	var req: RequestData = requests.pop_front()
+	current_request = req
 	req.http_request = HTTPRequest.new()
 	req.http_request.use_threads = true
 	req.http_request.timeout = 30
 	req.http_request.request_completed.connect(_on_request_completed.bind(req))
 	add_child(req.http_request)
+	req.started_at = Time.get_ticks_msec()
+	if log_traffic:
+		_log_traffic("dispatch %s" % [req.path])
 	var err : Error = req.http_request.request(req.path, _pack_headers(req.headers), req.method, req.body)
-	if err != OK: logError("Problems with request to %s cause of %s" % [path, error_string(err)])
-	requests.append(req)
-	request_added.emit(req)
-	logDebug("[%s] request started " % [ path ])
-	return req
+	if err != OK:
+		logError("Problems with request to %s cause of %s" % [req.path, error_string(err)])
+		if log_traffic:
+			_log_traffic("dispatch FAILED %s: %s" % [req.path, error_string(err)])
+	logDebug("[%s] request started " % [ req.path ])
 
 
 ## When the response is available return it otherwise wait for the response
@@ -117,6 +140,8 @@ func wait_for_request(request_data: RequestData) -> ResponseData:
 
 
 func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, request_data: RequestData) -> void:
+	if log_traffic:
+		_log_traffic("done %s (result=%d, code=%d, took=%dms)" % [request_data.path, result, response_code, Time.get_ticks_msec() - request_data.started_at])
 	var response_data : ResponseData = ResponseData.new()
 	if result != HTTPRequest.Result.RESULT_SUCCESS:
 		logInfo("[%s] problems with result \n\t> response code: %s \n\t> body: %s" % [request_data.path, response_code, body.get_string_from_utf8()])
@@ -124,17 +149,22 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 	if result == HTTPRequest.Result.RESULT_CONNECTION_ERROR || result == HTTPRequest.Result.RESULT_TLS_HANDSHAKE_ERROR:
 		if request_data.retry == max_error_count:
 			printerr("Maximum amount of retries for the request. Abort request: %s" % [request_data.path])
+			if current_request == request_data:
+				current_request = null
+				_dispatch_next.call_deferred()
 			return
 		var wait_time = pow(2, request_data.retry)
 		wait_time = min(wait_time, 30)
 		logDebug("Error happend during connection. Wait for %s" % wait_time)
 		await get_tree().create_timer(wait_time, true, false, true).timeout
 		var http_request: HTTPRequest = request_data.http_request.duplicate()
+		request_data.http_request.queue_free()
 		add_child(http_request)
 		request_data.http_request = http_request
 		request_data.retry += 1
 		http_request.request(request_data.path, _pack_headers(request_data.headers), request_data.method, request_data.body)
-		http_request.request_completed.connect(_on_request_completed.bind(http_request))
+		http_request.request_completed.connect(_on_request_completed.bind(request_data))
+		return
 
 	response_data.result = result
 	response_data.request_data = request_data
@@ -143,6 +173,9 @@ func _on_request_completed(result: int, response_code: int, headers: PackedStrin
 	response_data.response_header = _get_response_headers_as_dictionary(headers)
 	responses[request_data] = response_data
 	logInfo("[%s] request done with result HTTPRequest.Result[%s] " % [ request_data.path, result])
+	if current_request == request_data:
+		current_request = null
+		_dispatch_next.call_deferred()
 	request_done.emit(response_data)
 
 
@@ -176,6 +209,11 @@ func queued_request_size() -> int:
 	if current_request != null:
 		requests_size += 1
 	return requests_size
+
+
+## Prints a timestamped traffic line when `log_traffic` is enabled.
+func _log_traffic(text: String) -> void:
+	print("[HTTPTraffic %8d] %s %s" % [Time.get_ticks_msec(), name, text])
 
 
 func empty_response(request_data: RequestData) -> ResponseData:
