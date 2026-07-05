@@ -25,7 +25,7 @@ func save_reward(twitch_reward: TwitchReward) -> TwitchRewardService.SaveError:
 		TwitchRewardService.SaveError.UNKNOWN:
 			EditorInterface.get_editor_toaster().push_toast("Something unexpected happend during save", EditorToaster.SEVERITY_ERROR)
 	return error
-	
+
 
 func _convert_twitch_reward(twitch_reward: TwitchReward, reward: TwitchCustomReward) -> void:
 	convert_to_twitch_reward(twitch_reward, reward, media_loader)
@@ -35,7 +35,7 @@ func _convert_twitch_reward(twitch_reward: TwitchReward, reward: TwitchCustomRew
 static func convert_to_twitch_reward(twitch_reward: TwitchReward, reward: TwitchCustomReward, media_loader: TwitchMediaLoader = null) -> void:
 	var undo := EditorInterface.get_editor_undo_redo()
 	undo.create_action("Update Twitch Reward '%s'" % reward.title)
-	
+
 	undo.add_undo_property(twitch_reward, &"id", twitch_reward.id)
 	undo.add_undo_property(twitch_reward, &"title", twitch_reward.title)
 	undo.add_undo_property(twitch_reward, &"description", twitch_reward.description)
@@ -55,7 +55,7 @@ static func convert_to_twitch_reward(twitch_reward: TwitchReward, reward: Twitch
 	undo.add_undo_property(twitch_reward, &"redemptions_redeemed_current_stream", twitch_reward.redemptions_redeemed_current_stream)
 	undo.add_undo_property(twitch_reward, &"cooldown_expires_at", twitch_reward.cooldown_expires_at)
 	undo.add_undo_method(twitch_reward, &"emit_changed")
-	
+
 	undo.add_do_property(twitch_reward, &"id", reward.id)
 	undo.add_do_property(twitch_reward, &"title", reward.title)
 	undo.add_do_property(twitch_reward, &"description", reward.prompt)
@@ -75,12 +75,12 @@ static func convert_to_twitch_reward(twitch_reward: TwitchReward, reward: Twitch
 	undo.add_do_property(twitch_reward, &"redemptions_redeemed_current_stream", twitch_reward.redemptions_redeemed_current_stream)
 	undo.add_do_property(twitch_reward, &"cooldown_expires_at", twitch_reward.cooldown_expires_at)
 	undo.add_do_method(twitch_reward, &"emit_changed")
-	
+
 	undo.commit_action()
-	
-	# Doesn't undo this ones it doesn't make sense the value is temporary and the actual info from 
+
+	# Doesn't undo this ones it doesn't make sense the value is temporary and the actual info from
 	# Twitch. With undoing them you wouldn't reset Twitch :D
-	
+
 	if reward.image && media_loader:
 		twitch_reward.image_1 = await media_loader.load_image(reward.image.url_1x)
 		twitch_reward.image_2 = await media_loader.load_image(reward.image.url_2x)

@@ -162,7 +162,7 @@ func login(
 
 	login_in_process = true
 	_login_timeout_timer.start()
-    var flow: StringName = AuthorizationFlow.keys()[oauth_setting.authorization_flow]
+	var flow: StringName = AuthorizationFlow.keys()[oauth_setting.authorization_flow]
 	logInfo("do login via flow: %s" % flow)
 	match oauth_setting.authorization_flow:
 		AuthorizationFlow.AUTHORIZATION_CODE_FLOW:
