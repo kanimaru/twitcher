@@ -42,6 +42,8 @@ func _ready() -> void:
 	_expiration_check_timer = Timer.new()
 	_expiration_check_timer.name = "ExpirationCheck"
 	_expiration_check_timer.timeout.connect(refresh_tokens)
+	_expiration_check_timer.ignore_time_scale = true
+	_expiration_check_timer.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_expiration_check_timer)
 	token.load_tokens()
 
