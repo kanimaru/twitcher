@@ -80,6 +80,11 @@ func save() -> bool:
 			return false
 
 		var current_default_user: TwitchUser = TwitchEditorSettings.default_user
+		if current_default_user == null:
+			current_default_user = TwitchUser.new()
+			TwitchEditorSettings.default_user = current_default_user
+
+
 		var data: Dictionary = _default_user.to_dict()
 
 		for key in data:
