@@ -379,7 +379,7 @@ func _handle_message(parsed_message : ParsedMessage) -> void:
 		"USERSTATE":
 			var userstate_tags = TwitchTags.Userstate.new(parsed_message.tags)
 			var channel_name = parsed_message.channel
-			received_usernotice.emit(channel_name, userstate_tags)
+			received_userstate.emit(channel_name, userstate_tags)
 
 			var channel = _channels[channel_name] as ChannelData
 			channel.user_state = userstate_tags
