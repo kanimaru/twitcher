@@ -203,7 +203,7 @@ class Event extends TwitchData:
 			untimeout = val
 			track_data(&"untimeout", val)
 	
-	## Optional .. Metadata associated with the raid command.
+	## Optional . Metadata associated with the raid command.
 	@export var raid: Raid:
 		set(val):
 			raid = val
@@ -749,7 +749,7 @@ class Untimeout extends TwitchData:
 	
 
 
-## Optional .. Metadata associated with the raid command.
+## Optional . Metadata associated with the raid command.
 ## #/components/schemas/ChannelModerateEvent/Raid
 class Raid extends TwitchData:
 

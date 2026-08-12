@@ -69,7 +69,7 @@ class Event extends TwitchData:
 			track_data(&"title", val)
 	
 	## An array of choices for the poll. Includes vote counts.
-	@export var choices: TwitchESChoices:
+	@export var choices: Array[TwitchESChoices]:
 		set(val):
 			choices = val
 			track_data(&"choices", val)
@@ -125,7 +125,8 @@ class Event extends TwitchData:
 		if d.get("title", null) != null:
 			result.title = d["title"]
 		if d.get("choices", null) != null:
-			result.choices = TwitchESChoices.from_json(d["choices"])
+			for value in d["choices"]:
+				result.choices.append(TwitchESChoices.from_json(value))
 		if d.get("bits_voting", null) != null:
 			result.bits_voting = TwitchESBitsVoting.from_json(d["bits_voting"])
 		if d.get("channel_points_voting", null) != null:

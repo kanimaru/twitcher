@@ -113,7 +113,7 @@ class Event extends TwitchData:
 			message = val
 			track_data(&"message", val)
 	
-	## The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement
+	## The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak modiversary shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement shared_chat_modiversary unknown
 	@export var notice_type: String:
 		set(val):
 			notice_type = val
@@ -209,6 +209,12 @@ class Event extends TwitchData:
 			watch_streak = val
 			track_data(&"watch_streak", val)
 	
+	## Information about the modiversary event. Null if notice_type is not modiversary .
+	@export var modiversary: Modiversary:
+		set(val):
+			modiversary = val
+			track_data(&"modiversary", val)
+	
 	## Optional . The broadcaster user ID of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_id: String:
 		set(val):
@@ -299,6 +305,12 @@ class Event extends TwitchData:
 			shared_chat_announcement = val
 			track_data(&"shared_chat_announcement", val)
 	
+	## Optional . Information about the shared_chat_modiversary event. Is null if notice_type is not shared_chat_modiversary . This field has the same information as the modiversary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	@export var shared_chat_modiversary: Dictionary:
+		set(val):
+			shared_chat_modiversary = val
+			track_data(&"shared_chat_modiversary", val)
+	
 	
 	
 	## Constructor with all required fields.
@@ -364,6 +376,8 @@ class Event extends TwitchData:
 			result.amount = Amount.from_json(d["amount"])
 		if d.get("watch_streak", null) != null:
 			result.watch_streak = WatchStreak.from_json(d["watch_streak"])
+		if d.get("modiversary", null) != null:
+			result.modiversary = Modiversary.from_json(d["modiversary"])
 		if d.get("source_broadcaster_user_id", null) != null:
 			result.source_broadcaster_user_id = d["source_broadcaster_user_id"]
 		if d.get("source_broadcaster_user_name", null) != null:
@@ -395,6 +409,8 @@ class Event extends TwitchData:
 			result.shared_chat_raid = d["shared_chat_raid"]
 		if d.get("shared_chat_announcement", null) != null:
 			result.shared_chat_announcement = d["shared_chat_announcement"]
+		if d.get("shared_chat_modiversary", null) != null:
+			result.shared_chat_modiversary = d["shared_chat_modiversary"]
 		return result
 	
 
@@ -538,8 +554,8 @@ class Fragments extends TwitchData:
 ## #/components/schemas/ChannelChatNotificationEvent/Message/Fragments/Cheermote
 class Cheermote extends TwitchData:
 
-	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
-	@export var prefix: Dictionary:
+	## The name portion of the Cheermote string that you use in chat to cheer Bits, converted to lowercase. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is "cheer" and you want to cheer 100 Bits, the full Cheermote string is cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
+	@export var prefix: String:
 		set(val):
 			prefix = val
 			track_data(&"prefix", val)
@@ -739,7 +755,7 @@ class Resub extends TwitchData:
 			sub_tier = val
 			track_data(&"sub_tier", val)
 	
-	## Optional . The number of consecutive months the user has subscribed.
+	## Optional . Whether or not this subscription is a Prime subscription.
 	@export var is_prime: bool:
 		set(val):
 			is_prime = val
@@ -1233,6 +1249,32 @@ class WatchStreak extends TwitchData:
 			result.streak_count = d["streak_count"]
 		if d.get("channel_points_awarded", null) != null:
 			result.channel_points_awarded = d["channel_points_awarded"]
+		return result
+	
+
+
+## Information about the modiversary event. Null if notice_type is not modiversary .
+## #/components/schemas/ChannelChatNotificationEvent/Modiversary
+class Modiversary extends TwitchData:
+
+	## The number of months the user has been a moderator in this channel.
+	@export var months: int:
+		set(val):
+			months = val
+			track_data(&"months", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Modiversary:
+		var modiversary: Modiversary = Modiversary.new()
+		return modiversary
+	
+	
+	static func from_json(d: Dictionary) -> Modiversary:
+		var result: Modiversary = Modiversary.new()
+		if d.get("months", null) != null:
+			result.months = d["months"]
 		return result
 	
 

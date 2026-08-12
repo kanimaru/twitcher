@@ -69,7 +69,7 @@ class Event extends TwitchData:
 			track_data(&"title", val)
 	
 	## An array of outcomes for the Channel Points Prediction. Includes top_predictors .
-	@export var outcomes: TwitchESOutcomes:
+	@export var outcomes: Array[TwitchESOutcomes]:
 		set(val):
 			outcomes = val
 			track_data(&"outcomes", val)
@@ -107,7 +107,8 @@ class Event extends TwitchData:
 		if d.get("title", null) != null:
 			result.title = d["title"]
 		if d.get("outcomes", null) != null:
-			result.outcomes = TwitchESOutcomes.from_json(d["outcomes"])
+			for value in d["outcomes"]:
+				result.outcomes.append(TwitchESOutcomes.from_json(value))
 		if d.get("started_at", null) != null:
 			result.started_at = d["started_at"]
 		if d.get("locked_at", null) != null:

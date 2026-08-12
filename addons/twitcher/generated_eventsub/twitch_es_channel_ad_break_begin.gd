@@ -12,24 +12,24 @@ class_name TwitchESChannelAdBreakBegin
 class Condition extends TwitchData:
 
 	## The ID of the broadcaster that you want to get Channel Ad Break begin notifications for. Maximum: 1
-	@export var broadcaster_id: String:
+	@export var broadcaster_user_id: String:
 		set(val):
-			broadcaster_id = val
-			track_data(&"broadcaster_id", val)
+			broadcaster_user_id = val
+			track_data(&"broadcaster_user_id", val)
 	
 	
 	
 	## Constructor with all required fields.
-	static func create(_broadcaster_id: String) -> Condition:
+	static func create(_broadcaster_user_id: String) -> Condition:
 		var condition: Condition = Condition.new()
-		condition.broadcaster_id = _broadcaster_id
+		condition.broadcaster_user_id = _broadcaster_user_id
 		return condition
 	
 	
 	static func from_json(d: Dictionary) -> Condition:
 		var result: Condition = Condition.new()
-		if d.get("broadcaster_id", null) != null:
-			result.broadcaster_id = d["broadcaster_id"]
+		if d.get("broadcaster_user_id", null) != null:
+			result.broadcaster_user_id = d["broadcaster_user_id"]
 		return result
 	
 

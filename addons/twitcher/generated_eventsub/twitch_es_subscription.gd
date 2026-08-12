@@ -7,7 +7,7 @@ extends TwitchData
 ## #/components/schemas/Subscription
 class_name TwitchESSubscription
 	
-## Your client ID.
+## The Subscription ID of the Subscription
 @export var id: String:
 	set(val):
 		id = val

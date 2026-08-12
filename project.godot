@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Twitcher"
 run/main_scene="uid://5lyf04rwo1mf"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="uid://pnr400301dhc"
 
 [debug]

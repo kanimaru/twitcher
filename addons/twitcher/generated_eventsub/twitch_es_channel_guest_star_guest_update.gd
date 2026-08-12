@@ -113,7 +113,7 @@ class Event extends TwitchData:
 			slot_id = val
 			track_data(&"slot_id", val)
 	
-	## The current state of the user after the update has taken place. null if the slot is now empty. Can otherwise be one of the following: invited — The guest has transitioned to the invite queue. This can take place when the guest was previously assigned a slot, but have been removed from the call and are sent back to the invite queue. accepted — The guest has accepted the invite and is currently in the process of setting up to join the session. ready — The guest has signaled they are ready and can be assigned a slot. backstage — The guest has been assigned a slot in the session, but is not currently seen live in the broadcasting software. live — The guest is now live in the host's broadcasting software. removed — The guest was removed from the call or queue. accepted — The guest has accepted the invite to the call.
+	## The current state of the user after the update has taken place. null if the slot is now empty. Can otherwise be one of the following: invited — The guest has transitioned to the invite queue. This can take place when the guest was previously assigned a slot, but have been removed from the call and are sent back to the invite queue. accepted — The guest has accepted the invite and is currently in the process of setting up to join the session. ready — The guest has signaled they are ready and can be assigned a slot. backstage — The guest has been assigned a slot in the session, but is not currently seen live in the broadcasting software. live — The guest is now live in the host's broadcasting software. removed — The guest was removed from the call or queue.
 	@export var state: String:
 		set(val):
 			state = val

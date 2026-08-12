@@ -114,10 +114,22 @@ class Event extends TwitchData:
 			track_data(&"reward", val)
 	
 	## An object that contains the user message and emote information needed to recreate the message.
-	@export var message: Message:
+	@export var message: TwitchESMessage:
 		set(val):
 			message = val
 			track_data(&"message", val)
+	
+	## The text of the chat message.
+	@export var text: String:
+		set(val):
+			text = val
+			track_data(&"text", val)
+	
+	## An array that includes the emote ID and start and end positions for where the emote appears in the text.
+	@export var emotes: Array[Emotes]:
+		set(val):
+			emotes = val
+			track_data(&"emotes", val)
 	
 	## Optional. A string that the user entered if the reward requires input.
 	@export var user_input: String:
@@ -158,7 +170,12 @@ class Event extends TwitchData:
 		if d.get("reward", null) != null:
 			result.reward = Reward.from_json(d["reward"])
 		if d.get("message", null) != null:
-			result.message = Message.from_json(d["message"])
+			result.message = TwitchESMessage.from_json(d["message"])
+		if d.get("text", null) != null:
+			result.text = d["text"]
+		if d.get("emotes", null) != null:
+			for value in d["emotes"]:
+				result.emotes.append(Emotes.from_json(value))
 		if d.get("user_input", null) != null:
 			result.user_input = d["user_input"]
 		if d.get("redeemed_at", null) != null:
@@ -243,43 +260,8 @@ class UnlockedEmote extends TwitchData:
 	
 
 
-## An object that contains the user message and emote information needed to recreate the message.
-## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddEvent/Message
-class Message extends TwitchData:
-
-	## The text of the chat message.
-	@export var text: String:
-		set(val):
-			text = val
-			track_data(&"text", val)
-	
-	## An array that includes the emote ID and start and end positions for where the emote appears in the text.
-	@export var emotes: Array[Emotes]:
-		set(val):
-			emotes = val
-			track_data(&"emotes", val)
-	
-	
-	
-	## Constructor with all required fields.
-	static func create() -> Message:
-		var message: Message = Message.new()
-		return message
-	
-	
-	static func from_json(d: Dictionary) -> Message:
-		var result: Message = Message.new()
-		if d.get("text", null) != null:
-			result.text = d["text"]
-		if d.get("emotes", null) != null:
-			for value in d["emotes"]:
-				result.emotes.append(Emotes.from_json(value))
-		return result
-	
-
-
 ## An array that includes the emote ID and start and end positions for where the emote appears in the text.
-## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddEvent/Message/Emotes
+## #/components/schemas/ChannelPointsAutomaticRewardRedemptionAddEvent/Emotes
 class Emotes extends TwitchData:
 
 	## The emote ID.

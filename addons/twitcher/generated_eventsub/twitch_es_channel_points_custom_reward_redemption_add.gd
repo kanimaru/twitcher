@@ -100,17 +100,17 @@ class Event extends TwitchData:
 			status = val
 			track_data(&"status", val)
 	
-	## Basic information about the reward that was redeemed, at the time it was redeemed.
-	@export var reward: TwitchESReward:
-		set(val):
-			reward = val
-			track_data(&"reward", val)
-	
 	## RFC3339 timestamp of when the reward was redeemed.
 	@export var redeemed_at: String:
 		set(val):
 			redeemed_at = val
 			track_data(&"redeemed_at", val)
+	
+	## Basic information about the reward that was redeemed, at the time it was redeemed.
+	@export var reward: TwitchESReward:
+		set(val):
+			reward = val
+			track_data(&"reward", val)
 	
 	
 	
@@ -140,9 +140,9 @@ class Event extends TwitchData:
 			result.user_input = d["user_input"]
 		if d.get("status", null) != null:
 			result.status = d["status"]
-		if d.get("reward", null) != null:
-			result.reward = TwitchESReward.from_json(d["reward"])
 		if d.get("redeemed_at", null) != null:
 			result.redeemed_at = d["redeemed_at"]
+		if d.get("reward", null) != null:
+			result.reward = TwitchESReward.from_json(d["reward"])
 		return result
 	

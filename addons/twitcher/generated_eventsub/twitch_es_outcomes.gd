@@ -38,7 +38,7 @@ class_name TwitchESOutcomes
 		track_data(&"channel_points", val)
 
 ## An array of users who used the most Channel Points on this outcome.
-@export var top_predictors: TwitchESTopPredictors:
+@export var top_predictors: Array[TwitchESTopPredictors]:
 	set(val):
 		top_predictors = val
 		track_data(&"top_predictors", val)
@@ -64,6 +64,7 @@ static func from_json(d: Dictionary) -> TwitchESOutcomes:
 	if d.get("channel_points", null) != null:
 		result.channel_points = d["channel_points"]
 	if d.get("top_predictors", null) != null:
-		result.top_predictors = TwitchESTopPredictors.from_json(d["top_predictors"])
+		for value in d["top_predictors"]:
+			result.top_predictors.append(TwitchESTopPredictors.from_json(value))
 	return result
 

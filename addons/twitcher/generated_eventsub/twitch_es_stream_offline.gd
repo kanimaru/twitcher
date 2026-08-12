@@ -38,6 +38,12 @@ class Condition extends TwitchData:
 ## #/components/schemas/StreamOfflineEvent
 class Event extends TwitchData:
 
+	## The id of the stream.
+	@export var id: String:
+		set(val):
+			id = val
+			track_data(&"id", val)
+	
 	## The broadcaster's user id.
 	@export var broadcaster_user_id: String:
 		set(val):
@@ -66,6 +72,8 @@ class Event extends TwitchData:
 	
 	static func from_json(d: Dictionary) -> Event:
 		var result: Event = Event.new()
+		if d.get("id", null) != null:
+			result.id = d["id"]
 		if d.get("broadcaster_user_id", null) != null:
 			result.broadcaster_user_id = d["broadcaster_user_id"]
 		if d.get("broadcaster_user_login", null) != null:

@@ -14,7 +14,7 @@ class_name TwitchESMessage
 		track_data(&"text", val)
 
 ## An array that includes the emote ID and start and end positions for where the emote appears in the text.
-@export var emotes: TwitchESEmotes:
+@export var emotes: Array[TwitchESEmotes]:
 	set(val):
 		emotes = val
 		track_data(&"emotes", val)
@@ -32,6 +32,7 @@ static func from_json(d: Dictionary) -> TwitchESMessage:
 	if d.get("text", null) != null:
 		result.text = d["text"]
 	if d.get("emotes", null) != null:
-		result.emotes = TwitchESEmotes.from_json(d["emotes"])
+		for value in d["emotes"]:
+			result.emotes.append(TwitchESEmotes.from_json(value))
 	return result
 

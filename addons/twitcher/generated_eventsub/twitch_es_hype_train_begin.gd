@@ -81,7 +81,7 @@ class Event extends TwitchData:
 			track_data(&"goal", val)
 	
 	## The contributors with the most points contributed.
-	@export var top_contributions: TwitchESTopContributions:
+	@export var top_contributions: Array[TwitchESTopContributions]:
 		set(val):
 			top_contributions = val
 			track_data(&"top_contributions", val)
@@ -177,7 +177,8 @@ class Event extends TwitchData:
 		if d.get("goal", null) != null:
 			result.goal = d["goal"]
 		if d.get("top_contributions", null) != null:
-			result.top_contributions = TwitchESTopContributions.from_json(d["top_contributions"])
+			for value in d["top_contributions"]:
+				result.top_contributions.append(TwitchESTopContributions.from_json(value))
 		if d.get("user_id", null) != null:
 			result.user_id = d["user_id"]
 		if d.get("user_login", null) != null:

@@ -262,7 +262,7 @@ class Message extends TwitchData:
 ## #/components/schemas/ChannelChatMessageEvent/Message/Fragments
 class Fragments extends TwitchData:
 
-	## The type of message fragment. Possible values: text cheermote emote mention
+	## The type of message fragment. Possible values: text cheermote emote mention gif
 	@export var type: String:
 		set(val):
 			type = val
@@ -292,6 +292,12 @@ class Fragments extends TwitchData:
 			mention = val
 			track_data(&"mention", val)
 	
+	## Optional . Metadata pertaining to the GIF.
+	@export var gif: Gif:
+		set(val):
+			gif = val
+			track_data(&"gif", val)
+	
 	
 	
 	## Constructor with all required fields.
@@ -312,6 +318,8 @@ class Fragments extends TwitchData:
 			result.emote = Emote.from_json(d["emote"])
 		if d.get("mention", null) != null:
 			result.mention = Mention.from_json(d["mention"])
+		if d.get("gif", null) != null:
+			result.gif = Gif.from_json(d["gif"])
 		return result
 	
 
@@ -320,7 +328,7 @@ class Fragments extends TwitchData:
 ## #/components/schemas/ChannelChatMessageEvent/Message/Fragments/Cheermote
 class Cheermote extends TwitchData:
 
-	## The name portion of the Cheermote string that you use in chat to cheer Bits. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example, if the prefix is "Cheer" and you want to cheer 100 Bits, the full Cheermote string is Cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
+	## The name portion of the Cheermote string that you use in chat to cheer Bits, converted to lowercase. The full Cheermote string is the concatenation of {prefix} + {number of Bits}. For example , if the prefix is "cheer" and you want to cheer 100 Bits, the full Cheermote string is cheer100. When the Cheermote string is entered in chat, Twitch converts it to the image associated with the Bits tier that was cheered.
 	@export var prefix: String:
 		set(val):
 			prefix = val
@@ -447,6 +455,40 @@ class Mention extends TwitchData:
 			result.user_name = d["user_name"]
 		if d.get("user_login", null) != null:
 			result.user_login = d["user_login"]
+		return result
+	
+
+
+## Optional . Metadata pertaining to the GIF.
+## #/components/schemas/ChannelChatMessageEvent/Message/Fragments/Gif
+class Gif extends TwitchData:
+
+	## An ID that uniquely identifies this GIF.
+	@export var gif_id: String:
+		set(val):
+			gif_id = val
+			track_data(&"gif_id", val)
+	
+	## The URL of the GIF asset. Applications rendering the GIF must use the full URL provided; it must not be modified.
+	@export var url: String:
+		set(val):
+			url = val
+			track_data(&"url", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> Gif:
+		var gif: Gif = Gif.new()
+		return gif
+	
+	
+	static func from_json(d: Dictionary) -> Gif:
+		var result: Gif = Gif.new()
+		if d.get("gif_id", null) != null:
+			result.gif_id = d["gif_id"]
+		if d.get("url", null) != null:
+			result.url = d["url"]
 		return result
 	
 
