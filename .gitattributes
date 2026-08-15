@@ -5,3 +5,8 @@
 /**        export-ignore
 /addons    !export-ignore
 /addons/** !export-ignore
+
+# GUT is vendored for our own test suite. It lives under /addons so Godot can
+# load it as a plugin, but it must not ship to Asset Library consumers.
+/addons/gut     export-ignore
+/addons/gut/**  export-ignore
