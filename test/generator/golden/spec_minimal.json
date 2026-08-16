@@ -1,0 +1,46 @@
+{
+	"_comment": "Smallest useful spec: one standalone schema with no Response/Body/Opt suffix, exercising every scalar type mapping plus required-field handling. No paths, so no method generation.",
+	"components": {
+		"schemas": {
+			"SampleUser": {
+				"type": "object",
+				"description": "A single user.",
+				"required": ["id", "login"],
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "An ID that identifies the user."
+					},
+					"login": {
+						"type": "string",
+						"description": "The user's login name."
+					},
+					"view_count": {
+						"type": "integer",
+						"description": "Number of times the channel has been viewed."
+					},
+					"ratio": {
+						"type": "number",
+						"format": "float",
+						"description": "A float, distinguished from integer only by its format."
+					},
+					"score": {
+						"type": "number",
+						"description": "A number with no format maps to int, not float."
+					},
+					"is_live": {
+						"type": "boolean",
+						"description": "Whether the user is currently live."
+					},
+					"raw_settings": {
+						"type": "object",
+						"description": "An object with no properties falls back to Dictionary."
+					},
+					"untyped": {
+						"description": "No type at all falls back to Variant."
+					}
+				}
+			}
+		}
+	}
+}
