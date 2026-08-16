@@ -32,12 +32,51 @@ You can also run the suite from the editor via the GUT bottom panel — but see
 ```
 test/
 ├── unit/          mirrors addons/twitcher/. No network, no disk, no sleeping.
+├── generator/     golden-file tests for the two code generators
 ├── helpers/       the test kit (see below)
 └── fixtures/      captured Twitch payloads, as data files
 ```
 
 One test script per production script, at the mirrored path. "Does this file
 have a test?" should be answerable with `ls`.
+
+## Generator tests
+
+Twitcher ships ~44 000 lines across 289 generated files. Rather than 289 test
+scripts that all say the same thing, `test/generator/` tests the two generators
+that produce them.
+
+The seam is in `TwitchAPIParser.parse_api()`:
+
+```gdscript
+if definition == {}:
+    definition = await _load_swagger_definition()
+```
+
+Assign `definition` up front and no HTTP happens. Everything downstream is pure
+`String -> String`. `GeneratorHarness` wraps this; it never calls
+`generate_api()` or `write_output_file()`, so the real
+`addons/twitcher/generated/` is never at risk.
+
+Three fixture specs in `golden/` drive it: `spec_minimal` (scalar type mappings,
+required fields), `spec_grouped` (Response/Opt grouping, typed and primitive
+arrays, inline sub-objects, pagination) and `spec_renamed_fields` (the full
+`_update_name` rename table).
+
+When a golden legitimately changes:
+
+```bash
+godot --headless --path . -s res://test/generator/regenerate_goldens.gd
+```
+
+Then **read the diff**. A golden regenerated without being read turns a
+regression into a rubber stamp. The regenerator and the test suite share
+`GeneratorHarness`, so a golden can never be produced by a different code path
+than the one asserting on it.
+
+`test_golden_files.gd` also asserts that every `.golden` and every `spec_*.json`
+on disk is claimed by a case, so a stale file fails the build instead of rotting
+quietly.
 
 ## The test kit
 
@@ -125,6 +164,19 @@ throughout. Wrap engine classes in a thin GDScript adapter and double that.
 **`-gexit_on_complete` is not a real flag** despite appearing in several blog
 posts. GUT rejects unknown arguments and exits 1, so a typo fails the build with
 a green suite. The real flags are `-gexit` and `-gexit_on_success`.
+
+**A new `class_name` needs a reimport before tests can see it.** Adding a helper
+with a `class_name` and running the suite immediately gives
+`Identifier "X" not declared in the current scope`. Run
+`godot --headless --path . --import --quit` first.
+
+**`to_dict()` keeps insertion order; `to_json()` does not.**
+`JSON.stringify` defaults to `sort_keys = true`, so serialised payloads are
+alphabetical. Deterministic — just not the order you assigned fields in.
+
+**Godot's JSON parser has no integer type.** Every number parses as `float`, so
+`JSON.parse_string(dto.to_json())["count"]` is `7.0`, not `7`. Compare against
+the JSON string, or against a float.
 
 ## Status
 

@@ -57,7 +57,7 @@ jobs:
         run: |
           godot --headless --path . \
             -s res://addons/gut/gut_cmdln.gd \
-            -gdir=res://test/unit \
+            -gdir=res://test/unit,res://test/generator \
             -ginclude_subdirs \
             -glog=1 \
             -gjunit_xml_file=res://test_results.xml \

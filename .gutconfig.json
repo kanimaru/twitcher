@@ -1,6 +1,7 @@
 {
 	"dirs": [
-		"res://test/unit/"
+		"res://test/unit/",
+		"res://test/generator/"
 	],
 	"include_subdirs": true,
 	"prefix": "test_",
