@@ -292,6 +292,8 @@ var source_broadcaster_user_login: String
 var source_message_id: String
 ## Optional. The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 var source_badges: Array[Badge] = []
+## Optional. Whether the notification is only sent to the source channel. Is null if the notification is not in a shared chat session.
+var is_source_only: bool
 
 
 ## Loads a chat message from Json decoded dictionary. TwitchService is optional in case images and badges should be load from the message.
@@ -337,6 +339,8 @@ static func from_json(d: Dictionary) -> TwitchChatMessage:
 	if d.has("source_badges") and d["source_badges"] != null:
 		for value in d["source_badges"]:
 			result.source_badges.append(Badge.from_json(value))
+	if d.has("is_source_only") and d["is_source_only"] != null:
+		result.is_source_only = d["is_source_only"]
 	return result
 
 
