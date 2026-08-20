@@ -354,7 +354,7 @@ func get_badges(_media_loader: TwitchMediaLoader, scale: int = TwitchBadgeDefini
 func get_source_badges(_media_loader: TwitchMediaLoader, scale: int = TwitchBadgeDefinition.SCALE_1) -> Dictionary[TwitchBadgeDefinition, SpriteFrames]:
 	var definitions : Array[TwitchBadgeDefinition] = []
 	for badge in source_badges:
-		var badge_definition : TwitchBadgeDefinition = TwitchBadgeDefinition.new(badge.set_id, badge.id, scale, broadcaster_user_id)
+		var badge_definition : TwitchBadgeDefinition = TwitchBadgeDefinition.new(badge.set_id, badge.id, scale, source_broadcaster_user_id)
 		definitions.append(badge_definition)
 	var emotes : Dictionary[TwitchBadgeDefinition, SpriteFrames] = await _media_loader.get_badges(definitions)
 	return emotes
