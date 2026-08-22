@@ -63,31 +63,67 @@ enum Type {
 	CHANNEL_WARNING_ACKNOWLEDGE,
 	CHANNEL_WARNING_SEND,
 	CHANNEL_HYPE_TRAIN_BEGIN,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_hype_train_begin". Use CHANNEL_HYPE_TRAIN_BEGIN instead.
+	CHANNEL_HYPE_TRAIN_BEGIN_LEGACY,
 	CHANNEL_HYPE_TRAIN_PROGRESS,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_hype_train_progress". Use CHANNEL_HYPE_TRAIN_PROGRESS instead.
+	CHANNEL_HYPE_TRAIN_PROGRESS_LEGACY,
 	CHANNEL_HYPE_TRAIN_END,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_hype_train_end". Use CHANNEL_HYPE_TRAIN_END instead.
+	CHANNEL_HYPE_TRAIN_END_LEGACY,
 	CHANNEL_CHARITY_CAMPAIGN_DONATE,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_charity_campaign_donate". Use CHANNEL_CHARITY_CAMPAIGN_DONATE instead.
+	CHANNEL_CHARITY_CAMPAIGN_DONATE_LEGACY,
 	CHANNEL_CHARITY_CAMPAIGN_START,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_charity_campaign_start". Use CHANNEL_CHARITY_CAMPAIGN_START instead.
+	CHANNEL_CHARITY_CAMPAIGN_START_LEGACY,
 	CHANNEL_CHARITY_CAMPAIGN_PROGRESS,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_charity_campaign_progress". Use CHANNEL_CHARITY_CAMPAIGN_PROGRESS instead.
+	CHANNEL_CHARITY_CAMPAIGN_PROGRESS_LEGACY,
 	CHANNEL_CHARITY_CAMPAIGN_STOP,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_charity_campaign_stop". Use CHANNEL_CHARITY_CAMPAIGN_STOP instead.
+	CHANNEL_CHARITY_CAMPAIGN_STOP_LEGACY,
 	CHANNEL_SHARED_CHAT_BEGIN,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shared_chat_begin". Use CHANNEL_SHARED_CHAT_BEGIN instead.
+	CHANNEL_SHARED_CHAT_BEGIN_LEGACY,
 	CHANNEL_SHARED_CHAT_UPDATE,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shared_chat_update". Use CHANNEL_SHARED_CHAT_UPDATE instead.
+	CHANNEL_SHARED_CHAT_UPDATE_LEGACY,
 	CHANNEL_SHARED_CHAT_END,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shared_chat_end". Use CHANNEL_SHARED_CHAT_END instead.
+	CHANNEL_SHARED_CHAT_END_LEGACY,
 	CHANNEL_SHIELD_MODE_BEGIN,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shield_mode_begin". Use CHANNEL_SHIELD_MODE_BEGIN instead.
+	CHANNEL_SHIELD_MODE_BEGIN_LEGACY,
 	CHANNEL_SHIELD_MODE_END,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shield_mode_end". Use CHANNEL_SHIELD_MODE_END instead.
+	CHANNEL_SHIELD_MODE_END_LEGACY,
 	CHANNEL_SHOUTOUT_CREATE,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shoutout_create". Use CHANNEL_SHOUTOUT_CREATE instead.
+	CHANNEL_SHOUTOUT_CREATE_LEGACY,
 	CHANNEL_SHOUTOUT_RECEIVE,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shoutout_receive". Use CHANNEL_SHOUTOUT_RECEIVE instead.
+	CHANNEL_SHOUTOUT_RECEIVE_LEGACY,
 	CONDUIT_SHARD_DISABLED,
 	DROP_ENTITLEMENT_GRANT,
 	EXTENSION_BITS_TRANSACTION_CREATE,
 	CHANNEL_GOAL_BEGIN,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_goal_begin". Use CHANNEL_GOAL_BEGIN instead.
+	CHANNEL_GOAL_BEGIN_LEGACY,
 	CHANNEL_GOAL_PROGRESS,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_goal_progress". Use CHANNEL_GOAL_PROGRESS instead.
+	CHANNEL_GOAL_PROGRESS_LEGACY,
 	CHANNEL_GOAL_END,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_goal_end". Use CHANNEL_GOAL_END instead.
+	CHANNEL_GOAL_END_LEGACY,
 	STREAM_ONLINE,
 	STREAM_OFFLINE,
 	USER_AUTHORIZATION_GRANT,
 	USER_AUTHORIZATION_REVOKE,
 	USER_UPDATE,
 	USER_WHISPER_MESSAGE,
+	## @deprecated: Kept for backwards compatibility - points at the pre-override script name "user_whisper_message". Use USER_WHISPER_MESSAGE instead.
+	USER_WHISPER_MESSAGE_LEGACY,
 }
 
 ## The type of itself
@@ -178,31 +214,67 @@ static var CHANNEL_VIP_REMOVE := TwitchEventsubDefinition.new(Type.CHANNEL_VIP_R
 static var CHANNEL_WARNING_ACKNOWLEDGE := TwitchEventsubDefinition.new(Type.CHANNEL_WARNING_ACKNOWLEDGE, &"channel.warning.acknowledge", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:warnings",&"moderator:manage:warnings"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelwarningacknowledge", "channel_warning_acknowledge")
 static var CHANNEL_WARNING_SEND := TwitchEventsubDefinition.new(Type.CHANNEL_WARNING_SEND, &"channel.warning.send", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:warnings",&"moderator:manage:warnings"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelwarningsend", "channel_warning_send")
 static var CHANNEL_HYPE_TRAIN_BEGIN := TwitchEventsubDefinition.new(Type.CHANNEL_HYPE_TRAIN_BEGIN, &"channel.hype_train.begin", &"2", [&"broadcaster_user_id"], [&"channel:read:hype_train"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelhype_trainbegin", "hype_train_begin")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_hype_train_begin". Use CHANNEL_HYPE_TRAIN_BEGIN instead.
+static var CHANNEL_HYPE_TRAIN_BEGIN_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_HYPE_TRAIN_BEGIN_LEGACY, &"channel.hype_train.begin", &"2", [&"broadcaster_user_id"], [&"channel:read:hype_train"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelhype_trainbegin", "channel_hype_train_begin")
 static var CHANNEL_HYPE_TRAIN_PROGRESS := TwitchEventsubDefinition.new(Type.CHANNEL_HYPE_TRAIN_PROGRESS, &"channel.hype_train.progress", &"2", [&"broadcaster_user_id"], [&"channel:read:hype_train"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelhype_trainprogress", "hype_train_progress")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_hype_train_progress". Use CHANNEL_HYPE_TRAIN_PROGRESS instead.
+static var CHANNEL_HYPE_TRAIN_PROGRESS_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_HYPE_TRAIN_PROGRESS_LEGACY, &"channel.hype_train.progress", &"2", [&"broadcaster_user_id"], [&"channel:read:hype_train"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelhype_trainprogress", "channel_hype_train_progress")
 static var CHANNEL_HYPE_TRAIN_END := TwitchEventsubDefinition.new(Type.CHANNEL_HYPE_TRAIN_END, &"channel.hype_train.end", &"2", [&"broadcaster_user_id"], [&"channel:read:hype_train"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelhype_trainend", "hype_train_end")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_hype_train_end". Use CHANNEL_HYPE_TRAIN_END instead.
+static var CHANNEL_HYPE_TRAIN_END_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_HYPE_TRAIN_END_LEGACY, &"channel.hype_train.end", &"2", [&"broadcaster_user_id"], [&"channel:read:hype_train"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelhype_trainend", "channel_hype_train_end")
 static var CHANNEL_CHARITY_CAMPAIGN_DONATE := TwitchEventsubDefinition.new(Type.CHANNEL_CHARITY_CAMPAIGN_DONATE, &"channel.charity_campaign.donate", &"1", [&"broadcaster_user_id"], [&"channel:read:charity"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcharity_campaigndonate", "charity_donation")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_charity_campaign_donate". Use CHANNEL_CHARITY_CAMPAIGN_DONATE instead.
+static var CHANNEL_CHARITY_CAMPAIGN_DONATE_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_CHARITY_CAMPAIGN_DONATE_LEGACY, &"channel.charity_campaign.donate", &"1", [&"broadcaster_user_id"], [&"channel:read:charity"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcharity_campaigndonate", "channel_charity_campaign_donate")
 static var CHANNEL_CHARITY_CAMPAIGN_START := TwitchEventsubDefinition.new(Type.CHANNEL_CHARITY_CAMPAIGN_START, &"channel.charity_campaign.start", &"1", [&"broadcaster_user_id"], [&"channel:read:charity"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcharity_campaignstart", "charity_campaign_start")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_charity_campaign_start". Use CHANNEL_CHARITY_CAMPAIGN_START instead.
+static var CHANNEL_CHARITY_CAMPAIGN_START_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_CHARITY_CAMPAIGN_START_LEGACY, &"channel.charity_campaign.start", &"1", [&"broadcaster_user_id"], [&"channel:read:charity"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcharity_campaignstart", "channel_charity_campaign_start")
 static var CHANNEL_CHARITY_CAMPAIGN_PROGRESS := TwitchEventsubDefinition.new(Type.CHANNEL_CHARITY_CAMPAIGN_PROGRESS, &"channel.charity_campaign.progress", &"1", [&"broadcaster_user_id"], [&"channel:read:charity"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcharity_campaignprogress", "charity_campaign_progress")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_charity_campaign_progress". Use CHANNEL_CHARITY_CAMPAIGN_PROGRESS instead.
+static var CHANNEL_CHARITY_CAMPAIGN_PROGRESS_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_CHARITY_CAMPAIGN_PROGRESS_LEGACY, &"channel.charity_campaign.progress", &"1", [&"broadcaster_user_id"], [&"channel:read:charity"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcharity_campaignprogress", "channel_charity_campaign_progress")
 static var CHANNEL_CHARITY_CAMPAIGN_STOP := TwitchEventsubDefinition.new(Type.CHANNEL_CHARITY_CAMPAIGN_STOP, &"channel.charity_campaign.stop", &"1", [&"broadcaster_user_id"], [&"channel:read:charity"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcharity_campaignstop", "charity_campaign_stop")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_charity_campaign_stop". Use CHANNEL_CHARITY_CAMPAIGN_STOP instead.
+static var CHANNEL_CHARITY_CAMPAIGN_STOP_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_CHARITY_CAMPAIGN_STOP_LEGACY, &"channel.charity_campaign.stop", &"1", [&"broadcaster_user_id"], [&"channel:read:charity"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcharity_campaignstop", "channel_charity_campaign_stop")
 static var CHANNEL_SHARED_CHAT_BEGIN := TwitchEventsubDefinition.new(Type.CHANNEL_SHARED_CHAT_BEGIN, &"channel.shared_chat.begin", &"1", [&"broadcaster_user_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshared_chatbegin", "channel_shared_chat_session_begin")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shared_chat_begin". Use CHANNEL_SHARED_CHAT_BEGIN instead.
+static var CHANNEL_SHARED_CHAT_BEGIN_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_SHARED_CHAT_BEGIN_LEGACY, &"channel.shared_chat.begin", &"1", [&"broadcaster_user_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshared_chatbegin", "channel_shared_chat_begin")
 static var CHANNEL_SHARED_CHAT_UPDATE := TwitchEventsubDefinition.new(Type.CHANNEL_SHARED_CHAT_UPDATE, &"channel.shared_chat.update", &"1", [&"broadcaster_user_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshared_chatupdate", "channel_shared_chat_session_update")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shared_chat_update". Use CHANNEL_SHARED_CHAT_UPDATE instead.
+static var CHANNEL_SHARED_CHAT_UPDATE_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_SHARED_CHAT_UPDATE_LEGACY, &"channel.shared_chat.update", &"1", [&"broadcaster_user_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshared_chatupdate", "channel_shared_chat_update")
 static var CHANNEL_SHARED_CHAT_END := TwitchEventsubDefinition.new(Type.CHANNEL_SHARED_CHAT_END, &"channel.shared_chat.end", &"1", [&"broadcaster_user_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshared_chatend", "channel_shared_chat_session_end")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shared_chat_end". Use CHANNEL_SHARED_CHAT_END instead.
+static var CHANNEL_SHARED_CHAT_END_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_SHARED_CHAT_END_LEGACY, &"channel.shared_chat.end", &"1", [&"broadcaster_user_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshared_chatend", "channel_shared_chat_end")
 static var CHANNEL_SHIELD_MODE_BEGIN := TwitchEventsubDefinition.new(Type.CHANNEL_SHIELD_MODE_BEGIN, &"channel.shield_mode.begin", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:shield_mode",&"moderator:manage:shield_mode"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshield_modebegin", "shield_mode")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shield_mode_begin". Use CHANNEL_SHIELD_MODE_BEGIN instead.
+static var CHANNEL_SHIELD_MODE_BEGIN_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_SHIELD_MODE_BEGIN_LEGACY, &"channel.shield_mode.begin", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:shield_mode",&"moderator:manage:shield_mode"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshield_modebegin", "channel_shield_mode_begin")
 static var CHANNEL_SHIELD_MODE_END := TwitchEventsubDefinition.new(Type.CHANNEL_SHIELD_MODE_END, &"channel.shield_mode.end", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:shield_mode",&"moderator:manage:shield_mode"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshield_modeend", "shield_mode")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shield_mode_end". Use CHANNEL_SHIELD_MODE_END instead.
+static var CHANNEL_SHIELD_MODE_END_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_SHIELD_MODE_END_LEGACY, &"channel.shield_mode.end", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:shield_mode",&"moderator:manage:shield_mode"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshield_modeend", "channel_shield_mode_end")
 static var CHANNEL_SHOUTOUT_CREATE := TwitchEventsubDefinition.new(Type.CHANNEL_SHOUTOUT_CREATE, &"channel.shoutout.create", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:shoutouts",&"moderator:manage:shoutouts"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshoutoutcreate", "shoutout_create")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shoutout_create". Use CHANNEL_SHOUTOUT_CREATE instead.
+static var CHANNEL_SHOUTOUT_CREATE_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_SHOUTOUT_CREATE_LEGACY, &"channel.shoutout.create", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:shoutouts",&"moderator:manage:shoutouts"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshoutoutcreate", "channel_shoutout_create")
 static var CHANNEL_SHOUTOUT_RECEIVE := TwitchEventsubDefinition.new(Type.CHANNEL_SHOUTOUT_RECEIVE, &"channel.shoutout.receive", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:shoutouts",&"moderator:manage:shoutouts"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshoutoutreceive", "shoutout_received")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_shoutout_receive". Use CHANNEL_SHOUTOUT_RECEIVE instead.
+static var CHANNEL_SHOUTOUT_RECEIVE_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_SHOUTOUT_RECEIVE_LEGACY, &"channel.shoutout.receive", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:shoutouts",&"moderator:manage:shoutouts"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshoutoutreceive", "channel_shoutout_receive")
 static var CONDUIT_SHARD_DISABLED := TwitchEventsubDefinition.new(Type.CONDUIT_SHARD_DISABLED, &"conduit.shard.disabled", &"1", [&"client_id",&"conduit_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#conduitsharddisabled", "conduit_shard_disabled")
 static var DROP_ENTITLEMENT_GRANT := TwitchEventsubDefinition.new(Type.DROP_ENTITLEMENT_GRANT, &"drop.entitlement.grant", &"1", [&"organization_id",&"category_id",&"campaign_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#dropentitlementgrant", "drop_entitlement_grant")
 static var EXTENSION_BITS_TRANSACTION_CREATE := TwitchEventsubDefinition.new(Type.EXTENSION_BITS_TRANSACTION_CREATE, &"extension.bits_transaction.create", &"1", [&"extension_client_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#extensionbits_transactioncreate", "extension_bits_transaction_create")
 static var CHANNEL_GOAL_BEGIN := TwitchEventsubDefinition.new(Type.CHANNEL_GOAL_BEGIN, &"channel.goal.begin", &"1", [&"broadcaster_user_id"], [&"channel:read:goals"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelgoalbegin", "goals")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_goal_begin". Use CHANNEL_GOAL_BEGIN instead.
+static var CHANNEL_GOAL_BEGIN_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_GOAL_BEGIN_LEGACY, &"channel.goal.begin", &"1", [&"broadcaster_user_id"], [&"channel:read:goals"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelgoalbegin", "channel_goal_begin")
 static var CHANNEL_GOAL_PROGRESS := TwitchEventsubDefinition.new(Type.CHANNEL_GOAL_PROGRESS, &"channel.goal.progress", &"1", [&"broadcaster_user_id"], [&"channel:read:goals"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelgoalprogress", "goals")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_goal_progress". Use CHANNEL_GOAL_PROGRESS instead.
+static var CHANNEL_GOAL_PROGRESS_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_GOAL_PROGRESS_LEGACY, &"channel.goal.progress", &"1", [&"broadcaster_user_id"], [&"channel:read:goals"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelgoalprogress", "channel_goal_progress")
 static var CHANNEL_GOAL_END := TwitchEventsubDefinition.new(Type.CHANNEL_GOAL_END, &"channel.goal.end", &"1", [&"broadcaster_user_id"], [&"channel:read:goals"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelgoalend", "goals")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "channel_goal_end". Use CHANNEL_GOAL_END instead.
+static var CHANNEL_GOAL_END_LEGACY := TwitchEventsubDefinition.new(Type.CHANNEL_GOAL_END_LEGACY, &"channel.goal.end", &"1", [&"broadcaster_user_id"], [&"channel:read:goals"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelgoalend", "channel_goal_end")
 static var STREAM_ONLINE := TwitchEventsubDefinition.new(Type.STREAM_ONLINE, &"stream.online", &"1", [&"broadcaster_user_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#streamonline", "stream_online")
 static var STREAM_OFFLINE := TwitchEventsubDefinition.new(Type.STREAM_OFFLINE, &"stream.offline", &"1", [&"broadcaster_user_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#streamoffline", "stream_offline")
 static var USER_AUTHORIZATION_GRANT := TwitchEventsubDefinition.new(Type.USER_AUTHORIZATION_GRANT, &"user.authorization.grant", &"1", [&"client_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#userauthorizationgrant", "user_authorization_grant")
 static var USER_AUTHORIZATION_REVOKE := TwitchEventsubDefinition.new(Type.USER_AUTHORIZATION_REVOKE, &"user.authorization.revoke", &"1", [&"client_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#userauthorizationrevoke", "user_authorization_revoke")
 static var USER_UPDATE := TwitchEventsubDefinition.new(Type.USER_UPDATE, &"user.update", &"1", [&"user_id"], [&"user:read:email"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#userupdate", "user_update")
 static var USER_WHISPER_MESSAGE := TwitchEventsubDefinition.new(Type.USER_WHISPER_MESSAGE, &"user.whisper.message", &"1", [&"user_id"], [&"user:read:whispers",&"user:manage:whispers"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#userwhispermessage", "whisper_received")
+## @deprecated: Kept for backwards compatibility - points at the pre-override script name "user_whisper_message". Use USER_WHISPER_MESSAGE instead.
+static var USER_WHISPER_MESSAGE_LEGACY := TwitchEventsubDefinition.new(Type.USER_WHISPER_MESSAGE_LEGACY, &"user.whisper.message", &"1", [&"user_id"], [&"user:read:whispers",&"user:manage:whispers"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#userwhispermessage", "user_whisper_message")
 
 ## Returns all supported subscriptions
 static var ALL: Dictionary[TwitchEventsubDefinition.Type, TwitchEventsubDefinition] = {
@@ -264,31 +336,49 @@ static var ALL: Dictionary[TwitchEventsubDefinition.Type, TwitchEventsubDefiniti
 	Type.CHANNEL_WARNING_ACKNOWLEDGE: CHANNEL_WARNING_ACKNOWLEDGE,
 	Type.CHANNEL_WARNING_SEND: CHANNEL_WARNING_SEND,
 	Type.CHANNEL_HYPE_TRAIN_BEGIN: CHANNEL_HYPE_TRAIN_BEGIN,
+	Type.CHANNEL_HYPE_TRAIN_BEGIN_LEGACY: CHANNEL_HYPE_TRAIN_BEGIN_LEGACY,
 	Type.CHANNEL_HYPE_TRAIN_PROGRESS: CHANNEL_HYPE_TRAIN_PROGRESS,
+	Type.CHANNEL_HYPE_TRAIN_PROGRESS_LEGACY: CHANNEL_HYPE_TRAIN_PROGRESS_LEGACY,
 	Type.CHANNEL_HYPE_TRAIN_END: CHANNEL_HYPE_TRAIN_END,
+	Type.CHANNEL_HYPE_TRAIN_END_LEGACY: CHANNEL_HYPE_TRAIN_END_LEGACY,
 	Type.CHANNEL_CHARITY_CAMPAIGN_DONATE: CHANNEL_CHARITY_CAMPAIGN_DONATE,
+	Type.CHANNEL_CHARITY_CAMPAIGN_DONATE_LEGACY: CHANNEL_CHARITY_CAMPAIGN_DONATE_LEGACY,
 	Type.CHANNEL_CHARITY_CAMPAIGN_START: CHANNEL_CHARITY_CAMPAIGN_START,
+	Type.CHANNEL_CHARITY_CAMPAIGN_START_LEGACY: CHANNEL_CHARITY_CAMPAIGN_START_LEGACY,
 	Type.CHANNEL_CHARITY_CAMPAIGN_PROGRESS: CHANNEL_CHARITY_CAMPAIGN_PROGRESS,
+	Type.CHANNEL_CHARITY_CAMPAIGN_PROGRESS_LEGACY: CHANNEL_CHARITY_CAMPAIGN_PROGRESS_LEGACY,
 	Type.CHANNEL_CHARITY_CAMPAIGN_STOP: CHANNEL_CHARITY_CAMPAIGN_STOP,
+	Type.CHANNEL_CHARITY_CAMPAIGN_STOP_LEGACY: CHANNEL_CHARITY_CAMPAIGN_STOP_LEGACY,
 	Type.CHANNEL_SHARED_CHAT_BEGIN: CHANNEL_SHARED_CHAT_BEGIN,
+	Type.CHANNEL_SHARED_CHAT_BEGIN_LEGACY: CHANNEL_SHARED_CHAT_BEGIN_LEGACY,
 	Type.CHANNEL_SHARED_CHAT_UPDATE: CHANNEL_SHARED_CHAT_UPDATE,
+	Type.CHANNEL_SHARED_CHAT_UPDATE_LEGACY: CHANNEL_SHARED_CHAT_UPDATE_LEGACY,
 	Type.CHANNEL_SHARED_CHAT_END: CHANNEL_SHARED_CHAT_END,
+	Type.CHANNEL_SHARED_CHAT_END_LEGACY: CHANNEL_SHARED_CHAT_END_LEGACY,
 	Type.CHANNEL_SHIELD_MODE_BEGIN: CHANNEL_SHIELD_MODE_BEGIN,
+	Type.CHANNEL_SHIELD_MODE_BEGIN_LEGACY: CHANNEL_SHIELD_MODE_BEGIN_LEGACY,
 	Type.CHANNEL_SHIELD_MODE_END: CHANNEL_SHIELD_MODE_END,
+	Type.CHANNEL_SHIELD_MODE_END_LEGACY: CHANNEL_SHIELD_MODE_END_LEGACY,
 	Type.CHANNEL_SHOUTOUT_CREATE: CHANNEL_SHOUTOUT_CREATE,
+	Type.CHANNEL_SHOUTOUT_CREATE_LEGACY: CHANNEL_SHOUTOUT_CREATE_LEGACY,
 	Type.CHANNEL_SHOUTOUT_RECEIVE: CHANNEL_SHOUTOUT_RECEIVE,
+	Type.CHANNEL_SHOUTOUT_RECEIVE_LEGACY: CHANNEL_SHOUTOUT_RECEIVE_LEGACY,
 	Type.CONDUIT_SHARD_DISABLED: CONDUIT_SHARD_DISABLED,
 	Type.DROP_ENTITLEMENT_GRANT: DROP_ENTITLEMENT_GRANT,
 	Type.EXTENSION_BITS_TRANSACTION_CREATE: EXTENSION_BITS_TRANSACTION_CREATE,
 	Type.CHANNEL_GOAL_BEGIN: CHANNEL_GOAL_BEGIN,
+	Type.CHANNEL_GOAL_BEGIN_LEGACY: CHANNEL_GOAL_BEGIN_LEGACY,
 	Type.CHANNEL_GOAL_PROGRESS: CHANNEL_GOAL_PROGRESS,
+	Type.CHANNEL_GOAL_PROGRESS_LEGACY: CHANNEL_GOAL_PROGRESS_LEGACY,
 	Type.CHANNEL_GOAL_END: CHANNEL_GOAL_END,
+	Type.CHANNEL_GOAL_END_LEGACY: CHANNEL_GOAL_END_LEGACY,
 	Type.STREAM_ONLINE: STREAM_ONLINE,
 	Type.STREAM_OFFLINE: STREAM_OFFLINE,
 	Type.USER_AUTHORIZATION_GRANT: USER_AUTHORIZATION_GRANT,
 	Type.USER_AUTHORIZATION_REVOKE: USER_AUTHORIZATION_REVOKE,
 	Type.USER_UPDATE: USER_UPDATE,
 	Type.USER_WHISPER_MESSAGE: USER_WHISPER_MESSAGE,
+	Type.USER_WHISPER_MESSAGE_LEGACY: USER_WHISPER_MESSAGE_LEGACY,
 }
 
 ## Returns all supported subscriptions by name
@@ -351,29 +441,47 @@ static var BY_NAME: Dictionary[StringName, TwitchEventsubDefinition] = {
 	CHANNEL_WARNING_ACKNOWLEDGE.value: CHANNEL_WARNING_ACKNOWLEDGE,
 	CHANNEL_WARNING_SEND.value: CHANNEL_WARNING_SEND,
 	CHANNEL_HYPE_TRAIN_BEGIN.value: CHANNEL_HYPE_TRAIN_BEGIN,
+	CHANNEL_HYPE_TRAIN_BEGIN_LEGACY.value: CHANNEL_HYPE_TRAIN_BEGIN_LEGACY,
 	CHANNEL_HYPE_TRAIN_PROGRESS.value: CHANNEL_HYPE_TRAIN_PROGRESS,
+	CHANNEL_HYPE_TRAIN_PROGRESS_LEGACY.value: CHANNEL_HYPE_TRAIN_PROGRESS_LEGACY,
 	CHANNEL_HYPE_TRAIN_END.value: CHANNEL_HYPE_TRAIN_END,
+	CHANNEL_HYPE_TRAIN_END_LEGACY.value: CHANNEL_HYPE_TRAIN_END_LEGACY,
 	CHANNEL_CHARITY_CAMPAIGN_DONATE.value: CHANNEL_CHARITY_CAMPAIGN_DONATE,
+	CHANNEL_CHARITY_CAMPAIGN_DONATE_LEGACY.value: CHANNEL_CHARITY_CAMPAIGN_DONATE_LEGACY,
 	CHANNEL_CHARITY_CAMPAIGN_START.value: CHANNEL_CHARITY_CAMPAIGN_START,
+	CHANNEL_CHARITY_CAMPAIGN_START_LEGACY.value: CHANNEL_CHARITY_CAMPAIGN_START_LEGACY,
 	CHANNEL_CHARITY_CAMPAIGN_PROGRESS.value: CHANNEL_CHARITY_CAMPAIGN_PROGRESS,
+	CHANNEL_CHARITY_CAMPAIGN_PROGRESS_LEGACY.value: CHANNEL_CHARITY_CAMPAIGN_PROGRESS_LEGACY,
 	CHANNEL_CHARITY_CAMPAIGN_STOP.value: CHANNEL_CHARITY_CAMPAIGN_STOP,
+	CHANNEL_CHARITY_CAMPAIGN_STOP_LEGACY.value: CHANNEL_CHARITY_CAMPAIGN_STOP_LEGACY,
 	CHANNEL_SHARED_CHAT_BEGIN.value: CHANNEL_SHARED_CHAT_BEGIN,
+	CHANNEL_SHARED_CHAT_BEGIN_LEGACY.value: CHANNEL_SHARED_CHAT_BEGIN_LEGACY,
 	CHANNEL_SHARED_CHAT_UPDATE.value: CHANNEL_SHARED_CHAT_UPDATE,
+	CHANNEL_SHARED_CHAT_UPDATE_LEGACY.value: CHANNEL_SHARED_CHAT_UPDATE_LEGACY,
 	CHANNEL_SHARED_CHAT_END.value: CHANNEL_SHARED_CHAT_END,
+	CHANNEL_SHARED_CHAT_END_LEGACY.value: CHANNEL_SHARED_CHAT_END_LEGACY,
 	CHANNEL_SHIELD_MODE_BEGIN.value: CHANNEL_SHIELD_MODE_BEGIN,
+	CHANNEL_SHIELD_MODE_BEGIN_LEGACY.value: CHANNEL_SHIELD_MODE_BEGIN_LEGACY,
 	CHANNEL_SHIELD_MODE_END.value: CHANNEL_SHIELD_MODE_END,
+	CHANNEL_SHIELD_MODE_END_LEGACY.value: CHANNEL_SHIELD_MODE_END_LEGACY,
 	CHANNEL_SHOUTOUT_CREATE.value: CHANNEL_SHOUTOUT_CREATE,
+	CHANNEL_SHOUTOUT_CREATE_LEGACY.value: CHANNEL_SHOUTOUT_CREATE_LEGACY,
 	CHANNEL_SHOUTOUT_RECEIVE.value: CHANNEL_SHOUTOUT_RECEIVE,
+	CHANNEL_SHOUTOUT_RECEIVE_LEGACY.value: CHANNEL_SHOUTOUT_RECEIVE_LEGACY,
 	CONDUIT_SHARD_DISABLED.value: CONDUIT_SHARD_DISABLED,
 	DROP_ENTITLEMENT_GRANT.value: DROP_ENTITLEMENT_GRANT,
 	EXTENSION_BITS_TRANSACTION_CREATE.value: EXTENSION_BITS_TRANSACTION_CREATE,
 	CHANNEL_GOAL_BEGIN.value: CHANNEL_GOAL_BEGIN,
+	CHANNEL_GOAL_BEGIN_LEGACY.value: CHANNEL_GOAL_BEGIN_LEGACY,
 	CHANNEL_GOAL_PROGRESS.value: CHANNEL_GOAL_PROGRESS,
+	CHANNEL_GOAL_PROGRESS_LEGACY.value: CHANNEL_GOAL_PROGRESS_LEGACY,
 	CHANNEL_GOAL_END.value: CHANNEL_GOAL_END,
+	CHANNEL_GOAL_END_LEGACY.value: CHANNEL_GOAL_END_LEGACY,
 	STREAM_ONLINE.value: STREAM_ONLINE,
 	STREAM_OFFLINE.value: STREAM_OFFLINE,
 	USER_AUTHORIZATION_GRANT.value: USER_AUTHORIZATION_GRANT,
 	USER_AUTHORIZATION_REVOKE.value: USER_AUTHORIZATION_REVOKE,
 	USER_UPDATE.value: USER_UPDATE,
 	USER_WHISPER_MESSAGE.value: USER_WHISPER_MESSAGE,
+	USER_WHISPER_MESSAGE_LEGACY.value: USER_WHISPER_MESSAGE_LEGACY,
 }

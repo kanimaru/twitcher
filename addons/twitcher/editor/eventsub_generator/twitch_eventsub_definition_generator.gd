@@ -34,27 +34,52 @@ const OVERRIDES: Dictionary[String, String] = {
 
 
 func generate(definitions: Array[TwitchEventsubDefinitionInfo]) -> void:
-	for info in definitions:
-		info.script_name = _resolve_script_name(info.value)
+	var expanded: Array[TwitchEventsubDefinitionInfo] = _resolve_script_names(definitions)
 
 	var code: String = _header_code()
-	code += _enum_code(definitions)
+	code += _enum_code(expanded)
 	code += _fields_code()
-	for info in definitions:
+	for info in expanded:
 		code += _static_var_code(info) + "\n"
 	code += "\n"
-	code += _dict_code("ALL", definitions, "Type.%s: %s", "## Returns all supported subscriptions")
+	code += _dict_code("ALL", expanded, "Type.%s: %s", "## Returns all supported subscriptions")
 	code += "\n"
-	code += _dict_code("BY_NAME", definitions, "%s.value: %s", "## Returns all supported subscriptions by name")
+	code += _dict_code("BY_NAME", expanded, "%s.value: %s", "## Returns all supported subscriptions by name")
 
 	write_output_file(OUTPUT_PATH, code)
 	print("Eventsub definitions regenerated, you can find them under: %s" % OUTPUT_PATH)
 
 
-func _resolve_script_name(value: String) -> String:
-	if OVERRIDES.has(value): return OVERRIDES[value]
-	# Twitch's own type name sometimes repeats "channel_" (e.g. channel.channel_points_custom_reward...),
-	# but the addon's script names don't - safe to dedupe unconditionally.
+## For every override, also emits a "Legacy" alias definition pointing at the pre-override,
+## mechanically-derived script name - anyone who already depends on that name (guessed, or from before
+## an override was added here) keeps working. It's marked obsolete and shouldn't be used going forward.
+func _resolve_script_names(definitions: Array[TwitchEventsubDefinitionInfo]) -> Array[TwitchEventsubDefinitionInfo]:
+	var expanded: Array[TwitchEventsubDefinitionInfo] = []
+	for info in definitions:
+		var default_candidate: String = _default_candidate(info.value)
+
+		if OVERRIDES.has(info.value):
+			info.script_name = OVERRIDES[info.value]
+			expanded.append(info)
+
+			if default_candidate != info.script_name:
+				var legacy: TwitchEventsubDefinitionInfo = info.clone()
+				legacy.enum_name = info.enum_name + "Legacy"
+				legacy.script_name = default_candidate
+				legacy.is_obsolete = true
+				expanded.append(legacy)
+
+			continue
+
+		info.script_name = default_candidate
+		expanded.append(info)
+
+	return expanded
+
+
+# Twitch's own type name sometimes repeats "channel_" (e.g. channel.channel_points_custom_reward...),
+# but the addon's script names don't - safe to dedupe unconditionally.
+func _default_candidate(value: String) -> String:
 	var candidate: String = value.replace(".", "_")
 	if candidate.begins_with("channel_channel_"):
 		candidate = "channel_" + candidate.substr("channel_channel_".length())
@@ -74,9 +99,19 @@ class_name TwitchEventsubDefinition
 func _enum_code(definitions: Array[TwitchEventsubDefinitionInfo]) -> String:
 	var code: String = "enum Type {\n"
 	for info in definitions:
+		if info.is_obsolete:
+			code += "\t## @deprecated: %s\n" % _obsolete_message(info)
 		code += "\t%s,\n" % _screaming_snake(info.enum_name)
 	code += "}\n"
 	return code
+
+
+# Legacy definitions are always named "{Primary}Legacy" - see _resolve_script_names.
+func _obsolete_message(info: TwitchEventsubDefinitionInfo) -> String:
+	var primary_name: String = info.enum_name.substr(0, info.enum_name.length() - "Legacy".length())
+	return "Kept for backwards compatibility - points at the pre-override script name \"%s\". Use %s instead." % [
+		info.script_name, _screaming_snake(primary_name)
+	]
 
 
 func _fields_code() -> String:
@@ -118,8 +153,9 @@ func _static_var_code(info: TwitchEventsubDefinitionInfo) -> String:
 	var name: String = _screaming_snake(info.enum_name)
 	var conditions: String = _string_name_array_code(info.conditions)
 	var scopes: String = _string_name_array_code(info.scopes)
-	return "static var %s := TwitchEventsubDefinition.new(Type.%s, &\"%s\", &\"%s\", %s, %s, \"%s\", \"%s\")" % [
-		name, name, info.value, info.version, conditions, scopes, info.documentation_link, info.script_name
+	var deprecated_doc: String = "## @deprecated: %s\n" % _obsolete_message(info) if info.is_obsolete else ""
+	return "%sstatic var %s := TwitchEventsubDefinition.new(Type.%s, &\"%s\", &\"%s\", %s, %s, \"%s\", \"%s\")" % [
+		deprecated_doc, name, name, info.value, info.version, conditions, scopes, info.documentation_link, info.script_name
 	]
 
 
