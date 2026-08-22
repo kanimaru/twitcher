@@ -5,6 +5,9 @@
 [ext_resource type="Script" uid="uid://cetl2un34bjb1" path="res://addons/twitcher/editor/api_generator/twitch_api_generator.gd" id="2_hjk3t"]
 [ext_resource type="Script" uid="uid://o7q04krfh33l" path="res://addons/twitcher/editor/api_generator/twitch_api_parser.gd" id="2_poxsx"]
 [ext_resource type="Script" uid="uid://bj2377topmg0d" path="res://addons/twitcher/editor/eventsub_generator/twitch_eventsub_generator.gd" id="4_u4s0c"]
+[ext_resource type="PackedScene" uid="uid://c7n6vqfqxjhoy" path="res://addons/twitcher/example/eventsub_generator/generate_definitions.tscn" id="5_defscn"]
+[ext_resource type="Script" path="res://addons/twitcher/editor/eventsub_generator/twitch_eventsub_definition_parser.gd" id="5_defparser"]
+[ext_resource type="Script" path="res://addons/twitcher/editor/eventsub_generator/twitch_eventsub_definition_generator.gd" id="5_defgen"]
 
 [node name="GenerateAllApis" type="HSplitContainer" unique_id=2086038291]
 anchors_preset = 15
@@ -63,3 +66,27 @@ parser = NodePath("../SwaggerParser")
 script = ExtResource("2_poxsx")
 api = "https://raw.githubusercontent.com/kanimaru/twitch-eventsub-swagger/refs/heads/master/twitch_eventsub_swagger.json"
 metadata/_custom_type_script = "uid://o7q04krfh33l"
+
+[node name="Definitions" type="VBoxContainer" parent="." unique_id=315686517]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleDefinitions" type="Label" parent="Definitions" unique_id=252105183]
+layout_mode = 2
+text = "Generate Definitions"
+label_settings = ExtResource("1_u4s0c")
+
+[node name="GenerateDefinitions" parent="Definitions" unique_id=601183043 node_paths=PackedStringArray("api_parser", "definition_parser", "definition_generator") instance=ExtResource("5_defscn")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+api_parser = NodePath("../../Eventsub/GenerateEventsub/SwaggerParser")
+definition_parser = NodePath("DefinitionParser")
+definition_generator = NodePath("DefinitionGenerator")
+
+[node name="DefinitionParser" type="Node" parent="Definitions/GenerateDefinitions" unique_id=1159761620 node_paths=PackedStringArray("api_parser")]
+script = ExtResource("5_defparser")
+api_parser = NodePath("../../../Eventsub/GenerateEventsub/SwaggerParser")
+
+[node name="DefinitionGenerator" type="Node" parent="Definitions/GenerateDefinitions" unique_id=1159761621]
+script = ExtResource("5_defgen")
