@@ -27,5 +27,5 @@ func add_scopes(scopes: Array[StringName]) -> void:
 
 
 func remove_scopes(scopes: Array[StringName]) -> void:
-	used_scopes = used_scopes.filter(func(s): return scopes.find(s) != -1)
+	used_scopes = used_scopes.filter(func(s): return scopes.find(s) == -1)
 	scopes_changed.emit()

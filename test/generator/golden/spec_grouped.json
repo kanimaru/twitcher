@@ -1,0 +1,144 @@
+{
+	"_comment": "A suffixed schema (Response) plus a path with required and optional parameters, so the generator produces a grouped file containing Response and Opt inner classes. Also covers typed arrays, primitive arrays, inline sub-objects, and the pagination/iterator path (a 'pagination' field on the response plus an 'after' query parameter).",
+	"components": {
+		"schemas": {
+			"GetSampleItemsResponse": {
+				"type": "object",
+				"description": "The response payload for get_sample_items.",
+				"properties": {
+					"data": {
+						"type": "array",
+						"description": "The list of items.",
+						"items": {
+							"$ref": "#/components/schemas/SampleItem"
+						}
+					},
+					"pagination": {
+						"description": "Cursor container used to page through results.",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/SamplePagination"
+							}
+						]
+					}
+				}
+			},
+			"SampleItem": {
+				"type": "object",
+				"description": "One item.",
+				"required": ["id"],
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "The item's ID."
+					},
+					"tags": {
+						"type": "array",
+						"description": "A primitive array — no $ref, so no per-element from_json.",
+						"items": {
+							"type": "string"
+						}
+					},
+					"badge": {
+						"type": "object",
+						"description": "An inline object, which becomes a nested sub-component.",
+						"properties": {
+							"set_id": {
+								"type": "string",
+								"description": "The badge set."
+							},
+							"version": {
+								"type": "string",
+								"description": "The badge version."
+							}
+						}
+					}
+				}
+			},
+			"SamplePagination": {
+				"type": "object",
+				"description": "Paging cursor.",
+				"properties": {
+					"cursor": {
+						"type": "string",
+						"description": "The cursor to pass as 'after'."
+					}
+				}
+			}
+		}
+	},
+	"paths": {
+		"/sample/items": {
+			"get": {
+				"operationId": "get-sample-items",
+				"summary": "Gets a list of sample items.",
+				"description": "Long description.",
+				"externalDocs": {
+					"url": "https://example.invalid/docs/get-sample-items"
+				},
+				"parameters": [
+					{
+						"name": "broadcaster_id",
+						"in": "query",
+						"required": true,
+						"description": "The broadcaster's ID. Sorts last despite being required.",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "item_id",
+						"in": "query",
+						"required": true,
+						"description": "An array parameter, repeated in the query string.",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					{
+						"name": "started_at",
+						"in": "query",
+						"required": false,
+						"description": "A date-time parameter, formatted via get_rfc_3339_date_format.",
+						"schema": {
+							"type": "string",
+							"format": "date-time"
+						}
+					},
+					{
+						"name": "first",
+						"in": "query",
+						"required": false,
+						"description": "Page size.",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "after",
+						"in": "query",
+						"required": false,
+						"description": "The pagination cursor. Its presence switches on paging.",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetSampleItemsResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

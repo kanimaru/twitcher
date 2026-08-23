@@ -20,3 +20,5 @@ documentation/*.import
 # Jetbrains specific ignores
 .idea/
 *.tmp
+# GUT test output
+test_results.xml

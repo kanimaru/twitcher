@@ -1,0 +1,61 @@
+{
+	"_comment": "Every entry in TwitchGenField._update_name's rename table. These are wire names that are illegal or reserved as GDScript identifiers, so the generated property is renamed while the JSON key must stay as-is. The API generator keeps _original_name for the wire side; the EventSub generator does not, which is what test_generator_parity.gd pins.",
+	"components": {
+		"schemas": {
+			"SampleRenames": {
+				"type": "object",
+				"description": "Covers the full rename table.",
+				"properties": {
+					"animated": {
+						"type": "string",
+						"description": "Renamed to animated_format."
+					},
+					"static": {
+						"type": "string",
+						"description": "Renamed to static_format — 'static' is a GDScript keyword."
+					},
+					"1": {
+						"type": "string",
+						"description": "Renamed to _1 — identifiers cannot start with a digit."
+					},
+					"2": {
+						"type": "string",
+						"description": "Renamed to _2."
+					},
+					"3": {
+						"type": "string",
+						"description": "Renamed to _3."
+					},
+					"4": {
+						"type": "string",
+						"description": "Renamed to _4."
+					},
+					"1.5": {
+						"type": "string",
+						"description": "Renamed to _1_5."
+					},
+					"100x100": {
+						"type": "string",
+						"description": "Renamed to _100x100."
+					},
+					"24x24": {
+						"type": "string",
+						"description": "Renamed to _24x24."
+					},
+					"300x200": {
+						"type": "string",
+						"description": "Renamed to _300x200."
+					},
+					"source-only": {
+						"type": "string",
+						"description": "Renamed to source_only — hyphens are illegal in identifiers."
+					},
+					"normal_name": {
+						"type": "string",
+						"description": "Control: passes through untouched."
+					}
+				}
+			}
+		}
+	}
+}

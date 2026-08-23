@@ -1,0 +1,79 @@
+name: Tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.7.0"
+  # Godot reports leaked ObjectDB instances at shutdown. Twitcher's @tool
+  # scripts and GUT's own doubles both trip this on a perfectly green run, so
+  # without this the process can exit non-zero for no real reason.
+  GODOT_DISABLE_LEAK_CHECKS: "1"
+
+jobs:
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Godot ${{ env.GODOT_VERSION }}
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: false
+
+      - name: Cache import artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            .godot/imported
+            .godot/editor
+            .godot/global_script_class_cache.cfg
+          key: godot-import-${{ env.GODOT_VERSION }}-${{ hashFiles('project.godot', '**/*.gd', '**/*.tscn', '**/*.import') }}
+          restore-keys: |
+            godot-import-${{ env.GODOT_VERSION }}-
+
+      # Mandatory. Without a populated .godot/ the global class list is empty,
+      # so `class_name` lookups and GUT's script doubling both fail with parse
+      # errors. The first import routinely exits non-zero on benign warnings,
+      # which is why this step tolerates failure — the GUT step below is the
+      # actual gate.
+      - name: Import project
+        run: godot --headless --path . --import --quit
+        continue-on-error: true
+
+      - name: Run GUT
+        run: |
+          godot --headless --path . \
+            -s res://addons/gut/gut_cmdln.gd \
+            -gdir=res://test/unit,res://test/generator \
+            -ginclude_subdirs \
+            -glog=1 \
+            -gjunit_xml_file=res://test_results.xml \
+            -gexit
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test_results.xml
+          check_name: GUT Results
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gut-results
+          path: test_results.xml
+          if-no-files-found: warn
