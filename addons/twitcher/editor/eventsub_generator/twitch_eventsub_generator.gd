@@ -10,6 +10,11 @@ const suffixes: Array[String] = ["Condition", "Event", "EventV2"]
 
 @export var parser: TwitchAPIParser
 
+## Regenerates twitch_eventsub_definition.gd right after the payload classes below - same button,
+## no separate step needed.
+@export var definition_parser: TwitchEventsubDefinitionParser
+@export var definition_generator: TwitchEventsubDefinitionGenerator
+
 var grouped_files: Dictionary[String, Variant] = {}
 
 
@@ -37,6 +42,9 @@ func generate_api() -> void:
 			DirAccess.remove_absolute(absolute_path)
 			DirAccess.remove_absolute(absolute_path + ".uid")
 			print("- got deleted ", cls)
+
+	await definition_parser.parse_subscription_types()
+	definition_generator.generate(definition_parser.definitions)
 
 
 func prepare_component(component: TwitchGenComponent) -> void:

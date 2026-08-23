@@ -34,13 +34,13 @@ const OVERRIDES: Dictionary[String, String] = {
 
 
 func generate(definitions: Array[TwitchEventsubDefinitionInfo]) -> void:
-	for info in definitions:
+	for info: TwitchEventsubDefinitionInfo in definitions:
 		info.script_name = _resolve_script_name(info.value)
 
 	var code: String = _header_code()
 	code += _enum_code(definitions)
 	code += _fields_code()
-	for info in definitions:
+	for info: TwitchEventsubDefinitionInfo in definitions:
 		code += _static_var_code(info) + "\n"
 	code += "\n"
 	code += _dict_code("ALL", definitions, "Type.%s: %s", "## Returns all supported subscriptions")
@@ -73,7 +73,7 @@ class_name TwitchEventsubDefinition
 
 func _enum_code(definitions: Array[TwitchEventsubDefinitionInfo]) -> String:
 	var code: String = "enum Type {\n"
-	for info in definitions:
+	for info: TwitchEventsubDefinitionInfo in definitions:
 		code += "\t%s,\n" % _screaming_snake(info.enum_name)
 	code += "}\n"
 	return code
@@ -128,7 +128,7 @@ func _dict_code(dict_name: String, definitions: Array[TwitchEventsubDefinitionIn
 	var code: String = "%s\nstatic var %s: Dictionary[%s, TwitchEventsubDefinition] = {\n" % [
 		doc, dict_name, value_type
 	]
-	for info in definitions:
+	for info: TwitchEventsubDefinitionInfo in definitions:
 		var name: String = _screaming_snake(info.enum_name)
 		code += "\t" + (entry_format % [name, name]) + ",\n"
 	code += "}\n"
