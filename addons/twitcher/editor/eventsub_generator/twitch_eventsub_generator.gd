@@ -19,6 +19,11 @@ var grouped_files: Dictionary[String, Variant] = {}
 
 
 func generate_api() -> void:
+	# Must run before prepare_component() below: that mutates every component's _classname (prefixing
+	# it with "TwitchES"), which would break the condition-schema lookup by classname.
+	await definition_parser.parse_subscription_types()
+	definition_generator.generate(definition_parser.definitions)
+
 	# Get all classes in the API Folder to remove not needed anymore
 	var existing_classes: PackedStringArray = get_all_classes(api_output_path)
 
@@ -42,9 +47,6 @@ func generate_api() -> void:
 			DirAccess.remove_absolute(absolute_path)
 			DirAccess.remove_absolute(absolute_path + ".uid")
 			print("- got deleted ", cls)
-
-	await definition_parser.parse_subscription_types()
-	definition_generator.generate(definition_parser.definitions)
 
 
 func prepare_component(component: TwitchGenComponent) -> void:
