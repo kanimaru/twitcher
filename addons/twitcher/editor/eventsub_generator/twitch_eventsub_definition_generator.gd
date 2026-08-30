@@ -157,14 +157,14 @@ var documentation_link: String
 var response_script: Script
 
 
-func _init(typ: Type, val: StringName, ver: StringName, cond: Array[StringName], scps: Array[StringName], doc_link: String, script_name: String):
+func _init(typ: Type, val: StringName, ver: StringName, cond: Array[StringName], scps: Array[StringName], doc_link: String, resp_script: Script):
 	type = typ
 	value = val
 	version = ver
 	conditions = cond
 	scopes = scps
 	documentation_link = doc_link
-	response_script = load("res://addons/twitcher/generated_eventsub/twitch_es_%s.gd" % script_name)
+	response_script = resp_script
 
 ## Get a human readable name of it
 func get_readable_name() -> String:
@@ -178,9 +178,20 @@ func _static_var_code(info: TwitchEventsubDefinitionInfo) -> String:
 	var name: String = _screaming_snake(info.enum_name)
 	var conditions: String = _string_name_array_code(info.conditions)
 	var scopes: String = _string_name_array_code(info.scopes)
-	return "static var %s := TwitchEventsubDefinition.new(Type.%s, &\"%s\", &\"%s\", %s, %s, \"%s\", \"%s\")" % [
-		name, name, info.value, info.version, conditions, scopes, info.documentation_link, info.script_name
+	return "static var %s := TwitchEventsubDefinition.new(Type.%s, &\"%s\", &\"%s\", %s, %s, \"%s\", %s)" % [
+		name, name, info.value, info.version, conditions, scopes, info.documentation_link,
+		_script_class_name(info.script_name)
 	]
+
+
+## generated_eventsub scripts follow twitch_es_<name>.gd -> `class_name TwitchES<Name>`, so the Script
+## can be referenced by its global class name, the way the hand-written file did.
+func _script_class_name(script_name: String) -> String:
+	var result: String = "TwitchES"
+	for word: String in script_name.split("_"):
+		if word.is_empty(): continue
+		result += word.substr(0, 1).to_upper() + word.substr(1)
+	return result
 
 
 func _dict_code(dict_name: String, definitions: Array[TwitchEventsubDefinitionInfo], entry_format: String, doc: String) -> String:
