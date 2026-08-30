@@ -34,21 +34,81 @@ const OVERRIDES: Dictionary[String, String] = {
 
 
 func generate(definitions: Array[TwitchEventsubDefinitionInfo]) -> void:
+	# A failed fetch or a docs layout change leaves the parser with nothing. Writing that out would
+	# replace the checked-in definitions with an empty stub, so bail instead.
+	if definitions.is_empty():
+		push_error("No subscription types were parsed - keeping the existing %s untouched." % OUTPUT_PATH)
+		return
+
 	for info: TwitchEventsubDefinitionInfo in definitions:
 		info.script_name = _resolve_script_name(info.value)
 
+	var ordered: Array[TwitchEventsubDefinitionInfo] = _preserve_existing_order(definitions)
+
 	var code: String = _header_code()
-	code += _enum_code(definitions)
+	code += _enum_code(ordered)
 	code += _fields_code()
-	for info: TwitchEventsubDefinitionInfo in definitions:
+	for info: TwitchEventsubDefinitionInfo in ordered:
 		code += _static_var_code(info) + "\n"
 	code += "\n"
-	code += _dict_code("ALL", definitions, "Type.%s: %s", "## Returns all supported subscriptions")
+	code += _dict_code("ALL", ordered, "Type.%s: %s", "## Returns all supported subscriptions")
 	code += "\n"
-	code += _dict_code("BY_NAME", definitions, "%s.value: %s", "## Returns all supported subscriptions by name")
+	code += _dict_code("BY_NAME", ordered, "%s.value: %s", "## Returns all supported subscriptions by name")
 
 	write_output_file(OUTPUT_PATH, code)
 	print("Eventsub definitions regenerated, you can find them under: %s" % OUTPUT_PATH)
+
+
+## Type is an exported enum on TwitchEventsubConfig, so Godot serializes it into .tres/.tscn files as
+## a plain int. Reordering the enum would silently repoint every saved config at a different
+## subscription type, so existing entries have to keep the ordinal they already have: keep the order
+## from the file we're about to overwrite and append anything new at the bottom.
+func _preserve_existing_order(definitions: Array[TwitchEventsubDefinitionInfo]) -> Array[TwitchEventsubDefinitionInfo]:
+	var existing_order: Array[String] = _read_existing_enum_order()
+	if existing_order.is_empty(): return definitions
+
+	var remaining: Dictionary[String, TwitchEventsubDefinitionInfo] = {}
+	for info: TwitchEventsubDefinitionInfo in definitions:
+		remaining[_screaming_snake(info.enum_name)] = info
+
+	var ordered: Array[TwitchEventsubDefinitionInfo] = []
+	for name: String in existing_order:
+		if remaining.has(name):
+			ordered.append(remaining[name])
+			remaining.erase(name)
+		else:
+			# Twitch dropping a subscription type shifts every ordinal after it - that needs a manual
+			# migration decision, so make it loud rather than silently renumbering saved configs.
+			push_warning("%s is gone from the Twitch docs; removing it shifts the enum ordinals of everything after it." % name)
+
+	for info: TwitchEventsubDefinitionInfo in definitions:
+		var name: String = _screaming_snake(info.enum_name)
+		if remaining.has(name):
+			ordered.append(info)
+			remaining.erase(name)
+
+	return ordered
+
+
+## Reads the `enum Type { ... }` entries, in order, out of the file we're regenerating.
+func _read_existing_enum_order() -> Array[String]:
+	if not FileAccess.file_exists(OUTPUT_PATH): return []
+	var file: FileAccess = FileAccess.open(OUTPUT_PATH, FileAccess.READ)
+	if file == null: return []
+	var text: String = file.get_as_text()
+	file.close()
+
+	var start: int = text.find("enum Type {")
+	if start == -1: return []
+	var end: int = text.find("}", start)
+	if end == -1: return []
+
+	var names: Array[String] = []
+	for line: String in text.substr(start, end - start).split("\n"):
+		var entry: String = line.strip_edges().trim_suffix(",")
+		if entry.is_empty() or entry.begins_with("enum") or entry.begins_with("#"): continue
+		names.append(entry)
+	return names
 
 
 func _resolve_script_name(value: String) -> String:

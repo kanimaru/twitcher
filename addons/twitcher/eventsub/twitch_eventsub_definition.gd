@@ -6,12 +6,9 @@ class_name TwitchEventsubDefinition
 ## All supported subscriptions should be used in comination with get_all method as index.
 enum Type {
 	AUTOMOD_MESSAGE_HOLD,
-	AUTOMOD_MESSAGE_HOLD_V2,
 	AUTOMOD_MESSAGE_UPDATE,
-	AUTOMOD_MESSAGE_UPDATE_V2,
 	AUTOMOD_SETTINGS_UPDATE,
 	AUTOMOD_TERMS_UPDATE,
-	CHANNEL_BITS_USE,
 	CHANNEL_UPDATE,
 	CHANNEL_FOLLOW,
 	CHANNEL_AD_BREAK_BEGIN,
@@ -42,13 +39,11 @@ enum Type {
 	CHANNEL_GUEST_STAR_GUEST_UPDATE,
 	CHANNEL_GUEST_STAR_SETTINGS_UPDATE,
 	CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD,
-	CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_ADD,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_UPDATE,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REMOVE,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_UPDATE,
-	CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD,
 	CHANNEL_POLL_BEGIN,
 	CHANNEL_POLL_PROGRESS,
 	CHANNEL_POLL_END,
@@ -88,6 +83,11 @@ enum Type {
 	USER_AUTHORIZATION_REVOKE,
 	USER_UPDATE,
 	USER_WHISPER_MESSAGE,
+	AUTOMOD_MESSAGE_HOLD_V2,
+	AUTOMOD_MESSAGE_UPDATE_V2,
+	CHANNEL_BITS_USE,
+	CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2,
+	CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD,
 }
 
 ## The type of itself
@@ -121,12 +121,9 @@ func get_readable_name() -> String:
 
 
 static var AUTOMOD_MESSAGE_HOLD := TwitchEventsubDefinition.new(Type.AUTOMOD_MESSAGE_HOLD, &"automod.message.hold", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:manage:automod"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodmessagehold", "automod_message_hold")
-static var AUTOMOD_MESSAGE_HOLD_V2 := TwitchEventsubDefinition.new(Type.AUTOMOD_MESSAGE_HOLD_V2, &"automod.message.hold", &"2", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:manage:automod"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodmessagehold-v2", "automod_message_hold")
 static var AUTOMOD_MESSAGE_UPDATE := TwitchEventsubDefinition.new(Type.AUTOMOD_MESSAGE_UPDATE, &"automod.message.update", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:manage:automod"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodmessageupdate", "automod_message_update")
-static var AUTOMOD_MESSAGE_UPDATE_V2 := TwitchEventsubDefinition.new(Type.AUTOMOD_MESSAGE_UPDATE_V2, &"automod.message.update", &"2", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:manage:automod"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodmessageupdate-v2", "automod_message_update")
 static var AUTOMOD_SETTINGS_UPDATE := TwitchEventsubDefinition.new(Type.AUTOMOD_SETTINGS_UPDATE, &"automod.settings.update", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:automod_settings"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodsettingsupdate", "automod_settings_update")
 static var AUTOMOD_TERMS_UPDATE := TwitchEventsubDefinition.new(Type.AUTOMOD_TERMS_UPDATE, &"automod.terms.update", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:manage:automod"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodtermsupdate", "automod_terms_update")
-static var CHANNEL_BITS_USE := TwitchEventsubDefinition.new(Type.CHANNEL_BITS_USE, &"channel.bits.use", &"1", [&"broadcaster_user_id"], [&"bits:read"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelbitsuse", "channel_bits_use")
 static var CHANNEL_UPDATE := TwitchEventsubDefinition.new(Type.CHANNEL_UPDATE, &"channel.update", &"2", [&"broadcaster_user_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelupdate", "channel_update")
 static var CHANNEL_FOLLOW := TwitchEventsubDefinition.new(Type.CHANNEL_FOLLOW, &"channel.follow", &"2", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:followers"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelfollow", "channel_follow")
 static var CHANNEL_AD_BREAK_BEGIN := TwitchEventsubDefinition.new(Type.CHANNEL_AD_BREAK_BEGIN, &"channel.ad_break.begin", &"1", [&"broadcaster_user_id"], [&"channel:read:ads"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelad_breakbegin", "channel_ad_break_begin")
@@ -157,13 +154,11 @@ static var CHANNEL_GUEST_STAR_SESSION_END := TwitchEventsubDefinition.new(Type.C
 static var CHANNEL_GUEST_STAR_GUEST_UPDATE := TwitchEventsubDefinition.new(Type.CHANNEL_GUEST_STAR_GUEST_UPDATE, &"channel.guest_star_guest.update", &"beta", [&"broadcaster_user_id",&"moderator_user_id"], [&"channel:read:guest_star",&"channel:manage:guest_star",&"moderator:read:guest_star",&"moderator:manage:guest_star"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelguest_star_guestupdate", "channel_guest_star_guest_update")
 static var CHANNEL_GUEST_STAR_SETTINGS_UPDATE := TwitchEventsubDefinition.new(Type.CHANNEL_GUEST_STAR_SETTINGS_UPDATE, &"channel.guest_star_settings.update", &"beta", [&"broadcaster_user_id",&"moderator_user_id"], [&"channel:read:guest_star",&"channel:manage:guest_star",&"moderator:read:guest_star",&"moderator:manage:guest_star"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelguest_star_settingsupdate", "channel_guest_star_settings_update")
 static var CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD := TwitchEventsubDefinition.new(Type.CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD, &"channel.channel_points_automatic_reward_redemption.add", &"1", [&"broadcaster_user_id"], [&"channel:read:redemptions",&"channel:manage:redemptions"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_automatic_reward_redemptionadd", "channel_points_automatic_reward_redemption_add")
-static var CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2 := TwitchEventsubDefinition.new(Type.CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2, &"channel.channel_points_automatic_reward_redemption.add", &"2", [&"broadcaster_user_id"], [&"channel:read:redemptions",&"channel:manage:redemptions"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_automatic_reward_redemptionadd-v2", "channel_points_automatic_reward_redemption_add")
 static var CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_ADD := TwitchEventsubDefinition.new(Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_ADD, &"channel.channel_points_custom_reward.add", &"1", [&"broadcaster_user_id"], [&"channel:read:redemptions",&"channel:manage:redemptions"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_custom_rewardadd", "channel_points_custom_reward_add")
 static var CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_UPDATE := TwitchEventsubDefinition.new(Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_UPDATE, &"channel.channel_points_custom_reward.update", &"1", [&"broadcaster_user_id",&"reward_id"], [&"channel:read:redemptions",&"channel:manage:redemptions"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_custom_rewardupdate", "channel_points_custom_reward_update")
 static var CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REMOVE := TwitchEventsubDefinition.new(Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REMOVE, &"channel.channel_points_custom_reward.remove", &"1", [&"broadcaster_user_id",&"reward_id"], [&"channel:read:redemptions",&"channel:manage:redemptions"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_custom_rewardremove", "channel_points_custom_reward_remove")
 static var CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD := TwitchEventsubDefinition.new(Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD, &"channel.channel_points_custom_reward_redemption.add", &"1", [&"broadcaster_user_id",&"reward_id"], [&"channel:read:redemptions",&"channel:manage:redemptions"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_custom_reward_redemptionadd", "channel_points_custom_reward_redemption_add")
 static var CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_UPDATE := TwitchEventsubDefinition.new(Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_UPDATE, &"channel.channel_points_custom_reward_redemption.update", &"1", [&"broadcaster_user_id",&"reward_id"], [&"channel:read:redemptions",&"channel:manage:redemptions"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_custom_reward_redemptionupdate", "channel_points_custom_reward_redemption_update")
-static var CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD := TwitchEventsubDefinition.new(Type.CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD, &"channel.custom_power_up_redemption.add", &"1", [&"broadcaster_user_id",&"reward_id"], [&"bits:read"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcustom_power_up_redemptionadd", "channel_custom_power_up_redemption_add")
 static var CHANNEL_POLL_BEGIN := TwitchEventsubDefinition.new(Type.CHANNEL_POLL_BEGIN, &"channel.poll.begin", &"1", [&"broadcaster_user_id"], [&"channel:read:polls",&"channel:manage:polls"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelpollbegin", "channel_poll_begin")
 static var CHANNEL_POLL_PROGRESS := TwitchEventsubDefinition.new(Type.CHANNEL_POLL_PROGRESS, &"channel.poll.progress", &"1", [&"broadcaster_user_id"], [&"channel:read:polls",&"channel:manage:polls"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelpollprogress", "channel_poll_progress")
 static var CHANNEL_POLL_END := TwitchEventsubDefinition.new(Type.CHANNEL_POLL_END, &"channel.poll.end", &"1", [&"broadcaster_user_id"], [&"channel:read:polls",&"channel:manage:polls"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelpollend", "channel_poll_end")
@@ -203,16 +198,18 @@ static var USER_AUTHORIZATION_GRANT := TwitchEventsubDefinition.new(Type.USER_AU
 static var USER_AUTHORIZATION_REVOKE := TwitchEventsubDefinition.new(Type.USER_AUTHORIZATION_REVOKE, &"user.authorization.revoke", &"1", [&"client_id"], [], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#userauthorizationrevoke", "user_authorization_revoke")
 static var USER_UPDATE := TwitchEventsubDefinition.new(Type.USER_UPDATE, &"user.update", &"1", [&"user_id"], [&"user:read:email"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#userupdate", "user_update")
 static var USER_WHISPER_MESSAGE := TwitchEventsubDefinition.new(Type.USER_WHISPER_MESSAGE, &"user.whisper.message", &"1", [&"user_id"], [&"user:read:whispers",&"user:manage:whispers"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#userwhispermessage", "whisper_received")
+static var AUTOMOD_MESSAGE_HOLD_V2 := TwitchEventsubDefinition.new(Type.AUTOMOD_MESSAGE_HOLD_V2, &"automod.message.hold", &"2", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:manage:automod"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodmessagehold-v2", "automod_message_hold")
+static var AUTOMOD_MESSAGE_UPDATE_V2 := TwitchEventsubDefinition.new(Type.AUTOMOD_MESSAGE_UPDATE_V2, &"automod.message.update", &"2", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:manage:automod"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodmessageupdate-v2", "automod_message_update")
+static var CHANNEL_BITS_USE := TwitchEventsubDefinition.new(Type.CHANNEL_BITS_USE, &"channel.bits.use", &"1", [&"broadcaster_user_id"], [&"bits:read"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelbitsuse", "channel_bits_use")
+static var CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2 := TwitchEventsubDefinition.new(Type.CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2, &"channel.channel_points_automatic_reward_redemption.add", &"2", [&"broadcaster_user_id"], [&"channel:read:redemptions",&"channel:manage:redemptions"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_automatic_reward_redemptionadd-v2", "channel_points_automatic_reward_redemption_add")
+static var CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD := TwitchEventsubDefinition.new(Type.CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD, &"channel.custom_power_up_redemption.add", &"1", [&"broadcaster_user_id",&"reward_id"], [&"bits:read"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelcustom_power_up_redemptionadd", "channel_custom_power_up_redemption_add")
 
 ## Returns all supported subscriptions
 static var ALL: Dictionary[TwitchEventsubDefinition.Type, TwitchEventsubDefinition] = {
 	Type.AUTOMOD_MESSAGE_HOLD: AUTOMOD_MESSAGE_HOLD,
-	Type.AUTOMOD_MESSAGE_HOLD_V2: AUTOMOD_MESSAGE_HOLD_V2,
 	Type.AUTOMOD_MESSAGE_UPDATE: AUTOMOD_MESSAGE_UPDATE,
-	Type.AUTOMOD_MESSAGE_UPDATE_V2: AUTOMOD_MESSAGE_UPDATE_V2,
 	Type.AUTOMOD_SETTINGS_UPDATE: AUTOMOD_SETTINGS_UPDATE,
 	Type.AUTOMOD_TERMS_UPDATE: AUTOMOD_TERMS_UPDATE,
-	Type.CHANNEL_BITS_USE: CHANNEL_BITS_USE,
 	Type.CHANNEL_UPDATE: CHANNEL_UPDATE,
 	Type.CHANNEL_FOLLOW: CHANNEL_FOLLOW,
 	Type.CHANNEL_AD_BREAK_BEGIN: CHANNEL_AD_BREAK_BEGIN,
@@ -243,13 +240,11 @@ static var ALL: Dictionary[TwitchEventsubDefinition.Type, TwitchEventsubDefiniti
 	Type.CHANNEL_GUEST_STAR_GUEST_UPDATE: CHANNEL_GUEST_STAR_GUEST_UPDATE,
 	Type.CHANNEL_GUEST_STAR_SETTINGS_UPDATE: CHANNEL_GUEST_STAR_SETTINGS_UPDATE,
 	Type.CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD: CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD,
-	Type.CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2: CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2,
 	Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_ADD: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_ADD,
 	Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_UPDATE: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_UPDATE,
 	Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REMOVE: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REMOVE,
 	Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD,
 	Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_UPDATE: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_UPDATE,
-	Type.CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD: CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD,
 	Type.CHANNEL_POLL_BEGIN: CHANNEL_POLL_BEGIN,
 	Type.CHANNEL_POLL_PROGRESS: CHANNEL_POLL_PROGRESS,
 	Type.CHANNEL_POLL_END: CHANNEL_POLL_END,
@@ -289,17 +284,19 @@ static var ALL: Dictionary[TwitchEventsubDefinition.Type, TwitchEventsubDefiniti
 	Type.USER_AUTHORIZATION_REVOKE: USER_AUTHORIZATION_REVOKE,
 	Type.USER_UPDATE: USER_UPDATE,
 	Type.USER_WHISPER_MESSAGE: USER_WHISPER_MESSAGE,
+	Type.AUTOMOD_MESSAGE_HOLD_V2: AUTOMOD_MESSAGE_HOLD_V2,
+	Type.AUTOMOD_MESSAGE_UPDATE_V2: AUTOMOD_MESSAGE_UPDATE_V2,
+	Type.CHANNEL_BITS_USE: CHANNEL_BITS_USE,
+	Type.CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2: CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2,
+	Type.CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD: CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD,
 }
 
 ## Returns all supported subscriptions by name
 static var BY_NAME: Dictionary[StringName, TwitchEventsubDefinition] = {
 	AUTOMOD_MESSAGE_HOLD.value: AUTOMOD_MESSAGE_HOLD,
-	AUTOMOD_MESSAGE_HOLD_V2.value: AUTOMOD_MESSAGE_HOLD_V2,
 	AUTOMOD_MESSAGE_UPDATE.value: AUTOMOD_MESSAGE_UPDATE,
-	AUTOMOD_MESSAGE_UPDATE_V2.value: AUTOMOD_MESSAGE_UPDATE_V2,
 	AUTOMOD_SETTINGS_UPDATE.value: AUTOMOD_SETTINGS_UPDATE,
 	AUTOMOD_TERMS_UPDATE.value: AUTOMOD_TERMS_UPDATE,
-	CHANNEL_BITS_USE.value: CHANNEL_BITS_USE,
 	CHANNEL_UPDATE.value: CHANNEL_UPDATE,
 	CHANNEL_FOLLOW.value: CHANNEL_FOLLOW,
 	CHANNEL_AD_BREAK_BEGIN.value: CHANNEL_AD_BREAK_BEGIN,
@@ -330,13 +327,11 @@ static var BY_NAME: Dictionary[StringName, TwitchEventsubDefinition] = {
 	CHANNEL_GUEST_STAR_GUEST_UPDATE.value: CHANNEL_GUEST_STAR_GUEST_UPDATE,
 	CHANNEL_GUEST_STAR_SETTINGS_UPDATE.value: CHANNEL_GUEST_STAR_SETTINGS_UPDATE,
 	CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD.value: CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD,
-	CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2.value: CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_ADD.value: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_ADD,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_UPDATE.value: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_UPDATE,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REMOVE.value: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REMOVE,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD.value: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD,
 	CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_UPDATE.value: CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_UPDATE,
-	CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD.value: CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD,
 	CHANNEL_POLL_BEGIN.value: CHANNEL_POLL_BEGIN,
 	CHANNEL_POLL_PROGRESS.value: CHANNEL_POLL_PROGRESS,
 	CHANNEL_POLL_END.value: CHANNEL_POLL_END,
@@ -376,4 +371,9 @@ static var BY_NAME: Dictionary[StringName, TwitchEventsubDefinition] = {
 	USER_AUTHORIZATION_REVOKE.value: USER_AUTHORIZATION_REVOKE,
 	USER_UPDATE.value: USER_UPDATE,
 	USER_WHISPER_MESSAGE.value: USER_WHISPER_MESSAGE,
+	AUTOMOD_MESSAGE_HOLD_V2.value: AUTOMOD_MESSAGE_HOLD_V2,
+	AUTOMOD_MESSAGE_UPDATE_V2.value: AUTOMOD_MESSAGE_UPDATE_V2,
+	CHANNEL_BITS_USE.value: CHANNEL_BITS_USE,
+	CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2.value: CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2,
+	CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD.value: CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD,
 }
