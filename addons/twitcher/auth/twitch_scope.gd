@@ -98,8 +98,8 @@ static var USER_READ_SUBSCRIPTIONS = Definition.new(&"user:read:subscriptions", 
 static var USER_READ_WHISPERS = Definition.new(&"user:read:whispers", "Receive whispers sent to your user.")
 static var USER_MANAGE_WHISPERS = Definition.new(&"user:manage:whispers", "Receive whispers sent to your user, and send whispers on your user’s behalf.")
 static var USER_WRITE_CHAT = Definition.new(&"user:write:chat", "Send chat messages to a chatroom.")
-static var CHAT_READ = Definition.new(&"chat:edit", "Send chat messages to a chatroom using an IRC connection.", "IRC")
-static var CHAT_EDIT = Definition.new(&"chat:read", "View chat messages sent in a chatroom using an IRC connection.", "IRC")
+static var CHAT_READ = Definition.new(&"chat:read", "View chat messages sent in a chatroom using an IRC connection.", "IRC")
+static var CHAT_EDIT = Definition.new(&"chat:edit", "Send chat messages to a chatroom using an IRC connection.", "IRC")
 
 ## Key: Scope Name as String | Value: Definition
 static var SCOPE_MAP: Dictionary = {

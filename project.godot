@@ -37,8 +37,4 @@ project/assembly_name="Twitcher"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/twitcher/plugin.cfg")
-
-[twitcher]
-
-editor/show_setup_on_startup=false
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/twitcher/plugin.cfg")

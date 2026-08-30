@@ -1,0 +1,18 @@
+{
+	"dirs": [
+		"res://test/unit/",
+		"res://test/generator/"
+	],
+	"include_subdirs": true,
+	"prefix": "test_",
+	"suffix": ".gd",
+	"should_exit": true,
+	"should_exit_on_success": false,
+	"log_level": 1,
+	"compact_mode": true,
+	"hide_orphans": false,
+	"ignore_pause": true,
+	"double_strategy": "script_only",
+	"disable_colors": false,
+	"gut_on_top": true
+}
