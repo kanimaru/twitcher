@@ -64,6 +64,10 @@ class Event extends RefCounted:
 
 	func _init(notification_message: TwitchNotificationMessage) -> void:
 		message = notification_message
+	
+	
+	func get_condition() -> Dictionary:
+		return message.payload.subscription.condition
 
 
 ## Will be send as soon as the websocket connection is up and running you can use it to subscribe to events
@@ -81,6 +85,12 @@ signal events_revoked(type: StringName, status: String)
 
 ## Called when any eventsub message is received for low level access
 signal message_received(message: Variant)
+
+## Called when a subscription got established at Twitch.
+signal subscription_created(subscription: TwitchEventsubConfig)
+
+## Called when a subscription couldn't be established at Twitch. Reason contains a readable message.
+signal subscription_failed(subscription: TwitchEventsubConfig, reason: String)
 
 
 ## The api used to create the subscriptions (Can be empty will automatically look for first [TwitchAPI] in the
@@ -291,24 +301,32 @@ func _subscribe(subscription: TwitchEventsubConfig) -> String:
 	var eventsub_response = await api.create_eventsub_subscription(data)
 
 	if eventsub_response.response.response_code == 401:
-		_log.e("Subscription failed for '%s': Missing authentication for eventsub. The token got not authenticated yet. Please login!" % data.type)
+		var reason: String = "Missing authentication for eventsub. The token got not authenticated yet. Please login!"
+		_log.e("Subscription failed for '%s': %s" % [data.type, reason])
+		subscription_failed.emit(subscription, reason)
 		_client.close(3000, "Missing Authentication")
 		return ""
 	elif eventsub_response.response.response_code == 403:
-		_log.e("Subscription failed for '%s': The token is missing proper scopes. [url='%s']Please check documentation[/url]!" % [data.type, subscription.definition.documentation_link])
+		var reason: String = "The token is missing proper scopes. [url='%s']Please check documentation[/url]!" % subscription.definition.documentation_link
+		_log.e("Subscription failed for '%s': %s" % [data.type, reason])
 		_log.d(eventsub_response.response.response_data.get_string_from_utf8())
+		subscription_failed.emit(subscription, reason)
 		_client.close(3003, "Missing Authorization")
 		return ""
 	if eventsub_response.response.response_code < 200 || eventsub_response.response.response_code >= 300:
-		_log.e("Subscription failed for '%s'. Unknown error %s: %s" % [data.type, eventsub_response.response.response_code, eventsub_response.response.response_data.get_string_from_utf8()])
+		var reason: String = "Unknown error %s: %s" % [eventsub_response.response.response_code, eventsub_response.response.response_data.get_string_from_utf8()]
+		_log.e("Subscription failed for '%s'. %s" % [data.type, reason])
+		subscription_failed.emit(subscription, reason)
 		return ""
 	elif eventsub_response.response.response_data.is_empty():
+		subscription_failed.emit(subscription, "Twitch responded without any subscription data.")
 		return ""
 	_log.i("Now listening to '%s' events." % data.type)
 
 	var result = JSON.parse_string(eventsub_response.response.response_data.get_string_from_utf8())
 	var subscription_id = result.data[0].id
 	subscription.id = subscription_id
+	subscription_created.emit(subscription)
 	return subscription_id
 
 

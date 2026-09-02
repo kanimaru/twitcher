@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dkvmn2mlsi7up"]
 
-[ext_resource type="Script" uid="uid://c2s6pe7tvwbj" path="res://addons/twitcher/example/overlay_template/moveable_control.gd" id="1_n6m03"]
+[ext_resource type="Script" uid="uid://c2s6pe7tvwbj" path="res://addons/twitcher/overlay_template/moveable_control.gd" id="1_n6m03"]
 [ext_resource type="Script" uid="uid://dcq1bvfrqimqq" path="res://addons/twitcher/chat/twitch_chat.gd" id="2_cf51l"]
 [ext_resource type="PackedScene" uid="uid://cfe0kxk8dptag" path="res://addons/twitcher/example/chat_view.tscn" id="4_bh8og"]
-[ext_resource type="Script" uid="uid://dd6j2o3vaa5cn" path="res://addons/twitcher/example/overlay_template/chat_controller.gd" id="5_4gcxo"]
+[ext_resource type="Script" uid="uid://dd6j2o3vaa5cn" path="res://addons/twitcher/overlay_template/chat_controller.gd" id="5_4gcxo"]
 
 [node name="ChatController" type="PanelContainer" unique_id=775166331]
 anchors_preset = 6

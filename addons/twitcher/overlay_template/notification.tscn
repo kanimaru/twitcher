@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bqwgietymy1b2"]
 
-[ext_resource type="Script" uid="uid://deso118lm3wux" path="res://addons/twitcher/example/overlay_template/notification.gd" id="1_kkvsf"]
+[ext_resource type="Script" uid="uid://deso118lm3wux" path="res://addons/twitcher/overlay_template/notification.gd" id="1_kkvsf"]
 [ext_resource type="Texture2D" uid="uid://6nflfslr4a52" path="res://addons/twitcher/assets/no_profile.png" id="2_o42nw"]
 [ext_resource type="Script" uid="uid://bmluckfvgm1c2" path="res://addons/twitcher/chat/twitch_command.gd" id="3_o42nw"]
 

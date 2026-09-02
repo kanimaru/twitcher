@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://d0sdt48uvm1xq"]
 
 [ext_resource type="Theme" uid="uid://d145ou7bj00tv" path="res://addons/twitcher/assets/twitcher_theme.tres" id="1_5wvjt"]
-[ext_resource type="Script" uid="uid://pcxtxepgjdgg" path="res://addons/twitcher/example/game_template/device_code_request.gd" id="1_hivqr"]
+[ext_resource type="Script" uid="uid://pcxtxepgjdgg" path="res://addons/twitcher/game_template/device_code_request.gd" id="1_hivqr"]
 
 [sub_resource type="SystemFont" id="SystemFont_hivqr"]
 font_names = PackedStringArray("Monospace")
