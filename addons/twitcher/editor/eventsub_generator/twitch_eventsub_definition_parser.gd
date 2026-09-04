@@ -71,9 +71,12 @@ func parse_subscription_types() -> void:
 		# match a plain JSON regex. Strip tags first so the JSON reads as JSON again.
 		var plain_text: String = _tag_regex.sub(section, "", true)
 
+		# The header suffix carries the version for anything past v1 ("channel.moderate v2"); group 3 is
+		# the bare digit, so a future v3 gets a CHANNEL_MODERATE_V3 rather than another _V2.
 		var version_match: RegExMatch = _type_header_regex.search(text)
-		var is_v2: bool = version_match.get_start(2) != -1
-		var value: String = text.substr(0, version_match.get_start(2)).strip_edges() if is_v2 else text
+		var has_version_suffix: bool = version_match.get_start(2) != -1
+		var version_suffix: String = "V" + version_match.get_string(3) if has_version_suffix else ""
+		var value: String = text.substr(0, version_match.get_start(2)).strip_edges() if has_version_suffix else text
 
 		var version: String = "1"
 		var version_json_match: RegExMatch = _version_regex.search(plain_text)
@@ -90,7 +93,7 @@ func parse_subscription_types() -> void:
 		var conditions: Array[String] = _parse_conditions(section, plain_text, value)
 
 		var info: TwitchEventsubDefinitionInfo = TwitchEventsubDefinitionInfo.new()
-		info.enum_name = _to_enum_name(value) + ("V2" if is_v2 else "")
+		info.enum_name = _to_enum_name(value) + version_suffix
 		info.value = value
 		info.version = version
 		info.conditions = conditions
