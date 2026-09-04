@@ -122,6 +122,32 @@ func get_readable_name() -> String:
 	return "%s (v%s)" % [value, version]
 
 
+## The generated payload class for this definition's version. One script carries every version of an
+## event side by side - v1 as `Event`, later ones as `EventV<n>` or `V<n>Event` depending on how the
+## schema was named upstream - so the version is what has to pick between them. Falls back to `Event`
+## when no version specific class was generated, which is the best the script can offer.
+func get_event_class() -> Variant:
+	if version != &"1":
+		for candidate: String in ["EventV%s" % version, "V%sEvent" % version]:
+			if candidate in response_script: return response_script.get(candidate)
+	return response_script.get("Event")
+
+
+## Parse an event payload with the class that matches this definition's version.
+func parse_event(data: Dictionary) -> TwitchData:
+	return get_event_class().from_json(data)
+
+
+## Look up one exact type and version, e.g. ("channel.moderate", &"2"). Several subscriptions exist
+## at more than one version under the same name and BY_NAME can only hold one of them, so anything
+## resolving an incoming notification has to come through here. Falls back to the BY_NAME entry when
+## Twitch sends a version that hasn't been generated yet.
+static func get_definition(val: StringName, ver: StringName) -> TwitchEventsubDefinition:
+	# Key layout has to stay in sync with BY_NAME_AND_VERSION.
+	var definition: Variant = BY_NAME_AND_VERSION.get("%s@%s" % [val, ver])
+	return definition if definition != null else BY_NAME.get(val)
+
+
 static var AUTOMOD_MESSAGE_HOLD := TwitchEventsubDefinition.new(Type.AUTOMOD_MESSAGE_HOLD, &"automod.message.hold", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:manage:automod"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodmessagehold", TwitchESAutomodMessageHold)
 static var AUTOMOD_MESSAGE_UPDATE := TwitchEventsubDefinition.new(Type.AUTOMOD_MESSAGE_UPDATE, &"automod.message.update", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:manage:automod"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodmessageupdate", TwitchESAutomodMessageUpdate)
 static var AUTOMOD_SETTINGS_UPDATE := TwitchEventsubDefinition.new(Type.AUTOMOD_SETTINGS_UPDATE, &"automod.settings.update", &"1", [&"broadcaster_user_id",&"moderator_user_id"], [&"moderator:read:automod_settings"], "https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#automodsettingsupdate", TwitchESAutomodSettingsUpdate)
@@ -378,4 +404,91 @@ static var BY_NAME: Dictionary[StringName, TwitchEventsubDefinition] = {
 	CHANNEL_BITS_USE.value: CHANNEL_BITS_USE,
 	CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2.value: CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2,
 	CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD.value: CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD,
+}
+
+## Returns all supported subscriptions by name and version
+static var BY_NAME_AND_VERSION: Dictionary[StringName, TwitchEventsubDefinition] = {
+	&"automod.message.hold@1": AUTOMOD_MESSAGE_HOLD,
+	&"automod.message.update@1": AUTOMOD_MESSAGE_UPDATE,
+	&"automod.settings.update@1": AUTOMOD_SETTINGS_UPDATE,
+	&"automod.terms.update@1": AUTOMOD_TERMS_UPDATE,
+	&"channel.update@2": CHANNEL_UPDATE,
+	&"channel.follow@2": CHANNEL_FOLLOW,
+	&"channel.ad_break.begin@1": CHANNEL_AD_BREAK_BEGIN,
+	&"channel.chat.clear@1": CHANNEL_CHAT_CLEAR,
+	&"channel.chat.clear_user_messages@1": CHANNEL_CHAT_CLEAR_USER_MESSAGES,
+	&"channel.chat.message@1": CHANNEL_CHAT_MESSAGE,
+	&"channel.chat.message_delete@1": CHANNEL_CHAT_MESSAGE_DELETE,
+	&"channel.chat.notification@1": CHANNEL_CHAT_NOTIFICATION,
+	&"channel.chat_settings.update@1": CHANNEL_CHAT_SETTINGS_UPDATE,
+	&"channel.chat.user_message_hold@1": CHANNEL_CHAT_USER_MESSAGE_HOLD,
+	&"channel.chat.user_message_update@1": CHANNEL_CHAT_USER_MESSAGE_UPDATE,
+	&"channel.subscribe@1": CHANNEL_SUBSCRIBE,
+	&"channel.subscription.end@1": CHANNEL_SUBSCRIPTION_END,
+	&"channel.subscription.gift@1": CHANNEL_SUBSCRIPTION_GIFT,
+	&"channel.subscription.message@1": CHANNEL_SUBSCRIPTION_MESSAGE,
+	&"channel.cheer@1": CHANNEL_CHEER,
+	&"channel.raid@1": CHANNEL_RAID,
+	&"channel.ban@1": CHANNEL_BAN,
+	&"channel.unban@1": CHANNEL_UNBAN,
+	&"channel.unban_request.create@1": CHANNEL_UNBAN_REQUEST_CREATE,
+	&"channel.unban_request.resolve@1": CHANNEL_UNBAN_REQUEST_RESOLVE,
+	&"channel.moderate@1": CHANNEL_MODERATE,
+	&"channel.moderate@2": CHANNEL_MODERATE_V2,
+	&"channel.moderator.add@1": CHANNEL_MODERATOR_ADD,
+	&"channel.moderator.remove@1": CHANNEL_MODERATOR_REMOVE,
+	&"channel.guest_star_session.begin@beta": CHANNEL_GUEST_STAR_SESSION_BEGIN,
+	&"channel.guest_star_session.end@beta": CHANNEL_GUEST_STAR_SESSION_END,
+	&"channel.guest_star_guest.update@beta": CHANNEL_GUEST_STAR_GUEST_UPDATE,
+	&"channel.guest_star_settings.update@beta": CHANNEL_GUEST_STAR_SETTINGS_UPDATE,
+	&"channel.channel_points_automatic_reward_redemption.add@1": CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD,
+	&"channel.channel_points_custom_reward.add@1": CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_ADD,
+	&"channel.channel_points_custom_reward.update@1": CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_UPDATE,
+	&"channel.channel_points_custom_reward.remove@1": CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REMOVE,
+	&"channel.channel_points_custom_reward_redemption.add@1": CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD,
+	&"channel.channel_points_custom_reward_redemption.update@1": CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_UPDATE,
+	&"channel.poll.begin@1": CHANNEL_POLL_BEGIN,
+	&"channel.poll.progress@1": CHANNEL_POLL_PROGRESS,
+	&"channel.poll.end@1": CHANNEL_POLL_END,
+	&"channel.prediction.begin@1": CHANNEL_PREDICTION_BEGIN,
+	&"channel.prediction.progress@1": CHANNEL_PREDICTION_PROGRESS,
+	&"channel.prediction.lock@1": CHANNEL_PREDICTION_LOCK,
+	&"channel.prediction.end@1": CHANNEL_PREDICTION_END,
+	&"channel.suspicious_user.update@1": CHANNEL_SUSPICIOUS_USER_UPDATE,
+	&"channel.suspicious_user.message@1": CHANNEL_SUSPICIOUS_USER_MESSAGE,
+	&"channel.vip.add@1": CHANNEL_VIP_ADD,
+	&"channel.vip.remove@1": CHANNEL_VIP_REMOVE,
+	&"channel.warning.acknowledge@1": CHANNEL_WARNING_ACKNOWLEDGE,
+	&"channel.warning.send@1": CHANNEL_WARNING_SEND,
+	&"channel.hype_train.begin@2": CHANNEL_HYPE_TRAIN_BEGIN,
+	&"channel.hype_train.progress@2": CHANNEL_HYPE_TRAIN_PROGRESS,
+	&"channel.hype_train.end@2": CHANNEL_HYPE_TRAIN_END,
+	&"channel.charity_campaign.donate@1": CHANNEL_CHARITY_CAMPAIGN_DONATE,
+	&"channel.charity_campaign.start@1": CHANNEL_CHARITY_CAMPAIGN_START,
+	&"channel.charity_campaign.progress@1": CHANNEL_CHARITY_CAMPAIGN_PROGRESS,
+	&"channel.charity_campaign.stop@1": CHANNEL_CHARITY_CAMPAIGN_STOP,
+	&"channel.shared_chat.begin@1": CHANNEL_SHARED_CHAT_BEGIN,
+	&"channel.shared_chat.update@1": CHANNEL_SHARED_CHAT_UPDATE,
+	&"channel.shared_chat.end@1": CHANNEL_SHARED_CHAT_END,
+	&"channel.shield_mode.begin@1": CHANNEL_SHIELD_MODE_BEGIN,
+	&"channel.shield_mode.end@1": CHANNEL_SHIELD_MODE_END,
+	&"channel.shoutout.create@1": CHANNEL_SHOUTOUT_CREATE,
+	&"channel.shoutout.receive@1": CHANNEL_SHOUTOUT_RECEIVE,
+	&"conduit.shard.disabled@1": CONDUIT_SHARD_DISABLED,
+	&"drop.entitlement.grant@1": DROP_ENTITLEMENT_GRANT,
+	&"extension.bits_transaction.create@1": EXTENSION_BITS_TRANSACTION_CREATE,
+	&"channel.goal.begin@1": CHANNEL_GOAL_BEGIN,
+	&"channel.goal.progress@1": CHANNEL_GOAL_PROGRESS,
+	&"channel.goal.end@1": CHANNEL_GOAL_END,
+	&"stream.online@1": STREAM_ONLINE,
+	&"stream.offline@1": STREAM_OFFLINE,
+	&"user.authorization.grant@1": USER_AUTHORIZATION_GRANT,
+	&"user.authorization.revoke@1": USER_AUTHORIZATION_REVOKE,
+	&"user.update@1": USER_UPDATE,
+	&"user.whisper.message@1": USER_WHISPER_MESSAGE,
+	&"automod.message.hold@2": AUTOMOD_MESSAGE_HOLD_V2,
+	&"automod.message.update@2": AUTOMOD_MESSAGE_UPDATE_V2,
+	&"channel.bits.use@1": CHANNEL_BITS_USE,
+	&"channel.channel_points_automatic_reward_redemption.add@2": CHANNEL_CHANNEL_POINTS_AUTOMATIC_REWARD_REDEMPTION_ADD_V2,
+	&"channel.custom_power_up_redemption.add@1": CHANNEL_CUSTOM_POWER_UP_REDEMPTION_ADD,
 }

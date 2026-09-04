@@ -54,6 +54,9 @@ func generate(definitions: Array[TwitchEventsubDefinitionInfo]) -> void:
 	code += _dict_code("ALL", ordered, "Type.%s: %s", "## Returns all supported subscriptions")
 	code += "\n"
 	code += _dict_code("BY_NAME", ordered, "%s.value: %s", "## Returns all supported subscriptions by name")
+	code += "
+"
+	code += _by_name_and_version_code(ordered)
 
 	write_output_file(OUTPUT_PATH, code)
 	print("Eventsub definitions regenerated, you can find them under: %s" % OUTPUT_PATH)
@@ -173,6 +176,32 @@ func get_readable_name() -> String:
 	return "%s (v%s)" % [value, version]
 
 
+## The generated payload class for this definition's version. One script carries every version of an
+## event side by side - v1 as `Event`, later ones as `EventV<n>` or `V<n>Event` depending on how the
+## schema was named upstream - so the version is what has to pick between them. Falls back to `Event`
+## when no version specific class was generated, which is the best the script can offer.
+func get_event_class() -> Variant:
+	if version != &"1":
+		for candidate: String in ["EventV%s" % version, "V%sEvent" % version]:
+			if candidate in response_script: return response_script.get(candidate)
+	return response_script.get("Event")
+
+
+## Parse an event payload with the class that matches this definition's version.
+func parse_event(data: Dictionary) -> TwitchData:
+	return get_event_class().from_json(data)
+
+
+## Look up one exact type and version, e.g. ("channel.moderate", &"2"). Several subscriptions exist
+## at more than one version under the same name and BY_NAME can only hold one of them, so anything
+## resolving an incoming notification has to come through here. Falls back to the BY_NAME entry when
+## Twitch sends a version that hasn't been generated yet.
+static func get_definition(val: StringName, ver: StringName) -> TwitchEventsubDefinition:
+	# Key layout has to stay in sync with BY_NAME_AND_VERSION.
+	var definition: Variant = BY_NAME_AND_VERSION.get("%s@%s" % [val, ver])
+	return definition if definition != null else BY_NAME.get(val)
+
+
 """
 
 
@@ -205,6 +234,23 @@ func _dict_code(dict_name: String, definitions: Array[TwitchEventsubDefinitionIn
 		var name: String = _screaming_snake(info.enum_name)
 		code += "\t" + (entry_format % [name, name]) + ",\n"
 	code += "}\n"
+	return code
+
+
+## BY_NAME is keyed on the type string alone, so subscriptions that exist at several versions
+## (channel.moderate v1 and v2, automod.message.hold v1 and v2, ...) collapse onto one entry there.
+## This one keys on both, and is what get_definition() reads.
+func _by_name_and_version_code(definitions: Array[TwitchEventsubDefinitionInfo]) -> String:
+	var code: String = "## Returns all supported subscriptions by name and version
+"
+	code += "static var BY_NAME_AND_VERSION: Dictionary[StringName, TwitchEventsubDefinition] = {
+"
+	for info: TwitchEventsubDefinitionInfo in definitions:
+		# Key layout has to stay in sync with get_definition().
+		code += "	&\"%s@%s\": %s,
+" % [info.value, info.version, _screaming_snake(info.enum_name)]
+	code += "}
+"
 	return code
 
 

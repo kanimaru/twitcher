@@ -48,18 +48,17 @@ class Session extends RefCounted:
 
 ## A specific event received from eventsub
 class Event extends RefCounted:
+	# Resolved by type *and* version: channel.moderate, automod.message.hold and friends exist at
+	# more than one version under the same type string, and they carry different payloads.
 	var type: TwitchEventsubDefinition:
-		get(): return TwitchEventsubDefinition.BY_NAME[message.payload.subscription.type]
+		get(): return TwitchEventsubDefinition.get_definition(
+			message.payload.subscription.type, message.payload.subscription.version)
 	var data: Dictionary:
 		get(): return message.payload.event
 	var message: TwitchNotificationMessage
 
 	var typed_data: Variant:
-		get():
-			if "Event" in type.response_script:
-				return type.response_script.Event.from_json(data)
-			else:
-				return type.response_script.EventV2.from_json(data)
+		get(): return type.parse_event(data)
 
 
 	func _init(notification_message: TwitchNotificationMessage) -> void:
