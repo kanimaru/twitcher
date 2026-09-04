@@ -10,10 +10,20 @@ const suffixes: Array[String] = ["Condition", "Event", "EventV2"]
 
 @export var parser: TwitchAPIParser
 
+## Regenerates twitch_eventsub_definition.gd right after the payload classes below - same button,
+## no separate step needed.
+@export var definition_parser: TwitchEventsubDefinitionParser
+@export var definition_generator: TwitchEventsubDefinitionGenerator
+
 var grouped_files: Dictionary[String, Variant] = {}
 
 
 func generate_api() -> void:
+	# Must run before prepare_component() below: that mutates every component's _classname (prefixing
+	# it with "TwitchES"), which would break the condition-schema lookup by classname.
+	await definition_parser.parse_subscription_types()
+	definition_generator.generate(definition_parser.definitions)
+
 	# Get all classes in the API Folder to remove not needed anymore
 	var existing_classes: PackedStringArray = get_all_classes(api_output_path)
 
@@ -37,6 +47,19 @@ func generate_api() -> void:
 			DirAccess.remove_absolute(absolute_path)
 			DirAccess.remove_absolute(absolute_path + ".uid")
 			print("- got deleted ", cls)
+
+	_verify_definition_scripts()
+
+
+## twitch_eventsub_definition.gd references its payload classes by global class name, so a definition
+## whose script never got generated (a brand new subscription type with no schema in the swagger yet)
+## turns into a project-wide parse error. Has to run after the components above are written.
+func _verify_definition_scripts() -> void:
+	for info: TwitchEventsubDefinitionInfo in definition_parser.definitions:
+		var path: String = api_output_path + "twitch_es_%s.gd" % info.script_name
+		if not FileAccess.file_exists(path):
+			push_error("%s references %s, which doesn't exist. Add an OVERRIDES entry in %s or the project won't parse."
+				% [info.value, path, definition_generator.get_script().resource_path])
 
 
 func prepare_component(component: TwitchGenComponent) -> void:
