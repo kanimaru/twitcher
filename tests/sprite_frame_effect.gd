@@ -1,4 +1,4 @@
-﻿extends Control
+extends Control
 
 @export var sprite_frame: SpriteFrames
 
