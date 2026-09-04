@@ -55,6 +55,13 @@ func get_conditions() -> Dictionary:
 		if has_meta(condition_key + "_user"):
 			var user: TwitchUser = get_meta(condition_key + "_user")
 			result[condition_key] = user.id
-		else:
-			result[condition_key] = condition[condition_key]
+			continue
+		# Not every listed condition is required, and some are mutually exclusive (channel.raid takes
+		# either from_broadcaster_user_id or to_broadcaster_user_id, never both). Sending the unused
+		# key with an empty value makes Twitch reject the subscription, so leave blanks out.
+		var raw: Variant = condition.get(condition_key, null)
+		if raw == null: continue
+		var value: String = str(raw)
+		if value.is_empty(): continue
+		result[condition_key] = value
 	return result
