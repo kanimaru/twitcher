@@ -4,6 +4,12 @@ extends RefCounted
 var lsbbitpacker = preload("./lsbbitpacker.gd")
 var lsbbitunpacker = preload("./lsbbitunpacker.gd")
 
+## GIF89a caps LZW codes at 12 bits, so the code table never grows past 4096
+## entries. [method compress_lzw] already honours this by emitting a Clear Code
+## instead of adding entry 4096; the decompressor has to stop widening at the
+## same point or it desynchronises from the encoder.
+const MAX_CODE_SIZE: int = 12
+
 class CodeEntry:
 	var sequence: PackedByteArray
 	var raw_array: PackedByteArray
@@ -206,8 +212,17 @@ func decompress_lzw(code_stream_data: PackedByteArray, min_code_size: int, color
 			prevcode = code
 
 		# Detect when we should increase current code size and increase it.
+		#
+		# The clamp to MAX_CODE_SIZE is load bearing. The decoder trails the
+		# encoder by exactly one table entry, so it reaches counter == 4096 while
+		# reading the last code the encoder wrote before it gave up and emitted a
+		# Clear Code. get_bits_number_for(4096) is 13, so without the clamp the
+		# next read takes 13 bits out of a stream still written in 12 — every
+		# code after that is shifted, a Clear Code is mis-detected, and the reader
+		# eventually asks for a code past the end of its own table. That surfaces
+		# as a null CodeEntry a few lines up.
 		var new_code_size_candidate: int = get_bits_number_for(code_table.counter)
 		if new_code_size_candidate > current_code_size:
-			current_code_size = new_code_size_candidate
+			current_code_size = mini(new_code_size_candidate, MAX_CODE_SIZE)
 
 	return index_stream

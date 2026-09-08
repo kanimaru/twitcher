@@ -1,0 +1,13 @@
+[remap]
+
+importer="gif.animated.texture.plugin"
+type="SpriteFrames"
+uid="uid://b87setm3use05"
+valid=false
+
+[deps]
+
+source_file="res://test/fixtures/gif/lzw_full_code_table.gif"
+
+[params]
+
