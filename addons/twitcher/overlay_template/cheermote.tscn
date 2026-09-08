@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cftudp18otteu"]
 
-[ext_resource type="Script" uid="uid://bs11kd3horowg" path="res://addons/twitcher/example/overlay_template/cheermote.gd" id="1_nqt04"]
+[ext_resource type="Script" uid="uid://bs11kd3horowg" path="res://addons/twitcher/overlay_template/cheermote.gd" id="1_nqt04"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_nqt04"]
 bounce = 0.7

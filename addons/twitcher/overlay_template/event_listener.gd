@@ -1,10 +1,10 @@
 extends Node
 
 const NOTIFICATION = preload("uid://bqwgietymy1b2")
-const Notification = preload("uid://deso118lm3wux")
+const EventListenerNotification = preload("uid://deso118lm3wux")
 
 const CHEERMOTE = preload("uid://cftudp18otteu")
-const Cheermote = preload("uid://bs11kd3horowg")
+const EventListenerCheermote = preload("uid://bs11kd3horowg")
 
 @export var notification_duration_in_s: float = 5
 @export var notification_delay_in_between_in_s: float = 1
@@ -64,7 +64,7 @@ func _on_channel_chat_message_event(data: Variant) -> void:
 func show_cheermotes(cheermote: TwitchESChannelChatMessage.Cheermote) -> void:
 	var cheermote_definition: TwitchCheermoteDefinition = TwitchCheermoteDefinition.new(cheermote.prefix, str(cheermote.tier))
 	var cheer_result = await TwitchMediaLoader.instance.get_cheer_info(cheermote_definition)
-	var cheermote_obj: Cheermote = CHEERMOTE.instantiate()
+	var cheermote_obj: EventListenerCheermote = CHEERMOTE.instantiate()
 	cheermote_obj.sprite_frames = cheer_result.spriteframes
 	cheermote_obj.size = cheermote.bits / 4
 	cheermote_obj.global_position = Vector2(randf_range(300, 700), randf_range(300, 700))
@@ -73,7 +73,7 @@ func show_cheermotes(cheermote: TwitchESChannelChatMessage.Cheermote) -> void:
 
 
 func _show_notification(display_name: String, user_id: String, text: String) -> void:
-	var notification: Notification = NOTIFICATION.instantiate()
+	var notification: EventListenerNotification = NOTIFICATION.instantiate()
 	var user: TwitchUser = await TwitchService.instance.get_user_by_id(user_id)
 	var profile: ImageTexture = await TwitchMediaLoader.instance.load_profile_image(user)
 

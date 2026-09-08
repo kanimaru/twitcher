@@ -11,14 +11,14 @@ static var _open_tracked_redemptions: Dictionary[String, TwitchRedemption] = {}
 
 ## List of all rewards to listen for.
 @export var rewards_to_listen: Array[TwitchReward] = []
-## Eventsub to listen for the redemption's. (Can be empty will automatically look for first [TwitchEventsub] 
+## Eventsub to listen for the redemption's. (Can be empty will automatically look for first [TwitchEventsub]
 ## in the scene tree)
 @export var eventsub: TwitchEventsub
-## API to fullfill or deny redemptions. (Can be empty will automatically look for first [TwitchAPI]  in the 
+## API to fullfill or deny redemptions. (Can be empty will automatically look for first [TwitchAPI]  in the
 ## scene tree)
 @export var api: TwitchAPI
 
-## Should the node automatically subscribe to the needed eventsubs in the ready function. 
+## Should the node automatically subscribe to the needed eventsubs in the ready function.
 @export var ensure_subscriptions_on_ready: bool = true
 
 ## Called when one of the rewards that this node is listenting is getting redeemed
@@ -28,11 +28,11 @@ signal redeemed(redemption: TwitchRedemption)
 func _ready() -> void:
 	if eventsub == null: eventsub = TwitchEventsub.instance
 	if api == null: api = TwitchAPI.instance
-	
+
 	eventsub.event_received.connect(_on_event)
 	if ensure_subscriptions_on_ready: ensure_subscriptions()
-	
-	
+
+
 func ensure_subscriptions() -> void:
 	var add_subscriptions: Array[TwitchEventsubConfig] = eventsub.get_subscription_by_type(
 		TwitchEventsubDefinition.Type.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD)
@@ -49,8 +49,8 @@ func ensure_subscriptions() -> void:
 			"broadcaster_user_id": broadcaster.id
 		})
 		eventsub.subscribe(config)
-		
-	
+
+
 func _on_event(event: TwitchEventsub.Event) -> void:
 	if event.type == TwitchEventsubDefinition.CHANNEL_CHANNEL_POINTS_CUSTOM_REWARD_REDEMPTION_ADD:
 		var redemption_event: TwitchChannelPointsCustomRewardRedemptionAddEvent = TwitchChannelPointsCustomRewardRedemptionAddEvent.from_json(event.data)
@@ -70,7 +70,7 @@ func _add_redemption_event(redemption_event: TwitchChannelPointsCustomRewardRede
 	var reward_id: String = redemption_event.reward.id
 	var idx: int = rewards_to_listen.find_custom(_find_by_id.bind(reward_id))
 	if idx == -1: return
-	
+
 	var reward = rewards_to_listen[idx]
 	var opt = TwitchGetUsers.Opt.new()
 	var user_ids: Array[String] = [redemption_event.broadcaster_user_id, redemption_event.user_id]
@@ -89,7 +89,7 @@ func _add_redemption_event(redemption_event: TwitchChannelPointsCustomRewardRede
 	redemption.user_input = redemption_event.user_input
 	redemption._fullfill_callback = fulfill_redemption
 	redemption._cancel_callback = cancel_redemption
-	
+
 	_open_tracked_redemptions[redemption_event.id] = redemption
 	redeemed.emit(redemption)
 
@@ -97,7 +97,7 @@ func _add_redemption_event(redemption_event: TwitchChannelPointsCustomRewardRede
 func _update_redemption_event(update_event: TwitchChannelPointsCustomRewardRedemptionUpdateEvent) -> void:
 	var redemption: TwitchRedemption = _open_tracked_redemptions[update_event.id]
 	if redemption.status != TwitchRedemption.Status.UNFULFILLED: return
-		
+
 	match update_event.status:
 		TwitchRedemption.Status.FULFILLED:
 			redemption.notify_fullfilled()

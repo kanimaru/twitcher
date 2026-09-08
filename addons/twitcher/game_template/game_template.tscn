@@ -2,9 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://djt5lvmwxbq4a" path="res://addons/twitcher/twitch_service.tscn" id="1_muumb"]
 [ext_resource type="Resource" uid="uid://3dm6ts8hwlys" path="res://addons/twitcher/auth/preset_game_scopes.tres" id="2_56l04"]
-[ext_resource type="Resource" uid="uid://c5jqrbtqy5tkr" path="res://addons/twitcher/example/game_template/game_template_oauth_settings.tres" id="2_aht6s"]
-[ext_resource type="Resource" uid="uid://ddrqchmiend4e" path="res://addons/twitcher/example/game_template/game_template_oauth_token.tres" id="3_aht6s"]
-[ext_resource type="Script" uid="uid://fmtyexdlsy0x" path="res://addons/twitcher/example/game_template/twitcher_devicecode.gd" id="4_n7r82"]
+[ext_resource type="Resource" uid="uid://c5jqrbtqy5tkr" path="res://addons/twitcher/game_template/game_template_oauth_settings.tres" id="2_aht6s"]
+[ext_resource type="Resource" uid="uid://ddrqchmiend4e" path="res://addons/twitcher/game_template/game_template_oauth_token.tres" id="3_aht6s"]
+[ext_resource type="Script" uid="uid://fmtyexdlsy0x" path="res://addons/twitcher/game_template/twitcher_devicecode.gd" id="4_n7r82"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_lhtpo"]
 font_size = 40
