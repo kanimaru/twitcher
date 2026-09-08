@@ -1,6 +1,6 @@
 @icon("res://addons/twitcher/assets/chat-bot-icon.svg")
 @tool
-extends Node
+extends Twitcher
 
 ## Helper to send messages with a second bot user and the corrosponding bot badge.
 ## Take care that setup is needed that it actually works! The right scopes for the target channel
