@@ -1,6 +1,6 @@
-extends Node
+extends Twitcher
 
-## Experimental: Node is not stable yet. For suggestions and feedback please use discord. 
+## Experimental: Node is not stable yet. For suggestions and feedback please use discord.
 class_name TwitchAutoMessage
 
 static var all_rotational_messages: Array[TwitchAutoMessage] = []
@@ -27,7 +27,7 @@ var last_send: int
 
 func _enter_tree() -> void:
 	all_rotational_messages.append(self)
-	
+
 
 func _exit_tree() -> void:
 	all_rotational_messages.erase(self)
@@ -35,14 +35,14 @@ func _exit_tree() -> void:
 
 func send() -> void:
 	var color: TwitchAnnouncementColor = TwitchAnnouncementColor.all_colors[announcement_color]
-	
-	if use_bot: 
+
+	if use_bot:
 		if announcement:
 			TwitchBot.announcement(message, color, source_only, broadcaster)
 		else:
 			TwitchBot.chat(message, "", source_only, broadcaster)
 		return
-	
+
 	if not broadcaster: broadcaster = await TwitchService.get_current_user_via_api(TwitchAPI.instance)
 	if not sender: sender = broadcaster
 	if announcement:

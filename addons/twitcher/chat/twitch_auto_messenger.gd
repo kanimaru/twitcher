@@ -1,4 +1,4 @@
-extends Node
+extends Twitcher
 
 ## Experimental: Node is not stable yet. For suggestions and feedback please use discord.
 ## Used to send the twitch_auto_messages
@@ -7,7 +7,7 @@ class_name TwitchAutoMessenger
 ## The minimal delay between the messages
 @export var delay_in_s: float = 300:
 	set = _update_delay_in_s
-	
+
 ## The minimal amount of messages before a new message got triggered
 @export var min_messages: int = -1
 
@@ -41,8 +41,8 @@ func _on_event(event: TwitchEventsub.Event) -> void:
 		if message.broadcaster_user_id == broadcaster_to_listen.id:
 			_current_message_sent += 1
 			_check_to_send()
-			
-			
+
+
 func _on_timer_timeout() -> void:
 	_timer_ready = true
 	_check_to_send()
@@ -61,7 +61,7 @@ func _fill_bag() -> void:
 
 func _send_message() -> void:
 	if _bag.is_empty(): _fill_bag()
-	
+
 	_bag.shuffle()
 	var message: TwitchAutoMessage = _bag.pop_back()
 	message.send()
