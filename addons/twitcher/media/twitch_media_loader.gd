@@ -23,6 +23,13 @@ const FALLBACK_PROFILE = preload("res://addons/twitcher/assets/no_profile.png")
 @export var fallback_texture: Texture2D = FALLBACK_TEXTURE
 @export var fallback_profile: Texture2D = FALLBACK_PROFILE
 @export var image_cdn_host: String = "https://static-cdn.jtvnw.net"
+## How many images (emotes, badges, cheermotes, profiles) are downloaded at the same time.
+## Unlike API calls, image downloads are many small independent files and get noticeably
+## slow when they are fetched one after another. See [member BufferedHTTPClient.max_parallel_requests].
+@export var max_parallel_downloads: int = 8:
+	set(val):
+		max_parallel_downloads = val
+		if _client != null: _client.max_parallel_requests = val
 ## Will preload the whole badge and emote cache also to editor time (use it when you make a Editor Plugin with Twitch Support)
 @export var load_cache_in_editor: bool
 
@@ -51,6 +58,7 @@ var _client: BufferedHTTPClient
 func _ready() -> void:
 	_client = BufferedHTTPClient.new()
 	_client.name = "TwitchMediaLoaderClient"
+	_client.max_parallel_requests = max_parallel_downloads
 	add_child(_client)
 	_load_cache()
 	if api == null: api = TwitchAPI.instance
