@@ -1,0 +1,10 @@
+{
+	"time_unix_ms": "int",
+	"ticks_msec": "int",
+	"severity_number": "int",
+	"severity_text": "String",
+	"body": "String",
+	"scope": "String",
+	"attributes": "Dictionary",
+	"thread_id": "int"
+}

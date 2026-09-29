@@ -1,11 +1,19 @@
-## Unit tests for [TwitchLogger].
 extends TwitcherTest
+## Unit tests for [TwitchLogger].
 
 const SOURCE_ROOT: String = "res://addons/twitcher/"
 
 ## Matches [code]var _log: TwitchLogger[/code] style declarations and captures the
 ## variable name, so call sites can be checked per file.
 const DECLARATION_PATTERN: String = "var\\s+(\\w+)\\s*:\\s*TwitchLogger\\b"
+
+var _capture: LogCapture
+
+
+func before_each() -> void:
+	super()
+	TwitchLoggerManager.clear_handlers()
+	_capture = LogCapture.new()
 
 
 func test_warn_level_exists() -> void:
@@ -17,6 +25,111 @@ func test_warn_level_can_be_called_while_enabled() -> void:
 	var logger: TwitchLogger = TwitchLogger.new("GutWarnProbe", true)
 	logger.w("probe")
 	pass_test("calling w() on an enabled logger must not raise")
+
+
+func test_each_level_emits_its_severity() -> void:
+	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.TRACE)
+	var logger: TwitchLogger = TwitchLogger.new("GutLevelProbe")
+
+	logger.d("debug")
+	logger.i("info")
+	logger.w("warn")
+	logger.e("error")
+
+	var severities: Array[int] = []
+	for record: Dictionary in _capture.records:
+		severities.append(record[TwitchLogRecord.SEVERITY_NUMBER])
+	assert_eq(severities, [
+		TwitchLogLevel.Severity.DEBUG,
+		TwitchLogLevel.Severity.INFO,
+		TwitchLogLevel.Severity.WARN,
+		TwitchLogLevel.Severity.ERROR,
+	] as Array[int])
+	assert_eq(_capture.bodies(), PackedStringArray(["debug", "info", "warn", "error"]))
+
+
+func test_records_carry_the_context_as_scope() -> void:
+	TwitchLoggerManager.add_handler(_capture.handle)
+	TwitchLogger.new("GutScopeProbe").i("hello")
+	assert_eq(_capture.last()[TwitchLogRecord.SCOPE], "GutScopeProbe")
+
+
+func test_attributes_reach_the_handler() -> void:
+	TwitchLoggerManager.add_handler(_capture.handle)
+	TwitchLogger.new("GutAttributeProbe").i("refreshed", { "expires_in": 3600 })
+	assert_eq(_capture.last()[TwitchLogRecord.ATTRIBUTES], { "expires_in": 3600 })
+
+
+func test_suffix_becomes_the_instance_attribute() -> void:
+	TwitchLoggerManager.add_handler(_capture.handle)
+	var logger: TwitchLogger = TwitchLogger.new("GutSuffixProbe")
+	logger.set_suffix("main")
+	var attributes: Dictionary = { "key": "value" }
+
+	logger.i("joined", attributes)
+
+	assert_eq(logger.suffix, "-main", "the console suffix keeps its legacy form")
+	assert_eq(_capture.last()[TwitchLogRecord.ATTRIBUTES], { "key": "value", "instance": "main" })
+	assert_false(attributes.has("instance"), "the caller's dictionary must stay untouched")
+
+
+## The reason handlers exist (#123): a handler like a log file must receive
+## messages even when the console output for the context is off.
+func test_handler_receives_records_while_the_console_is_off() -> void:
+	TwitchLoggerManager.install_console_handler()
+	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.INFO)
+	var logger: TwitchLogger = TwitchLogger.new("GutConsoleOffProbe")
+	logger.set_enabled(false)
+
+	logger.i("still recorded")
+
+	assert_eq(_capture.bodies(), PackedStringArray(["still recorded"]))
+
+
+func test_messages_below_every_threshold_create_no_record() -> void:
+	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.INFO)
+	TwitchLogger.new("GutFilteredProbe").d("dropped")
+	assert_eq(_capture.records.size(), 0)
+
+
+func test_wants_reflects_the_handlers() -> void:
+	var logger: TwitchLogger = TwitchLogger.new("GutWantsProbe")
+	assert_false(logger.wants(TwitchLogLevel.Severity.FATAL), "no handlers, nothing wanted")
+
+	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.WARN)
+
+	assert_true(logger.wants(TwitchLogLevel.Severity.WARN))
+	assert_false(logger.wants(TwitchLogLevel.Severity.INFO))
+
+
+func test_console_prints_only_when_the_logger_is_enabled() -> void:
+	var lines: Array[String] = []
+	var console: TwitchConsoleLogHandler = TwitchLoggerManager.get_console_handler()
+	var original_printer: Callable = console.printer
+	console.printer = func(line: String) -> void:
+		lines.append(line)
+	TwitchLoggerManager.install_console_handler()
+	var logger: TwitchLogger = TwitchLogger.new("GutConsoleProbe")
+
+	logger.set_enabled(false)
+	logger.i("hidden")
+	logger.set_enabled(true)
+	logger.i("shown")
+	logger.d("hidden debug")
+	console.printer = original_printer
+
+	assert_eq(lines.size(), 1)
+	assert_string_contains(lines[0], "[GutConsoleProbe] shown")
+
+
+func test_logger_methods_work_as_set_logger_callables() -> void:
+	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.TRACE)
+	var logger: TwitchLogger = TwitchLogger.new("GutCallableProbe")
+	var error: Callable = logger.e
+
+	error.call("via callable")
+
+	assert_eq(_capture.bodies(), PackedStringArray(["via callable"]))
 
 
 ## Guards against call sites using a logger member that doesn't exist, like the

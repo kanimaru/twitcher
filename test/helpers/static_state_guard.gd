@@ -44,6 +44,7 @@ const _SLOTS: Array[Dictionary] = [
 	{path = "res://addons/twitcher/reward/twitch_redeem_listener.gd", prop = "_open_tracked_redemptions", deep = true},
 	{path = "res://addons/twitcher/lib/http/http_server.gd", prop = "_servers", deep = true},
 	{path = "res://addons/twitcher/logger/twitch_logger_manager.gd", prop = "log_registry", deep = true},
+	{path = "res://addons/twitcher/logger/twitch_logger_manager.gd", prop = "_handlers", deep = true},
 
 	# --- logger callables, installed by the set_logger cascade ---
 	# TwitchAuth._init() alone rewrites the first three of these.
