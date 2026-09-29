@@ -101,7 +101,9 @@ func send_message(message: String, reply_parent_message_id: String = "") -> Arra
 	if _log.enabled:
 		for message_data: TwitchSendChatMessage.ResponseData in response.data:
 			if not message_data.is_sent:
-				_log.w(message_data.drop_reason)
+				_log.w("Message couldn't be sent cause of [%s]: %s" % [
+					message_data.drop_reason.code, message_data.drop_reason.message,
+				])
 
 	return response.data
 

@@ -38,6 +38,14 @@ func i(text: String):
 	#else: print(context_name, " is not enabled")
 
 
+## Logs a message on warn level.
+func w(text: String) -> void:
+	if is_enabled():
+		print_rich("%s [color=yellow]W[/color][color=%s][%s%s] %s[/color]" % [
+			Time.get_ticks_msec(), color, context_name, suffix, text,
+		])
+
+
 ## log a message on error level
 func e(text: String):
 	if is_enabled(): print_rich("%s E[b][color=%s][%s%s] %s[/color][/b]" % [Time.get_ticks_msec(), color, context_name, suffix, text])
