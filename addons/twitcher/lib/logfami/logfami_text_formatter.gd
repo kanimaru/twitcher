@@ -6,7 +6,9 @@ extends LogfamiFormatter
 ## # session.start 2025-09-29T09:59:59.000Z service.name=MyGame
 ## 2025-09-29T10:00:00.123Z INFO  [Shop#eu] Item bought {id=42}
 ## [/codeblock]
-## Control characters are escaped, so every record stays on one line.
+## Control characters are escaped, so every record stays on one line. Values
+## in [code]key=value[/code] pairs are quoted when they contain spaces, like in
+## logfmt, so the line stays unambiguous.
 
 const HEADER_PREFIX: String = "# session.start"
 
@@ -55,5 +57,5 @@ func _pairs(values: Dictionary) -> PackedStringArray:
 	keys.sort()
 	var pairs: PackedStringArray = []
 	for key: Variant in keys:
-		pairs.append("%s=%s" % [key, values[key]])
+		pairs.append("%s=%s" % [key, LogfamiEscaper.quote_if_needed(str(values[key]))])
 	return pairs

@@ -1,6 +1,6 @@
 # session.start 2025-09-29T09:59:59.000Z godot.version=4.7.stable os.type=linux process.pid=1234 runtime=game service.name=Golden service.version=1.2.0
 2025-09-29T10:00:00.123Z INFO  [Auth#main] Token got authorized {expires_in=3600}
 2025-09-29T10:00:01.000Z WARN  [Chat] Fake line\n2025-09-29T10:00:00.000Z ERROR [Auth] forged
-2025-09-29T10:00:02.005Z ERROR [IRC] Connection lost {code=4000, reason=say "bye" = gone}
-2025-09-29T10:00:03.050Z DEBUG [Shop] Unicode ✓ 日本語 Kappa {nested={ "b": 2, "a": 1 }}
+2025-09-29T10:00:02.005Z ERROR [IRC] Connection lost {code=4000, reason="say \"bye\" = gone"}
+2025-09-29T10:00:03.050Z DEBUG [Shop] Unicode ✓ 日本語 Kappa {nested="{ \"b\": 2, \"a\": 1 }"}
 2025-09-29T10:00:04.000Z FATAL
