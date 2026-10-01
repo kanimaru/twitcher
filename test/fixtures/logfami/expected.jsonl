@@ -1,0 +1,6 @@
+{"timestamp":"2025-09-29T09:59:59.000Z","severity_text":"INFO","severity_number":9,"scope":"logfami","body":"session.start","attributes":{},"resource":{"godot.version":"4.7.stable","os.type":"linux","process.pid":1234,"runtime":"game","service.name":"Golden","service.version":"1.2.0"}}
+{"timestamp":"2025-09-29T10:00:00.123Z","severity_text":"INFO","severity_number":9,"scope":"Auth","body":"Token got authorized","attributes":{"expires_in":3600,"instance":"main"}}
+{"timestamp":"2025-09-29T10:00:01.000Z","severity_text":"WARN","severity_number":13,"scope":"Chat","body":"Fake line\n2025-09-29T10:00:00.000Z ERROR [Auth] forged","attributes":{}}
+{"timestamp":"2025-09-29T10:00:02.005Z","severity_text":"ERROR","severity_number":17,"scope":"IRC","body":"Connection lost","attributes":{"code":4000,"reason":"say \"bye\" = gone"}}
+{"timestamp":"2025-09-29T10:00:03.050Z","severity_text":"DEBUG","severity_number":5,"scope":"Shop","body":"Unicode ✓ 日本語 Kappa","attributes":{"nested":{"a":1,"b":2}}}
+{"timestamp":"2025-09-29T10:00:04.000Z","severity_text":"FATAL","severity_number":21,"scope":"","body":"","attributes":{}}
