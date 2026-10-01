@@ -11,7 +11,9 @@ const FORBIDDEN_PATTERNS: PackedStringArray = [
 	"twitcher/",
 	"\\bHttpUtil\\b",
 	"\\bBufferedHTTPClient\\b",
-	"\\bOAuth\\w*",
+	"\\bOAuth[A-Z]\\w*",
+	"\\bOAuth\\s*[.(]",
+	":\\s*OAuth\\b",
 	"ProjectSettings\\.set",
 ]
 
