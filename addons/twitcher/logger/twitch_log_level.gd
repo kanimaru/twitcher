@@ -35,6 +35,7 @@ const _THRESHOLD_BY_TEXT: Dictionary[String, int] = {
 	"debug": Severity.DEBUG,
 	"info": Severity.INFO,
 	"warn": Severity.WARN,
+	"warning": Severity.WARN,
 	"error": Severity.ERROR,
 	"fatal": Severity.FATAL,
 }

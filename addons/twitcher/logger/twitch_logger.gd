@@ -5,9 +5,9 @@ extends RefCounted
 ##
 ## Every message becomes a record (see [TwitchLogRecord]) that
 ## [TwitchLoggerManager] hands to the registered handlers. The console is one of
-## those handlers; which contexts it prints is configured per logger under
-## [code]twitcher/logs/<Context>[/code]. Other handlers, like a log file, filter
-## on their own, so a message can reach them while the console is off.
+## those handlers; whether it prints this logger's messages is configured under
+## [code]twitcher/logs/<Context>[/code]. Other handlers, like the log file,
+## filter on their own, so a message can reach them while the console is off.
 ## [codeblock]
 ## static var _log: TwitchLogger = TwitchLogger.new("MyNode")
 ##
@@ -27,14 +27,12 @@ var instance: String
 var enabled: bool
 ## Whether the console also prints debug messages of this logger.
 var debug: bool
-var color: String
 
 
 func _init(ctx_name: String, active: bool = false, should_debug: bool = false) -> void:
 	context_name = ctx_name
 	enabled = active
 	debug = should_debug
-	color = string_to_hex_color(ctx_name)
 	TwitchLoggerManager.register(self)
 
 
@@ -54,7 +52,7 @@ func set_suffix(s: String) -> void:
 ## True when any handler wants [param level] messages of this logger. Use it to
 ## skip building expensive messages nobody receives.
 func wants(level: int) -> bool:
-	return TwitchLoggerManager.wants(context_name, level)
+	return TwitchLoggerManager.wants(context_name, level, self)
 
 
 ## Logs a message on info level.
@@ -77,12 +75,8 @@ func d(text: String, attributes: Dictionary = {}) -> void:
 	_emit(TwitchLogLevel.Severity.DEBUG, text, attributes)
 
 
-func string_to_hex_color(text: String) -> String:
-	return TwitchConsoleLogHandler.color_for(text)
-
-
 func _emit(level: int, text: String, attributes: Dictionary) -> void:
-	if not TwitchLoggerManager.wants(context_name, level):
+	if not TwitchLoggerManager.wants(context_name, level, self):
 		return
 	var record_attributes: Dictionary = attributes
 	if instance != "":
@@ -90,4 +84,4 @@ func _emit(level: int, text: String, attributes: Dictionary) -> void:
 		record_attributes[TwitchLogRecord.ATTRIBUTE_INSTANCE] = instance
 	var record: Dictionary = TwitchLogRecord.create(
 			level, context_name, text, record_attributes)
-	TwitchLoggerManager.dispatch(record)
+	TwitchLoggerManager.dispatch(record, self)

@@ -20,10 +20,20 @@ class ReentrantHandler:
 class ScopeFilter:
 	extends RefCounted
 
-	func resolve(scope: String) -> int:
+	func resolve(scope: String, _logger: TwitchLogger) -> int:
 		if scope == "Wanted":
 			return TwitchLogLevel.Severity.DEBUG
 		return TwitchLogLevel.OFF
+
+
+class BoundTarget:
+	extends RefCounted
+
+	var seen: Array[String] = []
+
+
+	func handle(record: Dictionary, prefix: String) -> void:
+		seen.append(prefix + record[TwitchLogRecord.BODY])
 
 
 var _capture: LogCapture
@@ -33,12 +43,6 @@ func before_each() -> void:
 	super()
 	TwitchLoggerManager.clear_handlers()
 	_capture = LogCapture.new()
-
-
-func test_console_handler_is_installed_by_default() -> void:
-	_guard.restore()
-	var console: TwitchConsoleLogHandler = TwitchLoggerManager.get_console_handler()
-	assert_true(TwitchLoggerManager.has_handler(console.handle))
 
 
 func test_dispatch_hands_the_record_to_the_handler() -> void:
@@ -97,6 +101,7 @@ func test_adding_a_handler_twice_replaces_its_level() -> void:
 
 	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.DEBUG, "Scope", "once"))
 
+	assert_eq(TwitchLoggerManager.handler_count(), 1)
 	assert_eq(_capture.records.size(), 1, "the handler must be registered only once")
 
 
@@ -118,6 +123,7 @@ func test_remove_handler_keeps_the_others() -> void:
 	TwitchLoggerManager.remove_handler(_capture.handle)
 
 	assert_true(TwitchLoggerManager.has_handler(other.handle))
+	assert_eq(TwitchLoggerManager.handler_count(), 1)
 
 
 func test_clear_handlers_removes_the_console_too() -> void:
@@ -126,6 +132,7 @@ func test_clear_handlers_removes_the_console_too() -> void:
 
 	var console: TwitchConsoleLogHandler = TwitchLoggerManager.get_console_handler()
 	assert_false(TwitchLoggerManager.has_handler(console.handle))
+	assert_eq(TwitchLoggerManager.handler_count(), 0)
 
 
 func test_install_console_handler_is_idempotent() -> void:
@@ -133,11 +140,8 @@ func test_install_console_handler_is_idempotent() -> void:
 	TwitchLoggerManager.install_console_handler()
 
 	var console: TwitchConsoleLogHandler = TwitchLoggerManager.get_console_handler()
-	var count: int = 0
-	for entry: TwitchLogHandlerEntry in TwitchLoggerManager._handlers:
-		if entry.handler == console.handle:
-			count += 1
-	assert_eq(count, 1)
+	assert_true(TwitchLoggerManager.has_handler(console.handle))
+	assert_eq(TwitchLoggerManager.handler_count(), 1)
 
 
 func test_records_logged_while_handling_are_dropped() -> void:
@@ -169,7 +173,7 @@ func test_handlers_of_freed_objects_are_removed() -> void:
 
 	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.INFO, "Scope", "still works"))
 
-	assert_eq(TwitchLoggerManager._handlers.size(), 1, "the stale entry must be pruned")
+	assert_eq(TwitchLoggerManager.handler_count(), 1, "the stale entry must be pruned")
 	assert_eq(_capture.bodies(), PackedStringArray(["still works"]))
 
 
@@ -196,16 +200,6 @@ func test_register_enables_the_logger_from_its_setting() -> void:
 	ProjectSettings.clear("twitcher/logs/GutRegisterProbe")
 
 
-func _dispatch_many(index: int) -> void:
-	for count: int in 50:
-		TwitchLoggerManager.dispatch(
-				_record(TwitchLogLevel.Severity.INFO, "Thread%d" % index, str(count)))
-
-
-func _record(level: int, scope: String, body: String) -> Dictionary:
-	return TwitchLogRecord.create(level, scope, body)
-
-
 ## Godot frees a lambda with its script before static variables at shutdown; a
 ## lambda still registered then crashes the game on quit.
 func test_lambda_handlers_are_removed_on_shutdown() -> void:
@@ -214,18 +208,30 @@ func test_lambda_handlers_are_removed_on_shutdown() -> void:
 	TwitchLoggerManager.add_handler(lambda)
 	TwitchLoggerManager.add_handler(_capture.handle)
 
-	TwitchLoggerManager._remove_lambda_handlers()
+	TwitchLoggerManager.remove_lambda_handlers()
 
 	assert_false(TwitchLoggerManager.has_handler(lambda), "lambdas must go before shutdown")
 	assert_true(TwitchLoggerManager.has_handler(_capture.handle), "methods are safe and stay")
 
 
+func test_bound_methods_survive_the_shutdown_sweep() -> void:
+	var target: BoundTarget = BoundTarget.new()
+	var bound: Callable = target.handle.bind("seen: ")
+	TwitchLoggerManager.add_handler(bound)
+
+	TwitchLoggerManager.remove_lambda_handlers()
+	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.INFO, "Scope", "hello"))
+
+	assert_true(TwitchLoggerManager.has_handler(bound), "bound methods aren't lambdas")
+	assert_eq(target.seen, ["seen: hello"] as Array[String])
+
+
 func test_scoped_handlers_with_lambda_resolvers_are_removed_on_shutdown() -> void:
-	var resolver: Callable = func(_scope: String) -> int:
+	var resolver: Callable = func(_scope: String, _logger: TwitchLogger) -> int:
 		return TwitchLogLevel.Severity.INFO
 	TwitchLoggerManager.add_scoped_handler(_capture.handle, resolver)
 
-	TwitchLoggerManager._remove_lambda_handlers()
+	TwitchLoggerManager.remove_lambda_handlers()
 
 	assert_false(TwitchLoggerManager.has_handler(_capture.handle))
 
@@ -235,5 +241,15 @@ func test_adding_a_lambda_watches_the_tree_shutdown() -> void:
 		pass
 	TwitchLoggerManager.add_handler(lambda)
 
-	var remove_lambdas: Callable = Callable(TwitchLoggerManager, &"_remove_lambda_handlers")
+	var remove_lambdas: Callable = Callable(TwitchLoggerManager, &"remove_lambda_handlers")
 	assert_true(get_tree().root.tree_exiting.is_connected(remove_lambdas))
+
+
+func _dispatch_many(index: int) -> void:
+	for count: int in 50:
+		TwitchLoggerManager.dispatch(
+				_record(TwitchLogLevel.Severity.INFO, "Thread%d" % index, str(count)))
+
+
+func _record(level: int, scope: String, body: String) -> Dictionary:
+	return TwitchLogRecord.create(level, scope, body)

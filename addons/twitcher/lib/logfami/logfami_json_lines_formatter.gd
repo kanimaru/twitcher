@@ -22,7 +22,7 @@ func format(record: LogfamiRecord, resource: LogfamiResource) -> String:
 			record.time_unix_ms, record.severity_text, record.severity_number,
 			record.scope, record.body, record.attributes)
 	if include_resource:
-		data["resource"] = _sorted(resource.attributes)
+		data["resource"] = LogfamiValue.sorted(resource.attributes)
 	return JSON.stringify(data, "", false)
 
 
@@ -30,7 +30,7 @@ func header(resource: LogfamiResource, started_unix_ms: int) -> PackedStringArra
 	var data: Dictionary = _base(
 			started_unix_ms, LogfamiLevel.to_text(LogfamiLevel.Severity.INFO),
 			LogfamiLevel.Severity.INFO, HEADER_SCOPE, HEADER_BODY, {})
-	data["resource"] = _sorted(resource.attributes)
+	data["resource"] = LogfamiValue.sorted(resource.attributes)
 	return PackedStringArray([JSON.stringify(data, "", false)])
 
 
@@ -46,18 +46,5 @@ func _base(unix_ms: int, severity_text: String, severity_number: int, scope: Str
 		"severity_number": severity_number,
 		"scope": scope,
 		"body": body,
-		"attributes": _sorted(attributes),
+		"attributes": LogfamiValue.sorted(attributes),
 	}
-
-
-## Copy with keys in sorted order, recursively, so output is deterministic.
-func _sorted(values: Dictionary) -> Dictionary:
-	var keys: Array = values.keys()
-	keys.sort()
-	var sorted: Dictionary = {}
-	for key: Variant in keys:
-		var value: Variant = values[key]
-		if value is Dictionary:
-			value = _sorted(value)
-		sorted[key] = value
-	return sorted

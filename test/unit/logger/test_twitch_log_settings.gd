@@ -35,15 +35,17 @@ func test_defaults() -> void:
 
 	assert_eq(settings.file_level, TwitchLogLevel.Severity.INFO, "file logging is on by default")
 	assert_eq(settings.file_format, TwitchLogSettings.FORMAT_TEXT)
-	assert_eq(settings.file_directory, "user://logs")
+	assert_eq(settings.file_directory, TwitchLogSettings.DEFAULT_FILE_DIRECTORY)
 	assert_eq(settings.file_max_lines, 1000)
 	assert_eq(settings.file_max_files, 3)
 	assert_true(settings.redact)
-	assert_eq(settings.stdout_level, TwitchLogLevel.Severity.INFO,
-			"tests run headless, so auto turns stdout on")
+	var runtime: String = LogfamiResource.detect_runtime()
+	assert_eq(settings.runtime, runtime)
+	assert_eq(settings.stdout_level,
+			TwitchLogSettings.resolve_stdout_level(TwitchLogSettings.AUTO, runtime),
+			"stdout defaults to auto, whatever runtime the suite runs in")
 	assert_eq(settings.stdout_format, TwitchLogSettings.FORMAT_JSON_LINES)
 	assert_false(settings.capture_engine)
-	assert_eq(settings.runtime, LogfamiResource.RUNTIME_HEADLESS)
 
 
 func test_from_project_registers_every_setting() -> void:

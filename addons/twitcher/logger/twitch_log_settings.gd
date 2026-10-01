@@ -24,6 +24,10 @@ const FORMAT_TEXT: String = "text"
 const FORMAT_JSON_LINES: String = "jsonl"
 const FORMAT_LOGFMT: String = "logfmt"
 
+const DEFAULT_FILE_DIRECTORY: String = "user://logs"
+
+## The levels Twitcher's loggers emit. The parsers accept trace and fatal too,
+## but no Twitcher component logs at those levels, so they aren't offered.
 const LEVEL_OPTIONS: Array[String] = ["off", "error", "warn", "info", "debug"]
 const STDOUT_LEVEL_OPTIONS: Array[String] = ["auto", "off", "error", "warn", "info", "debug"]
 const FORMAT_OPTIONS: Array[String] = ["text", "jsonl", "logfmt"]
@@ -31,7 +35,7 @@ const FORMAT_OPTIONS: Array[String] = ["text", "jsonl", "logfmt"]
 ## Threshold of the log file, see [enum TwitchLogLevel.Severity].
 var file_level: int = TwitchLogLevel.Severity.INFO
 var file_format: String = FORMAT_TEXT
-var file_directory: String = "user://logs"
+var file_directory: String = DEFAULT_FILE_DIRECTORY
 var file_max_lines: int = 1000
 var file_max_files: int = 3
 ## Masks credentials in the file and on stdout.
@@ -52,7 +56,7 @@ static func from_project() -> TwitchLogSettings:
 	settings.file_level = TwitchLogLevel.threshold_from_text(
 			_select(FILE_LEVEL, "info", LEVEL_OPTIONS))
 	settings.file_format = _select(FILE_FORMAT, FORMAT_TEXT, FORMAT_OPTIONS)
-	settings.file_directory = str(TwitchProperty.new(FILE_DIRECTORY, "user://logs")
+	settings.file_directory = str(TwitchProperty.new(FILE_DIRECTORY, DEFAULT_FILE_DIRECTORY)
 			.as_dir().get_val())
 	settings.file_max_lines = int(TwitchProperty.new(FILE_MAX_LINES, 1000).as_num().get_val())
 	settings.file_max_files = int(TwitchProperty.new(FILE_MAX_FILES, 3).as_num().get_val())

@@ -16,6 +16,18 @@ func exists(path: String) -> bool:
 	return FileAccess.file_exists(path)
 
 
+func line_count(path: String) -> int:
+	if not FileAccess.file_exists(path):
+		return 0
+	var text: String = FileAccess.get_file_as_string(path)
+	if text == "":
+		return 0
+	var count: int = text.count("\n")
+	if not text.ends_with("\n"):
+		count += 1
+	return count
+
+
 func remove(path: String) -> bool:
 	return DirAccess.remove_absolute(path) == OK
 

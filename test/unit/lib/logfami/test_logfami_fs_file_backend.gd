@@ -75,5 +75,21 @@ func test_make_dir_creates_parents() -> void:
 	assert_true(_backend.make_dir(nested), "an existing directory is fine")
 
 
+func test_line_count() -> void:
+	var path: String = _dir.path_join("app.log")
+	assert_eq(_backend.line_count(path), 0, "missing file")
+	_backend.open_file(path, false)
+	_backend.write_line("one")
+	_backend.write_line("two")
+	_backend.close()
+	assert_eq(_backend.line_count(path), 2)
+
+	var no_newline: String = _dir.path_join("raw.log")
+	var file: FileAccess = FileAccess.open(no_newline, FileAccess.WRITE)
+	file.store_string("one\ntwo")
+	file.close()
+	assert_eq(_backend.line_count(no_newline), 2, "a last line without newline counts")
+
+
 func test_write_without_open_file_fails() -> void:
 	assert_false(_backend.write_line("nowhere"))

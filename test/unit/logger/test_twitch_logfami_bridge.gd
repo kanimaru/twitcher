@@ -186,7 +186,7 @@ func test_without_outputs_no_handler_is_added() -> void:
 
 	assert_null(bridge.file_sink)
 	assert_null(bridge.stdout_sink)
-	assert_eq(TwitchLoggerManager._handlers.size(), 0)
+	assert_eq(TwitchLoggerManager.handler_count(), 0)
 	assert_eq(TwitchLogfamiBridge.get_log_file_path(), "")
 
 
@@ -204,7 +204,7 @@ func test_install_replaces_the_previous_bridge() -> void:
 
 	assert_same(TwitchLogfamiBridge.get_instance(), second)
 	assert_ne(first, second)
-	assert_eq(TwitchLoggerManager._handlers.size(), 1)
+	assert_eq(TwitchLoggerManager.handler_count(), 1)
 
 
 func test_uninstall_detaches_and_closes_the_file() -> void:
@@ -214,7 +214,7 @@ func test_uninstall_detaches_and_closes_the_file() -> void:
 	TwitchLogger.new("GutBridgeGone").e("after uninstall")
 
 	assert_null(TwitchLogfamiBridge.get_instance())
-	assert_eq(TwitchLoggerManager._handlers.size(), 0)
+	assert_eq(TwitchLoggerManager.handler_count(), 0)
 	assert_eq(_backend.open_path, "", "the file must be closed")
 	assert_eq(_backend.lines_of(FILE_PATH).size(), 1, "only the header")
 
@@ -256,16 +256,47 @@ func test_install_once_respects_auto_install() -> void:
 	assert_null(TwitchLogfamiBridge.get_instance())
 
 
-func test_first_registration_installs_from_the_project_settings() -> void:
+func test_first_log_call_installs_from_the_project_settings() -> void:
 	_set_setting(TwitchLogSettings.FILE_LEVEL, "off")
 	_set_setting(TwitchLogSettings.STDOUT_LEVEL, "off")
 	TwitchLogfamiBridge.auto_install = true
+	var logger: TwitchLogger = TwitchLogger.new("GutBridgeAutoInstall")
+	assert_null(TwitchLogfamiBridge.get_instance(), "creating a logger doesn't install")
 
-	TwitchLogger.new("GutBridgeAutoInstall")
+	logger.i("first call")
 
 	var bridge: TwitchLogfamiBridge = TwitchLogfamiBridge.get_instance()
 	assert_not_null(bridge)
 	assert_eq(bridge.settings.file_level, TwitchLogLevel.OFF)
+
+
+## Static loggers register while scripts load, long before an autoload's
+## _init can run. The opt-out must still work after that.
+func test_auto_install_can_be_turned_off_after_loggers_exist() -> void:
+	_set_setting(TwitchLogSettings.FILE_LEVEL, "off")
+	_set_setting(TwitchLogSettings.STDOUT_LEVEL, "off")
+	TwitchLogfamiBridge.auto_install = true
+	var logger: TwitchLogger = TwitchLogger.new("GutBridgeLateOptOut")
+
+	TwitchLogfamiBridge.auto_install = false
+	logger.i("logged without a bridge")
+
+	assert_null(TwitchLogfamiBridge.get_instance())
+
+
+func test_uninstall_turns_auto_install_off() -> void:
+	_set_setting(TwitchLogSettings.FILE_LEVEL, "off")
+	_set_setting(TwitchLogSettings.STDOUT_LEVEL, "off")
+	TwitchLogfamiBridge.auto_install = true
+	var logger: TwitchLogger = TwitchLogger.new("GutBridgeUninstall")
+	logger.i("installs")
+	assert_not_null(TwitchLogfamiBridge.get_instance())
+
+	TwitchLogfamiBridge.uninstall()
+	logger.i("must not reinstall")
+
+	assert_false(TwitchLogfamiBridge.auto_install)
+	assert_null(TwitchLogfamiBridge.get_instance())
 
 
 func test_install_once_keeps_an_installed_bridge() -> void:

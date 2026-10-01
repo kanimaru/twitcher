@@ -44,9 +44,30 @@ const _SLOTS: Array[Dictionary] = [
 	{path = "res://addons/twitcher/reward/twitch_redeem_listener.gd", prop = "_open_tracked_redemptions", deep = true},
 	{path = "res://addons/twitcher/lib/http/http_server.gd", prop = "_servers", deep = true},
 	{path = "res://addons/twitcher/logger/twitch_logger_manager.gd", prop = "log_registry", deep = true},
-	{path = "res://addons/twitcher/logger/twitch_logger_manager.gd", prop = "_handlers", deep = true},
-	{path = "res://addons/twitcher/logger/twitch_logfami_bridge.gd", prop = "_instance", deep = false},
-	{path = "res://addons/twitcher/logger/twitch_logfami_bridge.gd", prop = "auto_install", deep = false},
+	{
+		path = "res://addons/twitcher/logger/twitch_logger_manager.gd",
+		prop = "_handlers", deep = true,
+	},
+	{
+		path = "res://addons/twitcher/logger/twitch_logger_manager.gd",
+		prop = "_console", deep = false,
+	},
+	{
+		path = "res://addons/twitcher/logger/twitch_logger_manager.gd",
+		prop = "_dispatching_threads", deep = true,
+	},
+	{
+		path = "res://addons/twitcher/logger/twitch_logger_manager.gd",
+		prop = "_is_shutdown_watch_deferred", deep = false,
+	},
+	{
+		path = "res://addons/twitcher/logger/twitch_logfami_bridge.gd",
+		prop = "_instance", deep = false,
+	},
+	{
+		path = "res://addons/twitcher/logger/twitch_logfami_bridge.gd",
+		prop = "auto_install", deep = false,
+	},
 
 	# --- logger callables, installed by the set_logger cascade ---
 	# TwitchAuth._init() alone rewrites the first three of these.

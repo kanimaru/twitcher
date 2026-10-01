@@ -3,8 +3,9 @@ class_name TwitchConsoleLogHandler
 extends RefCounted
 ## Prints log records to the Godot output in the classic Twitcher look.
 ##
-## Which contexts print is configured per logger under
-## [code]twitcher/logs/<Context>[/code] ([code]off[/code], [code]info[/code],
+## Whether a record prints depends on the [member TwitchLogger.enabled] and
+## [member TwitchLogger.debug] flags of the logger that emitted it, which come
+## from [code]twitcher/logs/<Context>[/code] ([code]off[/code], [code]info[/code],
 ## [code]debug[/code]); see [method threshold_for]. The format is
 ## [code]<ticks> <level>[<Context>-<instance>] <message> {<attributes>}[/code],
 ## colored per context.
@@ -20,10 +21,6 @@ const _DEBUG_FORMAT: String = "%s D[i][color=%s][%s] %s[/color][/i]"
 var printer: Callable
 
 
-func _init() -> void:
-	printer = _print_rich
-
-
 ## Deterministic color for a context name, so every context keeps its color
 ## across sessions.
 static func color_for(text: String) -> String:
@@ -32,6 +29,10 @@ static func color_for(text: String) -> String:
 	var green: int = clampi(int(((hash_value >> 8) & 0xff) * BRIGHTEN_FACTOR), 0, 255)
 	var blue: int = clampi(int(((hash_value >> 16) & 0xff) * BRIGHTEN_FACTOR), 0, 255)
 	return "#%02x%02x%02x" % [red, green, blue]
+
+
+func _init() -> void:
+	printer = _print_rich
 
 
 ## Handler entry point, see [method TwitchLoggerManager.add_scoped_handler].
@@ -58,16 +59,19 @@ func format(record: Dictionary) -> String:
 	return _DEBUG_FORMAT % values
 
 
-## Threshold for [param scope], taken from the logger registered under that
-## context: off when disabled, debug when debugging, otherwise info.
-func threshold_for(scope: String) -> int:
-	var registered: Variant = TwitchLoggerManager.log_registry.get(scope)
-	if not registered is TwitchLogger:
+## Threshold of [param logger]: off when disabled, debug when debugging,
+## otherwise info. Without a logger (records dispatched directly) the logger
+## registered last under [param scope] decides.
+func threshold_for(scope: String, logger: TwitchLogger = null) -> int:
+	var source: TwitchLogger = logger
+	if source == null:
+		var registered: Variant = TwitchLoggerManager.log_registry.get(scope)
+		if not registered is TwitchLogger:
+			return TwitchLogLevel.OFF
+		source = registered
+	if not source.enabled:
 		return TwitchLogLevel.OFF
-	var logger: TwitchLogger = registered
-	if not logger.enabled:
-		return TwitchLogLevel.OFF
-	if logger.debug:
+	if source.debug:
 		return TwitchLogLevel.Severity.DEBUG
 	return TwitchLogLevel.Severity.INFO
 
