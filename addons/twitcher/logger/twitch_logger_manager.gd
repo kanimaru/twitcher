@@ -18,6 +18,10 @@ extends RefCounted
 ## Handlers are called on the thread that logged. The handler list is replaced
 ## as a whole on every change (copy on write), so logging never waits for a
 ## lock unless a record is actually dispatched.
+##
+## Lambda handlers are removed when the scene tree shuts down. Godot frees a
+## lambda together with its script, before static variables like this
+## registry; a lambda still registered at that point crashes the game on quit.
 
 ## Context name to the [TwitchLogger] registered last under that name.
 static var log_registry: Dictionary = {}
@@ -133,6 +137,29 @@ static func _add_entry(entry: TwitchLogHandlerEntry) -> void:
 	var handlers: Array[TwitchLogHandlerEntry] = _without(_handlers, entry.handler)
 	handlers.append(entry)
 	_handlers = handlers
+	_mutex.unlock()
+	if entry.handler.is_custom() or entry.level_resolver.is_custom():
+		_remove_lambdas_on_shutdown()
+
+
+## Removes lambda handlers once the scene tree's root leaves the tree: after
+## every node logged its last lines, before Godot frees the scripts.
+static func _remove_lambdas_on_shutdown() -> void:
+	var tree: SceneTree = Engine.get_main_loop() as SceneTree
+	if tree == null or tree.root == null:
+		return
+	var remove_lambdas: Callable = Callable(TwitchLoggerManager, &"_remove_lambda_handlers")
+	if not tree.root.tree_exiting.is_connected(remove_lambdas):
+		tree.root.tree_exiting.connect(remove_lambdas)
+
+
+static func _remove_lambda_handlers() -> void:
+	_mutex.lock()
+	var remaining: Array[TwitchLogHandlerEntry] = []
+	for entry: TwitchLogHandlerEntry in _handlers:
+		if not entry.handler.is_custom() and not entry.level_resolver.is_custom():
+			remaining.append(entry)
+	_handlers = remaining
 	_mutex.unlock()
 
 
