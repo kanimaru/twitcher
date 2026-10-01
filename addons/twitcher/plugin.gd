@@ -8,9 +8,13 @@ const TOOLMENU_CATEGORY: String = "Twitcher"
 const REGENERATE_API_LABEL: String = "Regenerate Twitch Api & Eventsub"
 const OPEN_SETUP_LABEL: String = "Setup"
 const REWARD_MANAGER_LABEL: String = "Reward Manager"
+const OPEN_LOG_FOLDER_LABEL: String = "Open Log Folder"
 
 enum TwitcherTooltipIds {
-	SETUP, REWARD_MANAGER, REGENERATE_API
+	SETUP,
+	REWARD_MANAGER,
+	REGENERATE_API,
+	OPEN_LOG_FOLDER,
 }
 
 # oOuch imports
@@ -114,11 +118,13 @@ func add_twitcher_menu() -> void:
 	popup_menu.add_item(OPEN_SETUP_LABEL, TwitcherTooltipIds.SETUP)
 	popup_menu.add_item(REWARD_MANAGER_LABEL, TwitcherTooltipIds.REWARD_MANAGER)
 	popup_menu.add_item(REGENERATE_API_LABEL, TwitcherTooltipIds.REGENERATE_API)
+	popup_menu.add_item(OPEN_LOG_FOLDER_LABEL, TwitcherTooltipIds.OPEN_LOG_FOLDER)
 	popup_menu.id_pressed.connect(func(id):
 		match id:
 			TwitcherTooltipIds.SETUP: open_setup()
 			TwitcherTooltipIds.REWARD_MANAGER: open_reward_manager()
 			TwitcherTooltipIds.REGENERATE_API: generate_api()
+			TwitcherTooltipIds.OPEN_LOG_FOLDER: TwitchLogfamiBridge.open_log_folder()
 	)
 	add_tool_submenu_item(TOOLMENU_CATEGORY, popup_menu)
 

@@ -27,6 +27,14 @@ var _scratch_counter := 0
 var _scratch_dirs: PackedStringArray = []
 
 
+## Tests must not write Twitcher's real log file or print it to stdout (the
+## suite runs headless, which turns stdout logging on). Runs when the test kit
+## loads, before any test, whichever runner starts GUT.
+static func _static_init() -> void:
+	TwitchLogfamiBridge.auto_install = false
+	TwitchLogfamiBridge.uninstall()
+
+
 func before_each() -> void:
 	_guard = StaticStateGuard.new()
 	_guard.snapshot()

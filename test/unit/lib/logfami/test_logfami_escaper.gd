@@ -41,3 +41,16 @@ func test_escaped_text_never_contains_a_line_break() -> void:
 	var escaped: String = LogfamiEscaper.escape_control(text)
 	assert_false(escaped.contains("\n"))
 	assert_false(escaped.contains("\r"))
+
+
+func test_quote_if_needed(params: Array = use_parameters([
+	["plain", "plain"],
+	["", "\"\""],
+	["4.7-stable (official)", "\"4.7-stable (official)\""],
+	["a=b", "\"a=b\""],
+	["say \"hi\"", "\"say \\\"hi\\\"\""],
+	["日本語", "日本語"],
+])) -> void:
+	var value: String = params[0]
+	var expected: String = params[1]
+	assert_eq(LogfamiEscaper.quote_if_needed(value), expected)

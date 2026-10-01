@@ -35,6 +35,7 @@ static func _static_init() -> void:
 
 
 ## Registers the logger and sets the enabled state from its project setting.
+## The first registration also installs the [TwitchLogfamiBridge].
 static func register(logger: TwitchLogger) -> void:
 	log_registry[logger.context_name] = logger
 	var key: String = "twitcher/logs/%s" % logger.context_name
@@ -44,6 +45,7 @@ static func register(logger: TwitchLogger) -> void:
 		logger.set_enabled(true)
 	if property.get_val() == "debug":
 		logger.debug = true
+	TwitchLogfamiBridge.install_once()
 
 
 ## Adds [param handler] for every scope, receiving records at [param min_level]

@@ -12,8 +12,6 @@ extends LogfamiFormatter
 const HEADER_SCOPE: String = "logfami"
 const HEADER_MESSAGE: String = "session.start"
 
-static var _needs_quotes: RegEx = RegEx.create_from_string(
-		"[\\s=\"\\x00-\\x1f\\x7f\\x{2028}\\x{2029}]")
 static var _invalid_key_characters: RegEx = RegEx.create_from_string("[^A-Za-z0-9_.\\-]")
 
 
@@ -44,9 +42,7 @@ func header(resource: LogfamiResource, started_unix_ms: int) -> PackedStringArra
 
 ## Quotes and escapes [param value] when logfmt requires it.
 static func quote(value: String) -> String:
-	if value != "" and _needs_quotes.search(value) == null:
-		return value
-	return "\"%s\"" % LogfamiEscaper.escape_quoted(value)
+	return LogfamiEscaper.quote_if_needed(value)
 
 
 ## Replaces characters that aren't allowed in a logfmt key with [code]_[/code].

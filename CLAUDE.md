@@ -40,6 +40,9 @@ When editing existing files, reformat only the lines you touch.
 - Twitcher logging goes through `TwitchLogger` → `TwitchLoggerManager` →
   handlers (`Callable(record: Dictionary)`). The record contract is documented in
   `addons/twitcher/logger/twitch_log_record.gd`.
+- `lib/logfami/` is a standalone logging library (file, stdout, formats,
+  redaction). Only `TwitchLogfamiBridge` and `TwitchLogSettings` connect Twitcher
+  to it; a test fails if Logfami references Twitcher.
 
 ## Tests
 

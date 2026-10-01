@@ -15,6 +15,8 @@ const _NAMED_ESCAPES: Dictionary[String, String] = {
 }
 
 static var _control_regex: RegEx = RegEx.create_from_string(_CONTROL_PATTERN)
+static var _needs_quotes: RegEx = RegEx.create_from_string(
+		"[\\s=\"\\x00-\\x1f\\x7f\\x{2028}\\x{2029}]")
 
 
 ## Replaces control characters with visible escapes: [code]\n[/code],
@@ -34,6 +36,14 @@ static func escape_control(text: String) -> String:
 static func escape_quoted(text: String) -> String:
 	var escaped: String = text.replace("\\", "\\\\").replace("\"", "\\\"")
 	return escape_control(escaped)
+
+
+## Value for a [code]key=value[/code] pair, quoted like go-logfmt when it is
+## empty or contains spaces, [code]=[/code], quotes or control characters.
+static func quote_if_needed(value: String) -> String:
+	if value != "" and _needs_quotes.search(value) == null:
+		return value
+	return "\"%s\"" % escape_quoted(value)
 
 
 static func _escape_character(character: String) -> String:
