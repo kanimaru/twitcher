@@ -204,3 +204,36 @@ func _dispatch_many(index: int) -> void:
 
 func _record(level: int, scope: String, body: String) -> Dictionary:
 	return TwitchLogRecord.create(level, scope, body)
+
+
+## Godot frees a lambda with its script before static variables at shutdown; a
+## lambda still registered then crashes the game on quit.
+func test_lambda_handlers_are_removed_on_shutdown() -> void:
+	var lambda: Callable = func(_record: Dictionary) -> void:
+		pass
+	TwitchLoggerManager.add_handler(lambda)
+	TwitchLoggerManager.add_handler(_capture.handle)
+
+	TwitchLoggerManager._remove_lambda_handlers()
+
+	assert_false(TwitchLoggerManager.has_handler(lambda), "lambdas must go before shutdown")
+	assert_true(TwitchLoggerManager.has_handler(_capture.handle), "methods are safe and stay")
+
+
+func test_scoped_handlers_with_lambda_resolvers_are_removed_on_shutdown() -> void:
+	var resolver: Callable = func(_scope: String) -> int:
+		return TwitchLogLevel.Severity.INFO
+	TwitchLoggerManager.add_scoped_handler(_capture.handle, resolver)
+
+	TwitchLoggerManager._remove_lambda_handlers()
+
+	assert_false(TwitchLoggerManager.has_handler(_capture.handle))
+
+
+func test_adding_a_lambda_watches_the_tree_shutdown() -> void:
+	var lambda: Callable = func(_record: Dictionary) -> void:
+		pass
+	TwitchLoggerManager.add_handler(lambda)
+
+	var remove_lambdas: Callable = Callable(TwitchLoggerManager, &"_remove_lambda_handlers")
+	assert_true(get_tree().root.tree_exiting.is_connected(remove_lambdas))
