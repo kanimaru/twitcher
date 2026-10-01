@@ -14,7 +14,8 @@ func test_detect_fills_the_standard_attributes() -> void:
 		LogfamiResource.RUNTIME,
 	]:
 		assert_true(resource.attributes.has(key), "missing '%s'" % key)
-	assert_eq(resource.get_attribute(LogfamiResource.OS_TYPE), OS.get_name().to_lower())
+	assert_eq(resource.get_attribute(LogfamiResource.OS_TYPE),
+			LogfamiResource.os_type_of(OS.get_name()))
 	assert_eq(resource.get_attribute(LogfamiResource.PROCESS_PID), OS.get_process_id())
 
 
@@ -25,8 +26,28 @@ func test_service_name_comes_from_the_project() -> void:
 	assert_eq(LogfamiResource.detect().get_attribute(LogfamiResource.SERVICE_NAME), expected)
 
 
-func test_tests_run_headless() -> void:
-	assert_eq(LogfamiResource.detect_runtime(), LogfamiResource.RUNTIME_HEADLESS)
+func test_detect_runtime_returns_a_known_value() -> void:
+	var runtime: String = LogfamiResource.detect_runtime()
+	assert_true(runtime in [
+		LogfamiResource.RUNTIME_EDITOR,
+		LogfamiResource.RUNTIME_HEADLESS,
+		LogfamiResource.RUNTIME_GAME,
+	], runtime)
+	assert_eq(runtime == LogfamiResource.RUNTIME_EDITOR, Engine.is_editor_hint())
+
+
+func test_os_type_follows_open_telemetry(params: Array = use_parameters([
+	["Windows", "windows"],
+	["macOS", "darwin"],
+	["Linux", "linux"],
+	["FreeBSD", "freebsd"],
+	["Android", "android"],
+	["iOS", "ios"],
+	["Web", "web"],
+])) -> void:
+	var os_name: String = params[0]
+	var expected: String = params[1]
+	assert_eq(LogfamiResource.os_type_of(os_name), expected)
 
 
 func test_with_attribute_returns_a_copy() -> void:

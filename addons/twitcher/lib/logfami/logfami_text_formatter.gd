@@ -8,7 +8,8 @@ extends LogfamiFormatter
 ## [/codeblock]
 ## Control characters are escaped, so every record stays on one line. Values
 ## in [code]key=value[/code] pairs are quoted when they contain spaces, like in
-## logfmt, so the line stays unambiguous.
+## logfmt, so the line stays unambiguous; nested containers are rendered as
+## JSON (see [LogfamiValue]).
 
 const HEADER_PREFIX: String = "# session.start"
 
@@ -57,5 +58,6 @@ func _pairs(values: Dictionary) -> PackedStringArray:
 	keys.sort()
 	var pairs: PackedStringArray = []
 	for key: Variant in keys:
-		pairs.append("%s=%s" % [key, LogfamiEscaper.quote_if_needed(str(values[key]))])
+		var value: String = LogfamiValue.to_text(values[key])
+		pairs.append("%s=%s" % [key, LogfamiEscaper.quote_if_needed(value)])
 	return pairs

@@ -26,6 +26,7 @@ var threshold_params: Array = [
 	["debug", TwitchLogLevel.Severity.DEBUG],
 	["info", TwitchLogLevel.Severity.INFO],
 	["warn", TwitchLogLevel.Severity.WARN],
+	["warning", TwitchLogLevel.Severity.WARN],
 	["error", TwitchLogLevel.Severity.ERROR],
 	["fatal", TwitchLogLevel.Severity.FATAL],
 	["INFO", TwitchLogLevel.Severity.INFO],
@@ -46,6 +47,17 @@ func test_severities_follow_open_telemetry_numbers() -> void:
 
 func test_off_is_above_every_severity() -> void:
 	assert_gt(TwitchLogLevel.OFF, TwitchLogLevel.Severity.FATAL + 3)
+
+
+## Twitcher and Logfami each define the levels, because Logfami must not
+## reference Twitcher. The two copies must never drift apart.
+func test_levels_match_logfami() -> void:
+	assert_eq(TwitchLogLevel.Severity.keys(), LogfamiLevel.Severity.keys())
+	assert_eq(TwitchLogLevel.Severity.values(), LogfamiLevel.Severity.values())
+	assert_eq(TwitchLogLevel.OFF, LogfamiLevel.OFF)
+	for text: String in ["off", "trace", "debug", "info", "warn", "warning", "error", "fatal"]:
+		assert_eq(TwitchLogLevel.threshold_from_text(text),
+				LogfamiLevel.threshold_from_text(text), text)
 
 
 func test_to_text(params: Array = use_parameters(text_params)) -> void:

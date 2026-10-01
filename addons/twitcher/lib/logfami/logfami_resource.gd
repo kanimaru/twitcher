@@ -19,11 +19,18 @@ const RUNTIME_EDITOR: String = "editor"
 const RUNTIME_HEADLESS: String = "headless"
 const RUNTIME_GAME: String = "game"
 
+## [method OS.get_name] to the OpenTelemetry [code]os.type[/code] value.
+## Platforms without a convention keep their lowercased Godot name.
+const _OS_TYPE_BY_NAME: Dictionary[String, String] = {
+	"Windows": "windows",
+	"macOS": "darwin",
+	"Linux": "linux",
+	"FreeBSD": "freebsd",
+	"NetBSD": "netbsd",
+	"OpenBSD": "openbsd",
+}
+
 var attributes: Dictionary = {}
-
-
-func _init(resource_attributes: Dictionary = {}) -> void:
-	attributes = resource_attributes.duplicate(true)
 
 
 ## Detects the attributes of the running program. Reads the project settings
@@ -35,7 +42,7 @@ static func detect() -> LogfamiResource:
 		SERVICE_NAME: name if name != "" else "godot-app",
 		SERVICE_VERSION: version,
 		GODOT_VERSION: str(Engine.get_version_info().get("string", "")),
-		OS_TYPE: OS.get_name().to_lower(),
+		OS_TYPE: os_type_of(OS.get_name()),
 		PROCESS_PID: OS.get_process_id(),
 		RUNTIME: detect_runtime(),
 	})
@@ -49,6 +56,15 @@ static func detect_runtime() -> String:
 	if DisplayServer.get_name() == "headless" or OS.has_feature("dedicated_server"):
 		return RUNTIME_HEADLESS
 	return RUNTIME_GAME
+
+
+## OpenTelemetry [code]os.type[/code] for a [method OS.get_name] value.
+static func os_type_of(os_name: String) -> String:
+	return _OS_TYPE_BY_NAME.get(os_name, os_name.to_lower())
+
+
+func _init(resource_attributes: Dictionary = {}) -> void:
+	attributes = resource_attributes.duplicate(true)
 
 
 ## Returns a copy with [param key] set to [param value].

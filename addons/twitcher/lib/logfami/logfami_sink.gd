@@ -3,6 +3,11 @@
 class_name LogfamiSink
 extends RefCounted
 ## Destination of formatted lines: a file, stdout, memory, a network service.
+##
+## Records are written on the thread that logged them, so every method may be
+## called from several threads at once, also while [method start_session] or
+## [method close] runs. A sink serializes its own output; the pipeline doesn't
+## lock around it.
 
 
 ## Writes one formatted line. [param record] is passed along for sinks that

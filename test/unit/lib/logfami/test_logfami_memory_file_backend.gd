@@ -43,6 +43,12 @@ func test_flush_records_how_many_lines_are_safe() -> void:
 	assert_eq(_backend.flushed_lines["a.log"], 1)
 
 
+func test_line_count() -> void:
+	assert_eq(_backend.line_count("missing.log"), 0)
+	_backend.files["a.log"] = PackedStringArray(["one", "two"])
+	assert_eq(_backend.line_count("a.log"), 2)
+
+
 func test_failure_switches() -> void:
 	_backend.fail_make_dir = true
 	_backend.fail_open = true

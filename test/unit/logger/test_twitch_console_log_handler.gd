@@ -84,6 +84,18 @@ func test_threshold_follows_the_registered_logger() -> void:
 	assert_eq(_handler.threshold_for("GutConsoleProbe"), TwitchLogLevel.Severity.DEBUG, "debug")
 
 
+## Two loggers may share a context name (Twitcher does for "Http"). Each
+## instance decides for its own records.
+func test_threshold_uses_the_emitting_logger_over_the_registry() -> void:
+	var first: TwitchLogger = TwitchLogger.new("GutSharedContext", true)
+	var second: TwitchLogger = TwitchLogger.new("GutSharedContext", false)
+
+	assert_eq(_handler.threshold_for("GutSharedContext", first), TwitchLogLevel.Severity.INFO)
+	assert_eq(_handler.threshold_for("GutSharedContext", second), TwitchLogLevel.OFF)
+	assert_eq(_handler.threshold_for("GutSharedContext"), TwitchLogLevel.OFF,
+			"without a logger, the last registered one decides")
+
+
 func test_threshold_is_off_for_unknown_scopes() -> void:
 	assert_eq(_handler.threshold_for("GutNeverRegistered"), TwitchLogLevel.OFF)
 

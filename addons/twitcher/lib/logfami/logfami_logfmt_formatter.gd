@@ -7,12 +7,24 @@ extends LogfamiFormatter
 ## [/codeblock]
 ## Quoting follows go-logfmt: values with spaces, [code]=[/code], quotes or
 ## control characters are quoted, with [code]\\[/code], [code]\"[/code] and
-## control characters escaped. Attributes follow the fixed keys, sorted.
+## control characters escaped. Attributes follow the fixed keys, sorted;
+## nested containers are rendered as JSON (see [LogfamiValue]).
 
 const HEADER_SCOPE: String = "logfami"
 const HEADER_MESSAGE: String = "session.start"
 
 static var _invalid_key_characters: RegEx = RegEx.create_from_string("[^A-Za-z0-9_.\\-]")
+
+
+## Quotes and escapes [param value] when logfmt requires it.
+static func quote(value: String) -> String:
+	return LogfamiEscaper.quote_if_needed(value)
+
+
+## Replaces characters that aren't allowed in a logfmt key with [code]_[/code].
+static func clean_key(key: String) -> String:
+	var cleaned: String = _invalid_key_characters.sub(key, "_", true)
+	return cleaned if cleaned != "" else "_"
 
 
 func format(record: LogfamiRecord, _resource: LogfamiResource) -> String:
@@ -40,23 +52,12 @@ func header(resource: LogfamiResource, started_unix_ms: int) -> PackedStringArra
 	return PackedStringArray([" ".join(pairs)])
 
 
-## Quotes and escapes [param value] when logfmt requires it.
-static func quote(value: String) -> String:
-	return LogfamiEscaper.quote_if_needed(value)
-
-
-## Replaces characters that aren't allowed in a logfmt key with [code]_[/code].
-static func clean_key(key: String) -> String:
-	var cleaned: String = _invalid_key_characters.sub(key, "_", true)
-	return cleaned if cleaned != "" else "_"
-
-
 func _attribute_pairs(attributes: Dictionary) -> PackedStringArray:
 	var keys: Array = attributes.keys()
 	keys.sort()
 	var pairs: PackedStringArray = []
 	for key: Variant in keys:
-		pairs.append(_pair(str(key), str(attributes[key])))
+		pairs.append(_pair(str(key), LogfamiValue.to_text(attributes[key])))
 	return pairs
 
 

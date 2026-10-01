@@ -21,10 +21,31 @@ func test_warn_level_exists() -> void:
 	assert_true(logger.has_method("w"), "TwitchLogger must offer a warn level")
 
 
+## Can only fail through a runtime error: this pins the crash from before
+## the warn level existed, where the call raised "Nonexistent function 'w'".
 func test_warn_level_can_be_called_while_enabled() -> void:
 	var logger: TwitchLogger = TwitchLogger.new("GutWarnProbe", true)
 	logger.w("probe")
 	pass_test("calling w() on an enabled logger must not raise")
+
+
+func test_console_follows_each_instance_when_loggers_share_a_name() -> void:
+	var lines: Array[String] = []
+	var console: TwitchConsoleLogHandler = TwitchLoggerManager.get_console_handler()
+	var original_printer: Callable = console.printer
+	console.printer = func(line: String) -> void:
+		lines.append(line)
+	TwitchLoggerManager.install_console_handler()
+	var enabled: TwitchLogger = TwitchLogger.new("GutSharedName")
+	var disabled: TwitchLogger = TwitchLogger.new("GutSharedName")
+	enabled.set_enabled(true)
+
+	enabled.i("printed")
+	disabled.i("hidden")
+	console.printer = original_printer
+
+	assert_eq(lines.size(), 1)
+	assert_string_contains(lines[0], "printed")
 
 
 func test_each_level_emits_its_severity() -> void:

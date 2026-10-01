@@ -29,6 +29,10 @@ func exists(path: String) -> bool:
 	return files.has(path)
 
 
+func line_count(path: String) -> int:
+	return files.get(path, PackedStringArray()).size()
+
+
 func remove(path: String) -> bool:
 	if open_path == path:
 		close()

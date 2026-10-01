@@ -7,7 +7,8 @@ extends LogfamiSink
 ##
 ## Godot buffers stdout when it isn't a terminal; enable the project setting
 ## [code]application/run/flush_stdout_on_print[/code] so lines reach the
-## collector right away.
+## collector right away. [method @GlobalScope.print] is thread-safe, so this
+## sink needs no lock of its own.
 
 ## Sends records at [member stderr_level] and above to stderr instead.
 var errors_to_stderr: bool = false

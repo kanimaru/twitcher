@@ -15,6 +15,10 @@ extends RefCounted
 @abstract func exists(path: String) -> bool
 
 
+## Lines in [param path], 0 when it doesn't exist.
+@abstract func line_count(path: String) -> int
+
+
 @abstract func remove(path: String) -> bool
 
 

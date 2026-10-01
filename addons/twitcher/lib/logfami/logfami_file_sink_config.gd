@@ -12,7 +12,9 @@ enum FlushPolicy {
 	ON_LEVEL_OR_INTERVAL,
 }
 
-@export_dir var directory: String = "user://logs"
+## Usually under [code]user://[/code]; the inspector's folder picker only
+## offers [code]res://[/code] paths, so this is a plain text field.
+@export var directory: String = "user://logs"
 @export var base_name: String = "app"
 ## Without the dot. Empty uses the formatter's extension.
 @export var extension: String = ""

@@ -4,10 +4,10 @@ extends RefCounted
 ## Sends Twitcher's log records to Logfami: a rolling log file, stdout on
 ## headless servers and, optionally, engine errors.
 ##
-## Installed automatically when the first [TwitchLogger] registers, configured
-## through [TwitchLogSettings]. Players find the file via
-## [method get_log_file_path] or [method open_log_folder]; in the editor the
-## Project → Tools → Twitcher menu opens the folder.
+## Installed automatically on the first log call, configured through
+## [TwitchLogSettings]. Players find the file via [method get_log_file_path]
+## or [method open_log_folder]; in the editor the Project → Tools → Twitcher
+## menu opens the folder.
 ##
 ## This class and [TwitchLogSettings] are the only places where Twitcher knows
 ## Logfami; Logfami itself knows nothing about Twitcher.
@@ -16,9 +16,11 @@ const FILE_BASE_NAME: String = "twitcher"
 const EDITOR_FILE_BASE_NAME: String = "twitcher_editor"
 const TWITCHER_VERSION_ATTRIBUTE: String = "twitcher.version"
 
-## Set to false before the first logger registers to keep Twitcher from
-## installing the bridge on its own, e.g. in tests or when an application
-## brings its own handler.
+## Whether Twitcher installs the bridge on its own on the first log call.
+## Set it to false before then, e.g. in the [code]_init[/code] of an autoload,
+## when an application brings its own handler. Creating loggers doesn't count
+## as logging, so static loggers in your scripts don't get in the way.
+## [method uninstall] turns it off as well.
 static var auto_install: bool = true
 static var _instance: TwitchLogfamiBridge
 
@@ -30,20 +32,6 @@ var engine_capture: LogfamiEngineCapture
 
 var _handler: Callable
 var _is_console_suppressed: bool = false
-
-
-func _init(log_settings: TwitchLogSettings, file_backend: LogfamiFileBackend = null,
-		log_clock: LogfamiClock = null) -> void:
-	settings = log_settings
-	var resource: LogfamiResource = LogfamiResource.detect().with_attribute(
-			TWITCHER_VERSION_ATTRIBUTE, Twitcher.VERSION)
-	logfami = Logfami.new(resource, log_clock)
-	if settings.file_level < TwitchLogLevel.OFF:
-		_add_file_pipeline(file_backend)
-	if settings.stdout_level < TwitchLogLevel.OFF:
-		_add_stdout_pipeline()
-	if settings.capture_engine:
-		engine_capture = LogfamiEngineCapture.new(logfami)
 
 
 ## Installs the bridge from the project settings unless [member auto_install]
@@ -65,8 +53,10 @@ static func install(log_settings: TwitchLogSettings, file_backend: LogfamiFileBa
 	return bridge
 
 
-## Detaches the installed bridge and closes its files.
+## Detaches the installed bridge, closes its files and turns
+## [member auto_install] off, so the next log call doesn't bring it back.
 static func uninstall() -> void:
+	auto_install = false
 	if _instance == null:
 		return
 	_instance._disconnect()
@@ -90,7 +80,7 @@ static func get_log_folder_path() -> String:
 	if _instance != null and _instance.file_sink != null:
 		return _instance.file_sink.get_absolute_file_path().get_base_dir()
 	var directory: String = str(ProjectSettings.get_setting(
-			TwitchLogSettings.FILE_DIRECTORY, "user://logs"))
+			TwitchLogSettings.FILE_DIRECTORY, TwitchLogSettings.DEFAULT_FILE_DIRECTORY))
 	return ProjectSettings.globalize_path(directory)
 
 
@@ -99,6 +89,20 @@ static func open_log_folder() -> void:
 	var folder: String = get_log_folder_path()
 	DirAccess.make_dir_recursive_absolute(folder)
 	OS.shell_show_in_file_manager(folder)
+
+
+func _init(log_settings: TwitchLogSettings, file_backend: LogfamiFileBackend = null,
+		log_clock: LogfamiClock = null) -> void:
+	settings = log_settings
+	var resource: LogfamiResource = LogfamiResource.detect().with_attribute(
+			TWITCHER_VERSION_ATTRIBUTE, Twitcher.VERSION)
+	logfami = Logfami.new(resource, log_clock)
+	if settings.file_level < TwitchLogLevel.OFF:
+		_add_file_pipeline(file_backend)
+	if settings.stdout_level < TwitchLogLevel.OFF:
+		_add_stdout_pipeline()
+	if settings.capture_engine:
+		engine_capture = LogfamiEngineCapture.new(logfami)
 
 
 func _add_file_pipeline(file_backend: LogfamiFileBackend) -> void:

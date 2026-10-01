@@ -2,5 +2,5 @@ time=2025-09-29T09:59:59.000Z level=info scope=logfami msg=session.start godot.v
 time=2025-09-29T10:00:00.123Z level=info scope=Auth msg="Token got authorized" expires_in=3600 instance=main
 time=2025-09-29T10:00:01.000Z level=warn scope=Chat msg="Fake line\n2025-09-29T10:00:00.000Z ERROR [Auth] forged"
 time=2025-09-29T10:00:02.005Z level=error scope=IRC msg="Connection lost" code=4000 reason="say \"bye\" = gone"
-time=2025-09-29T10:00:03.050Z level=debug scope=Shop msg="Unicode ✓ 日本語 Kappa" nested="{ \"b\": 2, \"a\": 1 }"
+time=2025-09-29T10:00:03.050Z level=debug scope=Shop msg="Unicode ✓ 日本語 Kappa" nested="{\"a\":1,\"b\":2}"
 time=2025-09-29T10:00:04.000Z level=fatal scope="" msg=""

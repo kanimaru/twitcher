@@ -64,6 +64,35 @@ func test_without_rotate_on_start_the_file_is_appended() -> void:
 			PackedStringArray(["last session", "# session.start"]))
 
 
+func test_appended_lines_count_towards_the_rotation_limit() -> void:
+	_config.rotate_on_start = false
+	_config.max_lines = 3
+	_backend.files["user://logs/app.log"] = PackedStringArray(["old 1", "old 2"])
+	var sink: LogfamiFileSink = _sink()
+	sink.start_session(PackedStringArray())
+
+	sink.write("new 1", _record(LogfamiLevel.Severity.INFO))
+	sink.write("new 2", _record(LogfamiLevel.Severity.INFO))
+
+	assert_eq(_backend.lines_of("user://logs/app.1.log"),
+			PackedStringArray(["old 1", "old 2", "new 1"]), "rotated at 3 lines in total")
+	assert_eq(_backend.lines_of("user://logs/app.log"), PackedStringArray(["new 2"]))
+
+
+func test_config_is_read_once_at_construction() -> void:
+	var sink: LogfamiFileSink = _sink()
+	_config.directory = "user://elsewhere"
+	_config.base_name = "other"
+	_config.flush_policy = LogfamiFileSinkConfig.FlushPolicy.ON_LEVEL_OR_INTERVAL
+	_config.flush_interval_lines = 1000
+	sink.start_session(HEADER)
+
+	sink.write("line", _record(LogfamiLevel.Severity.DEBUG))
+
+	assert_eq(sink.get_file_path(), "user://logs/app.log", "later path changes are ignored")
+	assert_eq(_backend.flushed_lines["user://logs/app.log"], 2, "still flushes every line")
+
+
 func test_rotates_at_max_lines_and_repeats_the_header() -> void:
 	_config.max_lines = 2
 	var sink: LogfamiFileSink = _sink()
