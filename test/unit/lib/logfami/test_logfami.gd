@@ -157,3 +157,27 @@ func test_flush_and_close_reach_every_pipeline() -> void:
 	_logfami.close()
 	assert_eq(_sink.flush_count, 1)
 	assert_true(_sink.is_closed)
+
+
+## The whole chain on the real filesystem: what a user would send in.
+func test_end_to_end_writes_a_redacted_log_file() -> void:
+	var config: LogfamiFileSinkConfig = LogfamiFileSinkConfig.new()
+	config.directory = scratch_dir()
+	config.base_name = "game"
+	var sink: LogfamiFileSink = LogfamiFileSink.new(config)
+	var pipeline: LogfamiPipeline = LogfamiPipeline.new(LogfamiTextFormatter.new(), sink)
+	pipeline.add_processor(LogfamiRedactor.with_defaults())
+	var resource: LogfamiResource = LogfamiResource.new({ "service.name": "Game" })
+	var logfami: Logfami = Logfami.new(resource, LogfamiFixedClock.new(0))
+	logfami.add_pipeline(pipeline)
+
+	logfami.log_message(LogfamiLevel.Severity.INFO, "IRC", "PASS oauth:abc123")
+	logfami.log_message(LogfamiLevel.Severity.WARN, "Chat", "evil\nfake line")
+	logfami.close()
+
+	assert_eq(FileAccess.get_file_as_string(sink.get_file_path()), "\n".join([
+		"# session.start 1970-01-01T00:00:00.000Z service.name=Game",
+		"1970-01-01T00:00:00.000Z INFO  [IRC] PASS oauth:[REDACTED]",
+		"1970-01-01T00:00:00.000Z WARN  [Chat] evil\\nfake line",
+		"",
+	]))
