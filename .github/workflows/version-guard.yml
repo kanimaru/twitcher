@@ -1,0 +1,23 @@
+name: Version guard
+
+# For tags pushed by hand: the tag must match plugin.cfg and Twitcher.VERSION.
+# Tags pushed by the Release workflow don't trigger this (GITHUB_TOKEN events
+# don't start workflows); that workflow checks the same thing itself.
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  check:
+    name: Tag matches the version strings
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare the tag with plugin.cfg and Twitcher.VERSION
+        run: .github/scripts/check-version.sh "$GITHUB_REF_NAME"
