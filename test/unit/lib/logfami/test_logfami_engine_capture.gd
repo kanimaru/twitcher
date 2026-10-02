@@ -91,3 +91,42 @@ func test_printing_sinks_do_not_loop() -> void:
 	_logfami.log_message(LogfamiLevel.Severity.INFO, "Game", "started")
 
 	assert_eq(lines.size(), 2, "the session header and the record, nothing echoed")
+
+
+## The file sink reports failures with push_warning. With the capture
+## installed, that warning comes straight back into the same Logfami, whose
+## pipeline leads to the very sink that just failed. This must end after one
+## warning: at session start (outside the write guard) and mid-write (inside).
+func test_a_failing_file_sink_does_not_loop_through_the_capture() -> void:
+	var backend: LogfamiMemoryFileBackend = LogfamiMemoryFileBackend.new()
+	backend.fail_make_dir = true
+	var file: LogfamiFileSink = LogfamiFileSink.new(LogfamiFileSinkConfig.new(), backend)
+	_capture.install()
+
+	_logfami.add_pipeline(LogfamiPipeline.new(LogfamiTextFormatter.new(), file))
+	_logfami.log_message(LogfamiLevel.Severity.INFO, "Game", "after the failure")
+
+	assert_push_warning_count(1)
+	assert_true(file.has_failed())
+	assert_eq(_sink.records.size(), 2, "the warning and the message reach the healthy sink")
+	assert_eq(_sink.records[0].scope, LogfamiEngineCapture.SCOPE)
+	assert_string_contains(_sink.records[0].body, "can't create the log directory")
+
+
+func test_a_write_failure_does_not_loop_through_the_capture() -> void:
+	var backend: LogfamiMemoryFileBackend = LogfamiMemoryFileBackend.new()
+	var file: LogfamiFileSink = LogfamiFileSink.new(LogfamiFileSinkConfig.new(), backend)
+	_logfami.add_pipeline(LogfamiPipeline.new(LogfamiTextFormatter.new(), file))
+	_capture.install()
+	backend.fail_write = true
+
+	_logfami.log_message(LogfamiLevel.Severity.INFO, "Game", "first write fails")
+	_logfami.log_message(LogfamiLevel.Severity.INFO, "Game", "second is skipped")
+
+	assert_push_warning_count(1)
+	assert_true(file.has_failed())
+	var bodies: PackedStringArray = []
+	for record: LogfamiRecord in _sink.records:
+		bodies.append(record.body)
+	assert_eq(bodies, PackedStringArray(["first write fails", "second is skipped"]),
+			"the warning raised inside a write is dropped, not re-logged")
