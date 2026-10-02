@@ -1,0 +1,96 @@
+name: Release
+
+# One input, no files to edit by hand: writes the version into plugin.cfg and
+# Twitcher.VERSION, runs the test suite, commits, tags, publishes the GitHub
+# release and posts to Discord.
+#
+# The release is created with GITHUB_TOKEN, and events raised by that token
+# don't start other workflows, so the Discord notification lives here rather
+# than relying on release-notification.yaml (which still covers releases
+# published by hand).
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, e.g. 2.6.0. Becomes the tag and the release name."
+        required: true
+        type: string
+
+env:
+  GODOT_VERSION: "4.7.0"
+  GODOT_DISABLE_LEAK_CHECKS: "1"
+
+jobs:
+  release:
+    name: Release ${{ inputs.version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history, so the release notes see the previous tag.
+          fetch-depth: 0
+
+      - name: Refuse to release over an existing tag
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if git rev-parse -q --verify "refs/tags/$VERSION" > /dev/null; then
+            echo "::error::tag $VERSION already exists"
+            exit 1
+          fi
+
+      - name: Write the version into plugin.cfg and Twitcher.VERSION
+        env:
+          VERSION: ${{ inputs.version }}
+        run: .github/scripts/set-version.sh "$VERSION"
+
+      - name: Set up Godot ${{ env.GODOT_VERSION }}
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: false
+
+      - name: Import project
+        run: godot --headless --path . --import --quit
+        continue-on-error: true
+
+      - name: Run GUT
+        run: |
+          godot --headless --path . \
+            -s res://addons/gut/gut_cmdln.gd \
+            -gdir=res://test/unit,res://test/generator \
+            -ginclude_subdirs \
+            -glog=1 \
+            -gexit
+
+      - name: Commit, tag and push
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add addons/twitcher/plugin.cfg addons/twitcher/twitcher.gd
+          git commit -m "chore: release $VERSION"
+          git tag "$VERSION"
+          git push origin "HEAD:${GITHUB_REF_NAME}" "$VERSION"
+
+      - name: Publish the GitHub release
+        id: publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          url="$(gh release create "$VERSION" --title "$VERSION" --generate-notes)"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
+        with:
+          args: 'Twitcher ${{ inputs.version }} got released. \n\n [Get it here](${{ steps.publish.outputs.url }})'

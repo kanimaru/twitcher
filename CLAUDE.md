@@ -57,6 +57,15 @@ Every code change comes with tests. One test script per production script at the
 mirrored path under `test/unit/`. Tests extend `TwitcherTest`; any new static
 state must be registered in `test/helpers/static_state_guard.gd`.
 
+## Releases
+
+Run the **Release** workflow (Actions → Release → *Run workflow*) with the
+version, e.g. `2.6.0`. It writes the version into `addons/twitcher/plugin.cfg`
+and `Twitcher.VERSION` (exported games don't ship `plugin.cfg`), runs the
+suite, commits, tags and publishes the GitHub release. Don't edit the two
+version strings by hand; a test and the **Version guard** workflow fail when
+they disagree. The scripts live in `.github/scripts/`.
+
 ## Commits
 
 Conventional commits (`feat(logger): …`, `fix(chat): …`, `refactor: …`,
