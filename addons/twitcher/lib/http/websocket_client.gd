@@ -128,18 +128,30 @@ static func set_logger(error: Callable, info: Callable, debug: Callable) -> void
 	logger.debug = debug
 	logger.info = info
 	logger.error = error
+	if LambdaLoggerCleanup.has_lambda([error, info, debug]):
+		LambdaLoggerCleanup.remove_on_shutdown(WebsocketClient._remove_lambda_loggers)
+
+
+## Drops lambda loggers; Godot frees them before this static dictionary at shutdown.
+static func _remove_lambda_loggers() -> void:
+	LambdaLoggerCleanup.remove_lambdas(logger)
+
 
 func _logDebug(text: String) -> void:
 	logDebug("[%s]: %s" % [connection_url, text])
 
+
 static func logDebug(text: String) -> void:
 	if logger.has("debug"): logger.debug.call(text)
+
 
 func _logInfo(text: String) -> void:
 	logInfo("[%s]: %s" % [connection_url, text])
 
+
 static func logInfo(text: String) -> void:
 	if logger.has("info"): logger.info.call(text)
+
 
 static func logError(text: String) -> void:
 	if logger.has("error"): logger.error.call(text)
