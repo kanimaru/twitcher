@@ -18,8 +18,8 @@ func before_each() -> void:
 	_stdout = []
 	_settings = TwitchLogSettings.new()
 	_settings.runtime = LogfamiResource.RUNTIME_GAME
-	_settings.file_level = TwitchLogLevel.Severity.INFO
-	_settings.stdout_level = TwitchLogLevel.OFF
+	_settings.file_level = LogfamiLevel.Severity.INFO
+	_settings.stdout_level = LogfamiLevel.OFF
 
 
 func after_each() -> void:
@@ -76,7 +76,7 @@ func test_file_level_filters_records() -> void:
 
 
 func test_debug_file_level_includes_debug() -> void:
-	_settings.file_level = TwitchLogLevel.Severity.DEBUG
+	_settings.file_level = LogfamiLevel.Severity.DEBUG
 	_install()
 	TwitchLogger.new("GutBridgeDebug").d("details")
 	assert_string_ends_with(_backend.lines_of(FILE_PATH)[1], " DEBUG [GutBridgeDebug] details")
@@ -146,8 +146,8 @@ func test_redaction_can_be_turned_off() -> void:
 
 
 func test_stdout_prints_json_with_the_resource() -> void:
-	_settings.file_level = TwitchLogLevel.OFF
-	_settings.stdout_level = TwitchLogLevel.Severity.INFO
+	_settings.file_level = LogfamiLevel.OFF
+	_settings.stdout_level = LogfamiLevel.Severity.INFO
 	var bridge: TwitchLogfamiBridge = _install()
 	bridge.stdout_sink.printer = _collect_stdout
 
@@ -161,7 +161,7 @@ func test_stdout_prints_json_with_the_resource() -> void:
 func test_stdout_replaces_the_console_while_installed() -> void:
 	TwitchLoggerManager.install_console_handler()
 	var console: TwitchConsoleLogHandler = TwitchLoggerManager.get_console_handler()
-	_settings.stdout_level = TwitchLogLevel.Severity.INFO
+	_settings.stdout_level = LogfamiLevel.Severity.INFO
 
 	_install()
 	assert_false(TwitchLoggerManager.has_handler(console.handle), "no duplicate stdout lines")
@@ -172,7 +172,7 @@ func test_stdout_replaces_the_console_while_installed() -> void:
 
 func test_uninstall_keeps_a_console_that_was_removed_before() -> void:
 	var console: TwitchConsoleLogHandler = TwitchLoggerManager.get_console_handler()
-	_settings.stdout_level = TwitchLogLevel.Severity.INFO
+	_settings.stdout_level = LogfamiLevel.Severity.INFO
 
 	_install()
 	TwitchLogfamiBridge.uninstall()
@@ -181,7 +181,7 @@ func test_uninstall_keeps_a_console_that_was_removed_before() -> void:
 
 
 func test_without_outputs_no_handler_is_added() -> void:
-	_settings.file_level = TwitchLogLevel.OFF
+	_settings.file_level = LogfamiLevel.OFF
 	var bridge: TwitchLogfamiBridge = _install()
 
 	assert_null(bridge.file_sink)
@@ -191,11 +191,11 @@ func test_without_outputs_no_handler_is_added() -> void:
 
 
 func test_handler_level_is_the_lowest_output_level() -> void:
-	_settings.file_level = TwitchLogLevel.Severity.WARN
-	_settings.stdout_level = TwitchLogLevel.Severity.DEBUG
+	_settings.file_level = LogfamiLevel.Severity.WARN
+	_settings.stdout_level = LogfamiLevel.Severity.DEBUG
 	_install()
-	assert_true(TwitchLoggerManager.wants("Any", TwitchLogLevel.Severity.DEBUG))
-	assert_false(TwitchLoggerManager.wants("Any", TwitchLogLevel.Severity.TRACE))
+	assert_true(TwitchLoggerManager.wants("Any", LogfamiLevel.Severity.DEBUG))
+	assert_false(TwitchLoggerManager.wants("Any", LogfamiLevel.Severity.TRACE))
 
 
 func test_install_replaces_the_previous_bridge() -> void:
@@ -267,7 +267,7 @@ func test_first_log_call_installs_from_the_project_settings() -> void:
 
 	var bridge: TwitchLogfamiBridge = TwitchLogfamiBridge.get_instance()
 	assert_not_null(bridge)
-	assert_eq(bridge.settings.file_level, TwitchLogLevel.OFF)
+	assert_eq(bridge.settings.file_level, LogfamiLevel.OFF)
 
 
 ## Static loggers register while scripts load, long before an autoload's

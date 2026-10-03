@@ -98,7 +98,7 @@ func send_message(message: String, reply_parent_message_id: String = "") -> Arra
 		message_body.reply_parent_message_id = reply_parent_message_id
 
 	var response: TwitchSendChatMessage.Response = await api.send_chat_message(message_body)
-	if _log.wants(TwitchLogLevel.Severity.WARN):
+	if _log.wants(LogfamiLevel.Severity.WARN):
 		for message_data: TwitchSendChatMessage.ResponseData in response.data:
 			if not message_data.is_sent:
 				_log.w("Message couldn't be sent cause of [%s]: %s" % [

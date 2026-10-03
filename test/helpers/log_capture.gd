@@ -4,7 +4,7 @@ extends RefCounted
 ##
 ## [codeblock]
 ## var capture: LogCapture = LogCapture.new()
-## TwitchLoggerManager.add_handler(capture.handle, TwitchLogLevel.Severity.TRACE)
+## TwitchLoggerManager.add_handler(capture.handle, LogfamiLevel.Severity.TRACE)
 ## [/codeblock]
 
 var records: Array[Dictionary] = []

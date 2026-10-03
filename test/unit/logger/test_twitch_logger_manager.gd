@@ -14,7 +14,7 @@ class ReentrantHandler:
 	func handle(_record: Dictionary) -> void:
 		calls += 1
 		TwitchLoggerManager.dispatch(TwitchLogRecord.create(
-				TwitchLogLevel.Severity.ERROR, "Nested", "logged while handling"))
+				LogfamiLevel.Severity.ERROR, "Nested", "logged while handling"))
 
 
 class ScopeFilter:
@@ -22,8 +22,8 @@ class ScopeFilter:
 
 	func resolve(scope: String, _logger: TwitchLogger) -> int:
 		if scope == "Wanted":
-			return TwitchLogLevel.Severity.DEBUG
-		return TwitchLogLevel.OFF
+			return LogfamiLevel.Severity.DEBUG
+		return LogfamiLevel.OFF
 
 
 class BoundTarget:
@@ -46,8 +46,8 @@ func before_each() -> void:
 
 
 func test_dispatch_hands_the_record_to_the_handler() -> void:
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.INFO)
-	var record: Dictionary = _record(TwitchLogLevel.Severity.INFO, "Scope", "hello")
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.INFO)
+	var record: Dictionary = _record(LogfamiLevel.Severity.INFO, "Scope", "hello")
 
 	TwitchLoggerManager.dispatch(record)
 
@@ -56,50 +56,50 @@ func test_dispatch_hands_the_record_to_the_handler() -> void:
 
 
 func test_min_level_filters_records() -> void:
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.WARN)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.WARN)
 
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.INFO, "Scope", "info"))
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.WARN, "Scope", "warn"))
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.ERROR, "Scope", "error"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.INFO, "Scope", "info"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.WARN, "Scope", "warn"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.ERROR, "Scope", "error"))
 
 	assert_eq(_capture.bodies(), PackedStringArray(["warn", "error"]))
 
 
 func test_wants_reflects_the_handlers() -> void:
-	assert_false(TwitchLoggerManager.wants("Scope", TwitchLogLevel.Severity.FATAL),
+	assert_false(TwitchLoggerManager.wants("Scope", LogfamiLevel.Severity.FATAL),
 			"without handlers nothing is wanted")
 
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.INFO)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.INFO)
 
-	assert_true(TwitchLoggerManager.wants("Scope", TwitchLogLevel.Severity.INFO))
-	assert_false(TwitchLoggerManager.wants("Scope", TwitchLogLevel.Severity.DEBUG))
+	assert_true(TwitchLoggerManager.wants("Scope", LogfamiLevel.Severity.INFO))
+	assert_false(TwitchLoggerManager.wants("Scope", LogfamiLevel.Severity.DEBUG))
 
 
 func test_wants_is_true_when_any_handler_wants() -> void:
 	var other: LogCapture = LogCapture.new()
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.ERROR)
-	TwitchLoggerManager.add_handler(other.handle, TwitchLogLevel.Severity.DEBUG)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.ERROR)
+	TwitchLoggerManager.add_handler(other.handle, LogfamiLevel.Severity.DEBUG)
 
-	assert_true(TwitchLoggerManager.wants("Scope", TwitchLogLevel.Severity.DEBUG))
+	assert_true(TwitchLoggerManager.wants("Scope", LogfamiLevel.Severity.DEBUG))
 
 
 func test_scoped_handler_filters_per_scope() -> void:
 	var filter: ScopeFilter = ScopeFilter.new()
 	TwitchLoggerManager.add_scoped_handler(_capture.handle, filter.resolve)
 
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.DEBUG, "Wanted", "in"))
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.FATAL, "Ignored", "out"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.DEBUG, "Wanted", "in"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.FATAL, "Ignored", "out"))
 
 	assert_eq(_capture.bodies(), PackedStringArray(["in"]))
-	assert_true(TwitchLoggerManager.wants("Wanted", TwitchLogLevel.Severity.DEBUG))
-	assert_false(TwitchLoggerManager.wants("Ignored", TwitchLogLevel.Severity.FATAL))
+	assert_true(TwitchLoggerManager.wants("Wanted", LogfamiLevel.Severity.DEBUG))
+	assert_false(TwitchLoggerManager.wants("Ignored", LogfamiLevel.Severity.FATAL))
 
 
 func test_adding_a_handler_twice_replaces_its_level() -> void:
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.ERROR)
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.DEBUG)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.ERROR)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.DEBUG)
 
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.DEBUG, "Scope", "once"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.DEBUG, "Scope", "once"))
 
 	assert_eq(TwitchLoggerManager.handler_count(), 1)
 	assert_eq(_capture.records.size(), 1, "the handler must be registered only once")
@@ -109,7 +109,7 @@ func test_remove_handler() -> void:
 	TwitchLoggerManager.add_handler(_capture.handle)
 	TwitchLoggerManager.remove_handler(_capture.handle)
 
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.ERROR, "Scope", "gone"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.ERROR, "Scope", "gone"))
 
 	assert_false(TwitchLoggerManager.has_handler(_capture.handle))
 	assert_eq(_capture.records.size(), 0)
@@ -146,10 +146,10 @@ func test_install_console_handler_is_idempotent() -> void:
 
 func test_records_logged_while_handling_are_dropped() -> void:
 	var reentrant: ReentrantHandler = ReentrantHandler.new()
-	TwitchLoggerManager.add_handler(reentrant.handle, TwitchLogLevel.Severity.TRACE)
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.TRACE)
+	TwitchLoggerManager.add_handler(reentrant.handle, LogfamiLevel.Severity.TRACE)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.TRACE)
 
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.INFO, "Scope", "outer"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.INFO, "Scope", "outer"))
 
 	assert_eq(reentrant.calls, 1, "the nested record must not recurse")
 	assert_eq(_capture.bodies(), PackedStringArray(["outer"]))
@@ -157,10 +157,10 @@ func test_records_logged_while_handling_are_dropped() -> void:
 
 func test_dispatch_works_again_after_a_dropped_nested_record() -> void:
 	var reentrant: ReentrantHandler = ReentrantHandler.new()
-	TwitchLoggerManager.add_handler(reentrant.handle, TwitchLogLevel.Severity.TRACE)
+	TwitchLoggerManager.add_handler(reentrant.handle, LogfamiLevel.Severity.TRACE)
 
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.INFO, "Scope", "first"))
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.INFO, "Scope", "second"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.INFO, "Scope", "first"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.INFO, "Scope", "second"))
 
 	assert_eq(reentrant.calls, 2)
 
@@ -171,14 +171,14 @@ func test_handlers_of_freed_objects_are_removed() -> void:
 	TwitchLoggerManager.add_handler(_capture.handle)
 	node.free()
 
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.INFO, "Scope", "still works"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.INFO, "Scope", "still works"))
 
 	assert_eq(TwitchLoggerManager.handler_count(), 1, "the stale entry must be pruned")
 	assert_eq(_capture.bodies(), PackedStringArray(["still works"]))
 
 
 func test_dispatch_from_threads() -> void:
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.TRACE)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.TRACE)
 	var threads: Array[Thread] = []
 	for index: int in 4:
 		var thread: Thread = Thread.new()
@@ -220,7 +220,7 @@ func test_bound_methods_survive_the_shutdown_sweep() -> void:
 	TwitchLoggerManager.add_handler(bound)
 
 	TwitchLoggerManager.remove_lambda_handlers()
-	TwitchLoggerManager.dispatch(_record(TwitchLogLevel.Severity.INFO, "Scope", "hello"))
+	TwitchLoggerManager.dispatch(_record(LogfamiLevel.Severity.INFO, "Scope", "hello"))
 
 	assert_true(TwitchLoggerManager.has_handler(bound), "bound methods aren't lambdas")
 	assert_eq(target.seen, ["seen: hello"] as Array[String])
@@ -228,7 +228,7 @@ func test_bound_methods_survive_the_shutdown_sweep() -> void:
 
 func test_scoped_handlers_with_lambda_resolvers_are_removed_on_shutdown() -> void:
 	var resolver: Callable = func(_scope: String, _logger: TwitchLogger) -> int:
-		return TwitchLogLevel.Severity.INFO
+		return LogfamiLevel.Severity.INFO
 	TwitchLoggerManager.add_scoped_handler(_capture.handle, resolver)
 
 	TwitchLoggerManager.remove_lambda_handlers()
@@ -248,7 +248,7 @@ func test_adding_a_lambda_watches_the_tree_shutdown() -> void:
 func _dispatch_many(index: int) -> void:
 	for count: int in 50:
 		TwitchLoggerManager.dispatch(
-				_record(TwitchLogLevel.Severity.INFO, "Thread%d" % index, str(count)))
+				_record(LogfamiLevel.Severity.INFO, "Thread%d" % index, str(count)))
 
 
 func _record(level: int, scope: String, body: String) -> Dictionary:

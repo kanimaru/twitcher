@@ -50,11 +50,11 @@ func format(record: Dictionary) -> String:
 		name += "-" + instance
 	var text: String = str(record[TwitchLogRecord.BODY]) + _format_attributes(attributes)
 	var values: Array = [record[TwitchLogRecord.TICKS_MSEC], color_for(scope), name, text]
-	if level >= TwitchLogLevel.Severity.ERROR:
+	if level >= LogfamiLevel.Severity.ERROR:
 		return _ERROR_FORMAT % values
-	if level >= TwitchLogLevel.Severity.WARN:
+	if level >= LogfamiLevel.Severity.WARN:
 		return _WARN_FORMAT % values
-	if level >= TwitchLogLevel.Severity.INFO:
+	if level >= LogfamiLevel.Severity.INFO:
 		return _INFO_FORMAT % values
 	return _DEBUG_FORMAT % values
 
@@ -67,13 +67,13 @@ func threshold_for(scope: String, logger: TwitchLogger = null) -> int:
 	if source == null:
 		var registered: Variant = TwitchLoggerManager.log_registry.get(scope)
 		if not registered is TwitchLogger:
-			return TwitchLogLevel.OFF
+			return LogfamiLevel.OFF
 		source = registered
 	if not source.enabled:
-		return TwitchLogLevel.OFF
+		return LogfamiLevel.OFF
 	if source.debug:
-		return TwitchLogLevel.Severity.DEBUG
-	return TwitchLogLevel.Severity.INFO
+		return LogfamiLevel.Severity.DEBUG
+	return LogfamiLevel.Severity.INFO
 
 
 func _format_attributes(attributes: Dictionary) -> String:

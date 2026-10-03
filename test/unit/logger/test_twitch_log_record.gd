@@ -11,7 +11,7 @@ const CONTRACT_FIXTURE: String = "logger/record_contract.json"
 func test_record_matches_the_contract_fixture() -> void:
 	var contract: Dictionary = fixture_json(CONTRACT_FIXTURE)
 	var record: Dictionary = TwitchLogRecord.create(
-			TwitchLogLevel.Severity.INFO, "Scope", "body", { "key": "value" })
+			LogfamiLevel.Severity.INFO, "Scope", "body", { "key": "value" })
 
 	var expected_keys: Array = contract.keys()
 	expected_keys.sort()
@@ -24,7 +24,7 @@ func test_record_matches_the_contract_fixture() -> void:
 
 
 func test_keys_constant_lists_every_record_key() -> void:
-	var record: Dictionary = TwitchLogRecord.create(TwitchLogLevel.Severity.INFO, "Scope", "body")
+	var record: Dictionary = TwitchLogRecord.create(LogfamiLevel.Severity.INFO, "Scope", "body")
 	var expected: Array = Array(TwitchLogRecord.KEYS)
 	expected.sort()
 	var actual: Array = record.keys()
@@ -34,9 +34,9 @@ func test_keys_constant_lists_every_record_key() -> void:
 
 func test_record_carries_the_given_values() -> void:
 	var record: Dictionary = TwitchLogRecord.create(
-			TwitchLogLevel.Severity.WARN, "TwitchAuth", "Token expired", { "expires_in": 0 })
+			LogfamiLevel.Severity.WARN, "TwitchAuth", "Token expired", { "expires_in": 0 })
 
-	assert_eq(record[TwitchLogRecord.SEVERITY_NUMBER], TwitchLogLevel.Severity.WARN)
+	assert_eq(record[TwitchLogRecord.SEVERITY_NUMBER], LogfamiLevel.Severity.WARN)
 	assert_eq(record[TwitchLogRecord.SEVERITY_TEXT], "WARN")
 	assert_eq(record[TwitchLogRecord.SCOPE], "TwitchAuth")
 	assert_eq(record[TwitchLogRecord.BODY], "Token expired")
@@ -46,7 +46,7 @@ func test_record_carries_the_given_values() -> void:
 
 func test_timestamps_are_current() -> void:
 	var before_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
-	var record: Dictionary = TwitchLogRecord.create(TwitchLogLevel.Severity.INFO, "Scope", "body")
+	var record: Dictionary = TwitchLogRecord.create(LogfamiLevel.Severity.INFO, "Scope", "body")
 	var after_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
 
 	assert_between(record[TwitchLogRecord.TIME_UNIX_MS], before_ms, after_ms)
@@ -55,7 +55,7 @@ func test_timestamps_are_current() -> void:
 
 func test_record_and_attributes_are_read_only() -> void:
 	var record: Dictionary = TwitchLogRecord.create(
-			TwitchLogLevel.Severity.INFO, "Scope", "body", { "key": "value" })
+			LogfamiLevel.Severity.INFO, "Scope", "body", { "key": "value" })
 
 	assert_true(record.is_read_only(), "handlers must not be able to change a shared record")
 	var attributes: Dictionary = record[TwitchLogRecord.ATTRIBUTES]
@@ -65,7 +65,7 @@ func test_record_and_attributes_are_read_only() -> void:
 func test_attributes_are_copied() -> void:
 	var attributes: Dictionary = { "nested": { "count": 1 } }
 	var record: Dictionary = TwitchLogRecord.create(
-			TwitchLogLevel.Severity.INFO, "Scope", "body", attributes)
+			LogfamiLevel.Severity.INFO, "Scope", "body", attributes)
 
 	attributes["added"] = true
 	attributes["nested"]["count"] = 2
@@ -77,5 +77,5 @@ func test_attributes_are_copied() -> void:
 
 func test_passed_attributes_stay_writable() -> void:
 	var attributes: Dictionary = { "key": "value" }
-	TwitchLogRecord.create(TwitchLogLevel.Severity.INFO, "Scope", "body", attributes)
+	TwitchLogRecord.create(LogfamiLevel.Severity.INFO, "Scope", "body", attributes)
 	assert_false(attributes.is_read_only(), "the caller's dictionary must not be locked")

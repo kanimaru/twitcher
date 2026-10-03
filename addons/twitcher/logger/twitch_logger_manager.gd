@@ -9,7 +9,7 @@ extends RefCounted
 ## Twitcher class, so an external logging solution can subscribe with a plain
 ## [Callable]:
 ## [codeblock]
-## TwitchLoggerManager.add_handler(my_logger.write, TwitchLogLevel.Severity.INFO)
+## TwitchLoggerManager.add_handler(my_logger.write, LogfamiLevel.Severity.INFO)
 ## [/codeblock]
 ## The console output is a handler too ([TwitchConsoleLogHandler]). It's
 ## installed on load and can be removed with [method remove_handler] or
@@ -59,7 +59,7 @@ static func register(logger: TwitchLogger) -> void:
 ## Adds [param handler] for every scope, receiving records at [param min_level]
 ## and above. Adding a handler twice replaces its previous registration.
 static func add_handler(handler: Callable,
-		min_level: int = TwitchLogLevel.Severity.INFO) -> void:
+		min_level: int = LogfamiLevel.Severity.INFO) -> void:
 	_add_entry(TwitchLogHandlerEntry.new(handler, min_level))
 
 
@@ -69,7 +69,7 @@ static func add_handler(handler: Callable,
 ## [code]logger[/code] is the emitting logger or [code]null[/code] for records
 ## dispatched directly.
 static func add_scoped_handler(handler: Callable, level_resolver: Callable) -> void:
-	_add_entry(TwitchLogHandlerEntry.new(handler, TwitchLogLevel.OFF, level_resolver))
+	_add_entry(TwitchLogHandlerEntry.new(handler, LogfamiLevel.OFF, level_resolver))
 
 
 static func remove_handler(handler: Callable) -> void:
@@ -144,7 +144,7 @@ static func dispatch(record: Dictionary, logger: TwitchLogger = null) -> void:
 	if not _enter_dispatch(thread_id):
 		return
 	var scope: String = record.get(TwitchLogRecord.SCOPE, "")
-	var level: int = record.get(TwitchLogRecord.SEVERITY_NUMBER, TwitchLogLevel.Severity.INFO)
+	var level: int = record.get(TwitchLogRecord.SEVERITY_NUMBER, LogfamiLevel.Severity.INFO)
 	var handlers: Array[TwitchLogHandlerEntry] = _handlers
 	var has_stale_entries: bool = false
 	for entry: TwitchLogHandlerEntry in handlers:

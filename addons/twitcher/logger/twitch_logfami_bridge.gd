@@ -97,9 +97,9 @@ func _init(log_settings: TwitchLogSettings, file_backend: LogfamiFileBackend = n
 	var resource: LogfamiResource = LogfamiResource.detect().with_attribute(
 			TWITCHER_VERSION_ATTRIBUTE, Twitcher.VERSION)
 	logfami = Logfami.new(resource, log_clock)
-	if settings.file_level < TwitchLogLevel.OFF:
+	if settings.file_level < LogfamiLevel.OFF:
 		_add_file_pipeline(file_backend)
-	if settings.stdout_level < TwitchLogLevel.OFF:
+	if settings.stdout_level < LogfamiLevel.OFF:
 		_add_stdout_pipeline()
 	if settings.capture_engine:
 		engine_capture = LogfamiEngineCapture.new(logfami)
