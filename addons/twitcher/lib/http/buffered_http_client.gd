@@ -1,6 +1,6 @@
 @icon("./buffered-http-icon.svg")
 @tool
-extends Twitcher
+extends Node
 
 ## Http client that buffers the requests and sends at most [member max_parallel_requests]
 ## of them at the same time. Everything above that limit waits in a queue and is
@@ -235,12 +235,22 @@ static func set_logger(error: Callable, info: Callable, debug: Callable) -> void
 	logger.debug = debug
 	logger.info = info
 	logger.error = error
+	if LambdaLoggerCleanup.has_lambda([error, info, debug]):
+		LambdaLoggerCleanup.remove_on_shutdown(BufferedHTTPClient._remove_lambda_loggers)
+
+
+## Drops lambda loggers; Godot frees them before this static dictionary at shutdown.
+static func _remove_lambda_loggers() -> void:
+	LambdaLoggerCleanup.remove_lambdas(logger)
+
 
 static func logDebug(text: String) -> void:
 	if logger.has("debug"): logger.debug.call(text)
 
+
 static func logInfo(text: String) -> void:
 	if logger.has("info"): logger.info.call(text)
+
 
 static func logError(text: String) -> void:
 	if logger.has("error"): logger.error.call(text)
