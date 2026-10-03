@@ -10,6 +10,8 @@ var directories: PackedStringArray = []
 ## Path to the number of lines that were flushed.
 var flushed_lines: Dictionary[String, int] = {}
 var open_path: String = ""
+## How often [method line_count] ran; it reads a whole file on disk.
+var line_count_calls: int = 0
 
 ## Failure switches, to test how the sink copes.
 var fail_make_dir: bool = false
@@ -30,6 +32,7 @@ func exists(path: String) -> bool:
 
 
 func line_count(path: String) -> int:
+	line_count_calls += 1
 	return files.get(path, PackedStringArray()).size()
 
 
