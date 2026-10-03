@@ -16,6 +16,10 @@ func exists(path: String) -> bool:
 	return FileAccess.file_exists(path)
 
 
+## Reads the whole file once. [LogfamiFileSink] calls this only when a session
+## appends to an existing file ([member LogfamiFileSinkConfig.rotate_on_start]
+## is [code]false[/code]), so at most once per process start; size rotations
+## open a fresh file and don't count.
 func line_count(path: String) -> int:
 	if not FileAccess.file_exists(path):
 		return 0

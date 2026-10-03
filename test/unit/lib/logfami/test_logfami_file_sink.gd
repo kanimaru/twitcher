@@ -79,6 +79,22 @@ func test_appended_lines_count_towards_the_rotation_limit() -> void:
 	assert_eq(_backend.lines_of("user://logs/app.log"), PackedStringArray(["new 2"]))
 
 
+func test_existing_lines_are_counted_once_per_session_only_when_appending() -> void:
+	_config.max_lines = 2
+	var rotating: LogfamiFileSink = _sink()
+	rotating.start_session(HEADER)
+	for index: int in 5:
+		rotating.write("line %d" % index, _record(LogfamiLevel.Severity.INFO))
+	assert_eq(_backend.line_count_calls, 0, "a fresh file per session never reads the old one")
+
+	_config.rotate_on_start = false
+	var appending: LogfamiFileSink = _sink()
+	appending.start_session(HEADER)
+	for index: int in 5:
+		appending.write("line %d" % index, _record(LogfamiLevel.Severity.INFO))
+	assert_eq(_backend.line_count_calls, 1, "read once at start, not again on size rotations")
+
+
 func test_config_is_read_once_at_construction() -> void:
 	var sink: LogfamiFileSink = _sink()
 	_config.directory = "user://elsewhere"
