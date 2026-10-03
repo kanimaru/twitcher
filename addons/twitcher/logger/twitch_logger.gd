@@ -57,22 +57,22 @@ func wants(level: int) -> bool:
 
 ## Logs a message on info level.
 func i(text: String, attributes: Dictionary = {}) -> void:
-	_emit(TwitchLogLevel.Severity.INFO, text, attributes)
+	_emit(LogfamiLevel.Severity.INFO, text, attributes)
 
 
 ## Logs a message on warn level.
 func w(text: String, attributes: Dictionary = {}) -> void:
-	_emit(TwitchLogLevel.Severity.WARN, text, attributes)
+	_emit(LogfamiLevel.Severity.WARN, text, attributes)
 
 
 ## Logs a message on error level.
 func e(text: String, attributes: Dictionary = {}) -> void:
-	_emit(TwitchLogLevel.Severity.ERROR, text, attributes)
+	_emit(LogfamiLevel.Severity.ERROR, text, attributes)
 
 
 ## Logs a message on debug level.
 func d(text: String, attributes: Dictionary = {}) -> void:
-	_emit(TwitchLogLevel.Severity.DEBUG, text, attributes)
+	_emit(LogfamiLevel.Severity.DEBUG, text, attributes)
 
 
 func _emit(level: int, text: String, attributes: Dictionary) -> void:

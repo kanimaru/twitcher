@@ -2,13 +2,13 @@ extends TwitcherTest
 ## Unit tests for [TwitchLogSettings].
 
 var stdout_params: Array = [
-	["auto", LogfamiResource.RUNTIME_HEADLESS, TwitchLogLevel.Severity.INFO],
-	["auto", LogfamiResource.RUNTIME_GAME, TwitchLogLevel.OFF],
-	["auto", LogfamiResource.RUNTIME_EDITOR, TwitchLogLevel.OFF],
-	["AUTO", LogfamiResource.RUNTIME_HEADLESS, TwitchLogLevel.Severity.INFO],
-	["debug", LogfamiResource.RUNTIME_GAME, TwitchLogLevel.Severity.DEBUG],
-	["off", LogfamiResource.RUNTIME_HEADLESS, TwitchLogLevel.OFF],
-	["error", LogfamiResource.RUNTIME_EDITOR, TwitchLogLevel.Severity.ERROR],
+	["auto", LogfamiResource.RUNTIME_HEADLESS, LogfamiLevel.Severity.INFO],
+	["auto", LogfamiResource.RUNTIME_GAME, LogfamiLevel.OFF],
+	["auto", LogfamiResource.RUNTIME_EDITOR, LogfamiLevel.OFF],
+	["AUTO", LogfamiResource.RUNTIME_HEADLESS, LogfamiLevel.Severity.INFO],
+	["debug", LogfamiResource.RUNTIME_GAME, LogfamiLevel.Severity.DEBUG],
+	["off", LogfamiResource.RUNTIME_HEADLESS, LogfamiLevel.OFF],
+	["error", LogfamiResource.RUNTIME_EDITOR, LogfamiLevel.Severity.ERROR],
 ]
 
 ## Settings a test changed, with their previous value or null when they didn't
@@ -33,7 +33,7 @@ func test_defaults() -> void:
 
 	var settings: TwitchLogSettings = TwitchLogSettings.from_project()
 
-	assert_eq(settings.file_level, TwitchLogLevel.Severity.INFO, "file logging is on by default")
+	assert_eq(settings.file_level, LogfamiLevel.Severity.INFO, "file logging is on by default")
 	assert_eq(settings.file_format, TwitchLogSettings.FORMAT_TEXT)
 	assert_eq(settings.file_directory, TwitchLogSettings.DEFAULT_FILE_DIRECTORY)
 	assert_eq(settings.file_max_lines, 1000)
@@ -71,20 +71,20 @@ func test_reads_configured_values() -> void:
 
 	var settings: TwitchLogSettings = TwitchLogSettings.from_project()
 
-	assert_eq(settings.file_level, TwitchLogLevel.Severity.DEBUG)
+	assert_eq(settings.file_level, LogfamiLevel.Severity.DEBUG)
 	assert_eq(settings.file_format, TwitchLogSettings.FORMAT_LOGFMT)
 	assert_eq(settings.file_directory, "user://support")
 	assert_eq(settings.file_max_lines, 50)
 	assert_eq(settings.file_max_files, 5)
 	assert_false(settings.redact)
-	assert_eq(settings.stdout_level, TwitchLogLevel.OFF)
+	assert_eq(settings.stdout_level, LogfamiLevel.OFF)
 	assert_eq(settings.stdout_format, TwitchLogSettings.FORMAT_TEXT)
 	assert_true(settings.capture_engine)
 
 
 func test_file_logging_can_be_turned_off() -> void:
 	_set_setting(TwitchLogSettings.FILE_LEVEL, "off")
-	assert_eq(TwitchLogSettings.from_project().file_level, TwitchLogLevel.OFF)
+	assert_eq(TwitchLogSettings.from_project().file_level, LogfamiLevel.OFF)
 
 
 func test_resolve_stdout_level(params: Array = use_parameters(stdout_params)) -> void:

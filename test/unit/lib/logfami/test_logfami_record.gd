@@ -21,6 +21,11 @@ func test_create_stamps_clock_level_and_thread() -> void:
 	assert_eq(record.thread_id, OS.get_thread_caller_id())
 
 
+func test_keys_lists_every_to_dict_key_in_order() -> void:
+	var record: LogfamiRecord = LogfamiRecord.create(LogfamiLevel.Severity.INFO, "Scope", "body")
+	assert_eq(PackedStringArray(record.to_dict().keys()), LogfamiRecord.KEYS)
+
+
 func test_create_copies_the_attributes() -> void:
 	var attributes: Dictionary = { "nested": { "count": 1 } }
 	var record: LogfamiRecord = LogfamiRecord.create(
@@ -68,7 +73,7 @@ func test_reads_every_key_of_the_shared_record_contract() -> void:
 
 func test_reads_a_twitcher_record() -> void:
 	var source: Dictionary = TwitchLogRecord.create(
-			TwitchLogLevel.Severity.WARN, "TwitchAuth", "expired", { "instance": "bot" })
+			LogfamiLevel.Severity.WARN, "TwitchAuth", "expired", { "instance": "bot" })
 
 	var record: LogfamiRecord = LogfamiRecord.from_dict(source)
 

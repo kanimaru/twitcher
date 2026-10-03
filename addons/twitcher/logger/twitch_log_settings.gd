@@ -32,8 +32,8 @@ const LEVEL_OPTIONS: Array[String] = ["off", "error", "warn", "info", "debug"]
 const STDOUT_LEVEL_OPTIONS: Array[String] = ["auto", "off", "error", "warn", "info", "debug"]
 const FORMAT_OPTIONS: Array[String] = ["text", "jsonl", "logfmt"]
 
-## Threshold of the log file, see [enum TwitchLogLevel.Severity].
-var file_level: int = TwitchLogLevel.Severity.INFO
+## Threshold of the log file, see [enum LogfamiLevel.Severity].
+var file_level: int = LogfamiLevel.Severity.INFO
 var file_format: String = FORMAT_TEXT
 var file_directory: String = DEFAULT_FILE_DIRECTORY
 var file_max_lines: int = 1000
@@ -41,7 +41,7 @@ var file_max_files: int = 3
 ## Masks credentials in the file and on stdout.
 var redact: bool = true
 ## Threshold of stdout, already resolved from [constant AUTO].
-var stdout_level: int = TwitchLogLevel.OFF
+var stdout_level: int = LogfamiLevel.OFF
 var stdout_format: String = FORMAT_JSON_LINES
 ## Also writes engine errors and warnings ([method @GlobalScope.push_error]).
 var capture_engine: bool = false
@@ -53,7 +53,7 @@ var runtime: String = "game"
 static func from_project() -> TwitchLogSettings:
 	var settings: TwitchLogSettings = TwitchLogSettings.new()
 	settings.runtime = LogfamiResource.detect_runtime()
-	settings.file_level = TwitchLogLevel.threshold_from_text(
+	settings.file_level = LogfamiLevel.threshold_from_text(
 			_select(FILE_LEVEL, "info", LEVEL_OPTIONS))
 	settings.file_format = _select(FILE_FORMAT, FORMAT_TEXT, FORMAT_OPTIONS)
 	settings.file_directory = str(TwitchProperty.new(FILE_DIRECTORY, DEFAULT_FILE_DIRECTORY)
@@ -72,10 +72,10 @@ static func from_project() -> TwitchLogSettings:
 ## everywhere else, the editor included.
 static func resolve_stdout_level(text: String, current_runtime: String) -> int:
 	if text.strip_edges().to_lower() != AUTO:
-		return TwitchLogLevel.threshold_from_text(text)
+		return LogfamiLevel.threshold_from_text(text)
 	if current_runtime == LogfamiResource.RUNTIME_HEADLESS:
-		return TwitchLogLevel.Severity.INFO
-	return TwitchLogLevel.OFF
+		return LogfamiLevel.Severity.INFO
+	return LogfamiLevel.OFF
 
 
 static func _select(key: String, default: String, options: Array[String]) -> String:

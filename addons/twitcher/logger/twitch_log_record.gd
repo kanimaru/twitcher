@@ -10,7 +10,7 @@ extends RefCounted
 ## {
 ##     "time_unix_ms": int,       # wall clock, UTC, milliseconds since epoch
 ##     "ticks_msec": int,         # Time.get_ticks_msec() when the record was made
-##     "severity_number": int,    # see TwitchLogLevel.Severity
+##     "severity_number": int,    # see LogfamiLevel.Severity
 ##     "severity_text": String,   # "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
 ##     "body": String,            # the message
 ##     "scope": String,           # context name of the logger, e.g. "TwitchAuth"
@@ -21,26 +21,18 @@ extends RefCounted
 ## The keys are a public contract: new keys may be added, existing ones are
 ## never renamed or removed.
 
-const TIME_UNIX_MS: String = "time_unix_ms"
-const TICKS_MSEC: String = "ticks_msec"
-const SEVERITY_NUMBER: String = "severity_number"
-const SEVERITY_TEXT: String = "severity_text"
-const BODY: String = "body"
-const SCOPE: String = "scope"
-const ATTRIBUTES: String = "attributes"
-const THREAD_ID: String = "thread_id"
+## The keys are shared with [LogfamiRecord], the one definition of the shape.
+const TIME_UNIX_MS: String = LogfamiRecord.TIME_UNIX_MS
+const TICKS_MSEC: String = LogfamiRecord.TICKS_MSEC
+const SEVERITY_NUMBER: String = LogfamiRecord.SEVERITY_NUMBER
+const SEVERITY_TEXT: String = LogfamiRecord.SEVERITY_TEXT
+const BODY: String = LogfamiRecord.BODY
+const SCOPE: String = LogfamiRecord.SCOPE
+const ATTRIBUTES: String = LogfamiRecord.ATTRIBUTES
+const THREAD_ID: String = LogfamiRecord.THREAD_ID
 
 ## Every key a record carries.
-const KEYS: PackedStringArray = [
-	TIME_UNIX_MS,
-	TICKS_MSEC,
-	SEVERITY_NUMBER,
-	SEVERITY_TEXT,
-	BODY,
-	SCOPE,
-	ATTRIBUTES,
-	THREAD_ID,
-]
+const KEYS: PackedStringArray = LogfamiRecord.KEYS
 
 ## Attribute holding the instance name set via [method TwitchLogger.set_suffix].
 const ATTRIBUTE_INSTANCE: String = "instance"
@@ -56,7 +48,7 @@ static func create(level: int, scope: String, body: String,
 		TIME_UNIX_MS: int(Time.get_unix_time_from_system() * 1000.0),
 		TICKS_MSEC: Time.get_ticks_msec(),
 		SEVERITY_NUMBER: level,
-		SEVERITY_TEXT: TwitchLogLevel.to_text(level),
+		SEVERITY_TEXT: LogfamiLevel.to_text(level),
 		BODY: body,
 		SCOPE: scope,
 		ATTRIBUTES: own_attributes,

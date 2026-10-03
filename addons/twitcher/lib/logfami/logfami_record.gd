@@ -16,6 +16,18 @@ const SCOPE: String = "scope"
 const ATTRIBUTES: String = "attributes"
 const THREAD_ID: String = "thread_id"
 
+## Every key of the dictionary form, in the order [method to_dict] writes them.
+const KEYS: PackedStringArray = [
+	TIME_UNIX_MS,
+	TICKS_MSEC,
+	SEVERITY_NUMBER,
+	SEVERITY_TEXT,
+	BODY,
+	SCOPE,
+	ATTRIBUTES,
+	THREAD_ID,
+]
+
 ## Wall clock, UTC, milliseconds since epoch.
 var time_unix_ms: int = 0
 ## Milliseconds since the engine started.

@@ -8,7 +8,7 @@ extends RefCounted
 
 ## [code]func(record: Dictionary) -> void[/code], see [TwitchLogRecord].
 var handler: Callable
-## Lowest severity the handler receives, see [enum TwitchLogLevel.Severity].
+## Lowest severity the handler receives, see [enum LogfamiLevel.Severity].
 var min_level: int
 ## Optional [code]func(scope: String, logger: TwitchLogger) -> int[/code]
 ## returning the threshold; [code]logger[/code] is null for records dispatched
@@ -36,7 +36,7 @@ func threshold_for(scope: String, logger: TwitchLogger = null) -> int:
 	if level_resolver.is_null():
 		return min_level
 	if not level_resolver.is_valid():
-		return TwitchLogLevel.OFF
+		return LogfamiLevel.OFF
 	return level_resolver.call(scope, logger)
 
 

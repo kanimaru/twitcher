@@ -49,7 +49,7 @@ func test_console_follows_each_instance_when_loggers_share_a_name() -> void:
 
 
 func test_each_level_emits_its_severity() -> void:
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.TRACE)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.TRACE)
 	var logger: TwitchLogger = TwitchLogger.new("GutLevelProbe")
 
 	logger.d("debug")
@@ -61,10 +61,10 @@ func test_each_level_emits_its_severity() -> void:
 	for record: Dictionary in _capture.records:
 		severities.append(record[TwitchLogRecord.SEVERITY_NUMBER])
 	assert_eq(severities, [
-		TwitchLogLevel.Severity.DEBUG,
-		TwitchLogLevel.Severity.INFO,
-		TwitchLogLevel.Severity.WARN,
-		TwitchLogLevel.Severity.ERROR,
+		LogfamiLevel.Severity.DEBUG,
+		LogfamiLevel.Severity.INFO,
+		LogfamiLevel.Severity.WARN,
+		LogfamiLevel.Severity.ERROR,
 	] as Array[int])
 	assert_eq(_capture.bodies(), PackedStringArray(["debug", "info", "warn", "error"]))
 
@@ -98,7 +98,7 @@ func test_suffix_becomes_the_instance_attribute() -> void:
 ## messages even when the console output for the context is off.
 func test_handler_receives_records_while_the_console_is_off() -> void:
 	TwitchLoggerManager.install_console_handler()
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.INFO)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.INFO)
 	var logger: TwitchLogger = TwitchLogger.new("GutConsoleOffProbe")
 	logger.set_enabled(false)
 
@@ -108,19 +108,19 @@ func test_handler_receives_records_while_the_console_is_off() -> void:
 
 
 func test_messages_below_every_threshold_create_no_record() -> void:
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.INFO)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.INFO)
 	TwitchLogger.new("GutFilteredProbe").d("dropped")
 	assert_eq(_capture.records.size(), 0)
 
 
 func test_wants_reflects_the_handlers() -> void:
 	var logger: TwitchLogger = TwitchLogger.new("GutWantsProbe")
-	assert_false(logger.wants(TwitchLogLevel.Severity.FATAL), "no handlers, nothing wanted")
+	assert_false(logger.wants(LogfamiLevel.Severity.FATAL), "no handlers, nothing wanted")
 
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.WARN)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.WARN)
 
-	assert_true(logger.wants(TwitchLogLevel.Severity.WARN))
-	assert_false(logger.wants(TwitchLogLevel.Severity.INFO))
+	assert_true(logger.wants(LogfamiLevel.Severity.WARN))
+	assert_false(logger.wants(LogfamiLevel.Severity.INFO))
 
 
 func test_console_prints_only_when_the_logger_is_enabled() -> void:
@@ -144,7 +144,7 @@ func test_console_prints_only_when_the_logger_is_enabled() -> void:
 
 
 func test_logger_methods_work_as_set_logger_callables() -> void:
-	TwitchLoggerManager.add_handler(_capture.handle, TwitchLogLevel.Severity.TRACE)
+	TwitchLoggerManager.add_handler(_capture.handle, LogfamiLevel.Severity.TRACE)
 	var logger: TwitchLogger = TwitchLogger.new("GutCallableProbe")
 	var error: Callable = logger.e
 
