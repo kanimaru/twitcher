@@ -241,7 +241,7 @@ func test_adding_a_lambda_watches_the_tree_shutdown() -> void:
 		pass
 	TwitchLoggerManager.add_handler(lambda)
 
-	var remove_lambdas: Callable = Callable(TwitchLoggerManager, &"remove_lambda_handlers")
+	var remove_lambdas: Callable = TwitchLoggerManager.remove_lambda_handlers
 	assert_true(get_tree().root.tree_exiting.is_connected(remove_lambdas))
 
 

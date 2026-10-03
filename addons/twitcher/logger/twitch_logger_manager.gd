@@ -176,9 +176,9 @@ static func _watch_shutdown() -> void:
 	if tree == null or tree.root == null:
 		if not _is_shutdown_watch_deferred:
 			_is_shutdown_watch_deferred = true
-			Callable(TwitchLoggerManager, &"_watch_shutdown_deferred").call_deferred()
+			TwitchLoggerManager._watch_shutdown_deferred.call_deferred()
 		return
-	var remove_lambdas: Callable = Callable(TwitchLoggerManager, &"remove_lambda_handlers")
+	var remove_lambdas: Callable = TwitchLoggerManager.remove_lambda_handlers
 	if not tree.root.tree_exiting.is_connected(remove_lambdas):
 		tree.root.tree_exiting.connect(remove_lambdas)
 
