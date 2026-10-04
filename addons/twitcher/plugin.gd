@@ -37,6 +37,8 @@ const TWITCHER_EDITOR_SCOPES = preload("uid://cgqldyna2cv5h")
 const TWITCH_REWARD_MANAGER = preload("uid://deqnbbm1uxpbb")
 const SETUP = preload("uid://wu1fprbhr62")
 
+const LOG_DOCK_TITLE: String = "Twitcher Logs"
+
 var generator_eventsub: TwitchEventsubGenerator
 var generator_api: TwitchAPIGenerator
 var parser_eventsub: TwitchAPIParser
@@ -60,6 +62,7 @@ var bot_inspector: TwitchBotInspector = TwitchBotInspector.new()
 var current_setup_window: Node
 var current_reward_manager_window: Node
 var popup_menu: PopupMenu
+var log_dock: TwitchLogDock
 
 func _enter_tree():
 	_log.i("Start Twitcher loading...")
@@ -68,6 +71,7 @@ func _enter_tree():
 	token_inspector.token_info_scene = preload("res://addons/twitcher/editor/inspector/twitch_token_info.tscn")
 
 	add_twitcher_menu()
+	add_log_dock()
 
 	add_inspector_plugin(eventsub_config_inspector)
 	add_inspector_plugin(eventsub_inspector)
@@ -91,6 +95,7 @@ func _enter_tree():
 
 
 func _exit_tree():
+	remove_log_dock()
 	remove_import_plugin(gif_importer_native)
 	if is_magick_available():
 		remove_import_plugin(gif_importer_imagemagick)
@@ -127,6 +132,18 @@ func add_twitcher_menu() -> void:
 			TwitcherTooltipIds.OPEN_LOG_FOLDER: TwitchLogfamiBridge.open_log_folder()
 	)
 	add_tool_submenu_item(TOOLMENU_CATEGORY, popup_menu)
+
+
+func add_log_dock() -> void:
+	log_dock = TwitchLogDock.new()
+	add_control_to_bottom_panel(log_dock, LOG_DOCK_TITLE)
+
+
+func remove_log_dock() -> void:
+	if not is_instance_valid(log_dock): return
+	remove_control_from_bottom_panel(log_dock)
+	log_dock.queue_free()
+	log_dock = null
 
 
 func open_setup() -> void:
