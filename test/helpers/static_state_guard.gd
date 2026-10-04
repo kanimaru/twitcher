@@ -53,6 +53,10 @@ const _SLOTS: Array[Dictionary] = [
 		prop = "_console", deep = false,
 	},
 	{
+		path = "res://addons/twitcher/logger/twitch_log_contexts.gd",
+		prop = "_overrides", deep = true,
+	},
+	{
 		path = "res://addons/twitcher/logger/twitch_logger_manager.gd",
 		prop = "_dispatching_threads", deep = true,
 	},

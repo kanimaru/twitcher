@@ -47,12 +47,10 @@ static func _static_init() -> void:
 ## Registers the logger and sets the enabled state from its project setting.
 static func register(logger: TwitchLogger) -> void:
 	log_registry[logger.context_name] = logger
-	var key: String = "twitcher/logs/%s" % logger.context_name
-	var property: TwitchProperty = TwitchProperty.new(key, "off")
-	property.as_select(["off", "info", "debug"])
-	if property.get_val() != "off":
+	var property: TwitchProperty = TwitchLogContexts.property_for(logger.context_name)
+	if property.get_val() != TwitchLogContexts.MODE_OFF:
 		logger.set_enabled(true)
-	if property.get_val() == "debug":
+	if property.get_val() == TwitchLogContexts.MODE_DEBUG:
 		logger.debug = true
 
 
