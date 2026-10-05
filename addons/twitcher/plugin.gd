@@ -149,19 +149,27 @@ func generate_api() -> void:
 	parser_api = TwitchAPIParser.new()
 	parser_api.api = "https://raw.githubusercontent.com/DmitryScaletta/twitch-api-swagger/refs/heads/main/openapi.json"
 
+	# The eventsub generator regenerates twitch_eventsub_definition.gd too and needs its parser and
+	# generator, wired like in example/api_generator/generate_all_apis.tscn.
+	var definition_parser: TwitchEventsubDefinitionParser = TwitchEventsubDefinitionParser.new()
+	definition_parser.api_parser = parser_eventsub
+	var definition_generator: TwitchEventsubDefinitionGenerator = TwitchEventsubDefinitionGenerator.new()
+	generator_eventsub.definition_parser = definition_parser
+	generator_eventsub.definition_generator = definition_generator
+
 	generator_eventsub.parser = parser_eventsub
 	generator_api.parser = parser_api
-	add_child(generator_eventsub)
-	add_child(generator_api)
-	add_child(parser_eventsub)
-	add_child(parser_api)
+	var nodes: Array[Node] = [generator_eventsub, generator_api, parser_eventsub, parser_api, definition_parser, definition_generator]
+	for node: Node in nodes:
+		add_child(node)
 	await parser_eventsub.parse_api()
 	await parser_api.parse_api()
 	generator_api.generate_api()
-	generator_eventsub.generate_api()
-	remove_child(generator_api)
-	remove_child(parser_api)
-	remove_child(parser_eventsub)
+	# A coroutine (it downloads the subscription types): the nodes stay in the tree until it is done.
+	await generator_eventsub.generate_api()
+	for node: Node in nodes:
+		remove_child(node)
+		node.queue_free()
 	EditorInterface.get_resource_filesystem().scan()
 
 

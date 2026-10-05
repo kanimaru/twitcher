@@ -164,6 +164,12 @@ class Message extends TwitchData:
 ## #/components/schemas/ChannelChatUserMessageHoldEvent/Message/Fragments
 class Fragments extends TwitchData:
 
+	## The type of message fragment. Possible values: text, emote, cheermote.
+	@export var type: String:
+		set(val):
+			type = val
+			track_data(&"type", val)
+	
 	## Message text in a fragment.
 	@export var text: String:
 		set(val):
@@ -192,6 +198,8 @@ class Fragments extends TwitchData:
 	
 	static func from_json(d: Dictionary) -> Fragments:
 		var result: Fragments = Fragments.new()
+		if d.get("type", null) != null:
+			result.type = d["type"]
 		if d.get("text", null) != null:
 			result.text = d["text"]
 		if d.get("emote", null) != null:

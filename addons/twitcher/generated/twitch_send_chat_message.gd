@@ -45,6 +45,12 @@ class Body extends TwitchData:
 			for_source_only = val
 			track_data(&"for_source_only", val)
 	
+	## NEW If true, the message will be sent and immediately pinned. Default: false. Cannot be combined with `reply_parent_message_id` or `for_source_only`. When `pin` is true, additionally requires the `moderator:manage:chat_messages` scope and the sender must be the broadcaster or a moderator. Messages pinned via this endpoint are always pinned for 20 minutes. If the pin fails, the message is not sent.
+	@export var pin: bool:
+		set(val):
+			pin = val
+			track_data(&"pin", val)
+	
 	
 	
 	## Constructor with all required fields.
@@ -69,6 +75,8 @@ class Body extends TwitchData:
 			result.reply_parent_message_id = d["reply_parent_message_id"]
 		if d.get("for_source_only", null) != null:
 			result.for_source_only = d["for_source_only"]
+		if d.get("pin", null) != null:
+			result.pin = d["pin"]
 		return result
 	
 

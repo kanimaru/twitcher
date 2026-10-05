@@ -65,6 +65,24 @@ class Event extends TwitchData:
 			broadcaster_user_login = val
 			track_data(&"broadcaster_user_login", val)
 	
+	## The user ID of the moderator who started or ended the session.
+	@export var moderator_user_id: String:
+		set(val):
+			moderator_user_id = val
+			track_data(&"moderator_user_id", val)
+	
+	## The display name of the moderator.
+	@export var moderator_user_name: String:
+		set(val):
+			moderator_user_name = val
+			track_data(&"moderator_user_name", val)
+	
+	## The login of the moderator.
+	@export var moderator_user_login: String:
+		set(val):
+			moderator_user_login = val
+			track_data(&"moderator_user_login", val)
+	
 	## ID representing the unique session that was started.
 	@export var session_id: String:
 		set(val):
@@ -117,6 +135,12 @@ class Event extends TwitchData:
 			result.broadcaster_user_name = d["broadcaster_user_name"]
 		if d.get("broadcaster_user_login", null) != null:
 			result.broadcaster_user_login = d["broadcaster_user_login"]
+		if d.get("moderator_user_id", null) != null:
+			result.moderator_user_id = d["moderator_user_id"]
+		if d.get("moderator_user_name", null) != null:
+			result.moderator_user_name = d["moderator_user_name"]
+		if d.get("moderator_user_login", null) != null:
+			result.moderator_user_login = d["moderator_user_login"]
 		if d.get("session_id", null) != null:
 			result.session_id = d["session_id"]
 		if d.get("started_at", null) != null:

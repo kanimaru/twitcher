@@ -167,6 +167,7 @@ class Opt extends TwitchData:
 	## * websocket\_network\_timeout — The Twitch WebSocket server timed out writing the message to the client.
 	## * websocket\_network\_error — The Twitch WebSocket server experienced a network error writing the message to the client.
 	## * websocket\_failed\_to\_reconnect - The client failed to reconnect to the Twitch WebSocket server within the required time after a Reconnect Message.
+	## * conduit\_deleted - The conduit associated with the subscription was deleted.
 	@export var status: String:
 		set(val):
 			status = val
@@ -190,7 +191,13 @@ class Opt extends TwitchData:
 			subscription_id = val
 			track_data(&"subscription_id", val)
 	
-	## The cursor used to get the next page of results. The `pagination` object in the response contains the cursor's value.
+	## Filter subscriptions by [conduit](https://dev.twitch.tv/docs/eventsub/handling-conduit-events) ID.
+	@export var conduit_id: String:
+		set(val):
+			conduit_id = val
+			track_data(&"conduit_id", val)
+	
+	## The cursor used to get the next page of results. The `pagination` object in the response contains the cursor’s value.
 	@export var after: String:
 		set(val):
 			after = val
@@ -215,6 +222,8 @@ class Opt extends TwitchData:
 			result.user_id = d["user_id"]
 		if d.get("subscription_id", null) != null:
 			result.subscription_id = d["subscription_id"]
+		if d.get("conduit_id", null) != null:
+			result.conduit_id = d["conduit_id"]
 		if d.get("after", null) != null:
 			result.after = d["after"]
 		return result

@@ -72,22 +72,22 @@ class Event extends TwitchData:
 			track_data(&"broadcaster_user_name", val)
 	
 	## Optional. User ID of moderator who approved/denied the request.
-	@export var moderator_id: String:
+	@export var moderator_user_id: String:
 		set(val):
-			moderator_id = val
-			track_data(&"moderator_id", val)
+			moderator_user_id = val
+			track_data(&"moderator_user_id", val)
 	
 	## Optional. The moderator's login name
-	@export var moderator_login: String:
+	@export var moderator_user_login: String:
 		set(val):
-			moderator_login = val
-			track_data(&"moderator_login", val)
+			moderator_user_login = val
+			track_data(&"moderator_user_login", val)
 	
 	## Optional. The moderator's display name
-	@export var moderator_name: String:
+	@export var moderator_user_name: String:
 		set(val):
-			moderator_name = val
-			track_data(&"moderator_name", val)
+			moderator_user_name = val
+			track_data(&"moderator_user_name", val)
 	
 	## User ID of user that requested to be unbanned.
 	@export var user_id: String:
@@ -137,12 +137,12 @@ class Event extends TwitchData:
 			result.broadcaster_user_login = d["broadcaster_user_login"]
 		if d.get("broadcaster_user_name", null) != null:
 			result.broadcaster_user_name = d["broadcaster_user_name"]
-		if d.get("moderator_id", null) != null:
-			result.moderator_id = d["moderator_id"]
-		if d.get("moderator_login", null) != null:
-			result.moderator_login = d["moderator_login"]
-		if d.get("moderator_name", null) != null:
-			result.moderator_name = d["moderator_name"]
+		if d.get("moderator_user_id", null) != null:
+			result.moderator_user_id = d["moderator_user_id"]
+		if d.get("moderator_user_login", null) != null:
+			result.moderator_user_login = d["moderator_user_login"]
+		if d.get("moderator_user_name", null) != null:
+			result.moderator_user_name = d["moderator_user_name"]
 		if d.get("user_id", null) != null:
 			result.user_id = d["user_id"]
 		if d.get("user_login", null) != null:

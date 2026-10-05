@@ -13,13 +13,13 @@ class_name TwitchTeam
 		users = val
 		track_data(&"users", val)
 
-## A URL to the team’s background image.
+## A URL to the team’s background image. This field is **null** if the team does not have a background image set.
 @export var background_image_url: String:
 	set(val):
 		background_image_url = val
 		track_data(&"background_image_url", val)
 
-## A URL to the team’s banner.
+## A URL to the team’s banner. This field is **null** if the team does not have a banner image set.
 @export var banner: String:
 	set(val):
 		banner = val

@@ -87,7 +87,7 @@ class BodyShards extends TwitchData:
 ## #/components/schemas/UpdateConduitShardsBody/Shards/Transport
 class BodyTransport extends TwitchData:
 
-	## The transport method. Possible values are:  
+	## The transport method. Possible values are:   
 	##   
 	## * webhook
 	## * websocket
@@ -96,19 +96,19 @@ class BodyTransport extends TwitchData:
 			method = val
 			track_data(&"method", val)
 	
-	## The callback URL where the notifications are sent. The URL must use the HTTPS protocol and port 443\. See Processing an event.Specify this field only if method is set to webhook.NOTE: Redirects are not followed.
+	## The callback URL where the notifications are sent. The URL must use the HTTPS protocol and port 443\. See Processing an event. Specify this field only if method is set to webhook. **NOTE:** Redirects are not followed.
 	@export var callback: String:
 		set(val):
 			callback = val
 			track_data(&"callback", val)
 	
-	## The secret used to verify the signature. The secret must be an ASCII string that’s a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see Verifying the event message.Specify this field only if method is set to webhook.
+	## The secret used to verify the signature. The secret must be an ASCII string that’s a minimum of 10 characters long and a maximum of 100 characters long. For information about how the secret is used, see Verifying the event message. Specify this field only if method is set to webhook.
 	@export var secret: String:
 		set(val):
 			secret = val
 			track_data(&"secret", val)
 	
-	## An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message.Specify this field only if method is set to websocket.
+	## An ID that identifies the WebSocket to send notifications to. When you connect to EventSub using WebSockets, the server returns the ID in the Welcome message. Specify this field only if method is set to websocket.
 	@export var session_id: String:
 		set(val):
 			session_id = val
@@ -188,7 +188,7 @@ class ResponseData extends TwitchData:
 			id = val
 			track_data(&"id", val)
 	
-	## The shard status. The subscriber receives events only for enabled shards. Possible values are:  
+	## The shard status. The subscriber receives events only for enabled shards. Possible values are:   
 	##   
 	## * enabled — The shard is enabled.
 	## * webhook\_callback\_verification\_pending — The shard is pending verification of the specified callback URL.
@@ -200,7 +200,7 @@ class ResponseData extends TwitchData:
 	## * websocket\_internal\_error — The Twitch WebSocket server experienced an unexpected error.
 	## * websocket\_network\_timeout — The Twitch WebSocket server timed out writing the message to the client.
 	## * websocket\_network\_error — The Twitch WebSocket server experienced a network error writing the message to the client.
-	## * websocket\_failed\_to\_reconnect - The client failed to reconnect to the Twitch WebSocket server within the required time after a Reconnect Message.
+	## * websocket\_failed\_to\_reconnect — The client failed to reconnect to the Twitch WebSocket server within the required time after a Reconnect Message.
 	@export var status: String:
 		set(val):
 			status = val
@@ -240,7 +240,7 @@ class ResponseData extends TwitchData:
 ## #/components/schemas/UpdateConduitShardsResponse/Data/Transport
 class ResponseTransport extends TwitchData:
 
-	## The transport method. Possible values are:  
+	## The transport method. Possible values are:   
 	##   
 	## * webhook
 	## * websocket
@@ -309,7 +309,7 @@ class ResponseErrors extends TwitchData:
 			id = val
 			track_data(&"id", val)
 	
-	## The error that occurred while updating the shard. Possible errors:  
+	## The error that occurred while updating the shard. Possible errors:   
 	##   
 	## * The length of the string in the secret field is not valid.
 	## * The URL in the transport's callback field is not valid. The URL must use the HTTPS protocol and the 443 port number.
@@ -317,7 +317,7 @@ class ResponseErrors extends TwitchData:
 	## * The callback field is required if you specify the webhook transport method.
 	## * The session\_id field is required if you specify the WebSocket transport method.
 	## * The websocket session is not connected.
-	## * The shard id is outside of the conduit’s range.
+	## * The shard id is outside of the conduit's range.
 	@export var message: String:
 		set(val):
 			message = val

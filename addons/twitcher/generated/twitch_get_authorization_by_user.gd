@@ -64,16 +64,23 @@ class ResponseData extends TwitchData:
 		set(val):
 			scopes = val
 			track_data(&"scopes", val)
+	
+	## A boolean indicating whether or not the specified user has authorized this application.
+	@export var has_authorized: bool:
+		set(val):
+			has_authorized = val
+			track_data(&"has_authorized", val)
 	var response: BufferedHTTPClient.ResponseData
 	
 	
 	## Constructor with all required fields.
-	static func create(_user_id: String, _user_name: String, _user_login: String, _scopes: Array[String]) -> ResponseData:
+	static func create(_user_id: String, _user_name: String, _user_login: String, _scopes: Array[String], _has_authorized: bool) -> ResponseData:
 		var response_data: ResponseData = ResponseData.new()
 		response_data.user_id = _user_id
 		response_data.user_name = _user_name
 		response_data.user_login = _user_login
 		response_data.scopes = _scopes
+		response_data.has_authorized = _has_authorized
 		return response_data
 	
 	
@@ -90,5 +97,7 @@ class ResponseData extends TwitchData:
 			for value in d["scopes"]:
 				result.scopes.append(value)
 			result.track_data(&"scopes", result.scopes)
+		if d.get("has_authorized", null) != null:
+			result.has_authorized = d["has_authorized"]
 		return result
 	

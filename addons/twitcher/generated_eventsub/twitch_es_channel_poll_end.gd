@@ -81,7 +81,7 @@ class Event extends TwitchData:
 			track_data(&"bits_voting", val)
 	
 	## The Channel Points voting settings for the poll.
-	@export var channel_points_voting: int:
+	@export var channel_points_voting: TwitchESChannelPointsVoting:
 		set(val):
 			channel_points_voting = val
 			track_data(&"channel_points_voting", val)
@@ -130,7 +130,7 @@ class Event extends TwitchData:
 		if d.get("bits_voting", null) != null:
 			result.bits_voting = TwitchESBitsVoting.from_json(d["bits_voting"])
 		if d.get("channel_points_voting", null) != null:
-			result.channel_points_voting = d["channel_points_voting"]
+			result.channel_points_voting = TwitchESChannelPointsVoting.from_json(d["channel_points_voting"])
 		if d.get("status", null) != null:
 			result.status = d["status"]
 		if d.get("started_at", null) != null:

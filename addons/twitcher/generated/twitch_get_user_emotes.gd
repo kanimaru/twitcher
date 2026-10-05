@@ -110,7 +110,7 @@ class ResponseData extends TwitchData:
 			id = val
 			track_data(&"id", val)
 	
-	## The User ID of broadcaster whose channel is receiving the unban request.
+	## The case-sensitive name of the emote. This is the name that viewers type in the chat window to get the emote to appear.
 	@export var name: String:
 		set(val):
 			name = val
@@ -137,13 +137,13 @@ class ResponseData extends TwitchData:
 			emote_type = val
 			track_data(&"emote_type", val)
 	
-	## An ID that identifies the emote set that the emote belongs to.
+	## An ID that identifies the emote set that the emote belongs to. If the emote does not belong to a set, this field will be an empty string.
 	@export var emote_set_id: String:
 		set(val):
 			emote_set_id = val
 			track_data(&"emote_set_id", val)
 	
-	## The ID of the broadcaster who owns the emote.
+	## The ID of the broadcaster who owns the emote. If this emote does not have an owner, this field will be an empty string.
 	@export var owner_id: String:
 		set(val):
 			owner_id = val

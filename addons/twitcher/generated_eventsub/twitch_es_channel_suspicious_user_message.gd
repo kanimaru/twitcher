@@ -255,13 +255,13 @@ class Cheermote extends TwitchData:
 			track_data(&"prefix", val)
 	
 	## The amount of Bits cheered.
-	@export var bits: String:
+	@export var bits: int:
 		set(val):
 			bits = val
 			track_data(&"bits", val)
 	
 	## The tier level of the cheermote.
-	@export var tier: String:
+	@export var tier: int:
 		set(val):
 			tier = val
 			track_data(&"tier", val)

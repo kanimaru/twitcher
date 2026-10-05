@@ -23,13 +23,17 @@ class Response extends TwitchData:
 			pagination = val
 			track_data(&"pagination", val)
 	
-	## The current number of subscriber points earned by this broadcaster. Points are based on the subscription tier of each user that subscribes to this broadcaster. For example, a Tier 1 subscription is worth 1 point, Tier 2 is worth 2 points, and Tier 3 is worth 6 points. The number of points determines the number of emote slots that are unlocked for the broadcaster (see [Subscriber Emote Slots](https://help.twitch.tv/s/article/subscriber-emote-guide#emoteslots)).
+	## The current number of subscriber points earned by this broadcaster. Points are based on the subscription tier of each user that subscribes to this broadcaster. For example, a Tier 1 subscription is worth 1 point, Tier 2 is worth 2 points, and Tier 3 is worth 6 points. The number of points determines the number of emote slots that are unlocked for the broadcaster (see [Subscriber Emote Slots](https://help.twitch.tv/s/article/subscriber-emote-guide#emoteslots)).  
+	##   
+	## If the `user_id` query parameter is used, this field will be null.
 	@export var points: int:
 		set(val):
 			points = val
 			track_data(&"points", val)
 	
-	## The total number of users that subscribe to this broadcaster.
+	## The total number of users that subscribe to this broadcaster.  
+	##   
+	## If the `user_id` query parameter is used, this field will be null.
 	@export var total: int:
 		set(val):
 			total = val

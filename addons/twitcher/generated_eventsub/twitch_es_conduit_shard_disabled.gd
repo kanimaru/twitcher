@@ -65,40 +65,10 @@ class Event extends TwitchData:
 			track_data(&"status", val)
 	
 	## The disabled transport.
-	@export var transport: Dictionary:
+	@export var transport: TwitchESTransport:
 		set(val):
 			transport = val
 			track_data(&"transport", val)
-	
-	## websocket or webhook
-	@export var method: String:
-		set(val):
-			method = val
-			track_data(&"method", val)
-	
-	## Optional. Webhook callback URL. Null if method is set to websocket .
-	@export var callback: String:
-		set(val):
-			callback = val
-			track_data(&"callback", val)
-	
-	## Optional. WebSocket session ID. Null if method is set to webhook .
-	@export var session_id: String:
-		set(val):
-			session_id = val
-			track_data(&"session_id", val)
-	
-	## Optional. Time that the WebSocket session connected. Null if method is set to webhook .
-	@export var connected_at: String:
-		set(val):
-			connected_at = val
-			track_data(&"connected_at", val)
-	
-	## Optional. Time that the WebSocket session disconnected. Null if method is set to webhook .
-	@export var disconnected_at: String:
-		set(val):
-			disconnected_at = val
-			track_data(&"disconnected_at", val)
 	
 	
 	
@@ -117,16 +87,6 @@ class Event extends TwitchData:
 		if d.get("status", null) != null:
 			result.status = d["status"]
 		if d.get("transport", null) != null:
-			result.transport = d["transport"]
-		if d.get("method", null) != null:
-			result.method = d["method"]
-		if d.get("callback", null) != null:
-			result.callback = d["callback"]
-		if d.get("session_id", null) != null:
-			result.session_id = d["session_id"]
-		if d.get("connected_at", null) != null:
-			result.connected_at = d["connected_at"]
-		if d.get("disconnected_at", null) != null:
-			result.disconnected_at = d["disconnected_at"]
+			result.transport = TwitchESTransport.from_json(d["transport"])
 		return result
 	

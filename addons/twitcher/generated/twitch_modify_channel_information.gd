@@ -37,13 +37,14 @@ class Body extends TwitchData:
 	
 	## A list of channel-defined tags to apply to the channel. To remove all tags from the channel, set tags to an empty array. Tags help identify the content that the channel streams. [Learn More](https://help.twitch.tv/s/article/guide-to-tags)  
 	##   
-	## A channel may specify a maximum of 10 tags. Each tag is limited to a maximum of 25 characters and may not be an empty string or contain spaces or special characters. Tags are case insensitive. For readability, consider using camelCasing or PascalCasing.
+	## A channel may specify a maximum of 10 tags. Each tag is limited to a maximum of 25 characters and may not be an empty string or contain spaces or special characters.
 	@export var tags: Array[String]:
 		set(val):
 			tags = val
 			track_data(&"tags", val)
 	
-	## List of labels that should be set as the Channel’s CCLs.
+	## List of labels that should be set as the Channel’s CCLs.  
+	## **Note:** To clear CCLs for a channel, set all `is_enabled` for all possible CCLs to `false`
 	@export var content_classification_labels: Array[BodyContentClassificationLabels]:
 		set(val):
 			content_classification_labels = val
@@ -88,7 +89,8 @@ class Body extends TwitchData:
 	
 
 
-## List of labels that should be set as the Channel’s CCLs.
+## List of labels that should be set as the Channel’s CCLs.  
+## **Note:** To clear CCLs for a channel, set all `is_enabled` for all possible CCLs to `false`
 ## #/components/schemas/ModifyChannelInformationBody/ContentClassificationLabels
 class BodyContentClassificationLabels extends TwitchData:
 

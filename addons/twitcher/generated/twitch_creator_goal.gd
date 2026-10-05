@@ -38,6 +38,8 @@ class_name TwitchCreatorGoal
 ## * subscription\_count — The goal is to increase subscriptions. This type shows the net increase or decrease in the number of subscriptions.
 ## * new\_subscription — The goal is to increase subscriptions. This type shows only the net increase in tier points associated with the subscriptions (it does not account for users that unsubscribed since the goal started).
 ## * new\_subscription\_count — The goal is to increase subscriptions. This type shows only the net increase in the number of subscriptions (it does not account for users that unsubscribed since the goal started).
+## * new\_bit — The goal is to increase the amount of Bits used on the channel.
+## * new\_cheerer — The goal is to increase the amount of unique Cheerers on to Cheer on the channel.
 @export var type: String:
 	set(val):
 		type = val

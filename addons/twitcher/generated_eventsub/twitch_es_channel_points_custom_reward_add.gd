@@ -129,7 +129,7 @@ class Event extends TwitchData:
 			track_data(&"background_color", val)
 	
 	## Set of custom images of 1x, 2x and 4x sizes for the reward. Can be null if no images have been uploaded.
-	@export var image: Variant:
+	@export var image: TwitchESTwitchImage:
 		set(val):
 			image = val
 			track_data(&"image", val)
@@ -199,7 +199,7 @@ class Event extends TwitchData:
 		if d.get("background_color", null) != null:
 			result.background_color = d["background_color"]
 		if d.get("image", null) != null:
-			result.image = d["image"]
+			result.image = TwitchESTwitchImage.from_json(d["image"])
 		if d.get("default_image", null) != null:
 			result.default_image = TwitchESTwitchImage.from_json(d["default_image"])
 		if d.get("global_cooldown", null) != null:

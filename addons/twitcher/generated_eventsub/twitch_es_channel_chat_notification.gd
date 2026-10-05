@@ -77,6 +77,12 @@ class Event extends TwitchData:
 			chatter_user_name = val
 			track_data(&"chatter_user_name", val)
 	
+	## The chatter's login name.
+	@export var chatter_user_login: String:
+		set(val):
+			chatter_user_login = val
+			track_data(&"chatter_user_login", val)
+	
 	## Whether or not the chatter is anonymous.
 	@export var chatter_is_anonymous: bool:
 		set(val):
@@ -113,7 +119,7 @@ class Event extends TwitchData:
 			message = val
 			track_data(&"message", val)
 	
-	## The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak modiversary shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement shared_chat_modiversary unknown
+	## The type of notice. Possible values are: sub resub sub_gift community_sub_gift gift_paid_upgrade prime_paid_upgrade raid unraid pay_it_forward announcement bits_badge_tier charity_donation watch_streak modiversary gifted_drops_summary shared_chat_sub shared_chat_resub shared_chat_sub_gift shared_chat_community_sub_gift shared_chat_gift_paid_upgrade shared_chat_prime_paid_upgrade shared_chat_raid shared_chat_pay_it_forward shared_chat_announcement shared_chat_modiversary shared_chat_gifted_drops_summary unknown
 	@export var notice_type: String:
 		set(val):
 			notice_type = val
@@ -186,22 +192,10 @@ class Event extends TwitchData:
 			track_data(&"bits_badge_tier", val)
 	
 	## Information about the announcement event. Null if notice_type is not charity_donation
-	@export var charity_donation: String:
+	@export var charity_donation: CharityDonation:
 		set(val):
 			charity_donation = val
 			track_data(&"charity_donation", val)
-	
-	## Name of the charity.
-	@export var charity_name: String:
-		set(val):
-			charity_name = val
-			track_data(&"charity_name", val)
-	
-	## An object that contains the amount of money that the user paid.
-	@export var amount: Amount:
-		set(val):
-			amount = val
-			track_data(&"amount", val)
 	
 	## Information about the Watch Streak event. Null if notice_type is not watch_streak .
 	@export var watch_streak: WatchStreak:
@@ -214,6 +208,12 @@ class Event extends TwitchData:
 		set(val):
 			modiversary = val
 			track_data(&"modiversary", val)
+	
+	## Information about the gifted Drops summary event. Null if notice_type is not gifted_drops_summary .
+	@export var gifted_drops_summary: GiftedDropsSummary:
+		set(val):
+			gifted_drops_summary = val
+			track_data(&"gifted_drops_summary", val)
 	
 	## Optional . The broadcaster user ID of the channel the message was sent from. Is null when the message notification happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 	@export var source_broadcaster_user_id: String:
@@ -252,64 +252,88 @@ class Event extends TwitchData:
 			track_data(&"is_source_only", val)
 	
 	## Optional . Information about the shared_chat_sub event. Is null if notice_type is not shared_chat_sub . This field has the same information as the sub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_sub: Dictionary:
+	@export var shared_chat_sub: SharedChatSub:
 		set(val):
 			shared_chat_sub = val
 			track_data(&"shared_chat_sub", val)
 	
 	## Optional . Information about the shared_chat_resub event. Is null if notice_type is not shared_chat_resub . This field has the same information as the resub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_resub: Dictionary:
+	@export var shared_chat_resub: SharedChatResub:
 		set(val):
 			shared_chat_resub = val
 			track_data(&"shared_chat_resub", val)
 	
 	## Optional . Information about the shared_chat_sub_gift event. Is null if notice_type is not shared_chat_sub_gift . This field has the same information as the chat_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_sub_gift: Dictionary:
+	@export var shared_chat_sub_gift: SharedChatSubGift:
 		set(val):
 			shared_chat_sub_gift = val
 			track_data(&"shared_chat_sub_gift", val)
 	
 	## Optional . Information about the shared_chat_community_sub_gift event. Is null if notice_type is not shared_chat_community_sub_gift . This field has the same information as the community_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_community_sub_gift: Dictionary:
+	@export var shared_chat_community_sub_gift: SharedChatCommunitySubGift:
 		set(val):
 			shared_chat_community_sub_gift = val
 			track_data(&"shared_chat_community_sub_gift", val)
 	
 	## Optional . Information about the shared_chat_gift_paid_upgrade event. Is null if notice_type is not shared_chat_gift_paid_upgrade . This field has the same information as the gift_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_gift_paid_upgrade: Dictionary:
+	@export var shared_chat_gift_paid_upgrade: SharedChatGiftPaidUpgrade:
 		set(val):
 			shared_chat_gift_paid_upgrade = val
 			track_data(&"shared_chat_gift_paid_upgrade", val)
 	
 	## Optional . Information about the shared_chat_chat_prime_paid_upgrade event. Is null if notice_type is not shared_chat_prime_paid_upgrade . This field has the same information as the prime_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_prime_paid_upgrade: Dictionary:
+	@export var shared_chat_prime_paid_upgrade: SharedChatPrimePaidUpgrade:
 		set(val):
 			shared_chat_prime_paid_upgrade = val
 			track_data(&"shared_chat_prime_paid_upgrade", val)
 	
 	## Optional . Information about the shared_chat_pay_it_forward event. Is null if notice_type is not shared_chat_pay_it_forward . This field has the same information as the pay_it_forward field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_pay_it_forward: Dictionary:
+	@export var shared_chat_pay_it_forward: SharedChatPayItForward:
 		set(val):
 			shared_chat_pay_it_forward = val
 			track_data(&"shared_chat_pay_it_forward", val)
 	
 	## Optional . Information about the shared_chat_raid event. Is null if notice_type is not shared_chat_raid . This field has the same information as the raid field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_raid: Dictionary:
+	@export var shared_chat_raid: SharedChatRaid:
 		set(val):
 			shared_chat_raid = val
 			track_data(&"shared_chat_raid", val)
 	
 	## Optional . Information about the shared_chat_announcement event. Is null if notice_type is not shared_chat_announcement . This field has the same information as the announcement field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_announcement: Dictionary:
+	@export var shared_chat_announcement: SharedChatAnnouncement:
 		set(val):
 			shared_chat_announcement = val
 			track_data(&"shared_chat_announcement", val)
 	
 	## Optional . Information about the shared_chat_modiversary event. Is null if notice_type is not shared_chat_modiversary . This field has the same information as the modiversary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_modiversary: Dictionary:
+	@export var shared_chat_modiversary: SharedChatModiversary:
 		set(val):
 			shared_chat_modiversary = val
 			track_data(&"shared_chat_modiversary", val)
+	
+	## Optional . Information about the shared_chat_gifted_drops_summary event. Is null if notice_type is not shared_chat_gifted_drops_summary . This field has the same information as the gifted_drops_summary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+	@export var shared_chat_gifted_drops_summary: SharedChatGiftedDropsSummary:
+		set(val):
+			shared_chat_gifted_drops_summary = val
+			track_data(&"shared_chat_gifted_drops_summary", val)
+	
+	## This field has the same information as the unraid field but for a notification that happened in a channel in the shared chat session.
+	@export var shared_chat_unraid: Dictionary:
+		set(val):
+			shared_chat_unraid = val
+			track_data(&"shared_chat_unraid", val)
+	
+	## This field has the same information as the bits_badge_tier field but for a notification that happened in a channel in the shared chat session.
+	@export var shared_chat_bits_badge_tier: SharedChatBitsBadgeTier:
+		set(val):
+			shared_chat_bits_badge_tier = val
+			track_data(&"shared_chat_bits_badge_tier", val)
+	
+	## This field has the same information as the charity_donation field but for a notification that happened in a channel in the shared chat session.
+	@export var shared_chat_charity_donation: SharedChatCharityDonation:
+		set(val):
+			shared_chat_charity_donation = val
+			track_data(&"shared_chat_charity_donation", val)
 	
 	
 	
@@ -331,6 +355,8 @@ class Event extends TwitchData:
 			result.chatter_user_id = d["chatter_user_id"]
 		if d.get("chatter_user_name", null) != null:
 			result.chatter_user_name = d["chatter_user_name"]
+		if d.get("chatter_user_login", null) != null:
+			result.chatter_user_login = d["chatter_user_login"]
 		if d.get("chatter_is_anonymous", null) != null:
 			result.chatter_is_anonymous = d["chatter_is_anonymous"]
 		if d.get("color", null) != null:
@@ -369,15 +395,13 @@ class Event extends TwitchData:
 		if d.get("bits_badge_tier", null) != null:
 			result.bits_badge_tier = BitsBadgeTier.from_json(d["bits_badge_tier"])
 		if d.get("charity_donation", null) != null:
-			result.charity_donation = d["charity_donation"]
-		if d.get("charity_name", null) != null:
-			result.charity_name = d["charity_name"]
-		if d.get("amount", null) != null:
-			result.amount = Amount.from_json(d["amount"])
+			result.charity_donation = CharityDonation.from_json(d["charity_donation"])
 		if d.get("watch_streak", null) != null:
 			result.watch_streak = WatchStreak.from_json(d["watch_streak"])
 		if d.get("modiversary", null) != null:
 			result.modiversary = Modiversary.from_json(d["modiversary"])
+		if d.get("gifted_drops_summary", null) != null:
+			result.gifted_drops_summary = GiftedDropsSummary.from_json(d["gifted_drops_summary"])
 		if d.get("source_broadcaster_user_id", null) != null:
 			result.source_broadcaster_user_id = d["source_broadcaster_user_id"]
 		if d.get("source_broadcaster_user_name", null) != null:
@@ -392,25 +416,33 @@ class Event extends TwitchData:
 		if d.get("is_source_only", null) != null:
 			result.is_source_only = d["is_source_only"]
 		if d.get("shared_chat_sub", null) != null:
-			result.shared_chat_sub = d["shared_chat_sub"]
+			result.shared_chat_sub = SharedChatSub.from_json(d["shared_chat_sub"])
 		if d.get("shared_chat_resub", null) != null:
-			result.shared_chat_resub = d["shared_chat_resub"]
+			result.shared_chat_resub = SharedChatResub.from_json(d["shared_chat_resub"])
 		if d.get("shared_chat_sub_gift", null) != null:
-			result.shared_chat_sub_gift = d["shared_chat_sub_gift"]
+			result.shared_chat_sub_gift = SharedChatSubGift.from_json(d["shared_chat_sub_gift"])
 		if d.get("shared_chat_community_sub_gift", null) != null:
-			result.shared_chat_community_sub_gift = d["shared_chat_community_sub_gift"]
+			result.shared_chat_community_sub_gift = SharedChatCommunitySubGift.from_json(d["shared_chat_community_sub_gift"])
 		if d.get("shared_chat_gift_paid_upgrade", null) != null:
-			result.shared_chat_gift_paid_upgrade = d["shared_chat_gift_paid_upgrade"]
+			result.shared_chat_gift_paid_upgrade = SharedChatGiftPaidUpgrade.from_json(d["shared_chat_gift_paid_upgrade"])
 		if d.get("shared_chat_prime_paid_upgrade", null) != null:
-			result.shared_chat_prime_paid_upgrade = d["shared_chat_prime_paid_upgrade"]
+			result.shared_chat_prime_paid_upgrade = SharedChatPrimePaidUpgrade.from_json(d["shared_chat_prime_paid_upgrade"])
 		if d.get("shared_chat_pay_it_forward", null) != null:
-			result.shared_chat_pay_it_forward = d["shared_chat_pay_it_forward"]
+			result.shared_chat_pay_it_forward = SharedChatPayItForward.from_json(d["shared_chat_pay_it_forward"])
 		if d.get("shared_chat_raid", null) != null:
-			result.shared_chat_raid = d["shared_chat_raid"]
+			result.shared_chat_raid = SharedChatRaid.from_json(d["shared_chat_raid"])
 		if d.get("shared_chat_announcement", null) != null:
-			result.shared_chat_announcement = d["shared_chat_announcement"]
+			result.shared_chat_announcement = SharedChatAnnouncement.from_json(d["shared_chat_announcement"])
 		if d.get("shared_chat_modiversary", null) != null:
-			result.shared_chat_modiversary = d["shared_chat_modiversary"]
+			result.shared_chat_modiversary = SharedChatModiversary.from_json(d["shared_chat_modiversary"])
+		if d.get("shared_chat_gifted_drops_summary", null) != null:
+			result.shared_chat_gifted_drops_summary = SharedChatGiftedDropsSummary.from_json(d["shared_chat_gifted_drops_summary"])
+		if d.get("shared_chat_unraid", null) != null:
+			result.shared_chat_unraid = d["shared_chat_unraid"]
+		if d.get("shared_chat_bits_badge_tier", null) != null:
+			result.shared_chat_bits_badge_tier = SharedChatBitsBadgeTier.from_json(d["shared_chat_bits_badge_tier"])
+		if d.get("shared_chat_charity_donation", null) != null:
+			result.shared_chat_charity_donation = SharedChatCharityDonation.from_json(d["shared_chat_charity_donation"])
 		return result
 	
 
@@ -462,7 +494,7 @@ class Badges extends TwitchData:
 class Message extends TwitchData:
 
 	## The chat message in plain text.
-	@export var text: Dictionary:
+	@export var text: String:
 		set(val):
 			text = val
 			track_data(&"text", val)
@@ -1177,8 +1209,42 @@ class BitsBadgeTier extends TwitchData:
 	
 
 
+## Information about the announcement event. Null if notice_type is not charity_donation
+## #/components/schemas/ChannelChatNotificationEvent/CharityDonation
+class CharityDonation extends TwitchData:
+
+	## Name of the charity.
+	@export var charity_name: String:
+		set(val):
+			charity_name = val
+			track_data(&"charity_name", val)
+	
+	## An object that contains the amount of money that the user paid.
+	@export var amount: Amount:
+		set(val):
+			amount = val
+			track_data(&"amount", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> CharityDonation:
+		var charity_donation: CharityDonation = CharityDonation.new()
+		return charity_donation
+	
+	
+	static func from_json(d: Dictionary) -> CharityDonation:
+		var result: CharityDonation = CharityDonation.new()
+		if d.get("charity_name", null) != null:
+			result.charity_name = d["charity_name"]
+		if d.get("amount", null) != null:
+			result.amount = Amount.from_json(d["amount"])
+		return result
+	
+
+
 ## An object that contains the amount of money that the user paid.
-## #/components/schemas/ChannelChatNotificationEvent/Amount
+## #/components/schemas/ChannelChatNotificationEvent/CharityDonation/Amount
 class Amount extends TwitchData:
 
 	## The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550.
@@ -1279,6 +1345,32 @@ class Modiversary extends TwitchData:
 	
 
 
+## Information about the gifted Drops summary event. Null if notice_type is not gifted_drops_summary .
+## #/components/schemas/ChannelChatNotificationEvent/GiftedDropsSummary
+class GiftedDropsSummary extends TwitchData:
+
+	## The number of users who received a gifted Drop.
+	@export var recipient_count: int:
+		set(val):
+			recipient_count = val
+			track_data(&"recipient_count", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> GiftedDropsSummary:
+		var gifted_drops_summary: GiftedDropsSummary = GiftedDropsSummary.new()
+		return gifted_drops_summary
+	
+	
+	static func from_json(d: Dictionary) -> GiftedDropsSummary:
+		var result: GiftedDropsSummary = GiftedDropsSummary.new()
+		if d.get("recipient_count", null) != null:
+			result.recipient_count = d["recipient_count"]
+		return result
+	
+
+
 ## Optional . The list of chat badges for the chatter in the channel the message was sent from. Is null when the message happens in the same channel as the broadcaster. Is not null when in a shared chat session, and the action happens in the channel of a participant other than the broadcaster.
 ## #/components/schemas/ChannelChatNotificationEvent/SourceBadges
 class SourceBadges extends TwitchData:
@@ -1317,5 +1409,625 @@ class SourceBadges extends TwitchData:
 			result.id = d["id"]
 		if d.get("info", null) != null:
 			result.info = d["info"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_sub event. Is null if notice_type is not shared_chat_sub . This field has the same information as the sub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatSub
+class SharedChatSub extends TwitchData:
+
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
+	@export var sub_tier: String:
+		set(val):
+			sub_tier = val
+			track_data(&"sub_tier", val)
+	
+	## Indicates if the subscription was obtained through Amazon Prime.
+	@export var is_prime: bool:
+		set(val):
+			is_prime = val
+			track_data(&"is_prime", val)
+	
+	## The number of months the subscription is for.
+	@export var duration_months: int:
+		set(val):
+			duration_months = val
+			track_data(&"duration_months", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatSub:
+		var shared_chat_sub: SharedChatSub = SharedChatSub.new()
+		return shared_chat_sub
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatSub:
+		var result: SharedChatSub = SharedChatSub.new()
+		if d.get("sub_tier", null) != null:
+			result.sub_tier = d["sub_tier"]
+		if d.get("is_prime", null) != null:
+			result.is_prime = d["is_prime"]
+		if d.get("duration_months", null) != null:
+			result.duration_months = d["duration_months"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_resub event. Is null if notice_type is not shared_chat_resub . This field has the same information as the resub field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatResub
+class SharedChatResub extends TwitchData:
+
+	## The total number of months the user has subscribed.
+	@export var cumulative_months: int:
+		set(val):
+			cumulative_months = val
+			track_data(&"cumulative_months", val)
+	
+	## The number of months the subscription is for.
+	@export var duration_months: int:
+		set(val):
+			duration_months = val
+			track_data(&"duration_months", val)
+	
+	## The total number of months the user has subscribed.
+	@export var streak_months: int:
+		set(val):
+			streak_months = val
+			track_data(&"streak_months", val)
+	
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
+	@export var sub_tier: String:
+		set(val):
+			sub_tier = val
+			track_data(&"sub_tier", val)
+	
+	## Optional . Whether or not this subscription is a Prime subscription.
+	@export var is_prime: bool:
+		set(val):
+			is_prime = val
+			track_data(&"is_prime", val)
+	
+	## Whether or not the resub was a result of a gift.
+	@export var is_gift: bool:
+		set(val):
+			is_gift = val
+			track_data(&"is_gift", val)
+	
+	## Optional . Whether or not the gift was anonymous.
+	@export var gifter_is_anonymous: bool:
+		set(val):
+			gifter_is_anonymous = val
+			track_data(&"gifter_is_anonymous", val)
+	
+	## The user ID of the subscription gifter. Null if anonymous.
+	@export var gifter_user_id: String:
+		set(val):
+			gifter_user_id = val
+			track_data(&"gifter_user_id", val)
+	
+	## The user name of the subscription gifter. Null if anonymous.
+	@export var gifter_user_name: String:
+		set(val):
+			gifter_user_name = val
+			track_data(&"gifter_user_name", val)
+	
+	## Optional . The user login of the subscription gifter. Null if anonymous.
+	@export var gifter_user_login: String:
+		set(val):
+			gifter_user_login = val
+			track_data(&"gifter_user_login", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatResub:
+		var shared_chat_resub: SharedChatResub = SharedChatResub.new()
+		return shared_chat_resub
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatResub:
+		var result: SharedChatResub = SharedChatResub.new()
+		if d.get("cumulative_months", null) != null:
+			result.cumulative_months = d["cumulative_months"]
+		if d.get("duration_months", null) != null:
+			result.duration_months = d["duration_months"]
+		if d.get("streak_months", null) != null:
+			result.streak_months = d["streak_months"]
+		if d.get("sub_tier", null) != null:
+			result.sub_tier = d["sub_tier"]
+		if d.get("is_prime", null) != null:
+			result.is_prime = d["is_prime"]
+		if d.get("is_gift", null) != null:
+			result.is_gift = d["is_gift"]
+		if d.get("gifter_is_anonymous", null) != null:
+			result.gifter_is_anonymous = d["gifter_is_anonymous"]
+		if d.get("gifter_user_id", null) != null:
+			result.gifter_user_id = d["gifter_user_id"]
+		if d.get("gifter_user_name", null) != null:
+			result.gifter_user_name = d["gifter_user_name"]
+		if d.get("gifter_user_login", null) != null:
+			result.gifter_user_login = d["gifter_user_login"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_sub_gift event. Is null if notice_type is not shared_chat_sub_gift . This field has the same information as the chat_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatSubGift
+class SharedChatSubGift extends TwitchData:
+
+	## The number of months the subscription is for.
+	@export var duration_months: int:
+		set(val):
+			duration_months = val
+			track_data(&"duration_months", val)
+	
+	## Optional . The amount of gifts the gifter has given in this channel. Null if anonymous.
+	@export var cumulative_total: int:
+		set(val):
+			cumulative_total = val
+			track_data(&"cumulative_total", val)
+	
+	## The user ID of the subscription gift recipient.
+	@export var recipient_user_id: String:
+		set(val):
+			recipient_user_id = val
+			track_data(&"recipient_user_id", val)
+	
+	## The user name of the subscription gift recipient.
+	@export var recipient_user_name: String:
+		set(val):
+			recipient_user_name = val
+			track_data(&"recipient_user_name", val)
+	
+	## The user login of the subscription gift recipient.
+	@export var recipient_user_login: String:
+		set(val):
+			recipient_user_login = val
+			track_data(&"recipient_user_login", val)
+	
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
+	@export var sub_tier: String:
+		set(val):
+			sub_tier = val
+			track_data(&"sub_tier", val)
+	
+	## Optional . The ID of the associated community gift. Null if not associated with a community gift.
+	@export var community_gift_id: String:
+		set(val):
+			community_gift_id = val
+			track_data(&"community_gift_id", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatSubGift:
+		var shared_chat_sub_gift: SharedChatSubGift = SharedChatSubGift.new()
+		return shared_chat_sub_gift
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatSubGift:
+		var result: SharedChatSubGift = SharedChatSubGift.new()
+		if d.get("duration_months", null) != null:
+			result.duration_months = d["duration_months"]
+		if d.get("cumulative_total", null) != null:
+			result.cumulative_total = d["cumulative_total"]
+		if d.get("recipient_user_id", null) != null:
+			result.recipient_user_id = d["recipient_user_id"]
+		if d.get("recipient_user_name", null) != null:
+			result.recipient_user_name = d["recipient_user_name"]
+		if d.get("recipient_user_login", null) != null:
+			result.recipient_user_login = d["recipient_user_login"]
+		if d.get("sub_tier", null) != null:
+			result.sub_tier = d["sub_tier"]
+		if d.get("community_gift_id", null) != null:
+			result.community_gift_id = d["community_gift_id"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_community_sub_gift event. Is null if notice_type is not shared_chat_community_sub_gift . This field has the same information as the community_sub_gift field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatCommunitySubGift
+class SharedChatCommunitySubGift extends TwitchData:
+
+	## The ID of the associated community gift.
+	@export var id: String:
+		set(val):
+			id = val
+			track_data(&"id", val)
+	
+	## Number of subscriptions being gifted.
+	@export var total: int:
+		set(val):
+			total = val
+			track_data(&"total", val)
+	
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
+	@export var sub_tier: String:
+		set(val):
+			sub_tier = val
+			track_data(&"sub_tier", val)
+	
+	## Optional . The amount of gifts the gifter has given in this channel. Null if anonymous.
+	@export var cumulative_total: int:
+		set(val):
+			cumulative_total = val
+			track_data(&"cumulative_total", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatCommunitySubGift:
+		var shared_chat_community_sub_gift: SharedChatCommunitySubGift = SharedChatCommunitySubGift.new()
+		return shared_chat_community_sub_gift
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatCommunitySubGift:
+		var result: SharedChatCommunitySubGift = SharedChatCommunitySubGift.new()
+		if d.get("id", null) != null:
+			result.id = d["id"]
+		if d.get("total", null) != null:
+			result.total = d["total"]
+		if d.get("sub_tier", null) != null:
+			result.sub_tier = d["sub_tier"]
+		if d.get("cumulative_total", null) != null:
+			result.cumulative_total = d["cumulative_total"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_gift_paid_upgrade event. Is null if notice_type is not shared_chat_gift_paid_upgrade . This field has the same information as the gift_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatGiftPaidUpgrade
+class SharedChatGiftPaidUpgrade extends TwitchData:
+
+	## Whether the gift was given anonymously.
+	@export var gifter_is_anonymous: bool:
+		set(val):
+			gifter_is_anonymous = val
+			track_data(&"gifter_is_anonymous", val)
+	
+	## Optional . The user ID of the user who gifted the subscription. Null if anonymous.
+	@export var gifter_user_id: String:
+		set(val):
+			gifter_user_id = val
+			track_data(&"gifter_user_id", val)
+	
+	## Optional . The user name of the user who gifted the subscription. Null if anonymous.
+	@export var gifter_user_name: String:
+		set(val):
+			gifter_user_name = val
+			track_data(&"gifter_user_name", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatGiftPaidUpgrade:
+		var shared_chat_gift_paid_upgrade: SharedChatGiftPaidUpgrade = SharedChatGiftPaidUpgrade.new()
+		return shared_chat_gift_paid_upgrade
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatGiftPaidUpgrade:
+		var result: SharedChatGiftPaidUpgrade = SharedChatGiftPaidUpgrade.new()
+		if d.get("gifter_is_anonymous", null) != null:
+			result.gifter_is_anonymous = d["gifter_is_anonymous"]
+		if d.get("gifter_user_id", null) != null:
+			result.gifter_user_id = d["gifter_user_id"]
+		if d.get("gifter_user_name", null) != null:
+			result.gifter_user_name = d["gifter_user_name"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_chat_prime_paid_upgrade event. Is null if notice_type is not shared_chat_prime_paid_upgrade . This field has the same information as the prime_paid_upgrade field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatPrimePaidUpgrade
+class SharedChatPrimePaidUpgrade extends TwitchData:
+
+	## The type of subscription plan being used. Possible values are: 1000 - First level of paid or Prime subscription. 2000 - Second level of paid subscription. 3000 - Third level of paid subscription.
+	@export var sub_tier: String:
+		set(val):
+			sub_tier = val
+			track_data(&"sub_tier", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatPrimePaidUpgrade:
+		var shared_chat_prime_paid_upgrade: SharedChatPrimePaidUpgrade = SharedChatPrimePaidUpgrade.new()
+		return shared_chat_prime_paid_upgrade
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatPrimePaidUpgrade:
+		var result: SharedChatPrimePaidUpgrade = SharedChatPrimePaidUpgrade.new()
+		if d.get("sub_tier", null) != null:
+			result.sub_tier = d["sub_tier"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_pay_it_forward event. Is null if notice_type is not shared_chat_pay_it_forward . This field has the same information as the pay_it_forward field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatPayItForward
+class SharedChatPayItForward extends TwitchData:
+
+	## Whether the gift was given anonymously.
+	@export var gifter_is_anonymous: bool:
+		set(val):
+			gifter_is_anonymous = val
+			track_data(&"gifter_is_anonymous", val)
+	
+	## The user ID of the user who gifted the subscription. Null if anonymous.
+	@export var gifter_user_id: String:
+		set(val):
+			gifter_user_id = val
+			track_data(&"gifter_user_id", val)
+	
+	## Optional . The user name of the user who gifted the subscription. Null if anonymous.
+	@export var gifter_user_name: String:
+		set(val):
+			gifter_user_name = val
+			track_data(&"gifter_user_name", val)
+	
+	## The user login of the user who gifted the subscription. Null if anonymous.
+	@export var gifter_user_login: String:
+		set(val):
+			gifter_user_login = val
+			track_data(&"gifter_user_login", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatPayItForward:
+		var shared_chat_pay_it_forward: SharedChatPayItForward = SharedChatPayItForward.new()
+		return shared_chat_pay_it_forward
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatPayItForward:
+		var result: SharedChatPayItForward = SharedChatPayItForward.new()
+		if d.get("gifter_is_anonymous", null) != null:
+			result.gifter_is_anonymous = d["gifter_is_anonymous"]
+		if d.get("gifter_user_id", null) != null:
+			result.gifter_user_id = d["gifter_user_id"]
+		if d.get("gifter_user_name", null) != null:
+			result.gifter_user_name = d["gifter_user_name"]
+		if d.get("gifter_user_login", null) != null:
+			result.gifter_user_login = d["gifter_user_login"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_raid event. Is null if notice_type is not shared_chat_raid . This field has the same information as the raid field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatRaid
+class SharedChatRaid extends TwitchData:
+
+	## The user ID of the broadcaster raiding this channel.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The user name of the broadcaster raiding this channel.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	## The login name of the broadcaster raiding this channel.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The number of viewers raiding this channel from the broadcaster's channel.
+	@export var viewer_count: int:
+		set(val):
+			viewer_count = val
+			track_data(&"viewer_count", val)
+	
+	## Profile image URL of the broadcaster raiding this channel.
+	@export var profile_image_url: String:
+		set(val):
+			profile_image_url = val
+			track_data(&"profile_image_url", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatRaid:
+		var shared_chat_raid: SharedChatRaid = SharedChatRaid.new()
+		return shared_chat_raid
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatRaid:
+		var result: SharedChatRaid = SharedChatRaid.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("viewer_count", null) != null:
+			result.viewer_count = d["viewer_count"]
+		if d.get("profile_image_url", null) != null:
+			result.profile_image_url = d["profile_image_url"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_announcement event. Is null if notice_type is not shared_chat_announcement . This field has the same information as the announcement field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatAnnouncement
+class SharedChatAnnouncement extends TwitchData:
+
+	## Color of the announcement.
+	@export var color: String:
+		set(val):
+			color = val
+			track_data(&"color", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatAnnouncement:
+		var shared_chat_announcement: SharedChatAnnouncement = SharedChatAnnouncement.new()
+		return shared_chat_announcement
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatAnnouncement:
+		var result: SharedChatAnnouncement = SharedChatAnnouncement.new()
+		if d.get("color", null) != null:
+			result.color = d["color"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_modiversary event. Is null if notice_type is not shared_chat_modiversary . This field has the same information as the modiversary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatModiversary
+class SharedChatModiversary extends TwitchData:
+
+	## The number of months the user has been a moderator in this channel.
+	@export var months: int:
+		set(val):
+			months = val
+			track_data(&"months", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatModiversary:
+		var shared_chat_modiversary: SharedChatModiversary = SharedChatModiversary.new()
+		return shared_chat_modiversary
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatModiversary:
+		var result: SharedChatModiversary = SharedChatModiversary.new()
+		if d.get("months", null) != null:
+			result.months = d["months"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_gifted_drops_summary event. Is null if notice_type is not shared_chat_gifted_drops_summary . This field has the same information as the gifted_drops_summary field but for a notice that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatGiftedDropsSummary
+class SharedChatGiftedDropsSummary extends TwitchData:
+
+	## The number of users who received a gifted Drop.
+	@export var recipient_count: int:
+		set(val):
+			recipient_count = val
+			track_data(&"recipient_count", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatGiftedDropsSummary:
+		var shared_chat_gifted_drops_summary: SharedChatGiftedDropsSummary = SharedChatGiftedDropsSummary.new()
+		return shared_chat_gifted_drops_summary
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatGiftedDropsSummary:
+		var result: SharedChatGiftedDropsSummary = SharedChatGiftedDropsSummary.new()
+		if d.get("recipient_count", null) != null:
+			result.recipient_count = d["recipient_count"]
+		return result
+	
+
+
+## This field has the same information as the bits_badge_tier field but for a notification that happened in a channel in the shared chat session.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatBitsBadgeTier
+class SharedChatBitsBadgeTier extends TwitchData:
+
+	## The tier of the Bits badge the user just earned. For example, 100, 1000, or 10000.
+	@export var tier: int:
+		set(val):
+			tier = val
+			track_data(&"tier", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatBitsBadgeTier:
+		var shared_chat_bits_badge_tier: SharedChatBitsBadgeTier = SharedChatBitsBadgeTier.new()
+		return shared_chat_bits_badge_tier
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatBitsBadgeTier:
+		var result: SharedChatBitsBadgeTier = SharedChatBitsBadgeTier.new()
+		if d.get("tier", null) != null:
+			result.tier = d["tier"]
+		return result
+	
+
+
+## This field has the same information as the charity_donation field but for a notification that happened in a channel in the shared chat session.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatCharityDonation
+class SharedChatCharityDonation extends TwitchData:
+
+	## Name of the charity.
+	@export var charity_name: String:
+		set(val):
+			charity_name = val
+			track_data(&"charity_name", val)
+	
+	## An object that contains the amount of money that the user paid.
+	@export var amount: SharedChatCharityDonation_Amount:
+		set(val):
+			amount = val
+			track_data(&"amount", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatCharityDonation:
+		var shared_chat_charity_donation: SharedChatCharityDonation = SharedChatCharityDonation.new()
+		return shared_chat_charity_donation
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatCharityDonation:
+		var result: SharedChatCharityDonation = SharedChatCharityDonation.new()
+		if d.get("charity_name", null) != null:
+			result.charity_name = d["charity_name"]
+		if d.get("amount", null) != null:
+			result.amount = SharedChatCharityDonation_Amount.from_json(d["amount"])
+		return result
+	
+
+
+## An object that contains the amount of money that the user paid.
+## #/components/schemas/ChannelChatNotificationEvent/SharedChatCharityDonation/Amount
+class SharedChatCharityDonation_Amount extends TwitchData:
+
+	## The monetary amount. The amount is specified in the currency's minor unit. For example, the minor units for USD is cents, so if the amount is $5.50 USD, value is set to 550.
+	@export var value: int:
+		set(val):
+			value = val
+			track_data(&"value", val)
+	
+	## The number of decimal places used by the currency. For example, USD uses two decimal places.
+	@export var decimal_place: int:
+		set(val):
+			decimal_place = val
+			track_data(&"decimal_place", val)
+	
+	## The ISO-4217 three-letter currency code that identifies the type of currency in value.
+	@export var currency: String:
+		set(val):
+			currency = val
+			track_data(&"currency", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatCharityDonation_Amount:
+		var shared_chat_charity_donation_amount: SharedChatCharityDonation_Amount = SharedChatCharityDonation_Amount.new()
+		return shared_chat_charity_donation_amount
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatCharityDonation_Amount:
+		var result: SharedChatCharityDonation_Amount = SharedChatCharityDonation_Amount.new()
+		if d.get("value", null) != null:
+			result.value = d["value"]
+		if d.get("decimal_place", null) != null:
+			result.decimal_place = d["decimal_place"]
+		if d.get("currency", null) != null:
+			result.currency = d["currency"]
 		return result
 	

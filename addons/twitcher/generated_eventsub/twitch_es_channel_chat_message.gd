@@ -464,10 +464,10 @@ class Mention extends TwitchData:
 class Gif extends TwitchData:
 
 	## An ID that uniquely identifies this GIF.
-	@export var gif_id: String:
+	@export var id: String:
 		set(val):
-			gif_id = val
-			track_data(&"gif_id", val)
+			id = val
+			track_data(&"id", val)
 	
 	## The URL of the GIF asset. Applications rendering the GIF must use the full URL provided; it must not be modified.
 	@export var url: String:
@@ -485,8 +485,8 @@ class Gif extends TwitchData:
 	
 	static func from_json(d: Dictionary) -> Gif:
 		var result: Gif = Gif.new()
-		if d.get("gif_id", null) != null:
-			result.gif_id = d["gif_id"]
+		if d.get("id", null) != null:
+			result.id = d["id"]
 		if d.get("url", null) != null:
 			result.url = d["url"]
 		return result

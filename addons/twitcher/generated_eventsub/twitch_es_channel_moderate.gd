@@ -234,31 +234,31 @@ class Event extends TwitchData:
 			track_data(&"unban_request", val)
 	
 	## Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_ban: Dictionary:
+	@export var shared_chat_ban: SharedChatBan:
 		set(val):
 			shared_chat_ban = val
 			track_data(&"shared_chat_ban", val)
 	
 	## Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_unban: Dictionary:
+	@export var shared_chat_unban: SharedChatUnban:
 		set(val):
 			shared_chat_unban = val
 			track_data(&"shared_chat_unban", val)
 	
 	## Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_timeout: Dictionary:
+	@export var shared_chat_timeout: SharedChatTimeout:
 		set(val):
 			shared_chat_timeout = val
 			track_data(&"shared_chat_timeout", val)
 	
 	## Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_untimeout: Dictionary:
+	@export var shared_chat_untimeout: SharedChatUntimeout:
 		set(val):
 			shared_chat_untimeout = val
 			track_data(&"shared_chat_untimeout", val)
 	
 	## Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_delete: Dictionary:
+	@export var shared_chat_delete: SharedChatDelete:
 		set(val):
 			shared_chat_delete = val
 			track_data(&"shared_chat_delete", val)
@@ -324,15 +324,15 @@ class Event extends TwitchData:
 		if d.get("unban_request", null) != null:
 			result.unban_request = UnbanRequest.from_json(d["unban_request"])
 		if d.get("shared_chat_ban", null) != null:
-			result.shared_chat_ban = d["shared_chat_ban"]
+			result.shared_chat_ban = SharedChatBan.from_json(d["shared_chat_ban"])
 		if d.get("shared_chat_unban", null) != null:
-			result.shared_chat_unban = d["shared_chat_unban"]
+			result.shared_chat_unban = SharedChatUnban.from_json(d["shared_chat_unban"])
 		if d.get("shared_chat_timeout", null) != null:
-			result.shared_chat_timeout = d["shared_chat_timeout"]
+			result.shared_chat_timeout = SharedChatTimeout.from_json(d["shared_chat_timeout"])
 		if d.get("shared_chat_untimeout", null) != null:
-			result.shared_chat_untimeout = d["shared_chat_untimeout"]
+			result.shared_chat_untimeout = SharedChatUntimeout.from_json(d["shared_chat_untimeout"])
 		if d.get("shared_chat_delete", null) != null:
-			result.shared_chat_delete = d["shared_chat_delete"]
+			result.shared_chat_delete = SharedChatDelete.from_json(d["shared_chat_delete"])
 		return result
 	
 
@@ -1008,6 +1008,256 @@ class UnbanRequest extends TwitchData:
 	
 
 
+## Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEvent/SharedChatBan
+class SharedChatBan extends TwitchData:
+
+	## The ID of the user being banned.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user being banned.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user being banned.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	## Optional . Reason given for the ban.
+	@export var reason: String:
+		set(val):
+			reason = val
+			track_data(&"reason", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatBan:
+		var shared_chat_ban: SharedChatBan = SharedChatBan.new()
+		return shared_chat_ban
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatBan:
+		var result: SharedChatBan = SharedChatBan.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		if d.get("reason", null) != null:
+			result.reason = d["reason"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEvent/SharedChatUnban
+class SharedChatUnban extends TwitchData:
+
+	## The ID of the user being unbanned.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user being unbanned.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user being unbanned.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatUnban:
+		var shared_chat_unban: SharedChatUnban = SharedChatUnban.new()
+		return shared_chat_unban
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatUnban:
+		var result: SharedChatUnban = SharedChatUnban.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEvent/SharedChatTimeout
+class SharedChatTimeout extends TwitchData:
+
+	## The ID of the user being timed out.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user being timed out.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user being timed out.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	## Optional .. The reason given for the timeout.
+	@export var reason: String:
+		set(val):
+			reason = val
+			track_data(&"reason", val)
+	
+	## The time at which the timeout ends.
+	@export var expires_at: String:
+		set(val):
+			expires_at = val
+			track_data(&"expires_at", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatTimeout:
+		var shared_chat_timeout: SharedChatTimeout = SharedChatTimeout.new()
+		return shared_chat_timeout
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatTimeout:
+		var result: SharedChatTimeout = SharedChatTimeout.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		if d.get("reason", null) != null:
+			result.reason = d["reason"]
+		if d.get("expires_at", null) != null:
+			result.expires_at = d["expires_at"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEvent/SharedChatUntimeout
+class SharedChatUntimeout extends TwitchData:
+
+	## The ID of the user being untimed out.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user being untimed out.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user untimed out.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatUntimeout:
+		var shared_chat_untimeout: SharedChatUntimeout = SharedChatUntimeout.new()
+		return shared_chat_untimeout
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatUntimeout:
+		var result: SharedChatUntimeout = SharedChatUntimeout.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEvent/SharedChatDelete
+class SharedChatDelete extends TwitchData:
+
+	## The ID of the user whose message is being deleted.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	## The ID of the message being deleted.
+	@export var message_id: String:
+		set(val):
+			message_id = val
+			track_data(&"message_id", val)
+	
+	## The message body of the message being deleted.
+	@export var message_body: String:
+		set(val):
+			message_body = val
+			track_data(&"message_body", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatDelete:
+		var shared_chat_delete: SharedChatDelete = SharedChatDelete.new()
+		return shared_chat_delete
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatDelete:
+		var result: SharedChatDelete = SharedChatDelete.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		if d.get("message_id", null) != null:
+			result.message_id = d["message_id"]
+		if d.get("message_body", null) != null:
+			result.message_body = d["message_body"]
+		return result
+	
+
+
 ## 
 ## #/components/schemas/ChannelModerateEventV2
 class EventV2 extends TwitchData:
@@ -1169,31 +1419,31 @@ class EventV2 extends TwitchData:
 			track_data(&"warn", val)
 	
 	## Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_ban: Dictionary:
+	@export var shared_chat_ban: SharedChatBanV2:
 		set(val):
 			shared_chat_ban = val
 			track_data(&"shared_chat_ban", val)
 	
 	## Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_unban: Dictionary:
+	@export var shared_chat_unban: SharedChatUnbanV2:
 		set(val):
 			shared_chat_unban = val
 			track_data(&"shared_chat_unban", val)
 	
 	## Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_timeout: Dictionary:
+	@export var shared_chat_timeout: SharedChatTimeoutV2:
 		set(val):
 			shared_chat_timeout = val
 			track_data(&"shared_chat_timeout", val)
 	
 	## Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_untimeout: Dictionary:
+	@export var shared_chat_untimeout: SharedChatUntimeoutV2:
 		set(val):
 			shared_chat_untimeout = val
 			track_data(&"shared_chat_untimeout", val)
 	
 	## Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
-	@export var shared_chat_delete: Dictionary:
+	@export var shared_chat_delete: SharedChatDeleteV2:
 		set(val):
 			shared_chat_delete = val
 			track_data(&"shared_chat_delete", val)
@@ -1261,15 +1511,15 @@ class EventV2 extends TwitchData:
 		if d.get("warn", null) != null:
 			result.warn = WarnV2.from_json(d["warn"])
 		if d.get("shared_chat_ban", null) != null:
-			result.shared_chat_ban = d["shared_chat_ban"]
+			result.shared_chat_ban = SharedChatBanV2.from_json(d["shared_chat_ban"])
 		if d.get("shared_chat_unban", null) != null:
-			result.shared_chat_unban = d["shared_chat_unban"]
+			result.shared_chat_unban = SharedChatUnbanV2.from_json(d["shared_chat_unban"])
 		if d.get("shared_chat_timeout", null) != null:
-			result.shared_chat_timeout = d["shared_chat_timeout"]
+			result.shared_chat_timeout = SharedChatTimeoutV2.from_json(d["shared_chat_timeout"])
 		if d.get("shared_chat_untimeout", null) != null:
-			result.shared_chat_untimeout = d["shared_chat_untimeout"]
+			result.shared_chat_untimeout = SharedChatUntimeoutV2.from_json(d["shared_chat_untimeout"])
 		if d.get("shared_chat_delete", null) != null:
-			result.shared_chat_delete = d["shared_chat_delete"]
+			result.shared_chat_delete = SharedChatDeleteV2.from_json(d["shared_chat_delete"])
 		return result
 	
 
@@ -2000,5 +2250,255 @@ class WarnV2 extends TwitchData:
 		if d.get("chat_rules_cited", null) != null:
 			for value in d["chat_rules_cited"]:
 				result.chat_rules_cited.append(value)
+		return result
+	
+
+
+## Optional . Information about the shared_chat_ban event. Is null if action is not shared_chat_ban . This field has the same information as the ban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEventV2/SharedChatBan
+class SharedChatBanV2 extends TwitchData:
+
+	## The ID of the user being banned.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user being banned.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user being banned.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	## Optional . Reason given for the ban.
+	@export var reason: String:
+		set(val):
+			reason = val
+			track_data(&"reason", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatBanV2:
+		var shared_chat_ban_v_2: SharedChatBanV2 = SharedChatBanV2.new()
+		return shared_chat_ban_v_2
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatBanV2:
+		var result: SharedChatBanV2 = SharedChatBanV2.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		if d.get("reason", null) != null:
+			result.reason = d["reason"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_unban event. Is null if action is not shared_chat_unban . This field has the same information as the unban field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEventV2/SharedChatUnban
+class SharedChatUnbanV2 extends TwitchData:
+
+	## The ID of the user being unbanned.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user being unbanned.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user being unbanned.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatUnbanV2:
+		var shared_chat_unban_v_2: SharedChatUnbanV2 = SharedChatUnbanV2.new()
+		return shared_chat_unban_v_2
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatUnbanV2:
+		var result: SharedChatUnbanV2 = SharedChatUnbanV2.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_timeout event. Is null if action is not shared_chat_timeout . This field has the same information as the timeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEventV2/SharedChatTimeout
+class SharedChatTimeoutV2 extends TwitchData:
+
+	## The ID of the user being timed out.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user being timed out.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user being timed out.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	## Optional . The reason given for the timeout.
+	@export var reason: String:
+		set(val):
+			reason = val
+			track_data(&"reason", val)
+	
+	## The time at which the timeout ends.
+	@export var expires_at: String:
+		set(val):
+			expires_at = val
+			track_data(&"expires_at", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatTimeoutV2:
+		var shared_chat_timeout_v_2: SharedChatTimeoutV2 = SharedChatTimeoutV2.new()
+		return shared_chat_timeout_v_2
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatTimeoutV2:
+		var result: SharedChatTimeoutV2 = SharedChatTimeoutV2.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		if d.get("reason", null) != null:
+			result.reason = d["reason"]
+		if d.get("expires_at", null) != null:
+			result.expires_at = d["expires_at"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_untimeout event. Is null if action is not shared_chat_untimeout . This field has the same information as the untimeout field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEventV2/SharedChatUntimeout
+class SharedChatUntimeoutV2 extends TwitchData:
+
+	## The ID of the user being untimed out.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user being untimed out.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user untimed out.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatUntimeoutV2:
+		var shared_chat_untimeout_v_2: SharedChatUntimeoutV2 = SharedChatUntimeoutV2.new()
+		return shared_chat_untimeout_v_2
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatUntimeoutV2:
+		var result: SharedChatUntimeoutV2 = SharedChatUntimeoutV2.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		return result
+	
+
+
+## Optional . Information about the shared_chat_delete event. Is null if action is not shared_chat_delete . This field has the same information as the delete field but for a action that happened for a channel in a shared chat session other than the broadcaster in the subscription condition.
+## #/components/schemas/ChannelModerateEventV2/SharedChatDelete
+class SharedChatDeleteV2 extends TwitchData:
+
+	## The ID of the user whose message is being deleted.
+	@export var user_id: String:
+		set(val):
+			user_id = val
+			track_data(&"user_id", val)
+	
+	## The login of the user.
+	@export var user_login: String:
+		set(val):
+			user_login = val
+			track_data(&"user_login", val)
+	
+	## The user name of the user.
+	@export var user_name: String:
+		set(val):
+			user_name = val
+			track_data(&"user_name", val)
+	
+	## The ID of the message being deleted.
+	@export var message_id: String:
+		set(val):
+			message_id = val
+			track_data(&"message_id", val)
+	
+	## The message body of the message being deleted.
+	@export var message_body: String:
+		set(val):
+			message_body = val
+			track_data(&"message_body", val)
+	
+	
+	
+	## Constructor with all required fields.
+	static func create() -> SharedChatDeleteV2:
+		var shared_chat_delete_v_2: SharedChatDeleteV2 = SharedChatDeleteV2.new()
+		return shared_chat_delete_v_2
+	
+	
+	static func from_json(d: Dictionary) -> SharedChatDeleteV2:
+		var result: SharedChatDeleteV2 = SharedChatDeleteV2.new()
+		if d.get("user_id", null) != null:
+			result.user_id = d["user_id"]
+		if d.get("user_login", null) != null:
+			result.user_login = d["user_login"]
+		if d.get("user_name", null) != null:
+			result.user_name = d["user_name"]
+		if d.get("message_id", null) != null:
+			result.message_id = d["message_id"]
+		if d.get("message_body", null) != null:
+			result.message_body = d["message_body"]
 		return result
 	

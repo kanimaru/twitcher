@@ -31,11 +31,15 @@ class Body extends TwitchData:
 			color = val
 			track_data(&"color", val)
 	
-	## Determines if the chat announcement is sent only to the source channel defined by broadcaster\_id during a shared chat session. This has no effect if the announcement is not sent sent during a shared chat session. The default value is `false`. NOTE: This parameter can only be set when utilizing an App Access Token. It cannot be specified when a User Access Token is used, and will instead result in an HTTP 400 error.
-	@export var source_only: bool:
+	## **NOTE:** This parameter can only be set when utilizing an App Access Token. It cannot be specified when a User Access Token is used, and will instead result in an HTTP 400 error.  
+	##   
+	## Determines if the chat announcement is sent only to the source channel (defined by _broadcaster\_id_) during a shared chat session. This has no effect if the announcement is not sent during a shared chat session.  
+	##   
+	## The default value when using an App Access Token is `true`. If you prefer to send an announcement to all channels in a shared chat session, set this parameter to `false`.
+	@export var for_source_only: bool:
 		set(val):
-			source_only = val
-			track_data(&"source-only", val)
+			for_source_only = val
+			track_data(&"for_source_only", val)
 	
 	
 	
@@ -53,7 +57,7 @@ class Body extends TwitchData:
 			result.message = d["message"]
 		if d.get("color", null) != null:
 			result.color = d["color"]
-		if d.get("source-only", null) != null:
-			result.source_only = d["source-only"]
+		if d.get("for_source_only", null) != null:
+			result.for_source_only = d["for_source_only"]
 		return result
 	

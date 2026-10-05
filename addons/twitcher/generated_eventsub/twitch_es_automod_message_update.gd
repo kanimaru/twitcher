@@ -416,7 +416,7 @@ class EventV2 extends TwitchData:
 			held_at = val
 			track_data(&"held_at", val)
 	
-	## The reason why the message was caught. Possible values are: automod blocked_term
+	## The reason why the message was caught. Possible values are: automod blocked_term blocked_link
 	@export var reason: String:
 		set(val):
 			reason = val
@@ -428,7 +428,7 @@ class EventV2 extends TwitchData:
 			automod = val
 			track_data(&"automod", val)
 	
-	## Optional. If the message was caught due to a blocked term, this will be populated.
+	## Optional. If the message was caught due to a blocked term or a blocked link, this will be populated.
 	@export var blocked_term: BlockedTermV2:
 		set(val):
 			blocked_term = val
@@ -718,7 +718,7 @@ class BoundariesV2 extends TwitchData:
 	
 
 
-## Optional. If the message was caught due to a blocked term, this will be populated.
+## Optional. If the message was caught due to a blocked term or a blocked link, this will be populated.
 ## #/components/schemas/AutomodMessageUpdateEventV2/BlockedTerm
 class BlockedTermV2 extends TwitchData:
 
