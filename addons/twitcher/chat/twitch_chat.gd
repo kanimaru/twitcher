@@ -37,6 +37,11 @@ func _ready() -> void:
 	if media_loader == null: media_loader = TwitchMediaLoader.instance
 	if api == null: api = TwitchAPI.instance
 	if eventsub == null: eventsub = TwitchEventsub.instance
+
+	if eventsub == null:
+		_log.e("Eventsub missing can't connect TwitchChat!")
+		return
+
 	eventsub.event.connect(_on_event_received)
 	if not Engine.is_editor_hint() && subscribe_on_ready:
 		subscribe()

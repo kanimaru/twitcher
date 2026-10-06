@@ -29,6 +29,10 @@ func _ready() -> void:
 	if eventsub == null: eventsub = TwitchEventsub.instance
 	if api == null: api = TwitchAPI.instance
 
+	if eventsub == null:
+		_log.e("Eventsub missing can't connect TwitchRedeemListener!")
+		return
+
 	eventsub.event_received.connect(_on_event)
 	if ensure_subscriptions_on_ready: ensure_subscriptions()
 
