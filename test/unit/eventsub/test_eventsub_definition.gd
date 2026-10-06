@@ -14,7 +14,8 @@
 extends TwitcherTest
 
 
-func _make_notification(type: String, version: String, event: Dictionary) -> TwitchNotificationMessage:
+func _make_notification(
+		type: String, version: String, event: Dictionary) -> TwitchNotificationMessage:
 	return TwitchNotificationMessage.new({
 		"metadata": {
 			"message_id": "msg-1", "message_type": "notification",
@@ -64,7 +65,8 @@ func test_get_definition_distinguishes_versions_of_one_type() -> void:
 		["channel.channel_points_automatic_reward_redemption.add", "1"],
 		["channel.channel_points_automatic_reward_redemption.add", "2"],
 	]:
-		var definition := TwitchEventsubDefinition.get_definition(pair[0], pair[1])
+		var definition: TwitchEventsubDefinition = TwitchEventsubDefinition.get_definition(
+				pair[0], pair[1])
 		assert_not_null(definition, "%s v%s" % pair)
 		assert_eq(definition.value, StringName(pair[0]))
 		assert_eq(definition.version, StringName(pair[1]))
@@ -73,7 +75,8 @@ func test_get_definition_distinguishes_versions_of_one_type() -> void:
 func test_get_definition_falls_back_when_the_version_is_unknown() -> void:
 	# Twitch shipping a version we have not generated yet should degrade to the
 	# name match rather than returning null and crashing the dispatcher.
-	var definition := TwitchEventsubDefinition.get_definition("channel.moderate", "99")
+	var definition: TwitchEventsubDefinition = TwitchEventsubDefinition.get_definition(
+			"channel.moderate", "99")
 	assert_not_null(definition)
 	assert_eq(definition.value, &"channel.moderate")
 
@@ -85,7 +88,7 @@ func test_get_definition_returns_null_for_an_unknown_type() -> void:
 func test_get_event_class_picks_the_version_specific_class() -> void:
 	# Two upstream naming conventions reach the same place: EventV2 on the automod
 	# and moderate schemas, V2Event on the automatic reward one.
-	var expected := {
+	var expected: Dictionary[Array, String] = {
 		["channel.moderate", "1"]: "Event",
 		["channel.moderate", "2"]: "EventV2",
 		["automod.message.hold", "2"]: "EventV2",
@@ -95,7 +98,8 @@ func test_get_event_class_picks_the_version_specific_class() -> void:
 		["channel.guest_star_session.begin", "beta"]: "Event",
 	}
 	for pair: Array in expected:
-		var definition := TwitchEventsubDefinition.get_definition(pair[0], pair[1])
+		var definition: TwitchEventsubDefinition = TwitchEventsubDefinition.get_definition(
+				pair[0], pair[1])
 		var event_class: Variant = definition.get_event_class()
 		assert_not_null(event_class, "%s v%s" % pair)
 		var constants: Dictionary = definition.response_script.get_script_constant_map()
@@ -104,8 +108,8 @@ func test_get_event_class_picks_the_version_specific_class() -> void:
 
 
 func test_v2_notification_keeps_v2_only_payload_fields() -> void:
-	var event := TwitchEventsub.Event.new(
-		_make_notification("channel.moderate", "2", _moderate_v2_event()))
+	var event: TwitchEventsub.Event = TwitchEventsub.Event.new(
+			_make_notification("channel.moderate", "2", _moderate_v2_event()))
 
 	assert_eq(event.type.version, &"2", "resolved definition must be the v2 one")
 	var typed: Variant = event.typed_data
@@ -114,8 +118,8 @@ func test_v2_notification_keeps_v2_only_payload_fields() -> void:
 
 
 func test_v1_notification_still_decodes_with_the_v1_class() -> void:
-	var event := TwitchEventsub.Event.new(
-		_make_notification("channel.moderate", "1", _moderate_v2_event()))
+	var event: TwitchEventsub.Event = TwitchEventsub.Event.new(
+			_make_notification("channel.moderate", "1", _moderate_v2_event()))
 
 	assert_eq(event.type.version, &"1")
 	assert_true(event.type.documentation_link.ends_with("#channelmoderate"))
