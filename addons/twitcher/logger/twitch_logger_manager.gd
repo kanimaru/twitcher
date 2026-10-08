@@ -42,6 +42,7 @@ static var _is_shutdown_watch_deferred: bool = false
 
 static func _static_init() -> void:
 	install_console_handler()
+	TwitchLogDebuggerRelay.install_if_attached()
 
 
 ## Registers the logger and sets the enabled state from its project setting.

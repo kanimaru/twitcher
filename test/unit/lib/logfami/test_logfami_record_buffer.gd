@@ -102,5 +102,35 @@ func test_version_changes_with_every_added_record() -> void:
 	assert_ne(versions[1], versions[2], "also when the buffer is full")
 
 
+func test_merge_orders_by_time_and_keeps_the_first_list_first_on_ties() -> void:
+	var a1: LogfamiRecord = _timed(10, "a1")
+	var a2: LogfamiRecord = _timed(30, "a2")
+	var b1: LogfamiRecord = _timed(10, "b1")
+	var b2: LogfamiRecord = _timed(20, "b2")
+	var b3: LogfamiRecord = _timed(40, "b3")
+
+	var merged: Array[LogfamiRecord] = LogfamiRecordBuffer.merge([a1, a2], [b1, b2, b3])
+
+	var bodies: PackedStringArray = []
+	for record: LogfamiRecord in merged:
+		bodies.append(record.body)
+	assert_eq(bodies, PackedStringArray(["a1", "b1", "b2", "a2", "b3"]))
+
+
+func test_merge_with_an_empty_list_returns_the_other() -> void:
+	var only: LogfamiRecord = _timed(1, "only")
+	var empty: Array[LogfamiRecord] = []
+
+	assert_eq(LogfamiRecordBuffer.merge([only], empty).size(), 1)
+	assert_eq(LogfamiRecordBuffer.merge(empty, [only]).size(), 1)
+	assert_eq(LogfamiRecordBuffer.merge(empty, empty).size(), 0)
+
+
+func _timed(time_unix_ms: int, body: String) -> LogfamiRecord:
+	var record: LogfamiRecord = _record("S", body)
+	record.time_unix_ms = time_unix_ms
+	return record
+
+
 func _record(scope: String, body: String) -> LogfamiRecord:
 	return LogfamiRecord.create(LogfamiLevel.Severity.INFO, scope, body)

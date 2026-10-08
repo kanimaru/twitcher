@@ -63,6 +63,7 @@ var current_setup_window: Node
 var current_reward_manager_window: Node
 var popup_menu: PopupMenu
 var log_dock: TwitchLogDock
+var log_debugger: TwitchLogDebuggerPlugin
 
 func _enter_tree():
 	_log.i("Start Twitcher loading...")
@@ -136,11 +137,18 @@ func add_twitcher_menu() -> void:
 
 func add_log_dock() -> void:
 	log_dock = TwitchLogDock.new()
+	log_debugger = TwitchLogDebuggerPlugin.new()
+	log_debugger.link.game_buffer = log_dock.game_buffer
+	log_dock.debugger = log_debugger.link
+	add_debugger_plugin(log_debugger)
 	add_control_to_bottom_panel(log_dock, LOG_DOCK_TITLE)
 
 
 func remove_log_dock() -> void:
 	if not is_instance_valid(log_dock): return
+	remove_debugger_plugin(log_debugger)
+	log_dock.debugger = null
+	log_debugger = null
 	remove_control_from_bottom_panel(log_dock)
 	log_dock.queue_free()
 	log_dock = null

@@ -7,9 +7,12 @@ extends VBoxContainer
 ## component logs at all and is stored in the project settings, see
 ## [TwitchLogContexts]. The check box only hides the context in this panel.
 ## Right: the records, filtered by level, hidden contexts and a text query, see
-## [LogfamiRecordFilter].
+## [LogfamiRecordFilter]. Records of the editor and of a game started from it
+## ([TwitchLogDebuggerLink]) are merged by time; the source selector shows
+## one of them only. Modes picked here reach the running game as well.
 ##
-## The panel only collects records while it is part of the scene tree.
+## The panel only collects the editor's records while it is part of the scene
+## tree.
 
 const LEVELS: Dictionary[String, int] = {
 	"Debug": LogfamiLevel.Severity.DEBUG,
@@ -17,6 +20,12 @@ const LEVELS: Dictionary[String, int] = {
 	"Warn": LogfamiLevel.Severity.WARN,
 	"Error": LogfamiLevel.Severity.ERROR,
 }
+const SOURCE_ALL: String = "All"
+const SOURCE_EDITOR: String = "Editor"
+const SOURCE_GAME: String = "Game"
+const SOURCES: Array[String] = [SOURCE_ALL, SOURCE_EDITOR, SOURCE_GAME]
+const EDITOR_TAG: String = "[color=gray]E[/color] "
+const GAME_TAG: String = "[color=gray]G[/color] "
 const CONTEXT_PANEL_WIDTH: int = 260
 const SEARCH_PLACEHOLDER: String = "Filter: words, -excluded"
 ## Seconds between looking for new contexts and for modes changed elsewhere.
@@ -24,14 +33,20 @@ const SYNC_INTERVAL: float = 0.5
 
 var feed: TwitchLogFeed = TwitchLogFeed.new()
 var filter: LogfamiRecordFilter = LogfamiRecordFilter.new()
+## Records of the running game, filled by [member debugger].
+var game_buffer: LogfamiRecordBuffer = LogfamiRecordBuffer.new()
+## The link to the running game; without one only the editor's records show.
+var debugger: TwitchLogDebuggerLink
 
 var _formatter: TwitchConsoleLogHandler = TwitchConsoleLogHandler.new()
 var _rows: Dictionary[String, TwitchLogContextRow] = {}
+var _source: String = SOURCE_ALL
 var _last_version: int = -1
 var _is_dirty: bool = true
 var _since_sync: float = 0.0
 
 var _level_select: OptionButton
+var _source_select: OptionButton
 var _search: LineEdit
 var _autoscroll: CheckBox
 var _status: Label
@@ -113,12 +128,24 @@ func set_query(text: String) -> void:
 ## Sets the mode of every known context, see [method TwitchLogContexts.set_mode].
 func set_all_modes(mode: String) -> void:
 	for context: String in _all_contexts():
-		TwitchLogContexts.set_mode(context, mode)
+		_apply_mode(context, mode)
 	_sync_contexts()
+
+
+## Chooses which records show: [constant SOURCE_ALL], [constant SOURCE_EDITOR]
+## or [constant SOURCE_GAME].
+func set_source(source: String) -> void:
+	var index: int = SOURCES.find(source)
+	if index < 0:
+		return
+	_source = source
+	_source_select.select(index)
+	_is_dirty = true
 
 
 func clear() -> void:
 	feed.buffer.clear()
+	game_buffer.clear()
 	_is_dirty = true
 
 
@@ -133,6 +160,13 @@ func _build() -> void:
 
 func _build_toolbar() -> HBoxContainer:
 	var toolbar: HBoxContainer = HBoxContainer.new()
+	_source_select = OptionButton.new()
+	for source: String in SOURCES:
+		_source_select.add_item(source)
+	_source_select.tooltip_text = "Records of the editor, of the running game, or both"
+	_source_select.item_selected.connect(_on_source_selected)
+	toolbar.add_child(_source_select)
+
 	_level_select = OptionButton.new()
 	for label: String in LEVELS:
 		_level_select.add_item(label)
@@ -215,6 +249,8 @@ func _all_contexts() -> PackedStringArray:
 		seen[context] = true
 	for context: String in feed.buffer.scopes():
 		seen[context] = true
+	for context: String in game_buffer.scopes():
+		seen[context] = true
 	var sorted: PackedStringArray = PackedStringArray(seen.keys())
 	sorted.sort()
 	return sorted
@@ -250,25 +286,53 @@ func _sort_rows() -> void:
 
 
 func _render_if_changed() -> void:
-	if feed.buffer.version == _last_version and not _is_dirty:
+	var version: int = feed.buffer.version + game_buffer.version
+	if version == _last_version and not _is_dirty:
 		return
-	_last_version = feed.buffer.version
+	_last_version = version
 	_is_dirty = false
 	_render_records()
 
 
 func _render_records() -> void:
-	var all_records: int = feed.buffer.size()
-	var records: Array[LogfamiRecord] = feed.buffer.get_records(filter)
+	var game_records: Array[LogfamiRecord] = []
+	var editor_records: Array[LogfamiRecord] = []
+	var total: int = 0
+	if _source != SOURCE_GAME:
+		editor_records = feed.buffer.get_records(filter)
+		total += feed.buffer.size()
+	if _source != SOURCE_EDITOR:
+		game_records = game_buffer.get_records(filter)
+		total += game_buffer.size()
+	var records: Array[LogfamiRecord] = LogfamiRecordBuffer.merge(editor_records, game_records)
+	var game_set: Dictionary[LogfamiRecord, bool] = {}
+	for record: LogfamiRecord in game_records:
+		game_set[record] = true
 	var lines: PackedStringArray = []
 	for record: LogfamiRecord in records:
-		lines.append(_formatter.format(record.to_dict()))
+		var line: String = _formatter.format(record.to_dict())
+		if _source == SOURCE_ALL:
+			line = _origin_tag(game_set.has(record)) + line
+		lines.append(line)
 	var scroll_bar: VScrollBar = _output.get_v_scroll_bar()
 	var scroll_value: float = scroll_bar.value
 	_output.text = "\n".join(lines)
 	if not _autoscroll.button_pressed:
 		scroll_bar.value = scroll_value
-	_status.text = "%d / %d" % [records.size(), all_records]
+	_status.text = "%d / %d" % [records.size(), total]
+	if debugger != null and debugger.is_game_running():
+		_status.text += " · game running"
+
+
+func _origin_tag(is_game: bool) -> String:
+	return GAME_TAG if is_game else EDITOR_TAG
+
+
+## Switches the context here and in the running game.
+func _apply_mode(context: String, mode: String) -> void:
+	TwitchLogContexts.set_mode(context, mode)
+	if debugger != null:
+		debugger.send_mode(context, mode)
 
 
 func _show_all_contexts() -> void:
@@ -291,7 +355,11 @@ func _on_row_shown_changed(context: String, is_shown: bool) -> void:
 
 
 func _on_row_mode_changed(context: String, mode: String) -> void:
-	TwitchLogContexts.set_mode(context, mode)
+	_apply_mode(context, mode)
+
+
+func _on_source_selected(index: int) -> void:
+	set_source(SOURCES[index])
 
 
 func _on_level_selected(index: int) -> void:

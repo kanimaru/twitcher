@@ -178,3 +178,107 @@ func test_set_all_modes_switches_every_known_context() -> void:
 
 	_dock.set_all_modes("off")
 	assert_false(logger.enabled)
+
+
+func test_game_records_are_merged_and_tagged_by_origin() -> void:
+	var logger: TwitchLogger = TwitchLogger.new(CONTEXT, true)
+	logger.i("from the editor")
+	_dock.game_buffer.add(_game_record("GutDockGame", "from the game"))
+	_dock.refresh()
+
+	assert_eq(_dock.get_line_count(), 2)
+	var text: String = _dock._output.get_parsed_text()
+	assert_string_contains(text, "E ")
+	assert_string_contains(text, "G ")
+
+
+func test_the_source_selector_limits_the_records() -> void:
+	var logger: TwitchLogger = TwitchLogger.new(CONTEXT, true)
+	logger.i("from the editor")
+	_dock.game_buffer.add(_game_record("GutDockGame", "from the game"))
+
+	_dock.set_source(TwitchLogDock.SOURCE_GAME)
+	_dock.refresh()
+	assert_eq(_dock.get_line_count(), 1)
+	assert_string_contains(_dock._output.get_parsed_text(), "from the game")
+
+	_dock.set_source(TwitchLogDock.SOURCE_EDITOR)
+	_dock.refresh()
+	assert_eq(_dock.get_line_count(), 1)
+	assert_string_contains(_dock._output.get_parsed_text(), "from the editor")
+
+
+func test_unknown_sources_are_ignored() -> void:
+	_dock.set_source("Phone")
+	_dock.game_buffer.add(_game_record("GutDockGame", "from the game"))
+	_dock.refresh()
+	assert_eq(_dock.get_line_count(), 1)
+
+
+func test_contexts_of_the_game_get_a_row() -> void:
+	_dock.game_buffer.add(_game_record("GutDockGameOnly", "hi"))
+
+	_dock.refresh()
+
+	assert_not_null(_dock.get_row("GutDockGameOnly"))
+
+
+func test_hiding_a_context_hides_its_game_records_too() -> void:
+	_dock.game_buffer.add(_game_record("GutDockGameOnly", "hi"))
+	_dock.refresh()
+
+	_dock.get_row("GutDockGameOnly").toggle_shown(false)
+	_dock.refresh()
+
+	assert_eq(_dock.get_line_count(), 0)
+
+
+func test_clear_empties_the_game_records_as_well() -> void:
+	_dock.game_buffer.add(_game_record("GutDockGame", "hi"))
+	_dock.clear()
+	assert_eq(_dock.game_buffer.size(), 0)
+
+
+func test_modes_are_passed_on_to_the_running_game() -> void:
+	var session: FakeSession = FakeSession.new()
+	var link: TwitchLogDebuggerLink = TwitchLogDebuggerLink.new()
+	link.add_session(1, session)
+	_dock.debugger = link
+	TwitchLogger.new(CONTEXT)
+	_dock.refresh()
+
+	_dock.get_row(CONTEXT).pick_mode("info")
+
+	assert_eq(TwitchLogContexts.get_mode(CONTEXT), "info", "applied in the editor")
+	assert_eq(session.sent, [[TwitchLogDebuggerRelay.SET_MODE_MESSAGE, [CONTEXT, "info"]]])
+
+
+func test_set_all_modes_reaches_the_game_for_every_context() -> void:
+	var session: FakeSession = FakeSession.new()
+	var link: TwitchLogDebuggerLink = TwitchLogDebuggerLink.new()
+	link.add_session(1, session)
+	_dock.debugger = link
+	TwitchLogger.new(CONTEXT)
+	_dock.refresh()
+
+	_dock.set_all_modes("debug")
+
+	var contexts: Array[String] = []
+	for sent: Array in session.sent:
+		contexts.append(sent[1][0])
+	assert_true(contexts.has(CONTEXT))
+
+
+func _game_record(scope: String, body: String) -> LogfamiRecord:
+	return LogfamiRecord.create(LogfamiLevel.Severity.INFO, scope, body)
+
+
+class FakeSession extends Object:
+	var active: bool = true
+	var sent: Array = []
+
+	func is_active() -> bool:
+		return active
+
+	func send_message(message: String, data: Array) -> void:
+		sent.append([message, data])

@@ -67,3 +67,22 @@ func scopes() -> PackedStringArray:
 	var sorted: PackedStringArray = PackedStringArray(seen.keys())
 	sorted.sort()
 	return sorted
+
+
+## Merges two lists, each oldest first, into one ordered by
+## [member LogfamiRecord.time_unix_ms]. On equal times [param first] comes first.
+static func merge(first: Array[LogfamiRecord],
+		second: Array[LogfamiRecord]) -> Array[LogfamiRecord]:
+	var merged: Array[LogfamiRecord] = []
+	var i: int = 0
+	var j: int = 0
+	while i < first.size() and j < second.size():
+		if second[j].time_unix_ms < first[i].time_unix_ms:
+			merged.append(second[j])
+			j += 1
+		else:
+			merged.append(first[i])
+			i += 1
+	merged.append_array(first.slice(i))
+	merged.append_array(second.slice(j))
+	return merged
