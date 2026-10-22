@@ -17,6 +17,9 @@ signal message_received(message: PackedByteArray)
 ## Called when the state of the websocket changed
 signal connection_state_changed(state : WebSocketPeer.State)
 
+## Failed connection attempts after which the delay stops growing.
+const _MAX_TRIES: int = 16
+
 @export var connection_url: String:
 	set(val):
 		_logDebug("Set connection to %s" % val)
@@ -34,7 +37,16 @@ var connection_state : WebSocketPeer.State = WebSocketPeer.STATE_CLOSED:
 @export var auto_reconnect: bool:
 	set(val):
 		auto_reconnect = val
+		# Turned off on purpose, so a node that is out of the tree must not resume either.
+		if not val:
+			_resume_on_enter = false
 		_logDebug("New auto_reconnect value: %s" % val)
+
+## Seconds to wait before the first connection attempt. Doubles with every failed attempt.
+@export var reconnect_base_delay: float = 1.0
+## Upper bound of the wait between two connection attempts, so a long outage doesn't push the
+## next attempt hours into the future.
+@export var max_reconnect_delay: float = 60.0
 
 ## True if currently connecting to prevent 2 connectionen processes at the same time
 var _is_already_connecting: bool
@@ -45,11 +57,21 @@ var is_closed: bool:
 
 var _peer: WebSocketPeer = WebSocketPeer.new()
 var _tries: int
+## Bumped on every close, abort and tree exit. A connection attempt that started waiting in an
+## older generation gives up instead of reopening a client that got closed in the meantime.
+var _generation: int
+## The pending wait of [method _establish_connection], kept so it can be cut short.
+var _connection_wait: SceneTreeTimer
+## Remembers across a tree exit that the client was supposed to be connected.
+var _resume_on_enter: bool
 
 
 func open_connection() -> void:
 	if not is_closed: return
 	auto_reconnect = true
+	# Without a tree there is no timer to wait with, _enter_tree connects as soon as it's added.
+	if not is_inside_tree():
+		return
 	_logInfo("Open connection")
 	await _establish_connection()
 
@@ -58,27 +80,47 @@ func wait_connection_established() -> void:
 	if is_open: return
 	await connection_established
 
+## Seconds to wait before the connection attempt after [param tries] failed ones.
+func get_reconnect_delay(tries: int) -> float:
+	return minf(reconnect_base_delay * pow(2.0, tries), max_reconnect_delay)
+
+
 func _establish_connection() -> void:
 	if _is_already_connecting || not is_closed: return
 	_is_already_connecting = true
-	var wait_time = pow(2, _tries)
+	var generation: int = _generation
+	var wait_time: float = get_reconnect_delay(_tries)
 	_logDebug("Wait %s before connecting" % [wait_time])
-	await get_tree().create_timer(wait_time, true, false, true).timeout
+	var wait: SceneTreeTimer = get_tree().create_timer(wait_time, true, false, true)
+	_connection_wait = wait
+	await wait.timeout
+	if _connection_wait == wait:
+		_connection_wait = null
+	_is_already_connecting = false
+	if generation != _generation or not auto_reconnect or not is_inside_tree():
+		_logDebug("Connection attempt got cancelled")
+		return
 	_logInfo("Connecting to %s" % connection_url)
 	var err = _peer.connect_to_url(connection_url)
 	if err != OK:
 		logError("Couldn't connect cause of %s" % [error_string(err)])
-	_tries += 1
-	_is_already_connecting = false
+	_tries = mini(_tries + 1, _MAX_TRIES)
 
 
 func _enter_tree() -> void:
+	if _resume_on_enter:
+		_resume_on_enter = false
+		auto_reconnect = true
 	if auto_reconnect: open_connection()
 
 
 func _exit_tree() -> void:
-	if not is_open: return
-	_peer.close(1000, "resource got freed")
+	var resume: bool = auto_reconnect
+	_stop_connecting()
+	# A node outside the tree isn't polled, so a close handshake would never finish and the
+	# socket would hang in CLOSING. Drop it and reconnect when the node comes back.
+	_peer.close(-1)
+	_resume_on_enter = resume
 
 
 func _process(delta: float) -> void:
@@ -118,8 +160,34 @@ func send_text(message: String) -> Error:
 
 func close(status: int = 1000, message: String = "Normal Closure") -> void:
 	_logDebug("Websocket activly closed")
-	auto_reconnect = false
+	_stop_connecting()
 	_peer.close(status, message)
+
+
+## Drops the connection at once without a close handshake. Meant for a peer that stopped
+## answering, where [method close] would wait for a reply that never comes. Like
+## [method close] it turns [member auto_reconnect] off.
+func abort() -> void:
+	_logDebug("Websocket aborted")
+	_stop_connecting()
+	_peer.close(-1)
+
+
+## Stops the pending and every future connection attempt until the connection gets opened again.
+func _stop_connecting() -> void:
+	_generation += 1
+	auto_reconnect = false
+	_cancel_connection_wait()
+
+
+## Resumes a pending connection attempt right away so it can see that it got cancelled. Waiting
+## for the timer instead would resume the attempt on a node that might be freed by then.
+func _cancel_connection_wait() -> void:
+	if _connection_wait == null:
+		return
+	var wait: SceneTreeTimer = _connection_wait
+	_connection_wait = null
+	wait.timeout.emit()
 
 
 # === LOGGER ===
