@@ -1,9 +1,15 @@
 ## Tests for [TwitchEventsub].
 ##
-## No network is involved. Subscribing only appends to the subscription list and
-## queues an action that waits for a session, so the list itself is observable
-## without a connection.
+## Subscribing only appends to the subscription list and queues an action that
+## waits for a session, so the list itself is observable without a connection.
+##
+## Everything about the connection runs against [WebsocketTestServer] instances
+## on the loopback interface, which play Twitch by sending [EventsubMessages].
+## No subscription is made in those tests, so no HTTP request is sent.
 extends TwitcherTest
+
+## Upper bound for anything that needs the network, generous for slow CI runners.
+const TIMEOUT: float = 3.0
 
 const FOLLOW_CONDITION: Dictionary = {
 	&"broadcaster_user_id": "123",
@@ -17,6 +23,41 @@ func _make_eventsub() -> TwitchEventsub:
 	# so nothing else would ever free it.
 	autofree(eventsub.get_test_client())
 	return eventsub
+
+
+func _make_server() -> WebsocketTestServer:
+	var server: WebsocketTestServer = add_child_autofree(WebsocketTestServer.new())
+	server.start()
+	return server
+
+
+## An eventsub connected to [param server] with the session [code]first[/code].
+func _make_connected_eventsub(server: WebsocketTestServer) -> TwitchEventsub:
+	var eventsub: TwitchEventsub = _make_eventsub()
+	eventsub.eventsub_live_server_url = server.url()
+	eventsub.get_client().reconnect_base_delay = 0.0
+	eventsub.open_connection()
+	assert_true(await _await_peers(server, 1), "test setup: the eventsub has to connect")
+	server.broadcast(EventsubMessages.welcome("first"))
+	assert_true(await _await_session(eventsub, "first"), "test setup: no session")
+	return eventsub
+
+
+func _await_peers(server: WebsocketTestServer, count: int) -> bool:
+	return await wait_until(func() -> bool: return server.open_peers().size() == count, TIMEOUT)
+
+
+func _await_session(eventsub: TwitchEventsub, session_id: String) -> bool:
+	return await wait_until(func() -> bool:
+		return eventsub.session != null and eventsub.session.id == session_id, TIMEOUT)
+
+
+## A URL nobody listens on, so connecting to it fails right away.
+func _dead_url() -> String:
+	var server: WebsocketTestServer = _make_server()
+	var url: String = server.url()
+	server.stop()
+	return url
 
 
 func _subscribe_follows(eventsub: TwitchEventsub, count: int) -> void:
@@ -77,5 +118,99 @@ func test_a_url_from_a_scene_file_is_applied_to_the_client() -> void:
 	autofree(loaded.get_test_client())
 
 	assert_eq(loaded.get_client().connection_url, "ws://127.0.0.1:3/scene")
+
+#endregion
+
+
+#region Reconnect handover
+
+func test_a_reconnect_moves_the_session_to_the_new_server() -> void:
+	var old_server: WebsocketTestServer = _make_server()
+	var new_server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(old_server)
+	var old_client: WebsocketClient = eventsub.get_client()
+	# Lambdas must not capture the client itself, they complain once it got freed.
+	var old_id: int = old_client.get_instance_id()
+
+	old_server.broadcast(EventsubMessages.reconnect("first", new_server.url()))
+	assert_true(await _await_peers(new_server, 1), "the reconnect URL has to be opened")
+	new_server.broadcast(EventsubMessages.welcome("second"))
+
+	assert_true(await _await_session(eventsub, "second"), "the new session has to take over")
+	assert_ne(eventsub.get_client().get_instance_id(), old_id,
+			"the new connection is the current one now")
+	var is_freed: Callable = func() -> bool: return not is_instance_id_valid(old_id)
+	assert_true(await wait_until(is_freed, TIMEOUT), "the replaced client has to be freed")
+
+
+## The reconnect URL is only valid for this one handover, a later reconnect has
+## to start over at the live server.
+func test_the_new_connection_reconnects_to_the_live_server() -> void:
+	var old_server: WebsocketTestServer = _make_server()
+	var new_server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(old_server)
+
+	old_server.broadcast(EventsubMessages.reconnect("first", new_server.url()))
+	assert_true(await _await_peers(new_server, 1))
+	new_server.broadcast(EventsubMessages.welcome("second"))
+	assert_true(await _await_session(eventsub, "second"))
+
+	assert_eq(eventsub.get_client().connection_url, old_server.url())
+
+
+## Regression test: the handover waited for [signal TwitchEventsub.session_id_received],
+## which any welcome emits. A welcome on the old connection completed it and
+## swapped to a connection that had no session yet.
+func test_a_welcome_on_the_old_connection_does_not_complete_the_handover() -> void:
+	var old_server: WebsocketTestServer = _make_server()
+	var new_server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(old_server)
+	var old_client: WebsocketClient = eventsub.get_client()
+	old_server.broadcast(EventsubMessages.reconnect("first", new_server.url()))
+	assert_true(await _await_peers(new_server, 1))
+
+	old_server.broadcast(EventsubMessages.welcome("stale"))
+	await wait_process_frames(10)
+
+	assert_eq(eventsub.session.id, "first", "the old connection can't start a new session")
+	assert_eq(eventsub.get_client(), old_client, "the handover is still waiting")
+
+
+func test_a_failed_handover_keeps_the_current_connection() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
+	var client: WebsocketClient = eventsub.get_client()
+
+	server.broadcast(EventsubMessages.reconnect("first", _dead_url()))
+
+	var is_dropped: Callable = func() -> bool: return eventsub._swap_over_client == null
+	assert_true(await wait_until(is_dropped, TIMEOUT),
+			"the handover has to be dropped when its connection fails")
+	assert_eq(eventsub.get_client(), client)
+	assert_true(client.is_open, "the current connection is still fine")
+	assert_eq(eventsub.session.id, "first")
+
+
+func test_closing_drops_a_pending_handover() -> void:
+	var old_server: WebsocketTestServer = _make_server()
+	var new_server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(old_server)
+	old_server.broadcast(EventsubMessages.reconnect("first", new_server.url()))
+	assert_true(await _await_peers(new_server, 1))
+
+	eventsub.close_connection()
+
+	assert_null(eventsub._swap_over_client)
+	assert_true(await _await_peers(new_server, 0), "the handover connection has to be closed")
+
+
+func test_frames_of_a_replaced_client_are_ignored() -> void:
+	var eventsub: TwitchEventsub = _make_eventsub()
+	var replaced: WebsocketClient = autofree(WebsocketClient.new())
+	watch_signals(eventsub)
+
+	eventsub._data_received(EventsubMessages.keepalive().to_utf8_buffer(), replaced)
+
+	assert_signal_not_emitted(eventsub, "message_received")
 
 #endregion

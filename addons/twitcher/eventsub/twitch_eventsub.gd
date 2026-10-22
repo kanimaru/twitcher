@@ -151,11 +151,9 @@ class SubscriptionAction extends RefCounted:
 
 func _init() -> void:
 	_client.connection_url = eventsub_live_server_url
-	_client.message_received.connect(_data_received)
-	_client.connection_established.connect(_on_connection_established)
-	_client.connection_closed.connect(_on_connection_closed)
+	_watch_client(_client)
 	_test_client.connection_url = eventsub_test_server_url
-	_test_client.message_received.connect(_data_received)
+	_test_client.message_received.connect(_data_received.bind(_test_client))
 
 
 func _ready() -> void:
@@ -215,8 +213,16 @@ func _on_connection_established() -> void:
 	_execute_action_stack()
 
 
-func _on_connection_closed() -> void:
+func _on_connection_closed(source: WebsocketClient) -> void:
+	if source == _swap_over_client:
+		_log.i("Handover connection closed before it took over, staying on the current one.")
+		_discard_pending_handover()
+		return
+	# A client that got replaced by a handover closes on its own, its session is already gone.
+	if source != _client:
+		return
 	session = null
+	_discard_pending_handover()
 
 
 func open_connection() -> void:
@@ -231,6 +237,7 @@ func close_connection() -> void:
 		_client.close()
 	if not _test_client.is_closed:
 		_test_client.close()
+	_discard_pending_handover()
 
 
 ## Add a new subscription
@@ -345,7 +352,18 @@ func _unsubscribe(subscription: TwitchEventsubConfig) -> bool:
 	return response.error || response.response_code != 200
 
 
-func _data_received(data : PackedByteArray) -> void:
+## Connects the signals of a client that carries the session, [param client] is bound to tell
+## the clients apart.
+func _watch_client(client: WebsocketClient) -> void:
+	client.message_received.connect(_data_received.bind(client))
+	client.connection_established.connect(_on_connection_established)
+	client.connection_closed.connect(_on_connection_closed.bind(client))
+
+
+func _data_received(data : PackedByteArray, source: WebsocketClient) -> void:
+	# Frames of a client that got replaced by a handover can still arrive, they're stale.
+	if source != _client and source != _swap_over_client and source != _test_client:
+		return
 	var message_str : String = data.get_string_from_utf8()
 	var message_json : Dictionary = JSON.parse_string(message_str)
 	if not message_json.has("metadata"):
@@ -364,6 +382,11 @@ func _data_received(data : PackedByteArray) -> void:
 
 	match metadata.message_type:
 		"session_welcome":
+			# During a handover only the welcome of the new connection counts.
+			if _swap_over_process and source != _swap_over_client:
+				return
+			if source == _swap_over_client:
+				_complete_handover()
 			var welcome_message: TwitchWelcomeMessage = TwitchWelcomeMessage.new(message_json)
 			session = welcome_message.payload.session
 			session_id_received.emit(session.id)
@@ -392,23 +415,47 @@ func _data_received(data : PackedByteArray) -> void:
 	_cleanup()
 
 
-func _handle_reconnect(reconnect_message: TwitchReconnectMessage):
+## Opens the connection Twitch asked to move to. The current one keeps running until the new one
+## got its welcome, see [method _complete_handover].
+func _handle_reconnect(reconnect_message: TwitchReconnectMessage) -> void:
+	if _swap_over_process:
+		_log.d("Ignored reconnect, a handover is already running.")
+		return
 	_log.i("Session is forced to reconnect")
 	_swap_over_process = true
-	var reconnect_url = reconnect_message.payload.session.reconnect_url
+	var reconnect_url: String = reconnect_message.payload.session.reconnect_url
 	_swap_over_client = WebsocketClient.new()
-	_swap_over_client.message_received.connect(_data_received)
-	_swap_over_client.connection_established.connect(_on_connection_established)
+	_swap_over_client.name = "Websocket Client Handover"
 	_swap_over_client.connection_url = reconnect_url
-	add_child(_swap_over_client)
+	_swap_over_client.reconnect_base_delay = _client.reconnect_base_delay
+	_swap_over_client.max_reconnect_delay = _client.max_reconnect_delay
+	_watch_client(_swap_over_client)
+	add_child(_swap_over_client, true)
 	_swap_over_client.open_connection()
-	await session_id_received
-	_client.close(1000, "Closed cause of reconnect.")
-	remove_child(_client)
+
+
+## Makes the handover connection the current one once it received its welcome.
+func _complete_handover() -> void:
+	var old_client: WebsocketClient = _client
 	_client = _swap_over_client
 	_swap_over_client = null
 	_swap_over_process = false
-	_log.i("Session reconnected on %s" % reconnect_url)
+	_log.i("Session reconnected on %s" % _client.connection_url)
+	# The reconnect URL belongs to this one session, later reconnects start at the live server.
+	_client.connection_url = eventsub_live_server_url
+	old_client.close(1000, "Closed cause of reconnect.")
+	old_client.queue_free()
+
+
+## Drops a handover that didn't complete. The current connection stays in charge.
+func _discard_pending_handover() -> void:
+	_swap_over_process = false
+	if _swap_over_client == null:
+		return
+	var pending: WebsocketClient = _swap_over_client
+	_swap_over_client = null
+	pending.close()
+	pending.queue_free()
 
 
 ## Cleanup old messages that won't be processed anymore cause of time to prevent a
