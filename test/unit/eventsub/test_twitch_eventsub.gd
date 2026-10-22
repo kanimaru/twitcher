@@ -42,3 +42,40 @@ func test_unsetup_unsubscribes_every_subscription() -> void:
 		"every subscription has to be removed, not every second one")
 
 #endregion
+
+
+#region Server URLs
+
+## Regression test: the URLs were copied to the clients in [code]_init[/code]
+## only. Exported values are assigned afterwards, so a proxy configured in the
+## inspector was never used.
+func test_the_live_server_url_is_applied_to_the_client() -> void:
+	var eventsub: TwitchEventsub = _make_eventsub()
+
+	eventsub.eventsub_live_server_url = "ws://127.0.0.1:1/proxy"
+
+	assert_eq(eventsub.get_client().connection_url, "ws://127.0.0.1:1/proxy")
+
+
+func test_the_test_server_url_is_applied_to_the_test_client() -> void:
+	var eventsub: TwitchEventsub = _make_eventsub()
+
+	eventsub.eventsub_test_server_url = "ws://127.0.0.1:2/cli"
+
+	assert_eq(eventsub.get_test_client().connection_url, "ws://127.0.0.1:2/cli")
+
+
+func test_a_url_from_a_scene_file_is_applied_to_the_client() -> void:
+	var scene: PackedScene = PackedScene.new()
+	var original: TwitchEventsub = autofree(TwitchEventsub.new())
+	autofree(original.get_client())
+	autofree(original.get_test_client())
+	original.eventsub_live_server_url = "ws://127.0.0.1:3/scene"
+	scene.pack(original)
+
+	var loaded: TwitchEventsub = add_child_autofree(scene.instantiate())
+	autofree(loaded.get_test_client())
+
+	assert_eq(loaded.get_client().connection_url, "ws://127.0.0.1:3/scene")
+
+#endregion

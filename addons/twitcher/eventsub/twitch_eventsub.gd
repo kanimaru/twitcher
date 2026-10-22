@@ -98,9 +98,18 @@ signal subscription_failed(subscription: TwitchEventsubConfig, reason: String)
 ## All subscriptions this eventsub should subscribe to
 @export var _subscriptions: Array[TwitchEventsubConfig] = []
 ## Live twitch server you don't need to touch it except you want to implement a proxy in between for example
-@export var eventsub_live_server_url: String = "wss://eventsub.wss.twitch.tv/ws"
+@export var eventsub_live_server_url: String = "wss://eventsub.wss.twitch.tv/ws":
+	set(val):
+		eventsub_live_server_url = val
+		# Exported values are assigned after _init, the client has to follow them.
+		if _client != null:
+			_client.connection_url = val
 ## Test server in combination of TwitchCLI
-@export var eventsub_test_server_url: String = "ws://127.0.0.1:8080/ws"
+@export var eventsub_test_server_url: String = "ws://127.0.0.1:8080/ws":
+	set(val):
+		eventsub_test_server_url = val
+		if _test_client != null:
+			_test_client.connection_url = val
 ## Enables the test server usage
 @export var use_test_server: bool
 ## Ignores messages that are older than this value. Twitch can send messages multiple time.
