@@ -13,8 +13,10 @@ extends TwitcherTest
 const CHECKED_ROOTS: PackedStringArray = [
 	"res://addons/twitcher/logger/",
 	"res://addons/twitcher/lib/logfami/",
+	"res://addons/twitcher/editor/logs/",
 	"res://test/unit/logger/",
 	"res://test/unit/lib/logfami/",
+	"res://test/unit/editor/logs/",
 	"res://test/fixtures/logfami/",
 	"res://test/helpers/log_capture.gd",
 	"res://test/helpers/golden_lines.gd",

@@ -19,6 +19,10 @@ const _DEBUG_FORMAT: String = "%s D[i][color=%s][%s] %s[/color][/i]"
 
 ## Receives each formatted BBCode line. Defaults to [method @GlobalScope.print_rich].
 var printer: Callable
+## Escapes BBCode in the context name, message and attributes, so a message like
+## [code]"[b]"[/code] shows literally. For rich text labels that display
+## arbitrary messages; the Godot output keeps the classic behavior.
+var escape_markup: bool = false
 
 
 ## Deterministic color for a context name, so every context keeps its color
@@ -49,6 +53,9 @@ func format(record: Dictionary) -> String:
 	if instance != "":
 		name += "-" + instance
 	var text: String = str(record[TwitchLogRecord.BODY]) + _format_attributes(attributes)
+	if escape_markup:
+		name = name.replace("[", "[lb]")
+		text = text.replace("[", "[lb]")
 	var values: Array = [record[TwitchLogRecord.TICKS_MSEC], color_for(scope), name, text]
 	if level >= LogfamiLevel.Severity.ERROR:
 		return _ERROR_FORMAT % values
@@ -60,9 +67,13 @@ func format(record: Dictionary) -> String:
 
 
 ## Threshold of [param logger]: off when disabled, debug when debugging,
-## otherwise info. Without a logger (records dispatched directly) the logger
+## otherwise info. A mode picked at runtime ([method TwitchLogContexts.set_mode])
+## wins over the logger's flags. Without a logger (records dispatched directly) the logger
 ## registered last under [param scope] decides.
 func threshold_for(scope: String, logger: TwitchLogger = null) -> int:
+	var override_level: int = TwitchLogContexts.override_level(scope)
+	if override_level != TwitchLogContexts.NO_OVERRIDE:
+		return override_level
 	var source: TwitchLogger = logger
 	if source == null:
 		var registered: Variant = TwitchLoggerManager.log_registry.get(scope)

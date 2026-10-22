@@ -64,6 +64,35 @@ func test_color_matches_the_legacy_algorithm() -> void:
 		assert_eq(TwitchConsoleLogHandler.color_for(text), _legacy_color(text), text)
 
 
+func test_markup_is_kept_unless_escaping_is_asked_for() -> void:
+	var record: Dictionary = TwitchLogRecord.create(
+			LogfamiLevel.Severity.INFO, "Scope", "[b]hi[/b]", { "list": [1] })
+
+	assert_string_contains(_handler.format(record), "[b]hi[/b] {list=[1]}")
+
+	_handler.escape_markup = true
+	var escaped: String = _handler.format(record)
+	assert_string_contains(escaped, "[lb]b]hi[lb]/b] {list=[lb]1]}")
+
+
+func test_escaping_covers_the_context_name() -> void:
+	var record: Dictionary = TwitchLogRecord.create(
+			LogfamiLevel.Severity.INFO, "Scope", "hi", { "instance": "[x]" })
+	_handler.escape_markup = true
+
+	assert_string_contains(_handler.format(record), "[Scope-[lb]x]]")
+
+
+func test_a_runtime_mode_wins_over_the_logger_flags() -> void:
+	var logger: TwitchLogger = TwitchLogger.new("GutConsoleOverride", true)
+
+	TwitchLogContexts.set_mode("GutConsoleOverride", "off", false)
+
+	assert_eq(_handler.threshold_for("GutConsoleOverride", logger), LogfamiLevel.OFF)
+	assert_eq(_handler.threshold_for("GutConsoleOverride"), LogfamiLevel.OFF)
+	ProjectSettings.clear(TwitchLogContexts.setting_key("GutConsoleOverride"))
+
+
 func test_handle_sends_the_formatted_line_to_the_printer() -> void:
 	var record: Dictionary = TwitchLogRecord.create(LogfamiLevel.Severity.INFO, "Scope", "hi")
 	_handler.handle(record)
