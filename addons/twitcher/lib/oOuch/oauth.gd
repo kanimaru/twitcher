@@ -390,10 +390,11 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 		if enable_twitch_hacks and token_handler is TwitchTokenHandler:
 			var token: String = OAuth.DEBUGGER_PROTECTION + access_token
 			var validation_response: BufferedHTTPClient.ResponseData = await token_handler.validate_token(token)
-
-			if validation_response.response_data:
-				var validation_data: Dictionary = JSON.parse_string(validation_response.response_data.get_string_from_utf8())
-				token_handler.update_tokens(token, "", validation_data.get("expires_in", expires_in), scopes)
+			var expiry: int = _implicit_token_expiry(validation_response, expires_in)
+			if expiry >= 0:
+				token_handler.update_tokens(token, "", expiry, scopes)
+			else:
+				logError("The received access token got rejected by the validation.")
 		else:
 			token_handler.update_tokens(access_token, "", expires_in, scopes)
 
@@ -402,6 +403,25 @@ func _process_implicit_request(client: OAuthHTTPServer.Client, server: OAuthHTTP
 		_implicit_succeed.emit()
 		await server.client_disconnected
 		_stop_server(_AUTHTYPE_TOKEN)
+
+
+## Expiry to store for an implicit flow token after it got validated. The validated expiry wins,
+## a validation that couldn't run keeps the expiry of the redirect and a rejected token (401)
+## returns -1 so it doesn't get stored.
+static func _implicit_token_expiry(
+		validation: BufferedHTTPClient.ResponseData, fallback: int) -> int:
+	if validation == null:
+		return fallback
+	if validation.response_code == 401:
+		return -1
+	if validation.response_code != 200:
+		return fallback
+	var json: JSON = JSON.new()
+	if json.parse(validation.response_data.get_string_from_utf8()) != OK:
+		return fallback
+	if json.data is not Dictionary:
+		return fallback
+	return int(json.data.get("expires_in", fallback))
 
 #endregion
 #region AuthCodeFlow

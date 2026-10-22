@@ -4,6 +4,11 @@ extends OAuthTokenHandler
 
 class_name TwitchTokenHandler
 
+const VALIDATION_URL: String = "https://id.twitch.tv/oauth2/validate"
+## The only answer of the validation endpoint that proves a token is invalid. Anything else
+## (offline, timeout, 5xx) says nothing about the token and must not log the user out.
+const HTTP_UNAUTHORIZED: int = 401
+
 ## Validate that the token is still valid
 var _validation_timer: Timer
 
@@ -25,14 +30,18 @@ func validate_token(access_token: String = "") -> BufferedHTTPClient.ResponseDat
 		return null
 	access_token = access_token.trim_prefix(OAuth.DEBUGGER_PROTECTION)
 
-	var validation_request = _http_client.request("https://id.twitch.tv/oauth2/validate", HTTPClient.METHOD_GET, {
+	var validation_request = _http_client.request(VALIDATION_URL, HTTPClient.METHOD_GET, {
 		"Authorization": "OAuth %s" % access_token
 	}, "")
 	var response: BufferedHTTPClient.ResponseData = await _http_client.wait_for_request(validation_request)
-	if response.response_code != 200:
+	if response.response_code == HTTP_UNAUTHORIZED:
 		logInfo("Token (%s) is not valid anymore. Tokens got reset please reauthenticate! Twitch: %s " % [ token, response.response_data.get_string_from_utf8() ] )
 		token.remove_tokens()
 		unauthenticated.emit()
+		return response
+	if response.response_code != 200:
+		logInfo("Token (%s) couldn't be validated (HTTP %s), keeping it." % [
+				token, response.response_code])
 		return response
 
 	var response_string: String = response.response_data.get_string_from_utf8();
