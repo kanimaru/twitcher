@@ -23,6 +23,8 @@ const CHECKED_ROOTS: PackedStringArray = [
 	"res://test/unit/test_code_style.gd",
 	"res://test/unit/test_twitcher.gd",
 	"res://test/unit/eventsub/test_twitch_eventsub.gd",
+	"res://test/unit/auth/test_twitch_token_handler.gd",
+	"res://test/unit/oauth/test_oauth.gd",
 ]
 
 const MAX_COLUMNS: int = 99
