@@ -5,6 +5,15 @@ extends Twitcher
 ## Handles the evensub part of twitch. Returns the event data when receives it.
 class_name TwitchEventsub
 
+## Twitch promises a frame at least every keepalive_timeout_seconds. This much longer silence
+## counts as a dead connection, the extra covers slow networks and long frames.
+const KEEPALIVE_GRACE: float = 1.5
+## Lower bound of the keepalive timeout in seconds, in case Twitch announces an unusable one.
+const MIN_KEEPALIVE_TIMEOUT_SECONDS: int = 10
+## The clients run before the eventsub, so everything that arrived is read before the watchdog
+## looks at the clock. Otherwise a long frame would look like silence.
+const CLIENT_PROCESS_PRIORITY: int = -1
+
 static var _log: TwitchLogger = TwitchLogger.new("TwitchEventsub")
 
 static var instance: TwitchEventsub
@@ -125,6 +134,7 @@ var session: Session
 ## Holds the messages that was processed already.
 ## Key: MessageID  Value: Timestamp
 var eventsub_messages: Dictionary = {}
+## [method Time.get_ticks_msec] of the last frame of the session, 0 while there is none.
 var last_keepalive: int
 var is_open: bool:
 	get(): return _client.is_open
@@ -171,6 +181,16 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	if instance == self: instance = null
+
+
+func _process(_delta: float) -> void:
+	_check_keepalive(Time.get_ticks_msec())
+
+
+func _notification(what: int) -> void:
+	# Paused clients don't read, the silence while paused says nothing about the connection.
+	if what == NOTIFICATION_UNPAUSED and last_keepalive > 0:
+		last_keepalive = Time.get_ticks_msec()
 
 
 ## Propergated call from twitch service
@@ -222,10 +242,12 @@ func _on_connection_closed(source: WebsocketClient) -> void:
 	if source != _client:
 		return
 	session = null
+	last_keepalive = 0
 	_discard_pending_handover()
 
 
 func open_connection() -> void:
+	_should_connect = true
 	if _client.is_closed:
 		_client.open_connection()
 	if _test_client.is_closed && use_test_server:
@@ -233,6 +255,8 @@ func open_connection() -> void:
 
 
 func close_connection() -> void:
+	_should_connect = false
+	last_keepalive = 0
 	if not _client.is_closed:
 		_client.close()
 	if not _test_client.is_closed:
@@ -355,6 +379,7 @@ func _unsubscribe(subscription: TwitchEventsubConfig) -> bool:
 ## Connects the signals of a client that carries the session, [param client] is bound to tell
 ## the clients apart.
 func _watch_client(client: WebsocketClient) -> void:
+	client.process_priority = CLIENT_PROCESS_PRIORITY
 	client.message_received.connect(_data_received.bind(client))
 	client.connection_established.connect(_on_connection_established)
 	client.connection_closed.connect(_on_connection_closed.bind(client))
@@ -374,11 +399,12 @@ func _data_received(data : PackedByteArray, source: WebsocketClient) -> void:
 	var timestamp_str: String = metadata.message_timestamp
 	var timestamp: int = Time.get_unix_time_from_datetime_string(timestamp_str)
 
+	# Every frame proves that the connection is alive, a duplicate or an outdated one too.
+	last_keepalive = Time.get_ticks_msec()
 	if(_message_got_processed(id) || _message_is_to_old(timestamp)):
 		return
 
 	eventsub_messages[id] = timestamp
-	last_keepalive = Time.get_ticks_msec()
 
 	match metadata.message_type:
 		"session_welcome":
@@ -413,6 +439,28 @@ func _data_received(data : PackedByteArray, source: WebsocketClient) -> void:
 				notification_message.payload.event)
 			event_received.emit(Event.new(notification_message))
 	_cleanup()
+
+
+## Reconnects when the session went silent for longer than Twitch's keepalive promise. A socket
+## can stay open on our side long after the connection died, nothing else would notice.
+func _check_keepalive(now_msec: int) -> void:
+	if not _should_connect or session == null or last_keepalive <= 0:
+		return
+	if not _client.is_open or not _keepalive_timed_out(now_msec):
+		return
+	_log.e("No frame from Twitch for %s ms, reconnecting." % (now_msec - last_keepalive))
+	session = null
+	last_keepalive = 0
+	_discard_pending_handover()
+	# The peer stopped answering, a close handshake would never finish.
+	_client.abort()
+	_client.auto_reconnect = true
+
+
+func _keepalive_timed_out(now_msec: int) -> bool:
+	var timeout_seconds: int = maxi(
+			MIN_KEEPALIVE_TIMEOUT_SECONDS, session.keepalive_timeout_seconds)
+	return now_msec - last_keepalive > timeout_seconds * 1000 * KEEPALIVE_GRACE
 
 
 ## Opens the connection Twitch asked to move to. The current one keeps running until the new one
