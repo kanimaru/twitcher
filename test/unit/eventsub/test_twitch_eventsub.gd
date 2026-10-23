@@ -16,6 +16,17 @@ const FOLLOW_CONDITION: Dictionary = {
 	&"moderator_user_id": "456",
 }
 
+## [keepalive timeout announced by Twitch, silence in ms, timed out]
+const KEEPALIVE_PARAMS: Array = [
+	[10, 15000, false],
+	[10, 15001, true],
+	[30, 45000, false],
+	[30, 45001, true],
+	# Below the lower bound of 10 s.
+	[1, 14000, false],
+	[1, 15001, true],
+]
+
 
 func _make_eventsub() -> TwitchEventsub:
 	var eventsub: TwitchEventsub = add_child_autofree(TwitchEventsub.new())
@@ -212,5 +223,115 @@ func test_frames_of_a_replaced_client_are_ignored() -> void:
 	eventsub._data_received(EventsubMessages.keepalive().to_utf8_buffer(), replaced)
 
 	assert_signal_not_emitted(eventsub, "message_received")
+
+#endregion
+
+
+#region Keepalive watchdog
+
+func _session(keepalive_timeout_seconds: int) -> TwitchEventsub.Session:
+	return TwitchEventsub.Session.new({
+		"id": "session",
+		"status": "connected",
+		"keepalive_timeout_seconds": keepalive_timeout_seconds,
+		"reconnect_url": null,
+		"connected_at": "",
+	})
+
+
+func test_keepalive_times_out_after_the_announced_timeout_and_grace(
+		params: Array = use_parameters(KEEPALIVE_PARAMS)) -> void:
+	var eventsub: TwitchEventsub = _make_eventsub()
+	eventsub.session = _session(params[0])
+	eventsub.last_keepalive = 1000
+
+	assert_eq(eventsub._keepalive_timed_out(1000 + params[1]), params[2],
+			"%s s keepalive after %s ms silence" % [params[0], params[1]])
+
+
+## Regression test: [member TwitchEventsub.last_keepalive] was recorded but never
+## checked. A connection that died without a close (sleep, network switch) left
+## the socket open on our side and the eventsub silently stopped receiving.
+func test_a_silent_connection_gets_replaced() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
+
+	eventsub._check_keepalive(eventsub.last_keepalive + 15001)
+
+	assert_true(eventsub.get_client().is_closed, "a dead peer can't answer a close handshake")
+	assert_null(eventsub.session, "the session of the dead connection is gone")
+	var reconnected: Callable = func() -> bool:
+		return server.peers.size() == 2 and server.open_peers().size() == 1
+	assert_true(await wait_until(reconnected, TIMEOUT), "the eventsub has to reconnect")
+
+
+func test_a_quiet_connection_within_the_grace_stays() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
+
+	eventsub._check_keepalive(eventsub.last_keepalive + 15000)
+
+	assert_true(eventsub.get_client().is_open)
+	assert_eq(eventsub.session.id, "first")
+
+
+func test_a_closed_eventsub_is_not_reconnected_by_the_watchdog() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
+	var last_keepalive: int = eventsub.last_keepalive
+
+	eventsub.close_connection()
+	eventsub._check_keepalive(last_keepalive + 60000)
+
+	assert_false(eventsub.get_client().auto_reconnect, "closing on purpose has to stick")
+
+
+func test_a_keepalive_resets_the_clock() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
+	eventsub.last_keepalive = 1
+
+	server.broadcast(EventsubMessages.keepalive())
+
+	assert_true(await wait_until(func() -> bool: return eventsub.last_keepalive > 1, TIMEOUT))
+
+
+## Regression test: duplicates returned before the clock was reset, although
+## they prove just as well that the connection is alive.
+func test_a_duplicate_frame_resets_the_clock_too() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
+	server.broadcast(EventsubMessages.keepalive("duplicate"))
+	assert_true(await wait_until(func() -> bool:
+		return eventsub.eventsub_messages.has("duplicate"), TIMEOUT))
+	eventsub.last_keepalive = 1
+
+	server.broadcast(EventsubMessages.keepalive("duplicate"))
+
+	assert_true(await wait_until(func() -> bool: return eventsub.last_keepalive > 1, TIMEOUT))
+
+
+func test_unpausing_restarts_the_clock() -> void:
+	var eventsub: TwitchEventsub = _make_eventsub()
+	eventsub.last_keepalive = 1
+
+	eventsub.notification(Node.NOTIFICATION_UNPAUSED)
+
+	assert_gt(eventsub.last_keepalive, 1, "the silence while paused doesn't count")
+
+
+func test_unpausing_without_a_session_keeps_the_clock_stopped() -> void:
+	var eventsub: TwitchEventsub = _make_eventsub()
+
+	eventsub.notification(Node.NOTIFICATION_UNPAUSED)
+
+	assert_eq(eventsub.last_keepalive, 0)
+
+
+func test_the_clients_read_before_the_watchdog_runs() -> void:
+	var eventsub: TwitchEventsub = _make_eventsub()
+
+	assert_lt(eventsub.get_client().process_priority, eventsub.process_priority,
+			"lower priorities process first within a frame")
 
 #endregion
