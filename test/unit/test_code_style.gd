@@ -29,6 +29,8 @@ const CHECKED_ROOTS: PackedStringArray = [
 	"res://test/helpers/websocket_test_server.gd",
 	"res://test/helpers/eventsub_messages.gd",
 	"res://test/unit/editor/eventsub_generator/",
+	"res://test/unit/eventsub/test_twitch_seen_messages.gd",
+	"res://addons/twitcher/eventsub/twitch_seen_messages.gd",
 ]
 
 const MAX_COLUMNS: int = 99
