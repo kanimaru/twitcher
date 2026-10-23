@@ -122,7 +122,11 @@ signal subscription_failed(subscription: TwitchEventsubConfig, reason: String)
 ## Enables the test server usage
 @export var use_test_server: bool
 ## Ignores messages that are older than this value. Twitch can send messages multiple time.
-@export var ignore_message_eventsub_in_seconds: int = 600
+@export var ignore_message_eventsub_in_seconds: int = 600:
+	set(val):
+		ignore_message_eventsub_in_seconds = val
+		if _seen_messages != null:
+			_seen_messages.window_msec = val * 1000
 
 var _client: WebsocketClient = WebsocketClient.new()
 var _test_client : WebsocketClient = WebsocketClient.new()
@@ -131,9 +135,14 @@ var _test_client : WebsocketClient = WebsocketClient.new()
 var _swap_over_client : WebsocketClient
 
 var session: Session
-## Holds the messages that was processed already.
-## Key: MessageID  Value: Timestamp
-var eventsub_messages: Dictionary = {}
+## Ids of the messages that got processed recently, to drop the duplicates Twitch sends.
+var _seen_messages: TwitchSeenMessages = TwitchSeenMessages.new(
+		ignore_message_eventsub_in_seconds * 1000)
+## A copy of the messages that got processed recently.
+## Key: message id, Value: [method Time.get_ticks_msec] when it got processed.
+## @deprecated: Read-only copy, it was a live dictionary of Twitch timestamps before.
+var eventsub_messages: Dictionary:
+	get(): return _seen_messages.to_dictionary()
 ## [method Time.get_ticks_msec] of the last frame of the session, 0 while there is none.
 var last_keepalive: int
 var is_open: bool:
@@ -411,10 +420,10 @@ func _data_received(data : PackedByteArray, source: WebsocketClient) -> void:
 
 	# Every frame proves that the connection is alive, a duplicate or an outdated one too.
 	last_keepalive = Time.get_ticks_msec()
-	if(_message_got_processed(id) || _message_is_to_old(timestamp)):
+	if _message_is_to_old(timestamp):
 		return
-
-	eventsub_messages[id] = timestamp
+	if not _seen_messages.remember(id, Time.get_ticks_msec()):
+		return
 
 	match metadata.message_type:
 		"session_welcome":
@@ -448,7 +457,6 @@ func _data_received(data : PackedByteArray, source: WebsocketClient) -> void:
 			event.emit(notification_message.payload.subscription.type,
 				notification_message.payload.event)
 			event_received.emit(Event.new(notification_message))
-	_cleanup()
 
 
 ## Reconnects when the session went silent for longer than Twitch's keepalive promise. A socket
@@ -514,19 +522,6 @@ func _discard_pending_handover() -> void:
 	_swap_over_client = null
 	pending.close()
 	pending.queue_free()
-
-
-## Cleanup old messages that won't be processed anymore cause of time to prevent a
-## memory problem on long runinng applications.
-func _cleanup() -> void:
-	for message_id in eventsub_messages.keys():
-		var timestamp = eventsub_messages[message_id]
-		if _message_is_to_old(timestamp):
-			eventsub_messages.erase(message_id)
-
-
-func _message_got_processed(message_id: String) -> bool:
-	return eventsub_messages.has(message_id)
 
 
 func _message_is_to_old(timestamp: int) -> bool:

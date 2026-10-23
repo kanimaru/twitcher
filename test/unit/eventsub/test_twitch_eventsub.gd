@@ -296,7 +296,7 @@ func test_a_duplicate_frame_resets_the_clock_too() -> void:
 	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
 	server.broadcast(EventsubMessages.keepalive("duplicate"))
 	assert_true(await wait_until(func() -> bool:
-		return eventsub.eventsub_messages.has("duplicate"), TIMEOUT))
+		return eventsub._seen_messages.has("duplicate"), TIMEOUT))
 	eventsub.last_keepalive = 1
 
 	server.broadcast(EventsubMessages.keepalive("duplicate"))
@@ -394,5 +394,31 @@ func test_freeing_an_eventsub_whose_test_client_is_gone_is_fine() -> void:
 	eventsub.free()
 
 	pass_test("freeing must not touch the freed test client")
+
+#endregion
+
+
+#region Duplicates
+
+func test_a_duplicate_message_is_processed_once() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
+	watch_signals(eventsub)
+
+	server.broadcast(EventsubMessages.keepalive("twice"))
+	server.broadcast(EventsubMessages.keepalive("twice"))
+	server.broadcast(EventsubMessages.keepalive("other"))
+	assert_true(await wait_until(func() -> bool:
+		return eventsub._seen_messages.has("other"), TIMEOUT))
+
+	assert_signal_emit_count(eventsub, "message_received", 2, "the duplicate has to be dropped")
+
+
+func test_the_duplicate_window_follows_the_setting() -> void:
+	var eventsub: TwitchEventsub = _make_eventsub()
+
+	eventsub.ignore_message_eventsub_in_seconds = 5
+
+	assert_eq(eventsub._seen_messages.window_msec, 5000)
 
 #endregion
