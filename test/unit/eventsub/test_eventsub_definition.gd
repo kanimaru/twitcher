@@ -124,3 +124,16 @@ func test_v1_notification_still_decodes_with_the_v1_class() -> void:
 	assert_eq(event.type.version, &"1")
 	assert_true(event.type.documentation_link.ends_with("#channelmoderate"))
 	assert_false("warn" in event.typed_data, "v1 class has no warn field")
+
+
+## Regression test: definitions were plain [Object]s. The ~80 held in static vars
+## were never freed, together with the payload scripts they reference.
+func test_a_definition_is_freed_once_nothing_references_it() -> void:
+	var definition: TwitchEventsubDefinition = TwitchEventsubDefinition.new(
+			TwitchEventsubDefinition.Type.CHANNEL_FOLLOW, &"channel.follow", &"2",
+			[] as Array[StringName], [] as Array[StringName], "", TwitchESChannelFollow)
+	var id: int = definition.get_instance_id()
+
+	definition = null
+
+	assert_false(is_instance_id_valid(id), "definitions have to be reference counted")

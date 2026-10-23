@@ -3,7 +3,7 @@ extends Resource
 
 class_name TwitchScope
 
-class Definition extends Object:
+class Definition extends RefCounted:
 	var value: StringName
 	var description: String
 	var categroy: String
