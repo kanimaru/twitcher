@@ -17,13 +17,11 @@ extends TwitcherTest
 func test_get_category_derives_from_prefix_before_colon() -> void:
 	var def := TwitchScope.Definition.new(&"channel:read:ads", "desc")
 	assert_eq(def.get_category(), "channel")
-	def.free()
 
 
 func test_get_category_prefers_the_explicit_category() -> void:
 	var def := TwitchScope.Definition.new(&"chat:read", "desc", "IRC")
 	assert_eq(def.get_category(), "IRC", "an explicit category must win over the derived one")
-	def.free()
 
 
 ## A scope with no colon has no prefix to strip. [code]find()[/code] returns
@@ -34,13 +32,22 @@ func test_get_category_prefers_the_explicit_category() -> void:
 func test_get_category_of_a_scope_with_no_colon_is_the_whole_value() -> void:
 	var def := TwitchScope.Definition.new(&"openid", "desc")
 	assert_eq(def.get_category(), "openid", "substr(0, -1) returns the full string")
-	def.free()
 
 
 func test_to_string_returns_the_scope_value() -> void:
 	var def := TwitchScope.Definition.new(&"bits:read", "desc")
 	assert_eq(str(def), "bits:read")
-	def.free()
+
+
+## Regression test: definitions were plain [Object]s. The ~90 held in static vars
+## were never freed and showed up as leaked instances at every exit.
+func test_a_definition_is_freed_once_nothing_references_it() -> void:
+	var definition: TwitchScope.Definition = TwitchScope.Definition.new(&"bits:read", "desc")
+	var id: int = definition.get_instance_id()
+
+	definition = null
+
+	assert_false(is_instance_id_valid(id), "definitions have to be reference counted")
 
 #endregion
 

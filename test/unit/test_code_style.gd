@@ -28,6 +28,7 @@ const CHECKED_ROOTS: PackedStringArray = [
 	"res://test/unit/lib/test_websocket_client.gd",
 	"res://test/helpers/websocket_test_server.gd",
 	"res://test/helpers/eventsub_messages.gd",
+	"res://test/unit/editor/eventsub_generator/",
 ]
 
 const MAX_COLUMNS: int = 99
