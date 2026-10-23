@@ -2,6 +2,8 @@
 on:
   release:
     types: [ published ]
+# The job only needs the webhook secret, not the GITHUB_TOKEN.
+permissions: {}
 jobs:
   notify-discord:
     runs-on: ubuntu-latest
@@ -9,7 +11,7 @@ jobs:
     - name: Discord notification
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-      uses: Ilshidur/action-discord@master
+      uses: Ilshidur/action-discord@d2594079a10f1d6739ee50a2471f0ca57418b554 # 0.4.0
       with:
         args: 'Twitcher {{ EVENT_PAYLOAD.release.name }} got released. \n {{ EVENT_PAYLOAD.release.body }} \n\n 
         [Get it here]({{ EVENT_PAYLOAD.release.assets_url }})'
