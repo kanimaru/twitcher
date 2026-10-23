@@ -180,6 +180,11 @@ func _enter_tree() -> void:
 
 
 func _exit_tree() -> void:
+	# The clients drop their sockets outside the tree and reconnect once they are back, the
+	# session of the dropped socket is gone either way.
+	session = null
+	last_keepalive = 0
+	_discard_pending_handover()
 	if instance == self: instance = null
 
 
@@ -191,6 +196,12 @@ func _notification(what: int) -> void:
 	# Paused clients don't read, the silence while paused says nothing about the connection.
 	if what == NOTIFICATION_UNPAUSED and last_keepalive > 0:
 		last_keepalive = Time.get_ticks_msec()
+	# Clients are created in _init but only become children in _ready.
+	if what == NOTIFICATION_PREDELETE:
+		# Variant, a client that got freed already can't be assigned to a typed variable.
+		for client: Variant in [_client, _test_client]:
+			if is_instance_valid(client) and client.get_parent() == null:
+				client.free()
 
 
 ## Propergated call from twitch service
@@ -257,10 +268,9 @@ func open_connection() -> void:
 func close_connection() -> void:
 	_should_connect = false
 	last_keepalive = 0
-	if not _client.is_closed:
-		_client.close()
-	if not _test_client.is_closed:
-		_test_client.close()
+	# Closed clients get closed again too, that cancels a reconnect they are waiting for.
+	_client.close()
+	_test_client.close()
 	_discard_pending_handover()
 
 

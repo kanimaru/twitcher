@@ -29,11 +29,7 @@ const KEEPALIVE_PARAMS: Array = [
 
 
 func _make_eventsub() -> TwitchEventsub:
-	var eventsub: TwitchEventsub = add_child_autofree(TwitchEventsub.new())
-	# The test client is only added to the tree when the test server is enabled,
-	# so nothing else would ever free it.
-	autofree(eventsub.get_test_client())
-	return eventsub
+	return add_child_autofree(TwitchEventsub.new())
 
 
 func _make_server() -> WebsocketTestServer:
@@ -120,13 +116,10 @@ func test_the_test_server_url_is_applied_to_the_test_client() -> void:
 func test_a_url_from_a_scene_file_is_applied_to_the_client() -> void:
 	var scene: PackedScene = PackedScene.new()
 	var original: TwitchEventsub = autofree(TwitchEventsub.new())
-	autofree(original.get_client())
-	autofree(original.get_test_client())
 	original.eventsub_live_server_url = "ws://127.0.0.1:3/scene"
 	scene.pack(original)
 
 	var loaded: TwitchEventsub = add_child_autofree(scene.instantiate())
-	autofree(loaded.get_test_client())
 
 	assert_eq(loaded.get_client().connection_url, "ws://127.0.0.1:3/scene")
 
@@ -333,5 +326,73 @@ func test_the_clients_read_before_the_watchdog_runs() -> void:
 
 	assert_lt(eventsub.get_client().process_priority, eventsub.process_priority,
 			"lower priorities process first within a frame")
+
+#endregion
+
+
+#region Lifecycle
+
+## Regression test: closing skipped clients that were already closed, but a
+## closed client can still be waiting for its next reconnect attempt. It kept
+## reconnecting after the eventsub got closed.
+func test_closing_stops_a_pending_reconnect() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = _make_eventsub()
+	eventsub.eventsub_live_server_url = server.url()
+	eventsub.get_client().reconnect_base_delay = 30.0
+	eventsub.open_connection()
+	assert_true(eventsub.get_client().is_closed, "test setup: the attempt has to wait")
+
+	eventsub.close_connection()
+
+	assert_false(eventsub.get_client().auto_reconnect, "the client must not reconnect")
+	assert_false(eventsub.get_client()._is_already_connecting, "the pending attempt has to end")
+
+
+func test_leaving_the_tree_ends_the_session() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
+
+	remove_child(eventsub)
+
+	assert_null(eventsub.session, "a detached eventsub has no connection to a session")
+	add_child(eventsub)
+
+
+func test_a_reattached_eventsub_reconnects() -> void:
+	var server: WebsocketTestServer = _make_server()
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server)
+
+	remove_child(eventsub)
+	add_child(eventsub)
+
+	var reconnected: Callable = func() -> bool:
+		return server.peers.size() == 2 and server.open_peers().size() == 1
+	assert_true(await wait_until(reconnected, TIMEOUT), "the eventsub has to reconnect")
+	server.broadcast(EventsubMessages.welcome("again"))
+	assert_true(await _await_session(eventsub, "again"), "a new session has to start")
+
+
+## Regression test: the clients are created in [code]_init[/code] and only
+## become children in [code]_ready[/code], so an eventsub that never entered the
+## tree leaked both of them.
+func test_freeing_an_eventsub_outside_the_tree_frees_its_clients() -> void:
+	var eventsub: TwitchEventsub = TwitchEventsub.new()
+	var client_id: int = eventsub.get_client().get_instance_id()
+	var test_client_id: int = eventsub.get_test_client().get_instance_id()
+
+	eventsub.free()
+
+	assert_false(is_instance_id_valid(client_id), "the client leaked")
+	assert_false(is_instance_id_valid(test_client_id), "the test client leaked")
+
+
+func test_freeing_an_eventsub_whose_test_client_is_gone_is_fine() -> void:
+	var eventsub: TwitchEventsub = TwitchEventsub.new()
+	eventsub.get_test_client().free()
+
+	eventsub.free()
+
+	pass_test("freeing must not touch the freed test client")
 
 #endregion
