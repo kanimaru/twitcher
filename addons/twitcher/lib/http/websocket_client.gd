@@ -108,6 +108,11 @@ func _establish_connection() -> void:
 
 
 func _enter_tree() -> void:
+	# A paused client doesn't answer pings and the server drops it, so it keeps running while the
+	# game is paused. Only INHERIT is replaced, a mode chosen on purpose stays; that can't happen
+	# in _init, a scene sets its saved mode before the script exists.
+	if process_mode == Node.PROCESS_MODE_INHERIT:
+		process_mode = Node.PROCESS_MODE_ALWAYS
 	if _resume_on_enter:
 		_resume_on_enter = false
 		auto_reconnect = true

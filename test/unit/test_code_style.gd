@@ -31,6 +31,7 @@ const CHECKED_ROOTS: PackedStringArray = [
 	"res://test/unit/editor/eventsub_generator/",
 	"res://test/unit/eventsub/test_twitch_seen_messages.gd",
 	"res://addons/twitcher/eventsub/twitch_seen_messages.gd",
+	"res://test/unit/helpers/test_twitcher_test.gd",
 ]
 
 const MAX_COLUMNS: int = 99

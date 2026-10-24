@@ -28,8 +28,13 @@ const KEEPALIVE_PARAMS: Array = [
 ]
 
 
-func _make_eventsub() -> TwitchEventsub:
-	return add_child_autofree(TwitchEventsub.new())
+## Adds the eventsub to [param parent], or to the test when there is none.
+func _make_eventsub(parent: Node = null) -> TwitchEventsub:
+	if parent == null:
+		return add_child_autofree(TwitchEventsub.new())
+	var eventsub: TwitchEventsub = autofree(TwitchEventsub.new())
+	parent.add_child(eventsub)
+	return eventsub
 
 
 func _make_server() -> WebsocketTestServer:
@@ -39,8 +44,9 @@ func _make_server() -> WebsocketTestServer:
 
 
 ## An eventsub connected to [param server] with the session [code]first[/code].
-func _make_connected_eventsub(server: WebsocketTestServer) -> TwitchEventsub:
-	var eventsub: TwitchEventsub = _make_eventsub()
+func _make_connected_eventsub(
+		server: WebsocketTestServer, parent: Node = null) -> TwitchEventsub:
+	var eventsub: TwitchEventsub = _make_eventsub(parent)
 	eventsub.eventsub_live_server_url = server.url()
 	eventsub.get_client().reconnect_base_delay = 0.0
 	eventsub.open_connection()
@@ -304,23 +310,6 @@ func test_a_duplicate_frame_resets_the_clock_too() -> void:
 	assert_true(await wait_until(func() -> bool: return eventsub.last_keepalive > 1, TIMEOUT))
 
 
-func test_unpausing_restarts_the_clock() -> void:
-	var eventsub: TwitchEventsub = _make_eventsub()
-	eventsub.last_keepalive = 1
-
-	eventsub.notification(Node.NOTIFICATION_UNPAUSED)
-
-	assert_gt(eventsub.last_keepalive, 1, "the silence while paused doesn't count")
-
-
-func test_unpausing_without_a_session_keeps_the_clock_stopped() -> void:
-	var eventsub: TwitchEventsub = _make_eventsub()
-
-	eventsub.notification(Node.NOTIFICATION_UNPAUSED)
-
-	assert_eq(eventsub.last_keepalive, 0)
-
-
 func test_the_clients_read_before_the_watchdog_runs() -> void:
 	var eventsub: TwitchEventsub = _make_eventsub()
 
@@ -420,5 +409,28 @@ func test_the_duplicate_window_follows_the_setting() -> void:
 	eventsub.ignore_message_eventsub_in_seconds = 5
 
 	assert_eq(eventsub._seen_messages.window_msec, 5000)
+
+#endregion
+
+
+#region Pause
+
+## Pausing the game must not cost the session. Twitch drops a connection that
+## doesn't answer its pings, and an eventsub that pauses with the game misses
+## everything in the meantime.
+func test_a_paused_game_keeps_the_session_and_its_events() -> void:
+	var server: WebsocketTestServer = _make_server()
+	server.heartbeat_interval = 0.05
+	var eventsub: TwitchEventsub = await _make_connected_eventsub(server, add_pausable_root())
+
+	get_tree().paused = true
+	await wait_seconds(0.5)
+	server.broadcast(EventsubMessages.keepalive("while paused"))
+
+	assert_true(await wait_until(func() -> bool:
+		return eventsub._seen_messages.has("while paused"), TIMEOUT),
+			"messages have to arrive while the game is paused")
+	assert_eq(server.peers.size(), 1, "the connection must not have been dropped")
+	assert_eq(eventsub.session.id, "first")
 
 #endregion

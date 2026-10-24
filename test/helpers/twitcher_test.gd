@@ -25,6 +25,8 @@ const SCRATCH_ROOT := "user://gut_scratch/"
 var _guard: StaticStateGuard
 var _scratch_counter := 0
 var _scratch_dirs: PackedStringArray = []
+## Process mode of this test before [method add_pausable_root] changed it, or -1.
+var _process_mode_before_pause: int = -1
 
 
 ## Tests must not write Twitcher's real log file or print it to stdout (the
@@ -43,6 +45,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	_restore_pause()
 	_clear_scratch()
 	if _guard != null:
 		_guard.restore()
@@ -96,6 +99,34 @@ func _remove_recursive(path: String) -> void:
 
 func _clean_name() -> String:
 	return get_script().resource_path.get_file().get_basename()
+
+#endregion
+
+
+#region Pause
+
+## Returns a node that stops while the tree is paused, the way a game does, so a test can
+## observe what keeps running. The test itself, its awaits and nodes added to it directly keep
+## running. Pause with [code]get_tree().paused = true[/code]; it's undone in
+## [method after_each].
+func add_pausable_root() -> Node:
+	if _process_mode_before_pause == -1:
+		_process_mode_before_pause = process_mode
+		# GUT's awaiter is a child of the test, waiting on a paused tree would never end.
+		process_mode = Node.PROCESS_MODE_ALWAYS
+	var root: Node = Node.new()
+	root.name = "PausableRoot"
+	root.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child_autofree(root)
+	return root
+
+
+func _restore_pause() -> void:
+	if _process_mode_before_pause == -1:
+		return
+	get_tree().paused = false
+	process_mode = _process_mode_before_pause as Node.ProcessMode
+	_process_mode_before_pause = -1
 
 #endregion
 
