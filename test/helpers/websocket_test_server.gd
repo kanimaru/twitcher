@@ -21,6 +21,9 @@ signal peer_connected(peer: WebSocketPeer)
 ## A client sent a text frame.
 signal text_received(peer: WebSocketPeer, text: String)
 
+## Seconds between the pings sent to every peer, 0 sends none. A peer that doesn't answer gets
+## closed, which is how Twitch treats a client that stopped reading.
+var heartbeat_interval: float = 0.0
 ## Every accepted connection, oldest first, open or not.
 var peers: Array[WebSocketPeer] = []
 ## Every text frame received, oldest first.
@@ -55,6 +58,7 @@ func url() -> String:
 func poll() -> void:
 	while _tcp.is_listening() and _tcp.is_connection_available():
 		var peer: WebSocketPeer = WebSocketPeer.new()
+		peer.heartbeat_interval = heartbeat_interval
 		peer.accept_stream(_tcp.take_connection())
 		peers.append(peer)
 		_states[peer] = WebSocketPeer.STATE_CONNECTING

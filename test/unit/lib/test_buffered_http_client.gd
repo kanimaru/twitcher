@@ -221,3 +221,26 @@ func test_retry_completes_the_original_request() -> void:
 	assert_eq(client.active_requests.size(), 0, "the retried request released its slot")
 	await get_tree().process_frame # queue_free is deferred
 	assert_eq(client.get_child_count(), 0, "the HTTPRequest nodes of the failed attempt and of the retry were both freed")
+
+
+#region Pause
+
+## Pinned on purpose: requests run on threads, so they finish while the game is
+## paused without the client having to keep running. Reconnecting eventsubs rely
+## on that to resubscribe during a pause.
+func test_a_request_completes_while_the_game_is_paused() -> void:
+	var client: BufferedHTTPClient = autofree(Subject.new())
+	add_pausable_root().add_child(client)
+	get_tree().paused = true
+
+	var request: BufferedHTTPClient.RequestData = client.request(
+			_url("paused"), HTTPClient.METHOD_GET, {}, "")
+	await _wait_until_received(1)
+	_respond_all()
+	var response: BufferedHTTPClient.ResponseData = await _wait_for_response(client, request)
+
+	assert_not_null(response, "the request must not wait for the game")
+	if response != null:
+		assert_eq(response.response_code, 200)
+
+#endregion

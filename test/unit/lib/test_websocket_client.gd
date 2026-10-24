@@ -10,6 +10,10 @@ extends TwitcherTest
 const TIMEOUT: float = 3.0
 ## Long enough that a pending attempt never finishes within a test.
 const PENDING_DELAY: float = 30.0
+## Seconds between the pings of the test server, short so a missing answer shows quickly.
+const HEARTBEAT: float = 0.05
+## Many heartbeats, a client that doesn't answer is dropped well within this.
+const PAUSE_DURATION: float = 0.5
 
 var _server: WebsocketTestServer
 var _url: String
@@ -201,5 +205,72 @@ func test_a_client_that_never_connected_stays_closed_after_reattaching() -> void
 
 	assert_eq(_server.peers.size(), 0)
 	assert_false(client.auto_reconnect)
+
+#endregion
+
+
+#region Pause
+
+func test_a_client_keeps_running_while_the_game_is_paused() -> void:
+	var client: WebsocketClient = _make_client()
+
+	assert_eq(client.process_mode, Node.PROCESS_MODE_ALWAYS)
+
+
+func test_a_client_keeps_a_process_mode_chosen_on_purpose() -> void:
+	var client: WebsocketClient = _make_client(false)
+	client.process_mode = Node.PROCESS_MODE_PAUSABLE
+
+	add_child(client)
+
+	assert_eq(client.process_mode, Node.PROCESS_MODE_PAUSABLE)
+
+
+## Regression test: clients paused with the game. A paused client doesn't poll,
+## so it doesn't answer pings either, and the server dropped the connection.
+## Twitch does that after a few minutes, the test server after a few heartbeats.
+func test_a_paused_game_keeps_the_connection_alive() -> void:
+	_server.heartbeat_interval = HEARTBEAT
+	var client: WebsocketClient = _make_client(false)
+	add_pausable_root().add_child(client)
+	client.open_connection()
+	assert_true(await _await_open(client), "test setup: the client has to connect")
+
+	get_tree().paused = true
+	await wait_seconds(PAUSE_DURATION)
+
+	assert_true(client.is_open, "the client has to answer pings while the game is paused")
+	assert_eq(_server.open_peers().size(), 1, "the server must not drop the client")
+
+
+func test_a_paused_game_still_receives_messages() -> void:
+	var client: WebsocketClient = _make_client(false)
+	add_pausable_root().add_child(client)
+	client.open_connection()
+	assert_true(await _await_open(client), "test setup: the client has to connect")
+	watch_signals(client)
+
+	get_tree().paused = true
+	_server.broadcast("while paused")
+
+	assert_true(await wait_for_signal(client.message_received, TIMEOUT))
+
+
+## Pinned on purpose: [code]INHERIT[/code] always becomes [code]ALWAYS[/code], it's
+## the engine default and a scene doesn't save it. [code]PAUSABLE[/code] is how to
+## opt out, it behaves the same in a game.
+func test_a_scene_can_still_make_the_client_pausable(
+		params: Variant = use_parameters([
+			[Node.PROCESS_MODE_PAUSABLE, Node.PROCESS_MODE_PAUSABLE],
+			[Node.PROCESS_MODE_INHERIT, Node.PROCESS_MODE_ALWAYS],
+		])) -> void:
+	var original: WebsocketClient = _make_client(false)
+	original.process_mode = params[0]
+	var scene: PackedScene = PackedScene.new()
+	scene.pack(original)
+
+	var loaded: WebsocketClient = add_child_autofree(scene.instantiate())
+
+	assert_eq(loaded.process_mode, params[1])
 
 #endregion

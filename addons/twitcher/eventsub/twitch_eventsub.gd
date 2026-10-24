@@ -202,9 +202,6 @@ func _process(_delta: float) -> void:
 
 
 func _notification(what: int) -> void:
-	# Paused clients don't read, the silence while paused says nothing about the connection.
-	if what == NOTIFICATION_UNPAUSED and last_keepalive > 0:
-		last_keepalive = Time.get_ticks_msec()
 	# Clients are created in _init but only become children in _ready.
 	if what == NOTIFICATION_PREDELETE:
 		# Variant, a client that got freed already can't be assigned to a typed variable.
