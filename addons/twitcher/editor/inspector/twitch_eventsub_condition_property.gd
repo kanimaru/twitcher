@@ -79,6 +79,9 @@ func _create_editor_supported_input(target: Object, \
 		condition_name: String, \
 		condition_value: String) -> void:
 	var user_converter: UserConverter = USER_CONVERTER.instantiate()
+	# An empty condition is a valid choice (channel.raid takes only one of from/to), so leave it
+	# empty until the default user is asked for via the converter's button.
+	user_converter.auto_fill_default_user = false
 	user_converter.changed.connect(_on_changed_user.bind(condition_name))
 	_container.add_child(user_converter)
 
