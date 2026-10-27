@@ -77,6 +77,16 @@ const _SLOTS: Array[Dictionary] = [
 		prop = "auto_install", deep = false,
 	},
 
+	# --- editor inspector state ---
+	{
+		path = "res://addons/twitcher/editor/inspector/user_converter.gd",
+		prop = "_current_user", deep = false,
+	},
+	{
+		path = "res://addons/twitcher/editor/twitch_editor_settings.gd",
+		prop = "_load_current_twitch_user", deep = false,
+	},
+
 	# --- logger callables, installed by the set_logger cascade ---
 	# TwitchAuth._init() alone rewrites the first three of these.
 	{path = "res://addons/twitcher/lib/http/buffered_http_client.gd", prop = "logger", deep = true},

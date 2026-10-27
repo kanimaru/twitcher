@@ -10,10 +10,18 @@ const TwitchTweens = preload("res://addons/twitcher/editor/twitch_tweens.gd")
 @onready var _id: LineEdit = %Id
 @onready var _swap_view: Button = %SwapView
 @onready var search: Button = %Search
+@onready var _use_default_user: Button = %UseDefaultUser
 
 @export var user: TwitchUser
 @export var token: OAuthToken
 @export var setting: OAuthSetting
+## Fills the field with the default user when it is shown empty. Turn it off wherever an empty
+## field means something, e.g. eventsub conditions where Twitch takes only one of several user
+## ids (channel.raid). The default user button keeps working either way.
+@export var auto_fill_default_user: bool = true
+## Shows a small button that puts the default user into the field on request.
+@export var show_default_user_button: bool = true:
+	set = _update_show_default_user_button
 
 static var _current_user: TwitchUser
 
@@ -22,6 +30,12 @@ var user_login: String:
 
 var user_id: String:
 	set = _update_user_id
+
+## Where the default user comes from, swap it to feed the converter without editor settings.
+var default_user_source: TwitchDefaultUserSource = TwitchDefaultUserSource.new()
+## Looks a user up on Twitch: [code]Callable(opt: TwitchGetUsers.Opt) -> TwitchUser[/code], may be
+## a coroutine. Asks the Twitch API when unset.
+var user_lookup: Callable
 
 
 signal changed(user: TwitchUser)
@@ -36,6 +50,8 @@ func _ready() -> void:
 	_id.focus_exited.connect(_on_focus_exited)
 	_swap_view.pressed.connect(_on_swap_view)
 	search.pressed.connect(_on_search_pressed)
+	_use_default_user.pressed.connect(use_default_user)
+	_use_default_user.visible = show_default_user_button
 	_load_default_user.call_deferred()
 
 
@@ -50,10 +66,23 @@ func update_user(new_user: TwitchUser, notify: bool = false) -> void:
 	if notify: changed.emit(new_user)
 
 
+## Puts the default user into the field and reports the change. Flashes red when there is no
+## default user configured.
+func use_default_user() -> void:
+	var default_user: TwitchUser = default_user_source.get_user()
+	if default_user == null:
+		TwitchTweens.flash(self, Color.RED)
+		return
+	update_user(default_user, true)
+
+
 ## Experimental tries to load default user
 func _load_default_user() -> void:
-	if not TwitchEditorSettings.load_current_twitch_user or user_login or user_id: return
-	_current_user = TwitchEditorSettings.default_user
+	if not auto_fill_default_user or user_login or user_id:
+		return
+	if not default_user_source.is_auto_fill_enabled():
+		return
+	_current_user = default_user_source.get_user()
 	if _current_user:
 		update_user(_current_user, true)
 
@@ -67,7 +96,7 @@ func load_current_user() -> void:
 	if _current_user \
 		and not user_login \
 		and not user_id \
-		and TwitchEditorSettings.load_current_twitch_user:
+		and default_user_source.is_auto_fill_enabled():
 		update_user(_current_user, true)
 
 
@@ -94,6 +123,12 @@ func _update_user_id(val: String) -> void:
 	_id.caret_column = val.length()
 
 
+func _update_show_default_user_button(val: bool) -> void:
+	show_default_user_button = val
+	if is_node_ready():
+		_use_default_user.visible = val
+
+
 func _on_id_changed(new_text: String) -> void:
 	_login.text = ""
 	TwitchTweens.loading(self, Color.AQUA)
@@ -116,10 +151,6 @@ func reload() -> void:
 	if user and new_user_login == user.login and new_user_id == user.id:
 		return
 
-	if not user and TwitchEditorSettings.load_current_twitch_user:
-		update_user(TwitchEditorSettings.default_user, true)
-		return
-
 	var users: TwitchGetUsers.Opt = TwitchGetUsers.Opt.new()
 
 	if new_user_login != "" and (not user or user.login != new_user_login):
@@ -134,7 +165,8 @@ func reload() -> void:
 func _load_user(users: TwitchGetUsers.Opt) -> TwitchUser:
 	TwitchTweens.loading(self)
 	if users.id != null or users.login != null:
-		var new_user = await _get_user(users)
+		var lookup: Callable = user_lookup if user_lookup.is_valid() else _get_user
+		var new_user: TwitchUser = await lookup.call(users)
 		if not new_user:
 			await TwitchTweens.flash(self, Color.RED)
 		else:

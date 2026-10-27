@@ -31,3 +31,9 @@ text = "Name"
 unique_name_in_owner = true
 layout_mode = 2
 icon = ExtResource("2_t7vdb")
+
+[node name="UseDefaultUser" type="Button" parent="." unique_id=1784207761]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Use the default user from the Twitcher setup."
+text = "Default"
