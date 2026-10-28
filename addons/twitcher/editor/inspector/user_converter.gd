@@ -52,6 +52,7 @@ func _ready() -> void:
 	search.pressed.connect(_on_search_pressed)
 	_use_default_user.pressed.connect(use_default_user)
 	_use_default_user.visible = show_default_user_button
+	_refresh_default_user_button()
 	_load_default_user.call_deferred()
 
 
@@ -63,6 +64,8 @@ func update_user(new_user: TwitchUser, notify: bool = false) -> void:
 		user_login = ""
 		user_id = ""
 	user = new_user
+	if is_node_ready():
+		_refresh_default_user_button()
 	if notify: changed.emit(new_user)
 
 
@@ -127,6 +130,21 @@ func _update_show_default_user_button(val: bool) -> void:
 	show_default_user_button = val
 	if is_node_ready():
 		_use_default_user.visible = val
+
+
+## The button is only an icon, so its tooltip names the user it puts in, and it is disabled when
+## pressing it would change nothing.
+func _refresh_default_user_button() -> void:
+	var default_user: TwitchUser = default_user_source.get_user()
+	if default_user == null:
+		_use_default_user.disabled = true
+		_use_default_user.tooltip_text = "No default user, set one up in the Twitcher setup."
+	elif user != null and user.id == default_user.id:
+		_use_default_user.disabled = true
+		_use_default_user.tooltip_text = "Already the default user %s." % default_user.login
+	else:
+		_use_default_user.disabled = false
+		_use_default_user.tooltip_text = "Use the default user %s." % default_user.login
 
 
 func _on_id_changed(new_text: String) -> void:

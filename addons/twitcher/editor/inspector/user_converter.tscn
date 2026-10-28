@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b6qdiwr7rawx1" path="res://addons/twitcher/editor/inspector/user_converter.gd" id="1_ior8m"]
 [ext_resource type="Texture2D" uid="uid://1e6nrtqsuc6" path="res://addons/twitcher/assets/icon_search.tres" id="2_t7vdb"]
+[ext_resource type="Texture2D" uid="uid://c4k7vrn2qx8yh" path="res://addons/twitcher/assets/icon_default_user.svg" id="3_dfusr"]
 
 [node name="UserConverter" type="HBoxContainer" unique_id=991934264]
 offset_right = 40.0
@@ -36,4 +37,4 @@ icon = ExtResource("2_t7vdb")
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Use the default user from the Twitcher setup."
-text = "Default"
+icon = ExtResource("3_dfusr")

@@ -123,6 +123,42 @@ func test_the_default_user_button_can_be_toggled_after_ready() -> void:
 	assert_true(_default_user_button(converter).visible)
 
 
+func test_the_default_user_button_is_a_small_icon() -> void:
+	var button: Button = _default_user_button(_add_converter(false))
+
+	assert_eq(button.text, "")
+	assert_not_null(button.icon)
+
+
+func test_the_default_user_button_names_the_default_user() -> void:
+	var button: Button = _default_user_button(_add_converter(false))
+
+	assert_false(button.disabled)
+	assert_string_contains(button.tooltip_text, "default_user")
+
+
+func test_the_default_user_button_is_disabled_without_a_default_user() -> void:
+	_source.user = null
+	var button: Button = _default_user_button(_add_converter(false))
+
+	assert_true(button.disabled)
+	assert_string_contains(button.tooltip_text, "Twitcher setup")
+
+
+func test_the_default_user_button_is_disabled_while_the_field_holds_it() -> void:
+	var converter: UserConverter = _add_converter(false)
+	var button: Button = _default_user_button(converter)
+
+	converter.use_default_user()
+	assert_true(button.disabled)
+
+	converter.update_user(_make_user("200", "stored_user"))
+	assert_false(button.disabled)
+
+	converter.update_user(null)
+	assert_false(button.disabled)
+
+
 ## A condition stored without its user metadata is shown by id and reloaded. That used to swap in
 ## the default user instead of looking the stored id up.
 func test_reload_looks_up_a_stored_id_instead_of_using_the_default_user() -> void:
