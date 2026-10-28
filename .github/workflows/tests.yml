@@ -24,7 +24,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Godot ${{ env.GODOT_VERSION }}
         uses: chickensoft-games/setup-godot@v2
@@ -34,7 +34,7 @@ jobs:
           include-templates: false
 
       - name: Cache import artifacts
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             .godot/imported
@@ -71,7 +71,7 @@ jobs:
           check_name: GUT Results
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: gut-results
