@@ -23,7 +23,7 @@ static func create(
 		cmd_name: String,
 		callable: Callable,
 		min_args: int = 0,
-		max_args: int = 0,
+		max_args: int = -1,
 		permission_level: int = PermissionFlag.EVERYONE,
 		where: int = WhereFlag.CHAT,
 		allowed_users: Array[String] = [],
@@ -92,22 +92,17 @@ func _handle_command(info: TwitchCommandInfo) -> void:
 	# Handle Argument parsing
 	if cmd_msg.size() > 1:
 		arguments.append_array(cmd_msg[1].split(" ", false))
-		var to_less_arguments: bool = arguments.size() < args_min
-		var to_much_arguments: bool = arguments.size() > args_max
-		if to_much_arguments && args_max != -1 || to_less_arguments:
-			received_invalid_command.emit(info.username, info, arguments)
-			return
-	if arguments.size() == 0 && args_min > 0:
+
+	var too_few_arguments: bool = arguments.size() < args_min
+	var too_many_arguments: bool = args_max != -1 and arguments.size() > args_max
+	if too_few_arguments or too_many_arguments:
 		received_invalid_command.emit(info.username, info, arguments)
 		return
 
 	# Executing the command
 	if arguments.size() == 0:
 		var empty_args: Array[String] = []
-		if args_max > 0:
-			command_received.emit(info.username, info, empty_args)
-		else:
-			command_received.emit(info.username, info, empty_args)
+		command_received.emit(info.username, info, empty_args)
 	else:
 		command_received.emit(info.username, info, arguments)
 

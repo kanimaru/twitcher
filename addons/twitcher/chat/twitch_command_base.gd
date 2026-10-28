@@ -73,7 +73,7 @@ static func create(
 		cmd_name: String,
 		callable: Callable,
 		min_args: int = 0,
-		max_args: int = 0,
+		max_args: int = -1,
 		permission_level: int = PermissionFlag.EVERYONE,
 		where: int = WhereFlag.CHAT,
 		allowed_users: Array[String] = [],
