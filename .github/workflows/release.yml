@@ -29,7 +29,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Full history, so the release notes see the previous tag.
           fetch-depth: 0
@@ -91,6 +91,6 @@ jobs:
       - name: Discord notification
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        uses: Ilshidur/action-discord@master
+        uses: Ilshidur/action-discord@d2594079a10f1d6739ee50a2471f0ca57418b554 # 0.4.0
         with:
           args: 'Twitcher ${{ inputs.version }} got released. \n\n [Get it here](${{ steps.publish.outputs.url }})'

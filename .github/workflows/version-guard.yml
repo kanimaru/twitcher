@@ -17,7 +17,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Compare the tag with plugin.cfg and Twitcher.VERSION
         run: .github/scripts/check-version.sh "$GITHUB_REF_NAME"
