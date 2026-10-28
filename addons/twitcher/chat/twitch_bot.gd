@@ -119,7 +119,7 @@ func send_announcement(message: String, color: TwitchAnnouncementColor = TwitchA
 	var body: TwitchSendChatAnnouncement.Body = TwitchSendChatAnnouncement.Body.new()
 	body.color = color.value
 	body.message = message
-	body.source_only = for_source_only
+	body.for_source_only = for_source_only
 	_bot_api.send_chat_announcement(body, sender.id, broadcaster.id)
 
 
