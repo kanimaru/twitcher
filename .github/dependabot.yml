@@ -1,0 +1,15 @@
+# Keeps the actions in .github/workflows/ current, so runtime deprecations
+# (like the Node 20 one) arrive as a PR instead of a warning in the logs.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # One PR for all action bumps rather than one per action.
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: ci
