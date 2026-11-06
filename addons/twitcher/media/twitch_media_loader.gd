@@ -127,15 +127,16 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 	var requests: Dictionary[TwitchEmoteDefinition, BufferedHTTPClient.RequestData] = {}
 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
+		# Before the paths are built: the type is part of the file name.
+		if not image_transformer.is_supporting_animation():
+			emote_definition.type_static()
+
 		var original_file_cache_path: String = _get_emote_cache_path(emote_definition)
 		var spriteframe_path: String = _get_emote_cache_path_spriteframe(emote_definition)
 		if ResourceLoader.has_cached(spriteframe_path):
 			_log.d("Use cached emote %s" % emote_definition)
 			response[emote_definition] = ResourceLoader.load(spriteframe_path)
 			continue
-
-		if not image_transformer.is_supporting_animation():
-			emote_definition.type_static()
 
 		if _requests_in_progress.has(original_file_cache_path): continue
 		_requests_in_progress.append(original_file_cache_path)
@@ -148,17 +149,35 @@ func get_emotes_by_definition(emote_definitions : Array[TwitchEmoteDefinition]) 
 		var spriteframe_path : String = _get_emote_cache_path_spriteframe(emote_definition)
 		var request : BufferedHTTPClient.RequestData = requests[emote_definition]
 		var sprite_frames : SpriteFrames = await _convert_response(request, original_file_cache_path, spriteframe_path)
+		# The transformers register the frames under different paths (the static one under the
+		# raw image path), so register them where the cache lookup above looks. Only when the
+		# conversion was saved: a failed one should be tried again next time.
+		if FileAccess.file_exists(spriteframe_path):
+			sprite_frames.take_over_path(spriteframe_path)
 		response[emote_definition] = sprite_frames
 		_cached_images.append(sprite_frames)
 		_requests_in_progress.erase(original_file_cache_path)
 		emoji_loaded.emit(emote_definition)
 
 	for emote_definition: TwitchEmoteDefinition in emote_definitions:
-		if not response.has(emote_definition):
-			var cache : String = _get_emote_cache_path_spriteframe(emote_definition)
-			response[emote_definition] = ResourceLoader.load(cache)
+		if response.has(emote_definition): continue
+		var original_file_cache_path : String = _get_emote_cache_path(emote_definition)
+		var spriteframe_path : String = _get_emote_cache_path_spriteframe(emote_definition)
+		# Another call is still downloading this emote: its file is not written yet.
+		while _requests_in_progress.has(original_file_cache_path):
+			await emoji_loaded
+		response[emote_definition] = _get_loaded_emote(spriteframe_path)
 
 	return response
+
+
+## Returns an emote another request has loaded, or the fallback when that request failed.
+func _get_loaded_emote(spriteframe_path: String) -> SpriteFrames:
+	if ResourceLoader.has_cached(spriteframe_path) or FileAccess.file_exists(spriteframe_path):
+		return ResourceLoader.load(spriteframe_path)
+	var frames : SpriteFrames = SpriteFrames.new()
+	frames.add_frame(&"default", fallback_texture)
+	return frames
 
 
 ## Returns the path where the raw emoji should be cached
