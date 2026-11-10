@@ -16,7 +16,6 @@ class_name TwitchAutoMessenger
 ## Eventsub that should be used to listen the messages for
 @export var eventsub: TwitchEventsub
 
-## Created in _ready: an instance that never enters the tree would otherwise leave it orphaned
 var _timer: Timer
 
 ## The current tracker for messages received
@@ -73,6 +72,5 @@ func _send_message() -> void:
 
 func _update_delay_in_s(delay: float) -> void:
 	delay_in_s = delay
-	# A scene sets the delay before _ready made the timer; _ready applies it then.
 	if _timer != null:
 		_timer.wait_time = delay
